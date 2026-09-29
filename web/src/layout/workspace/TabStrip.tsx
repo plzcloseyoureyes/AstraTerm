@@ -5,7 +5,9 @@ import { DynamicDropdown } from '@/components/menu-items'
 import { IconButton } from '@/components/ui/icon-button'
 import { cn } from '@/lib/utils'
 import {
+  beginSpaceDrag,
   closeSpace,
+  endSpaceDrag,
   focusSpace,
   moveSpace,
   splitActive,
@@ -22,10 +24,14 @@ import { buildSpaceMenu } from './tabMenu'
 /** Where a space dragged within the strip would land: before or after `id`. */
 type DropMark = { id: string; after: boolean } | null
 
+/** Hovering a tab this long while dragging another one switches to it (to drop into its layout). */
+const HOVER_SWITCH_MS = 600
+
 /**
  * Title-bar tabs: one per space (a top-level tab with its own split layout, like a Tabby tab). A tab shows its
- * focused pane (icon, title, status) and, when split, how many panes it has. Click to switch, drag to reorder,
- * middle-click or × to close the whole tab; ←/→ Home/End move the keyboard focus, Enter/Space open, Delete closes.
+ * focused pane (icon, title, status) and, when split, how many panes it has. Click to switch; drag to reorder, or
+ * drop it onto the layout below to split it in there (hovering another tab while dragging switches to it);
+ * middle-click or × closes the whole tab; ←/→ Home/End move the keyboard focus, Enter/Space open, Delete closes.
  */
 export function TabStrip({ className }: { className?: string }) {
   const spaces = useSpaces()
@@ -35,7 +41,12 @@ export function TabStrip({ className }: { className?: string }) {
   const byId = useMemo(() => new Map(tabs.map((t) => [t.id, t])), [tabs])
   const scroller = useRef<HTMLDivElement>(null)
   const dragging = useRef<string | null>(null)
+  const hover = useRef<{ id: string; timer: number } | null>(null)
   const [mark, setMark] = useState<DropMark>(null)
+  const clearHover = () => {
+    if (hover.current) window.clearTimeout(hover.current.timer)
+    hover.current = null
+  }
   const visible = spaces.filter((s) => s.panes.length > 0)
   const active = visible.find((s) => s.id === activeId)
   const split = (active?.panes.length ?? 0) > 1
@@ -68,6 +79,10 @@ export function TabStrip({ className }: { className?: string }) {
   const onDragOver = (id: string) => (e: DragEvent<HTMLDivElement>) => {
     if (!dragging.current) return
     e.preventDefault()
+    if (id !== dragging.current && id !== activeId && hover.current?.id !== id) {
+      clearHover()
+      hover.current = { id, timer: window.setTimeout(() => focusSpace(id), HOVER_SWITCH_MS) }
+    }
     const r = e.currentTarget.getBoundingClientRect()
     const after = e.clientX > r.left + r.width / 2
     if (mark?.id !== id || mark.after !== after) setMark({ id, after })
@@ -76,6 +91,8 @@ export function TabStrip({ className }: { className?: string }) {
     const from = dragging.current
     const after = mark?.after ?? false
     dragging.current = null
+    endSpaceDrag()
+    clearHover()
     setMark(null)
     if (!from || from === id) return
     e.preventDefault()
@@ -97,7 +114,10 @@ export function TabStrip({ className }: { className?: string }) {
           if (e.deltaY && !e.deltaX) e.currentTarget.scrollLeft += e.deltaY
         }}
         onDragLeave={(e) => {
-          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setMark(null)
+          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+            setMark(null)
+            clearHover()
+          }
         }}
       >
         {visible.map((s) => (
@@ -110,11 +130,14 @@ export function TabStrip({ className }: { className?: string }) {
             mark={mark?.id === s.id ? (mark.after ? 'after' : 'before') : null}
             onDragStart={(e) => {
               dragging.current = s.id
+              beginSpaceDrag(s.id)
               e.dataTransfer.effectAllowed = 'move'
               e.dataTransfer.setData('text/plain', s.id)
             }}
             onDragEnd={() => {
               dragging.current = null
+              endSpaceDrag()
+              clearHover()
               setMark(null)
             }}
             onDragOver={onDragOver(s.id)}
@@ -179,9 +202,8 @@ function SpaceTab({
       onDragEnd={drag.onDragEnd}
       onDragOver={drag.onDragOver}
       onDrop={drag.onDrop}
-      onMouseDown={(e) => {
-        if (e.button === 0) focusSpace(space.id)
-      }}
+      // On click, not mouse-down: starting a drag must not switch away from the layout it will be dropped on.
+      onClick={() => focusSpace(space.id)}
     />
   )
 }

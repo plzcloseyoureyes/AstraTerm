@@ -19,7 +19,7 @@
 import { useCallback, useSyncExternalStore } from 'react'
 import { create } from 'zustand'
 import { toast } from 'sonner'
-import type { AddPanelOptions, DockviewApi, IDockviewPanel, SerializedDockview } from 'dockview-react'
+import type { AddPanelOptions, DockviewApi, DockviewGroupPanel, IDockviewPanel, SerializedDockview } from 'dockview-react'
 import { tabKinds, type ClosedTab, type TabInfo, type TabPlacement, type TabPosition } from '@/app/registry'
 import { trackDocument } from '@/lib/theme'
 import { debounce, storage, uid } from '@/lib/utils'
@@ -367,6 +367,16 @@ export function attachSpace(id: string, dv: DockviewApi): () => void {
       popoutDisposers.get(pg.id)?.()
       popoutDisposers.delete(pg.id)
     }),
+    // A title-bar tab dragged over this space: dockview's drop zones show, and a drop merges its panes here.
+    dv.onUnhandledDragOver((e) => {
+      if (draggingSpace && draggingSpace !== id) e.accept()
+    }),
+    dv.onDidDrop((e) => {
+      const from = draggingSpace
+      if (!from || from === id) return
+      draggingSpace = null
+      mergeSpace(from, id, e.group, e.position)
+    }),
   ]
   const space: Space = {
     api: dv,
@@ -430,11 +440,22 @@ export function moveSpace(id: string, toIndex: number): void {
   saveLayout()
 }
 
+type Direction = 'left' | 'right' | 'above' | 'below'
+
+/** Where a tab goes in another space: beside `group` (default: its focused pane), or at the layout's edge. */
+interface MoveTarget {
+  spaceId: string
+  group?: DockviewGroupPanel
+  direction?: Direction
+  /** Beside the whole layout instead of a pane (a drop on the layout's outer edge). */
+  edge?: boolean
+}
+
 /**
  * Move a tab into another pane arrangement without closing it: into a new space (`to` omitted), or beside a pane of
  * another space. The tab is re-created there (its session re-attaches), never closed.
  */
-export function moveTab(tabId: string, to?: { spaceId: string; direction?: 'right' | 'below' }): void {
+export function moveTab(tabId: string, to?: MoveTarget): void {
   const panel = getPanel(tabId)
   const from = spaceOf(tabId)
   if (!panel || !from) return
@@ -448,14 +469,44 @@ export function moveTab(tabId: string, to?: { spaceId: string; direction?: 'righ
     params: panel.params as PanelParams,
   }
   panel.api.close() // not closeTab: the tab lives on in its new place
-  if (target) {
-    const ref = target.api.activePanel
-    target.api.addPanel({ ...opts, position: ref ? { referencePanel: ref, direction: to?.direction ?? 'right' } : undefined } as PanelOpts)
-    focusSpace(to!.spaceId)
+  if (target && to) {
+    const direction = to.direction ?? 'right'
+    const group = to.edge ? undefined : (to.group ?? target.api.activePanel?.group)
+    const position = group ? { referenceGroup: group, direction } : target.api.panels.length ? { direction } : undefined
+    target.api.addPanel({ ...opts, position } as PanelOpts)
+    focusSpace(to.spaceId)
   } else {
     createSpace({ panels: [opts as PanelOpts] }, { after: from })
   }
   scheduleEmptyCheck()
+}
+
+/** The space being dragged from the title bar (its panes can be dropped into another space's layout). */
+let draggingSpace: string | null = null
+
+export function beginSpaceDrag(id: string): void {
+  draggingSpace = id
+}
+
+export function endSpaceDrag(): void {
+  draggingSpace = null
+}
+
+const DROP_DIRECTION: Record<string, Direction> = { left: 'left', right: 'right', top: 'above', bottom: 'below', center: 'right' }
+
+/** Move every pane of space `from` into space `to`, beside `group` on side `position` (dockview drop position). */
+function mergeSpace(from: string, to: string, group: DockviewGroupPanel | undefined, position: string): void {
+  const src = mounted.get(from)
+  if (!src || from === to) return
+  const direction = DROP_DIRECTION[position] ?? 'right'
+  let anchor = group
+  const panels = src.api.panels // a snapshot: panes leave the source as they move
+  for (const panel of panels) {
+    const id = panel.id
+    moveTab(id, { spaceId: to, group: anchor, direction, edge: !anchor })
+    // The next panes line up after the one just placed (keeps them together).
+    anchor = getPanel(id)?.group
+  }
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
