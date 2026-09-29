@@ -8,11 +8,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // "Follow terminal folder" (FILE-2), MobaXterm style: when an SSH terminal connects, detect the login shell over the

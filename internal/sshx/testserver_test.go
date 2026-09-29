@@ -21,9 +21,9 @@ import (
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/server/servertest"
-	"github.com/termstead/termstead/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
 )
 
 // ---- in-process SSH server ----------------------------------------------------------------------------------------

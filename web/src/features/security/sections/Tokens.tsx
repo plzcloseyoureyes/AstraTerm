@@ -70,7 +70,7 @@ export default function TokensSection() {
             <EmptyState
               icon={KeyRound}
               title="No API tokens"
-              description="Create one to automate Termstead from scripts, CI jobs or other tools."
+              description="Create one to automate AstraTerm from scripts, CI jobs or other tools."
               action={
                 <Button onClick={openCreateToken}>
                   <Plus /> Create a token

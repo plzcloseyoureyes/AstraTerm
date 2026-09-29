@@ -5,20 +5,12 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
 import {
   Activity,
-  Binary,
-  Braces,
   Building2,
-  Clock,
   EthernetPort,
-  FileLock2,
-  Fingerprint,
   Gauge,
   Globe,
-  Hash,
-  KeyRound,
   ListTree,
   type LucideIcon,
-  Network,
   Power,
   Radar,
   Router,
@@ -28,7 +20,7 @@ import {
   Waypoints,
 } from 'lucide-react'
 
-export type ToolCategory = 'Diagnostics' | 'Discovery' | 'Security' | 'Host' | 'Utilities'
+export type ToolCategory = 'Diagnostics' | 'Discovery' | 'Security' | 'Host'
 
 export interface ToolDef {
   id: string
@@ -39,11 +31,8 @@ export interface ToolDef {
   component: LazyExoticComponent<ComponentType>
   /** Admin-only in server mode (scanners, host details, throughput); shown as a hint in the UI. */
   serverAdminOnly?: boolean
-  /** Runs entirely in the browser. */
-  offline?: boolean
 }
 
-const utility = (name: string) => lazy(() => import('./utilities').then((m) => ({ default: m.UTILITY_PANELS[name] })))
 const host = (name: 'InterfacesPanel' | 'ListeningPanel') => lazy(() => import('./panels/host').then((m) => ({ default: m[name] })))
 
 export const TOOLS: ToolDef[] = [
@@ -65,19 +54,9 @@ export const TOOLS: ToolDef[] = [
   // Host
   { id: 'interfaces', label: 'Interfaces', icon: EthernetPort, category: 'Host', keywords: ['nic', 'ip', 'mac', 'mtu', 'ifconfig'], component: host('InterfacesPanel'), serverAdminOnly: true },
   { id: 'listening', label: 'Listening ports', icon: ListTree, category: 'Host', keywords: ['netstat', 'ss', 'sockets', 'process', 'pid', 'listports', 'kill'], component: host('ListeningPanel'), serverAdminOnly: true },
-  // Utilities (offline)
-  { id: 'password', label: 'Password generator', icon: KeyRound, category: 'Utilities', keywords: ['passphrase', 'random', 'diceware'], component: utility('password'), offline: true },
-  { id: 'subnet', label: 'Subnet calculator', icon: Network, category: 'Utilities', keywords: ['cidr', 'netmask', 'ipv4', 'ipv6', 'ip'], component: utility('subnet'), offline: true },
-  { id: 'hash', label: 'Hash calculator', icon: Hash, category: 'Utilities', keywords: ['md5', 'sha256', 'sha512', 'blake3', 'checksum'], component: utility('hash'), offline: true },
-  { id: 'encode', label: 'Encode / decode', icon: Binary, category: 'Utilities', keywords: ['base64', 'hex', 'url', 'encode', 'decode'], component: utility('encode'), offline: true },
-  { id: 'jwt', label: 'JWT decoder', icon: FileLock2, category: 'Utilities', keywords: ['token', 'json web token', 'claims'], component: utility('jwt'), offline: true },
-  { id: 'json', label: 'JSON formatter', icon: Braces, category: 'Utilities', keywords: ['pretty', 'minify', 'format', 'validate'], component: utility('json'), offline: true },
-  { id: 'timestamp', label: 'Timestamp converter', icon: Clock, category: 'Utilities', keywords: ['unix', 'epoch', 'date', 'iso'], component: utility('timestamp'), offline: true },
-  { id: 'chmod', label: 'chmod calculator', icon: FileLock2, category: 'Utilities', keywords: ['permissions', 'octal', 'rwx'], component: utility('chmod'), offline: true },
-  { id: 'uuid', label: 'UUID generator', icon: Fingerprint, category: 'Utilities', keywords: ['guid', 'v4', 'v7', 'unique'], component: utility('uuid'), offline: true },
 ]
 
-export const TOOL_CATEGORIES: ToolCategory[] = ['Diagnostics', 'Discovery', 'Security', 'Host', 'Utilities']
+export const TOOL_CATEGORIES: ToolCategory[] = ['Diagnostics', 'Discovery', 'Security', 'Host']
 
 export const DEFAULT_TOOL = 'ping'
 

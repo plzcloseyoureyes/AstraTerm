@@ -1,4 +1,4 @@
-# Termstead remote monitor — Linux sampler (RESEARCH §3.21). Runs as `/bin/sh -s` on one non-PTY exec channel and prints
+# AstraTerm remote monitor — Linux sampler (RESEARCH §3.21). Runs as `/bin/sh -s` on one non-PTY exec channel and prints
 # one sample every __INTERVAL__ s between @@S and @@E markers; __COUNT__ samples (0 = until the channel closes).
 # Only /proc reads and a few tiny commands per sample (BusyBox compatible). Network / pseudo filesystems are never
 # passed to df, so a hung NFS server cannot stall the loop; neither are the mounts of container runtimes (a Docker or

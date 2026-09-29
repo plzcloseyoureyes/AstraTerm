@@ -16,9 +16,9 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
 type commitFull struct {
@@ -272,7 +272,7 @@ func TestPlaintextJSONWithSecretsIsNotTrusted(t *testing.T) {
 	isolateHome(t)
 	env := servertest.New(t)
 	admin := env.Setup("admin", adminPass)
-	doc := `{"format":"termstead-export","version":1,"connections":[{"id":"x","name":"planted","protocol":"ssh","host":"p.example.com","secrets":{"password":"planted-pw"}}]}`
+	doc := `{"format":"astraterm-export","version":1,"connections":[{"id":"x","name":"planted","protocol":"ssh","host":"p.example.com","secrets":{"password":"planted-pw"}}]}`
 	var res commitFull
 	admin.MustJSON("POST", "/api/import/commit", map[string]any{"format": "json", "content": b64([]byte(doc)), "base64": true}, &res)
 	if res.Created != 1 {
@@ -316,7 +316,7 @@ func TestSyncToggleAdminOnlyAndBackupPost(t *testing.T) {
 	// Restore hardening: a zip bomb / foreign entries are refused.
 	var zb bytes.Buffer
 	zw := zip.NewWriter(&zb)
-	w, _ := zw.Create("termstead.db")
+	w, _ := zw.Create("astraterm.db")
 	_, _ = w.Write([]byte("SQLite format 3\x00"))
 	w2, _ := zw.Create("../escape.txt")
 	_, _ = w2.Write([]byte("x"))

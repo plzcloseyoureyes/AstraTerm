@@ -1,5 +1,5 @@
 {
-  "format": "termstead-export",
+  "format": "astraterm-export",
   "version": 1,
   "includesSecrets": false,
   "folders": [

@@ -14,7 +14,7 @@ var unixSignals = map[string]syscall.Signal{
 	"USR2": syscall.SIGUSR2,
 }
 
-// signalLocal delivers a signal to a process of the Termstead host (sig is a validated name such as "TERM").
+// signalLocal delivers a signal to a process of the AstraTerm host (sig is a validated name such as "TERM").
 func signalLocal(pid int, sig string) error {
 	s, ok := unixSignals[sig]
 	if !ok {

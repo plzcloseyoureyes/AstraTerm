@@ -5,7 +5,7 @@ header, the `/ws/events` socket (prompts are answered there), and `/ws/terminal/
 no npm packages.
 
 ```sh
-make build                      # bin/termstead with the frontend embedded
+make build                      # bin/astraterm with the frontend embedded
 make smoke                      # = make build + node scripts/smoke/smoke.mjs
 node scripts/smoke/smoke.mjs -h # options
 ```
@@ -18,7 +18,7 @@ entirely with `--no-ssh`.
 
 1. Starts `lscr.io/linuxserver/openssh-server` with password auth on a random loopback port (`-p 127.0.0.1::2222`,
    random password) and waits for the SSH banner.
-2. Starts `bin/termstead serve --listen 127.0.0.1:0 --data-dir <tmp>/data --scrollback-bytes 2MiB --log-level debug`,
+2. Starts `bin/astraterm serve --listen 127.0.0.1:0 --data-dir <tmp>/data --scrollback-bytes 2MiB --log-level debug`,
    reads the URL and launch token from the banner, and keeps the server log in `<tmp>/server.log`.
 3. Runs the checks (each prints `PASS`/`FAIL`/`SKIP`; a failed critical step skips the dependent ones):
 

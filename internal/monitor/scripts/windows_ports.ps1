@@ -1,4 +1,4 @@
-# Termstead remote monitor — Windows listening sockets (MON-3).
+# AstraTerm remote monitor — Windows listening sockets (MON-3).
 $ProgressPreference='SilentlyContinue';$ErrorActionPreference='SilentlyContinue'
 $n=@{};Get-Process|%{$n[[int]$_.Id]=$_.ProcessName}
 $r=@()

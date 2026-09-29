@@ -9,8 +9,8 @@ import { PanelHost } from './PanelHost'
 import { Watermark } from './Watermark'
 
 const theme: DockviewTheme = {
-  name: 'termstead',
-  className: 'dockview-theme-termstead',
+  name: 'astraterm',
+  className: 'dockview-theme-astraterm',
   gap: 0,
   dndOverlayMounting: 'absolute',
   dndPanelOverlay: 'content',

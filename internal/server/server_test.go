@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
 const pass = "correct horse battery"

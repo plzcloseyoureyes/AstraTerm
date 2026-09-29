@@ -123,7 +123,7 @@ export function LogonEditor({ connectionId, onSaved, onCancel }: { connectionId:
         <p className="rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-sm">This connection is shared with you: only its owner or an administrator can change its logon actions.</p>
       )}
       <p className="text-sm text-muted-foreground">
-        After each connect Termstead waits for every step's pattern (a regular expression over the plain-text output, e.g.{' '}
+        After each connect AstraTerm waits for every step's pattern (a regular expression over the plain-text output, e.g.{' '}
         <code className="font-mono">[Pp]assword:\s*$</code>) and then types the text or a stored secret. A step without a pattern types immediately.
       </p>
       {startup && rows.length > 0 && (

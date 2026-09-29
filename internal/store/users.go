@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Users is the users repository.
@@ -35,7 +35,7 @@ func scanUser(sc scanner) (*model.User, error) {
 	}
 	u.Role = model.Role(role)
 	u.TOTPEnabled, u.Disabled = totp != 0, disabled != 0
-	u.CreatedAt, u.UpdatedAt, u.LastLoginAt = fromMs(created), fromMs(updated), fromNullMs(lastLogin)
+	u.CreatedAt, u.UpdatedAt, u.LastLoginAt = FromMs(created), FromMs(updated), FromNullMs(lastLogin)
 	return &u, nil
 }
 
@@ -89,7 +89,7 @@ func (r *Users) create(ctx context.Context, q execer, u *model.User, passwordHas
 	}
 	_, err := q.ExecContext(ctx, `INSERT INTO users (id, username, display_name, password_hash, role, disabled, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-		u.ID, u.Username, u.DisplayName, passwordHash, string(u.Role), b2i(u.Disabled), ms(u.CreatedAt), ms(u.UpdatedAt))
+		u.ID, u.Username, u.DisplayName, passwordHash, string(u.Role), B2I(u.Disabled), ms(u.CreatedAt), ms(u.UpdatedAt))
 	return mapErr(err)
 }
 
@@ -145,7 +145,7 @@ func (r *Users) getAuth(ctx context.Context, where string, arg any) (*UserAuth, 
 	}
 	u.Role = model.Role(role)
 	u.TOTPEnabled, u.Disabled = totp != 0, disabled != 0
-	u.CreatedAt, u.UpdatedAt, u.LastLoginAt = fromMs(created), fromMs(updated), fromNullMs(lastLogin)
+	u.CreatedAt, u.UpdatedAt, u.LastLoginAt = FromMs(created), FromMs(updated), FromNullMs(lastLogin)
 	return &UserAuth{User: &u, PasswordHash: hash, TOTPSecretEnc: secret, RecoveryHashes: parseStrings(rec), TOTPLastStep: lastStep}, nil
 }
 
@@ -163,7 +163,7 @@ func (r *Users) GetAuth(ctx context.Context, id string) (*UserAuth, error) {
 func (r *Users) Update(ctx context.Context, u *model.User) error {
 	u.UpdatedAt = Now()
 	return expectOne(r.db.ExecContext(ctx, `UPDATE users SET display_name = ?, role = ?, disabled = ?, updated_at = ? WHERE id = ?`,
-		u.DisplayName, string(u.Role), b2i(u.Disabled), ms(u.UpdatedAt), u.ID))
+		u.DisplayName, string(u.Role), B2I(u.Disabled), ms(u.UpdatedAt), u.ID))
 }
 
 // SetPassword replaces the password hash.
@@ -175,7 +175,7 @@ func (r *Users) SetPassword(ctx context.Context, id, hash string) error {
 // replay guard.
 func (r *Users) SetTOTP(ctx context.Context, id string, secretEnc []byte, enabled bool, recoveryHashes []string) error {
 	return expectOne(r.db.ExecContext(ctx, `UPDATE users SET totp_secret_enc = ?, totp_enabled = ?, totp_recovery = ?,
-		totp_last_step = 0, updated_at = ? WHERE id = ?`, secretEnc, b2i(enabled), stringsJSON(recoveryHashes), ms(Now()), id))
+		totp_last_step = 0, updated_at = ? WHERE id = ?`, secretEnc, B2I(enabled), stringsJSON(recoveryHashes), ms(Now()), id))
 }
 
 // SetRecoveryCodes replaces the hashed recovery codes.
@@ -253,14 +253,14 @@ func scanAuthSession(sc scanner) (*model.AuthSession, error) {
 	if err := sc.Scan(&s.ID, &s.UserID, &created, &expires, &seen, &s.IP, &s.UserAgent, &remember); err != nil {
 		return nil, mapErr(err)
 	}
-	s.CreatedAt, s.ExpiresAt, s.LastSeenAt, s.Remember = fromMs(created), fromMs(expires), fromMs(seen), remember != 0
+	s.CreatedAt, s.ExpiresAt, s.LastSeenAt, s.Remember = FromMs(created), FromMs(expires), FromMs(seen), remember != 0
 	return &s, nil
 }
 
 // Create inserts a session (ID must be the token hash).
 func (r *AuthSessions) Create(ctx context.Context, s *model.AuthSession) error {
 	_, err := r.db.ExecContext(ctx, `INSERT INTO auth_sessions (`+authSessionCols+`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-		s.ID, s.UserID, ms(s.CreatedAt), ms(s.ExpiresAt), ms(s.LastSeenAt), s.IP, s.UserAgent, b2i(s.Remember))
+		s.ID, s.UserID, ms(s.CreatedAt), ms(s.ExpiresAt), ms(s.LastSeenAt), s.IP, s.UserAgent, B2I(s.Remember))
 	return mapErr(err)
 }
 
@@ -337,7 +337,7 @@ func scanAPIToken(sc scanner) (*model.APIToken, error) {
 	if err := sc.Scan(&t.ID, &t.UserID, &t.Name, &t.TokenHash, &created, &used, &expires); err != nil {
 		return nil, mapErr(err)
 	}
-	t.CreatedAt, t.LastUsedAt, t.ExpiresAt = fromMs(created), fromNullMs(used), fromNullMs(expires)
+	t.CreatedAt, t.LastUsedAt, t.ExpiresAt = FromMs(created), FromNullMs(used), FromNullMs(expires)
 	return &t, nil
 }
 
@@ -350,7 +350,7 @@ func (r *APITokens) Create(ctx context.Context, t *model.APIToken) error {
 		t.CreatedAt = Now()
 	}
 	_, err := r.db.ExecContext(ctx, `INSERT INTO api_tokens (`+apiTokenCols+`) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		t.ID, t.UserID, t.Name, t.TokenHash, ms(t.CreatedAt), nullMs(t.LastUsedAt), nullMs(t.ExpiresAt))
+		t.ID, t.UserID, t.Name, t.TokenHash, ms(t.CreatedAt), NullMs(t.LastUsedAt), NullMs(t.ExpiresAt))
 	return mapErr(err)
 }
 

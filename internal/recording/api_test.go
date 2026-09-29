@@ -10,8 +10,8 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/recording"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/recording"
 )
 
 type listResp struct {

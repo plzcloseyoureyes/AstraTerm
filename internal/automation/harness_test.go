@@ -18,21 +18,21 @@ import (
 	"github.com/coder/websocket"
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/audit"
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/events"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/proto/local"
-	"github.com/termstead/termstead/internal/sshx"
-	"github.com/termstead/termstead/internal/store"
-	"github.com/termstead/termstead/internal/term"
-	"github.com/termstead/termstead/internal/vault"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/audit"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/events"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/proto/local"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/vault"
 )
 
-// harness is an in-process Termstead built from the foundation packages only (so the tests do not depend on other
+// harness is an in-process AstraTerm built from the foundation packages only (so the tests do not depend on other
 // feature modules): store, vault, events, jobs, audit, router, term + sshx + local shells and this module. Requests
 // are authenticated by an X-Test-User header carrying a user ID.
 type harness struct {
@@ -58,7 +58,7 @@ func newHarness(t *testing.T, mutate ...func(*config.Config)) *harness {
 	if err := config.EnsureDataDir(dir); err != nil {
 		t.Fatal(err)
 	}
-	st, err := store.Open(ctx, filepath.Join(dir, "termstead.db"))
+	st, err := store.Open(ctx, filepath.Join(dir, "astraterm.db"))
 	if err != nil {
 		t.Fatal(err)
 	}

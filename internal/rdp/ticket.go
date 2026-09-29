@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Tickets authorize one viewer connection: POST /api/sessions/{id}/rdp-ticket mints a random token bound

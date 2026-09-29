@@ -8,11 +8,11 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
-// termsteadSessionCookie is internal/auth.CookieName (not imported: webproxy must not depend on auth). It is removed
+// astratermSessionCookie is internal/auth.CookieName (not imported: webproxy must not depend on auth). It is removed
 // from every proxied request.
-const termsteadSessionCookie = "termstead_session"
+const astratermSessionCookie = "astraterm_session"
 
-// reqMode describes how the current proxied request reached Termstead.
+// reqMode describes how the current proxied request reached AstraTerm.
 type reqMode struct {
 	path   bool   // path mode (/proxy/<id>-<key>/…)
 	prefix string // path-mode prefix ("" in host mode)
@@ -31,15 +31,15 @@ func modeOf(r *http.Request) reqMode {
 	return m
 }
 
-// Security headers Termstead's pre-routing middleware sets on every response; proxied responses carry the upstream's.
-var termsteadHeaders = []string{
+// Security headers AstraTerm's pre-routing middleware sets on every response; proxied responses carry the upstream's.
+var astratermHeaders = []string{
 	"Content-Security-Policy", "X-Frame-Options", "Cross-Origin-Opener-Policy", "Cross-Origin-Resource-Policy",
 	"Cross-Origin-Embedder-Policy", "Permissions-Policy", "Referrer-Policy", "Strict-Transport-Security",
 	"X-Xss-Protection", "X-Content-Type-Options",
 }
 
 // dispatch is the pre-routing middleware: requests for a proxy origin (host mode) or /proxy/… (path mode) are proxied;
-// every other request continues through Termstead's router, with the SPA's frame-src extended to the proxy origins.
+// every other request continues through AstraTerm's router, with the SPA's frame-src extended to the proxy origins.
 func (s *Service) dispatch(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c *echo.Context) error {
 		r := c.Request()
@@ -93,7 +93,7 @@ func validID(id string) bool {
 	return true
 }
 
-// extendFrameSrc lets the SPA frame proxy origins: Termstead's CSP allows `frame-src 'self' blob:` only.
+// extendFrameSrc lets the SPA frame proxy origins: AstraTerm's CSP allows `frame-src 'self' blob:` only.
 func (s *Service) extendFrameSrc(h http.Header) {
 	csp := h.Get("Content-Security-Policy")
 	if csp == "" || !strings.Contains(csp, "frame-src") {
@@ -112,8 +112,8 @@ func (s *Service) extendFrameSrc(h http.Header) {
 	h.Set("Content-Security-Policy", strings.Join(parts, ";"))
 }
 
-func clearTermsteadHeaders(h http.Header, keepNosniff bool) {
-	for _, k := range termsteadHeaders {
+func clearAstraTermHeaders(h http.Header, keepNosniff bool) {
+	for _, k := range astratermHeaders {
 		if keepNosniff && k == "X-Content-Type-Options" {
 			continue
 		}
@@ -130,7 +130,7 @@ func requestScheme(r *http.Request) string {
 
 // serveHost handles a request for a host-mode proxy origin.
 func (s *Service) serveHost(w http.ResponseWriter, r *http.Request, id string) {
-	clearTermsteadHeaders(w.Header(), false)
+	clearAstraTermHeaders(w.Header(), false)
 	scheme := requestScheme(r)
 	origin := scheme + "://" + strings.ToLower(r.Host)
 	host, _ := splitHostPortLoose(r.Host)
@@ -139,7 +139,7 @@ func (s *Service) serveHost(w http.ResponseWriter, r *http.Request, id string) {
 	if p == nil {
 		writePage(w, r, http.StatusGone, page{
 			Code: "gone", Title: "This web page is closed",
-			Message: "The Termstead web proxy for this page was closed (idle, or Termstead restarted). Reopen it from Termstead.",
+			Message: "The AstraTerm web proxy for this page was closed (idle, or AstraTerm restarted). Reopen it from AstraTerm.",
 			Origins: []string{"*"},
 		})
 		return
@@ -193,7 +193,7 @@ func localRedirect(uri string) string {
 }
 
 // proxyCookie is the host-only browser-session cookie of a host-mode proxy. On a secure context it is SameSite=None
-// + Partitioned so it works inside Termstead's (cross-site) iframe, even where third-party cookies are blocked.
+// + Partitioned so it works inside AstraTerm's (cross-site) iframe, even where third-party cookies are blocked.
 func proxyCookie(v string, secure bool) *http.Cookie {
 	ck := &http.Cookie{Name: cookieName, Value: v, Path: "/", HttpOnly: true, SameSite: http.SameSiteLaxMode}
 	if secure {
@@ -204,8 +204,8 @@ func proxyCookie(v string, secure bool) *http.Cookie {
 
 func (p *Proxy) authFailed(w http.ResponseWriter, r *http.Request) {
 	writePage(w, r, http.StatusUnauthorized, page{
-		Code: "auth", Title: "Open this page from Termstead",
-		Message: "This web proxy link is only valid for the Termstead tab that opened it. If you see this inside Termstead, " +
+		Code: "auth", Title: "Open this page from AstraTerm",
+		Message: "This web proxy link is only valid for the AstraTerm tab that opened it. If you see this inside AstraTerm, " +
 			"your browser may block the proxy's cookie in embedded pages: use \"Open in new window\".",
 		Origins: p.origins(), Frame: p.origins(),
 	})
@@ -213,7 +213,7 @@ func (p *Proxy) authFailed(w http.ResponseWriter, r *http.Request) {
 
 // servePath handles /proxy/<id>-<key>/… (path mode).
 func (s *Service) servePath(w http.ResponseWriter, r *http.Request) {
-	clearTermsteadHeaders(w.Header(), true)
+	clearAstraTermHeaders(w.Header(), true)
 	rest := strings.TrimPrefix(r.URL.EscapedPath(), "/proxy/")
 	capSeg, tail, hasSlash := strings.Cut(rest, "/")
 	id, key, _ := strings.Cut(capSeg, "-")
@@ -224,7 +224,7 @@ func (s *Service) servePath(w http.ResponseWriter, r *http.Request) {
 	if p == nil || !p.checkPathKey(key) || !s.currentSettings().pathModeAllowed() {
 		writePage(w, r, http.StatusNotFound, page{
 			Code: "gone", Title: "This web page is closed", Sandbox: true, Origins: []string{"*"},
-			Message: "The Termstead web proxy for this page is closed or the link is invalid. Reopen it from Termstead.",
+			Message: "The AstraTerm web proxy for this page is closed or the link is invalid. Reopen it from AstraTerm.",
 		})
 		return
 	}

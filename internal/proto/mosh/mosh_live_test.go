@@ -13,7 +13,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 func fakeAddr(s string) net.Addr {
@@ -22,8 +22,8 @@ func fakeAddr(s string) net.Addr {
 }
 
 // Live tests against a real mosh-server reached over SSH. They need direct UDP reachability, so they are driven by
-// TERMSTEAD_TEST_MOSH=user:password@host:port (see scripts in the protocols review: run the test binary inside the
-// network namespace of a container that has sshd + mosh). TERMSTEAD_TEST_MOSH_PORTS sets moshPorts.
+// ASTRATERM_TEST_MOSH=user:password@host:port (see scripts in the protocols review: run the test binary inside the
+// network namespace of a container that has sshd + mosh). ASTRATERM_TEST_MOSH_PORTS sets moshPorts.
 
 type sshExec struct{ c *ssh.Client }
 
@@ -45,9 +45,9 @@ func (s sshExec) Exec(_ context.Context, cmd string) ([]byte, []byte, int, error
 
 func liveSSH(t *testing.T) (*ssh.Client, model.Options) {
 	t.Helper()
-	spec := os.Getenv("TERMSTEAD_TEST_MOSH")
+	spec := os.Getenv("ASTRATERM_TEST_MOSH")
 	if spec == "" {
-		t.Skip("set TERMSTEAD_TEST_MOSH=user:password@host:port to run against a real mosh-server")
+		t.Skip("set ASTRATERM_TEST_MOSH=user:password@host:port to run against a real mosh-server")
 	}
 	cred, addr, _ := strings.Cut(spec, "@")
 	user, pass, _ := strings.Cut(cred, ":")
@@ -58,7 +58,7 @@ func liveSSH(t *testing.T) (*ssh.Client, model.Options) {
 	}
 	t.Cleanup(func() { c.Close() })
 	o := model.Options{}
-	if p := os.Getenv("TERMSTEAD_TEST_MOSH_PORTS"); p != "" {
+	if p := os.Getenv("ASTRATERM_TEST_MOSH_PORTS"); p != "" {
 		o["moshPorts"] = p
 	}
 	return c, o
@@ -186,10 +186,10 @@ func TestLiveMoshCloseStopsServer(t *testing.T) {
 }
 
 // TestLiveMoshManyStates types more than 1024 separately acknowledged keystrokes (the C server's receive queue limit)
-// and checks the session still reacts promptly. Opt-in (slow): TERMSTEAD_TEST_MOSH_LONG=1.
+// and checks the session still reacts promptly. Opt-in (slow): ASTRATERM_TEST_MOSH_LONG=1.
 func TestLiveMoshManyStates(t *testing.T) {
-	if os.Getenv("TERMSTEAD_TEST_MOSH_LONG") != "1" {
-		t.Skip("set TERMSTEAD_TEST_MOSH_LONG=1")
+	if os.Getenv("ASTRATERM_TEST_MOSH_LONG") != "1" {
+		t.Skip("set ASTRATERM_TEST_MOSH_LONG=1")
 	}
 	c, o := liveSSH(t)
 	b := dialLive(t, c, o)

@@ -9,14 +9,15 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strconv"
 	"strings"
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
 )
 
 // maxKeyFileBytes bounds a key file read from disk (the keys module's limit for key text).
@@ -245,7 +246,7 @@ func addrKey(host string, port int, user string) string {
 	if port == 0 {
 		port = 22
 	}
-	return strings.ToLower(host) + "\x00" + itoa(port) + "\x00" + strings.ToLower(user)
+	return strings.ToLower(host) + "\x00" + strconv.Itoa(port) + "\x00" + strings.ToLower(user)
 }
 
 func (cm *committer) indexSSH(c *model.Connection) {
@@ -778,14 +779,14 @@ func (cm *committer) importKnownHosts() error {
 }
 
 func knownHostSlot(host string, port int, keyType string) string {
-	return strings.ToLower(host) + "\x00" + itoa(port) + "\x00" + keyType
+	return strings.ToLower(host) + "\x00" + strconv.Itoa(port) + "\x00" + keyType
 }
 
 func knownHostLabel(host string, port int) string {
 	if port == 22 {
 		return host
 	}
-	return "[" + host + "]:" + itoa(port)
+	return "[" + host + "]:" + strconv.Itoa(port)
 }
 
 // normalizePubKey reduces an authorized_keys line to its base64 blob for comparison.

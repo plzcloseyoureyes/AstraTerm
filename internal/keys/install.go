@@ -16,7 +16,7 @@ import (
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
 )
 
 // Installing a public key on a server (TOOL-1 "one-click install", ssh-copy-id semantics): ~/.ssh is created with
@@ -249,11 +249,11 @@ func installViaShell(ctx context.Context, cl *sshx.Client, pub ssh.PublicKey, li
 		"cd || exit 1",
 		"mkdir -p .ssh && chmod 700 .ssh || exit 1",
 		"f=.ssh/authorized_keys",
-		"if [ -f \"$f\" ] && grep -q -F -e '" + blob + "' \"$f\"; then chmod 600 \"$f\"; echo TERMSTEAD_KEY_PRESENT; exit 0; fi",
+		"if [ -f \"$f\" ] && grep -q -F -e '" + blob + "' \"$f\"; then chmod 600 \"$f\"; echo ASTRATERM_KEY_PRESENT; exit 0; fi",
 		"if [ -s \"$f\" ] && [ -n \"$(tail -c 1 \"$f\")\" ]; then echo >> \"$f\" || exit 1; fi",
 		"printf '%s\\n' '" + safeLine + "' >> \"$f\" && chmod 600 \"$f\" || exit 1",
 		"command -v restorecon >/dev/null 2>&1 && restorecon -F .ssh \"$f\" >/dev/null 2>&1",
-		"echo TERMSTEAD_KEY_ADDED",
+		"echo ASTRATERM_KEY_ADDED",
 		"",
 	}, "\n")
 	sess, _, release, err := cl.NewSessionContext(ctx)
@@ -278,9 +278,9 @@ func installViaShell(ctx context.Context, cl *sshx.Client, pub ssh.PublicKey, li
 	}
 	res := &installResult{Path: "~/.ssh/authorized_keys"}
 	switch {
-	case strings.Contains(out.String(), "TERMSTEAD_KEY_PRESENT"):
+	case strings.Contains(out.String(), "ASTRATERM_KEY_PRESENT"):
 		res.AlreadyPresent = true
-	case strings.Contains(out.String(), "TERMSTEAD_KEY_ADDED"):
+	case strings.Contains(out.String(), "ASTRATERM_KEY_ADDED"):
 		res.Installed = true
 	default:
 		msg := strings.TrimSpace(errOut.String())

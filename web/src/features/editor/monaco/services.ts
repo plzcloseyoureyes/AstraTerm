@@ -1,5 +1,5 @@
 /*
- * Monaco's global (standalone) services, adapted to Termstead's workspace. Installed once by monaco/setup.ts.
+ * Monaco's global (standalone) services, adapted to AstraTerm's workspace. Installed once by monaco/setup.ts.
  *
  *   popup layer     Context menus, dropdowns (diff gutter "…"), hovers and action lists are placed by Monaco in its
  *                   "layout container" — by default the DOM node of whichever editor happens to be focused or was
@@ -136,7 +136,7 @@ export function onCopyToLeft(modified: Monaco.Uri, fn: (block: GutterBlock) => v
   }
 }
 
-const COPY_LEFT = 'termstead.diff.copyToLeft'
+const COPY_LEFT = 'astraterm.diff.copyToLeft'
 
 function registerDiffGutter(): void {
   CommandsRegistry.registerCommand(COPY_LEFT, (_accessor, arg) => {

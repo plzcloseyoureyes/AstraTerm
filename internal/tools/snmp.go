@@ -11,7 +11,7 @@ import (
 
 	g "github.com/gosnmp/gosnmp"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 type snmpRequest struct {
@@ -168,8 +168,8 @@ func runSNMP(ctx context.Context, guard *netGuard, req *snmpRequest, client *g.G
 }
 
 func buildSNMP(req *snmpRequest) (*g.GoSNMP, error) {
-	timeout := time.Duration(clampInt(orDefault(req.TimeoutMs, 3000), 200, 30000)) * time.Millisecond
-	retries := clampInt(req.Retries, 0, 5)
+	timeout := time.Duration(min(max(orDefault(req.TimeoutMs, 3000), 200), 30000)) * time.Millisecond
+	retries := min(max(req.Retries, 0), 5)
 	if req.Retries == 0 {
 		retries = 1
 	}

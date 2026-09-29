@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Snippet placeholders (AUTO-3; the same grammar is implemented in web/src/features/automation/template.ts):

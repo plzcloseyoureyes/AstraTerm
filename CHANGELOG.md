@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Termstead are documented in this file.
+All notable changes to AstraTerm are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html). While the version is below 1.0.0, minor releases may
@@ -8,7 +8,7 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
-First public release candidate: an organized, self-hosted remote-management workspace in a single binary.
+First public release candidate: an organized, self-hosted remote-management workspace, as a server and a desktop app.
 
 ### Added
 
@@ -45,8 +45,13 @@ First public release candidate: an organized, self-hosted remote-management work
   audit log; recordings (asciicast, logs, RDP) with player, search and retention; session sharing links.
 - **Import and backup.** Import from MobaXterm, PuTTY, `~/.ssh/config` (live sync), Termius, mRemoteNG, Remmina,
   FileZilla, WinSCP, SecureCRT, CSV and JSON; encrypted exports; admin backup and restore.
-- **Distribution.** One CGO-free executable per platform (macOS, Linux and Windows on amd64/arm64, FreeBSD amd64) with the
-  web UI embedded and precompressed; `termstead version` prints version, commit and build date; reproducible release
-  archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
+- **Desktop app.** AstraTerm in a native window (Tauri, the system web engine) with the unchanged server running
+  inside as a sidecar: installers for macOS (`.dmg`), Windows (setup `.exe`, `.msi`) and Linux (`.deb`, `.rpm`,
+  `.AppImage`), single instance, remembered window size, downloads to the Downloads folder, links opened in the
+  browser. It keeps listening on its port, moves to a free port when 7822 is taken, and reports startup problems in a
+  dialog.
+- **Distribution.** CGO-free executables for macOS, Linux and Windows on amd64/arm64, Linux on 32-bit ARMv7 and
+  FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
+  release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/OWNER/termstead/commits/main
+[Unreleased]: https://github.com/plzcloseyoureyes/astraterm/commits/main

@@ -1,4 +1,4 @@
-// Package sshx is Termstead's SSH layer (SPEC §4 "SSH pool", RESEARCH §3.2): a ref-counted pool of authenticated
+// Package sshx is AstraTerm's SSH layer (SPEC §4 "SSH pool", RESEARCH §3.2): a ref-counted pool of authenticated
 // *ssh.Client connections shared by terminals, SFTP, monitoring and tunnels; the generic Dialer (proxy → SSH jump
 // chain → target) used by every network protocol; interactive authentication and host-key verification relayed
 // through the events prompt broker; agent and X11 forwarding; and the "ssh" terminal protocol.
@@ -14,10 +14,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // DefaultIdleTTL is how long a client stays connected after its last release.

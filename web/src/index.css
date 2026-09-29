@@ -1,5 +1,5 @@
 /*
- * Termstead design system — Tailwind 4 CSS-first tokens.
+ * AstraTerm design system — Tailwind 4 CSS-first tokens.
  *
  * Theme model: semantic tokens are plain CSS variables on :root (light) and .dark (dark, the default); <html> gets the
  * `dark` class from src/lib/theme.ts ('dark' | 'light' | 'system'). Runtime knobs set on <html> by theme.ts:
@@ -289,8 +289,8 @@
   }
 
   /* Reduced motion: one-shot animations end at once (their animationend still fires, which Radix exit animations wait
-     for), looping ones (the spinner) stop after that single instant cycle — a still ring instead of a ring re-drawn at a
-     random angle every frame — and there are no transitions at all. (A 0.01ms transition-duration here would turn every
+     for), and there are no transitions at all. The spinner is the exception: a frozen ring reads as a hung app, so it
+     keeps turning, slower (a steady rotation, not a flash or pulse). (A 0.01ms transition-duration here would turn every
      style change into a transition: a `visibility: hidden` then lands a frame late, so a closing / replaced view stays
      on screen for that frame — and for a whole long task when one follows, e.g. opening a new tab.) */
   @media (prefers-reduced-motion: reduce) {
@@ -301,6 +301,9 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0s !important;
       transition-delay: 0s !important;
+    }
+    .animate-spin {
+      animation: spin 2s linear infinite !important;
     }
   }
 }
@@ -321,10 +324,10 @@
 }
 
 /* ------------------------------------------------------------------------------------------------------------------
- * Dockview theme ("dockview-theme-termstead"): maps dockview's variables onto the design tokens.
+ * Dockview theme ("dockview-theme-astraterm"): maps dockview's variables onto the design tokens.
  * Tab height 30px (scaled with the UI), active tab gets an accent underline (rendered by our tab component).
  * ---------------------------------------------------------------------------------------------------------------- */
-.dockview-theme-termstead {
+.dockview-theme-astraterm {
   --dv-paneview-active-outline-color: var(--ring);
   --dv-tabs-and-actions-container-font-size: var(--text-sm);
   --dv-tabs-and-actions-container-height: 1.875rem;
@@ -392,22 +395,22 @@
  * document taller than the viewport, and the next focus() scrolled the entire shell up (body has overflow:hidden, so
  * the user could not scroll back). Anchor overlays at the origin; visible ones get inline geometry from dockview.
  */
-.dockview-theme-termstead .dv-render-overlay {
+.dockview-theme-astraterm .dv-render-overlay {
   top: 0;
   left: 0;
 }
 
-.dockview-theme-termstead .dv-tab {
+.dockview-theme-astraterm .dv-tab {
   padding: 0;
 }
-.dockview-theme-termstead .dv-tabs-and-actions-container {
+.dockview-theme-astraterm .dv-tabs-and-actions-container {
   border-bottom: 1px solid var(--border);
 }
-.dockview-theme-termstead .dv-groupview > .dv-tabs-and-actions-container .dv-tab:last-child {
+.dockview-theme-astraterm .dv-groupview > .dv-tabs-and-actions-container .dv-tab:last-child {
   box-shadow: 1px 0 0 var(--dv-tab-divider-color);
 }
 /* Accent underline for the active tab (element rendered inside our tab component). */
-.dockview-theme-termstead .nx-tab-indicator {
+.dockview-theme-astraterm .nx-tab-indicator {
   position: absolute;
   left: 0;
   right: 0;
@@ -417,38 +420,38 @@
   pointer-events: none;
   z-index: 6;
 }
-.dockview-theme-termstead .dv-tab.dv-active-tab .nx-tab-indicator {
+.dockview-theme-astraterm .dv-tab.dv-active-tab .nx-tab-indicator {
   background: color-mix(in oklab, var(--muted-foreground) 55%, transparent);
 }
-.dockview-theme-termstead .dv-active-group .dv-tab.dv-active-tab .nx-tab-indicator {
+.dockview-theme-astraterm .dv-active-group .dv-tab.dv-active-tab .nx-tab-indicator {
   background: var(--primary);
 }
-.dockview-theme-termstead .dv-tab.dv-active-tab {
+.dockview-theme-astraterm .dv-tab.dv-active-tab {
   /* Active tab visually merges with the panel below. */
   box-shadow: inset 0 -1px 0 var(--panel);
 }
-.dockview-theme-termstead .dv-tabs-overflow-dropdown-default {
+.dockview-theme-astraterm .dv-tabs-overflow-dropdown-default {
   color: var(--muted-foreground);
 }
 /* Phones: the group header's "all tabs" sheet (layout/workspace/TabsSheet) replaces dockview's overflow chip, which
    had to squeeze the active tab's title to fit ("Tunn ⌄ 3"). */
 @media (max-width: 767px) {
-  .dockview-theme-termstead .dv-tabs-overflow-dropdown-default {
+  .dockview-theme-astraterm .dv-tabs-overflow-dropdown-default {
     display: none;
   }
 }
-.dockview-theme-termstead .dv-context-menu,
-.dockview-theme-termstead .dv-tabs-overflow-container {
+.dockview-theme-astraterm .dv-context-menu,
+.dockview-theme-astraterm .dv-tabs-overflow-container {
   background: var(--popover);
   color: var(--popover-foreground);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-popover);
 }
-.dockview-theme-termstead .dv-resize-container {
+.dockview-theme-astraterm .dv-resize-container {
   border-radius: var(--radius);
   overflow: hidden;
 }
-.dockview-theme-termstead .dv-watermark {
+.dockview-theme-astraterm .dv-watermark {
   height: 100%;
 }
 

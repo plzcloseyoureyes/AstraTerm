@@ -81,15 +81,15 @@ export function SetupWizard() {
   }
 
   return (
-    <AuthLayout wide footer={state?.version ? `Termstead ${state.version}` : undefined}>
+    <AuthLayout wide footer={state?.version ? `AstraTerm ${state.version}` : undefined}>
       <div className="mb-6 flex flex-col items-center gap-3 text-center">
         <BrandMark />
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Welcome to Termstead</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Welcome to AstraTerm</h1>
           <p className="text-base text-muted-foreground">Let’s get your workstation ready — it only takes a minute.</p>
         </div>
         <ol className="flex items-center gap-2 text-xs text-muted-foreground" aria-label="Setup progress">
-          {['How Termstead runs', 'Administrator account'].map((label, i) => (
+          {['How AstraTerm runs', 'Administrator account'].map((label, i) => (
             <li key={label} className="flex items-center gap-2">
               <span
                 className={cn(
@@ -214,13 +214,13 @@ const MODES = {
   desktop: {
     icon: Laptop,
     title: 'Desktop mode',
-    text: 'Termstead runs on this computer for you alone. It listens on 127.0.0.1 only, and local shells, serial ports and the built-in servers are available. The app opens with a one-time launch link, so you normally won’t need to type your password.',
-    other: <>To share Termstead with several people, start it with <Flag>--mode server</Flag>.</>,
+    text: 'AstraTerm runs on this computer for you alone. It listens on 127.0.0.1 only, and local shells, serial ports and the built-in servers are available. The app opens with a one-time launch link, so you normally won’t need to type your password.',
+    other: <>To share AstraTerm with several people, start it with <Flag>--mode server</Flag>.</>,
   },
   server: {
     icon: ServerCog,
     title: 'Server mode',
-    text: 'Termstead is shared by several users through the browser. Everyone signs in with their own account; administrators manage users, shared sessions and security policies. Use TLS when exposing it on a network.',
+    text: 'AstraTerm is shared by several users through the browser. Everyone signs in with their own account; administrators manage users, shared sessions and security policies. Use TLS when exposing it on a network.',
     other: <>For a single-user workstation on this computer, start it with <Flag>--mode desktop</Flag>.</>,
   },
 } as const

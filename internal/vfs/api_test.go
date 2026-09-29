@@ -16,11 +16,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/server/servertest"
-	"github.com/termstead/termstead/internal/transfer"
-	"github.com/termstead/termstead/internal/vfs"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/transfer"
+	"github.com/plzcloseyoureyes/astraterm/internal/vfs"
 )
 
 const pw = "correct horse battery staple"
@@ -358,7 +358,7 @@ func TestFilesAPILocal(t *testing.T) {
 
 func TestLocalServerModeJail(t *testing.T) {
 	root := tempDir(t)
-	t.Setenv("TERMSTEAD_LOCAL_FS_ROOT", root)
+	t.Setenv("ASTRATERM_LOCAL_FS_ROOT", root)
 	env := servertest.New(t, func(c *config.Config) { c.Mode = config.ModeServer })
 	admin := env.Setup("admin", pw)
 	bob := env.CreateUser(admin, "bob", pw, "user")

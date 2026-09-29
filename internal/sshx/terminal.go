@@ -12,8 +12,8 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // The "ssh" terminal protocol (PROTO-1/3/4, TERM-2): a PTY (TERM from options.term, modes consistent with the

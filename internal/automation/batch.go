@@ -12,9 +12,10 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // Batch runs (AUTO-11): run a command, a snippet or a script on many saved connections with a parallelism limit,
@@ -106,7 +107,7 @@ func (m *Module) prepareAction(ctx context.Context, user *model.User, a JobActio
 	if a.TimeoutSec > 0 {
 		p.timeout = min(time.Duration(a.TimeoutSec)*time.Second, maxHostTimeout)
 	}
-	p.parallel = clampInt(a.Parallel, 1, maxBatchParallel)
+	p.parallel = min(max(a.Parallel, 1), maxBatchParallel)
 	if a.Parallel == 0 {
 		p.parallel = 4
 	}
@@ -193,7 +194,7 @@ func batchName(p *preparedAction) string {
 // startBatchJob records a run and executes it as a job.
 func (m *Module) startBatchJob(user *model.User, name string, ids []string, p *preparedAction, origin, refID string) (string, string, error) {
 	run := &Run{ID: model.NewID(), OwnerID: user.ID, Kind: RunBatch, RefID: refID, Name: name, Origin: origin,
-		Status: StatusRunning, Target: countOf(len(ids), "connection"), StartedAt: now()}
+		Status: StatusRunning, Target: countOf(len(ids), "connection"), StartedAt: store.Now()}
 	if p.Kind == KindScript && refID == "" {
 		run.RefID = p.script.ID
 	}
@@ -297,7 +298,7 @@ func (m *Module) executeBatch(ctx context.Context, user *model.User, run *Run, i
 		}
 	}
 	emit(batchEvent{Kind: "summary", Summary: &sum, TS: time.Now().UTC()})
-	fin := now()
+	fin := store.Now()
 	run.FinishedAt = &fin
 	run.Results, run.Summary, run.Log = results, sum, log.String()
 	var err error

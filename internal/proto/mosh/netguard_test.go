@@ -15,12 +15,12 @@ import (
 
 	mosh "github.com/unixshells/mosh-go"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/netguard"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // SEC-7: the UDP leg of a restricted user's mosh session is vetted by netguard.
@@ -49,7 +49,7 @@ func (f *fakeBootstrap) Exec(context.Context, string) ([]byte, []byte, int, erro
 
 func (f *fakeBootstrap) RemoteAddr() net.Addr { return f.remote }
 
-// udpCounter is a loopback-only datagram service of the Termstead host counting what reaches it.
+// udpCounter is a loopback-only datagram service of the AstraTerm host counting what reaches it.
 func udpCounter(t *testing.T) (port int, received *atomic.Int32) {
 	t.Helper()
 	pc, err := net.ListenPacket("udp", "127.0.0.1:0")
@@ -102,7 +102,7 @@ func TestNetguardRefusesUDPLegOfUsers(t *testing.T) {
 	}{
 		// Direct: the UDP target is the address SSH reached.
 		{"direct", &model.Connection{Protocol: model.ProtoMosh, Host: "ssh.example"}, loop},
-		// Through a jump host: the host name is resolved on the Termstead host.
+		// Through a jump host: the host name is resolved on the AstraTerm host.
 		{"jump host, literal", &model.Connection{Protocol: model.ProtoMosh, Host: "127.0.0.1",
 			Options: model.Options{"jumpHosts": []any{"x@192.0.2.1"}}}, &net.TCPAddr{IP: net.IPv4(192, 0, 2, 1), Port: 22}},
 		{"proxy, mapped literal", &model.Connection{Protocol: model.ProtoMosh, Host: "::ffff:127.0.0.1",

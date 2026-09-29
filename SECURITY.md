@@ -1,18 +1,16 @@
 # Security policy
 
-Termstead holds the keys to your infrastructure — credentials, private keys and live sessions — so security reports
+AstraTerm holds the keys to your infrastructure — credentials, private keys and live sessions — so security reports
 get priority over everything else. Thank you for helping keep its users safe.
 
 ## Reporting a vulnerability
 
 **Please do not report security issues in public issues, pull requests or discussions.**
 
-- Preferred: GitHub private vulnerability reporting — *Security → Report a vulnerability* on the repository
-  (`https://github.com/OWNER/termstead/security/advisories/new`).
-- Or e-mail **security@TBD.example** <!-- TODO(owner): replace with the real address before publishing -->
-  (encrypt with our PGP key if you like: *TBD*).
+Use GitHub private vulnerability reporting: *Security → Report a vulnerability* on the repository
+(<https://github.com/plzcloseyoureyes/astraterm/security/advisories/new>). Only the maintainers can see the report.
 
-Include what you can: the affected version (`termstead version`), run mode (desktop/server), configuration flags,
+Include what you can: the affected version (`astraterm version`), run mode (desktop/server), configuration flags,
 steps to reproduce or a proof of concept, and the impact you expect. Please use your own test instance and throwaway
 data, never other people's systems.
 
@@ -30,7 +28,7 @@ bounty at this time.
 
 ## Supported versions
 
-Termstead is pre-1.0. Security fixes are made on `main` and shipped in a new release; only the **latest release** is
+AstraTerm is pre-1.0. Security fixes are made on `main` and shipped in a new release; only the **latest release** is
 supported. Please upgrade before reporting and check whether the issue still reproduces.
 
 | Version | Supported |
@@ -42,14 +40,14 @@ supported. Please upgrade before reporting and check whether the issue still rep
 
 **Trust boundaries**
 
-- **The Termstead process is the security boundary.** The browser only talks to Termstead; all protocol traffic (SSH, RDP,
-  VNC, file transfers, tunnels, tools) originates from the machine Termstead runs on, with that machine's network
+- **The AstraTerm process is the security boundary.** The browser only talks to AstraTerm; all protocol traffic (SSH, RDP,
+  VNC, file transfers, tunnels, tools) originates from the machine AstraTerm runs on, with that machine's network
   position.
 - **Desktop mode** (default) serves one person on their own computer: it binds `127.0.0.1` only, rejects requests
   whose `Host` header is not a loopback name (DNS rebinding), and signs in through a single-use launch token printed
   in the start-up banner. Host features (local shells, serial ports, embedded servers, local files, the host SSH
   agent) are available because the user is the machine's owner.
-- **Server mode** serves several accounts. Administrators are fully trusted: they can run commands on the Termstead
+- **Server mode** serves several accounts. Administrators are fully trusted: they can run commands on the AstraTerm
   host (local shells, ProxyCommand), change the security policy and read the audit log. Ordinary users are isolated
   from the host: host features are admin-only, their outbound connections pass the network policy (below), shared
   connections are usable but their secrets are never revealed, and private rows of other users are invisible.
@@ -60,7 +58,7 @@ supported. Please upgrade before reporting and check whether the issue still rep
 
 - Authentication: argon2id password hashes, login back-off and lockout policy, TOTP with recovery codes, passkeys
   (WebAuthn), OIDC single sign-on, API tokens, re-authentication for sensitive account and admin actions.
-- Web: SameSite=Strict session cookies plus a required `X-Termstead` header on mutations (CSRF), WebSocket Origin
+- Web: SameSite=Strict session cookies plus a required `X-AstraTerm` header on mutations (CSRF), WebSocket Origin
   checks, a strict Content Security Policy (no inline scripts, no remote origins), `nosniff`, `no-referrer`,
   frame-ancestors restrictions, HSTS over TLS.
 - Secrets: connection and identity secrets, private keys and passphrases are write-only in the API and sealed with
@@ -70,7 +68,7 @@ supported. Please upgrade before reporting and check whether the issue still rep
   anything to a provider.
 - Outbound network policy (`internal/netguard`, server mode): every connection made for a non-admin user is checked
   on the concrete dialed address (after DNS, so rebinding and redirects cannot bypass it). By default loopback,
-  link-local, cloud metadata endpoints, the host's own addresses and Termstead's own listener are refused; private
+  link-local, cloud metadata endpoints, the host's own addresses and AstraTerm's own listener are refused; private
   ranges are allowed for bastion use. Admins can tighten the policy and optionally apply it to admins too.
 - SSH host keys: unknown keys are confirmed by the user, changed keys are refused unless confirmed (in server mode
   only by an admin), `@cert-authority` and `@revoked` markers are honoured.
@@ -80,7 +78,7 @@ supported. Please upgrade before reporting and check whether the issue still rep
 with `0700`/`0600` permissions. Anyone who can read that directory *and* the system key can decrypt stored secrets
 unless a master password is set. Protect it like an SSH key directory, and keep backups encrypted.
 
-**Out of scope.** Attacks that require an already compromised Termstead host or administrator account; actions an
+**Out of scope.** Attacks that require an already compromised AstraTerm host or administrator account; actions an
 administrator is allowed to perform; missing hardening on instances that run with `--insecure-http` on untrusted
 networks; denial of service by authenticated administrators; vulnerabilities in remote systems you connect to.
 
@@ -101,12 +99,12 @@ networks; denial of service by authenticated administrators; vulnerabilities in 
   to create one), then require TOTP or passkeys for administrators.
 - **Reverse proxies.** Forward the original `Host` header and WebSocket upgrades (`/ws/…`), and set
   `--trusted-proxies <proxy IP/CIDR>` so client IPs (lockout, audit) and `X-Forwarded-Proto: https` (Secure cookies)
-  are honoured. Termstead bound to a loopback address accepts only loopback/`localhost` host names (DNS-rebinding
-  protection, `421` otherwise). For a proxy on the same machine, keep Termstead on loopback and name the proxy's public
-  host names with `--allowed-hosts termstead.example.com` (`TERMSTEAD_ALLOWED_HOSTS`, comma-separated, exact names, no
+  are honoured. AstraTerm bound to a loopback address accepts only loopback/`localhost` host names (DNS-rebinding
+  protection, `421` otherwise). For a proxy on the same machine, keep AstraTerm on loopback and name the proxy's public
+  host names with `--allowed-hosts astraterm.example.com` (`ASTRATERM_ALLOWED_HOSTS`, comma-separated, exact names, no
   wildcards) — the guard then accepts exactly those names in addition to loopback. A proxy on another machine must reach
-  Termstead on a non-loopback address (e.g. a private interface or container network, firewalled to the proxy, with
-  `--insecure-http`) or Termstead terminates TLS itself.
+  AstraTerm on a non-loopback address (e.g. a private interface or container network, firewalled to the proxy, with
+  `--insecure-http`) or AstraTerm terminates TLS itself.
 - **Network policy.** Review Settings → Security → network policy: add the internal ranges ordinary users must not
   reach (databases, management networks), and enable it for administrators if they do not need exceptions.
 - **Master password** for the vault if the data directory could be read by others (backups, shared storage); remember
@@ -122,5 +120,5 @@ Every release publishes `SHA256SUMS`, an SPDX SBOM per archive and a GitHub buil
 
 ```sh
 sha256sum --ignore-missing -c SHA256SUMS
-gh attestation verify termstead_<version>_<os>_<arch>.tar.gz --repo OWNER/termstead
+gh attestation verify astraterm_<version>_<os>_<arch>.tar.gz --repo plzcloseyoureyes/astraterm
 ```

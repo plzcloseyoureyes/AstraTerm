@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { RotateCcw, ServerOff } from 'lucide-react'
 import { queryClient } from '@/api/queryClient'
+import { MARK } from '@/components/brand-mark'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { installEventHandlers } from '@/lib/eventHandlers'
@@ -47,10 +48,17 @@ function Splash({ visible, label }: { visible: boolean; label: string }) {
   if (!mounted && !shown) return null
   return (
     <div className="nx-splash" data-leaving={shown ? undefined : ''} aria-busy={visible || undefined}>
+      {/* Same markup as the static splash in index.html (fixed gradient id: there is only one splash). */}
       <svg viewBox="0 0 64 64" className="nx-splash-mark" aria-hidden>
-        <rect width="64" height="64" rx="14" fill="var(--primary)" />
-        <path d="M16 22l12 10-12 10" stroke="var(--primary-foreground)" strokeWidth="5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M32 44h16" stroke="var(--primary-foreground)" strokeWidth="5" strokeLinecap="round" />
+        <defs>
+          <linearGradient id="nx-splash-bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#7c6cff" />
+            <stop offset="1" stopColor="#2459e0" />
+          </linearGradient>
+        </defs>
+        <rect width="64" height="64" rx="14" fill="url(#nx-splash-bg)" />
+        <path d={MARK.chevron} fill="none" stroke="#fff" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d={MARK.star} fill="#fff" />
       </svg>
       <div className="nx-splash-status" aria-live="polite">
         {spinning && (
@@ -82,7 +90,7 @@ function ServerUnreachable() {
           <ServerOff className="size-5" />
         </div>
         <div className="grid gap-1">
-          <h1 className="text-lg font-semibold">Cannot reach the Termstead server</h1>
+          <h1 className="text-lg font-semibold">Cannot reach the AstraTerm server</h1>
           <p className="text-sm text-muted-foreground">{error ?? 'The server did not respond.'}</p>
         </div>
         <Button onClick={() => void retryAuth()}>
@@ -158,7 +166,7 @@ export function AuthGate() {
   return (
     <>
       {content}
-      <Splash visible={booting} label={status === 'authenticated' ? 'Loading your workspace…' : 'Starting Termstead…'} />
+      <Splash visible={booting} label={status === 'authenticated' ? 'Loading your workspace…' : 'Starting AstraTerm…'} />
     </>
   )
 }

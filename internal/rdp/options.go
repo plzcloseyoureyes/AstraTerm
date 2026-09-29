@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 // Engines.
@@ -32,7 +32,7 @@ const (
 	defaultHeight  = 800
 	defaultDPI     = 96
 	defaultVMPort  = 2179
-	defaultDrive   = "Termstead"
+	defaultDrive   = "AstraTerm"
 	maxOptionValue = 4096
 )
 
@@ -185,7 +185,7 @@ type globalSettings struct {
 	GuacdSidecar bool `json:"guacdSidecar,omitempty"`
 	// GuacdDataPath is a writable directory in guacd's filesystem for virtual drives and recordings.
 	GuacdDataPath string `json:"guacdDataPath,omitempty"`
-	// GuacdForwardHost is the address guacd uses to reach Termstead's loopback forwarders (connections routed through
+	// GuacdForwardHost is the address guacd uses to reach AstraTerm's loopback forwarders (connections routed through
 	// SSH gateways or proxies): "127.0.0.1" for a guacd on this host, "host.docker.internal" for a container.
 	GuacdForwardHost string `json:"guacdForwardHost,omitempty"`
 }

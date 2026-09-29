@@ -3,20 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <!-- App name and icons for the desktop app's window / task bar (a Chromium app window reads the manifest). -->
+    <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#15181d" />
     <meta name="referrer" content="no-referrer" />
-    <meta name="description" content="Termstead — SSH, SFTP, RDP, VNC and more in your browser." />
-    <title>Termstead</title>
+    <meta name="description" content="AstraTerm — SSH, SFTP, RDP, VNC and more in your browser." />
+    <title>AstraTerm</title>
     <!-- Theme, accent and scale before the first paint (no dark→light flash); see public/boot.js. -->
     <script src="/boot.js"></script>
+    <!-- Critical splash layout: in dev the stylesheet arrives with the JS bundle, so without this the unsized mark filled
+         the whole window until then. Mirrors .nx-splash in src/index.css. -->
+    <style>
+      html, body, #root { height: 100%; margin: 0; }
+      .nx-splash { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; background: var(--background, #15181d); }
+      html:not(.dark) .nx-splash { background: var(--background, #fbfbfc); }
+      .nx-splash-mark { width: 2.25rem; height: 2.25rem; }
+    </style>
   </head>
   <body>
     <!-- Static splash, identical to the React one (src/auth/AuthGate.tsx, .nx-splash in src/index.css): React's first
          render replaces it without a visible change. -->
-    <div id="root"><div class="nx-splash" aria-hidden="true"><svg viewBox="0 0 64 64" class="nx-splash-mark"><rect width="64" height="64" rx="14" fill="var(--primary)"></rect><path d="M16 22l12 10-12 10" stroke="var(--primary-foreground)" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><path d="M32 44h16" stroke="var(--primary-foreground)" stroke-width="5" stroke-linecap="round"></path></svg><div class="nx-splash-status"></div></div></div>
-    <noscript>Termstead needs JavaScript enabled.</noscript>
+    <div id="root"><div class="nx-splash" aria-hidden="true"><svg viewBox="0 0 64 64" width="36" height="36" class="nx-splash-mark"><defs><linearGradient id="nx-splash-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"></stop><stop offset="1" stop-color="#2459e0"></stop></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#nx-splash-bg)"></rect><path d="M14.6 18.1L26.6 30.1L14.6 42.1" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M41.6 27.6Q43.6 36.1 52.1 38.1Q43.6 40.1 41.6 48.6Q39.6 40.1 31.1 38.1Q39.6 36.1 41.6 27.6Z" fill="#fff"></path></svg><div class="nx-splash-status"></div></div></div>
+    <noscript>AstraTerm needs JavaScript enabled.</noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

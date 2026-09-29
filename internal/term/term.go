@@ -1,4 +1,4 @@
-// Package term is Termstead's runtime session manager (SPEC §4 "Terminal protocol registry", §6.0 runtime sessions,
+// Package term is AstraTerm's runtime session manager (SPEC §4 "Terminal protocol registry", §6.0 runtime sessions,
 // §6.2 terminal WebSocket). Sessions live in the Go process, independent of browser sockets: backend output is
 // pumped into an offset-addressed ring buffer, fanned out to any number of attached WebSocket clients with ack-based
 // flow control, scanned for OSC title/cwd/prompt marks, optionally recorded (asciicast v3) and logged (plain text).
@@ -9,11 +9,10 @@ import (
 	"context"
 	"errors"
 	"io"
-	"sort"
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Backend is a live terminal connection produced by an Opener.
@@ -72,18 +71,6 @@ func RegisterPolicy(protocol string, p Policy) {
 	registry.Lock()
 	registry.policies[protocol] = p
 	registry.Unlock()
-}
-
-// Protocols lists the registered terminal protocols.
-func Protocols() []string {
-	registry.RLock()
-	defer registry.RUnlock()
-	out := make([]string, 0, len(registry.openers))
-	for p := range registry.openers {
-		out = append(out, p)
-	}
-	sort.Strings(out)
-	return out
 }
 
 func lookupOpener(protocol string) Opener {

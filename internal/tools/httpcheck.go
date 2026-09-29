@@ -17,7 +17,7 @@ import (
 
 	"golang.org/x/net/http/httpguts"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 type httpCheckRequest struct {
@@ -74,9 +74,9 @@ func prepareHTTPCheck(_ context.Context, cl *call) (runner, error) {
 		return nil, httpx.BadRequest("request body too large (max 1 MiB)")
 	}
 	req.Method = method
-	req.TimeoutMs = clampInt(orDefault(req.TimeoutMs, 15000), 500, 120000)
-	req.Count = clampInt(orDefault(req.Count, 1), 1, maxHTTPCheckCount)
-	req.IntervalMs = clampInt(orDefault(req.IntervalMs, 1000), 100, 60000)
+	req.TimeoutMs = min(max(orDefault(req.TimeoutMs, 15000), 500), 120000)
+	req.Count = min(max(orDefault(req.Count, 1), 1), maxHTTPCheckCount)
+	req.IntervalMs = min(max(orDefault(req.IntervalMs, 1000), 100), 60000)
 	cl.target = redactURL(u)
 	cl.details = map[string]any{"method": method}
 	guard := cl.guard
@@ -205,7 +205,7 @@ func httpAttempt(ctx context.Context, guard *netGuard, req *httpCheckRequest, u 
 	if err != nil {
 		return nil, 0, httpx.BadRequest("invalid request: " + err.Error())
 	}
-	hreq.Header.Set("User-Agent", "Termstead-httpcheck")
+	hreq.Header.Set("User-Agent", "AstraTerm-httpcheck")
 	for k, v := range req.Headers {
 		if k = strings.TrimSpace(k); k == "" {
 			continue

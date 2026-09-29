@@ -12,10 +12,10 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/netguard"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // Connection defaults (SPEC §5.3 ssh options).
@@ -269,7 +269,7 @@ type route struct {
 	cmdUser string
 	timeout time.Duration
 	once    sync.Once
-	// guard vets every connection the route opens from the Termstead host itself (direct dials, the proxy server,
+	// guard vets every connection the route opens from the AstraTerm host itself (direct dials, the proxy server,
 	// UDP knocks); nil = unrestricted. Streams through an SSH gateway are the gateway's business.
 	guard *netguard.Guard
 }
@@ -444,7 +444,7 @@ func (p *Pool) allowLocalExec(user *model.User) bool {
 	return p.d.Cfg.IsDesktop() || user.IsAdmin()
 }
 
-// guardFor returns the destination guard (SEC-7, internal/netguard) for connections Termstead opens from its own host
+// guardFor returns the destination guard (SEC-7, internal/netguard) for connections AstraTerm opens from its own host
 // on user's behalf: nil (unrestricted) in desktop mode and for administrators unless the policy says otherwise.
 func (p *Pool) guardFor(user *model.User) *netguard.Guard {
 	if p.d == nil {
@@ -505,7 +505,7 @@ func hopName(c *model.Connection) string {
 	return net.JoinHostPort(c.Host, strconv.Itoa(c.Port))
 }
 
-// dialDirect connects from the Termstead host; g (nil = unrestricted) vets every address actually connected to.
+// dialDirect connects from the AstraTerm host; g (nil = unrestricted) vets every address actually connected to.
 func dialDirect(ctx context.Context, network, addr string, timeout time.Duration, g *netguard.Guard) (net.Conn, error) {
 	d := &net.Dialer{
 		Timeout: timeout,

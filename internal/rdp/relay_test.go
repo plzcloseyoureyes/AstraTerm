@@ -20,7 +20,7 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // ---- a fake RDP server: X.224 negotiation, then TLS, then an echo service ------------------------------------------
@@ -431,11 +431,11 @@ func TestPCBForwarded(t *testing.T) {
 	}
 }
 
-// TestRelayTestEnvXRDP runs the relay against the shared test environment's xrdp (TERMSTEAD_TESTENV=1) through the
+// TestRelayTestEnvXRDP runs the relay against the shared test environment's xrdp (ASTRATERM_TESTENV=1) through the
 // X.224 and TLS stages, with the certificate confirmed through the prompt broker.
 func TestRelayTestEnvXRDP(t *testing.T) {
 	if !testEnvEnabled() {
-		t.Skip("TERMSTEAD_TESTENV=1 not set")
+		t.Skip("ASTRATERM_TESTENV=1 not set")
 	}
 	env := newTestEnv(t)
 	admin := env.setup()

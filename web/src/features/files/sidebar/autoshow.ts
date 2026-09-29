@@ -22,7 +22,7 @@ const shown = new Set<string>()
 
 /** The shell's sidebar prefs (read-only; written by layout/Sidebar.tsx under this key). */
 function sidebarCollapsed(): boolean {
-  return storage.get<{ collapsed?: boolean }>('termstead:sidebar', {}).collapsed === true
+  return storage.get<{ collapsed?: boolean }>('astraterm:sidebar', {}).collapsed === true
 }
 
 function browserType(s: RuntimeSession, params: TerminalTabParams | undefined): string {

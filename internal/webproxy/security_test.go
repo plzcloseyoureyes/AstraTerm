@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
 // hostileUpstream answers every request with headers that would configure the serving origin.
@@ -20,7 +20,7 @@ func hostileUpstream(t *testing.T) *httptest.Server {
 		h.Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
 		h.Set("Access-Control-Allow-Origin", "https://evil.example")
 		h.Set("Access-Control-Allow-Credentials", "true")
-		h.Add("Set-Cookie", "termstead_session=attacker; Path=/")
+		h.Add("Set-Cookie", "astraterm_session=attacker; Path=/")
 		h.Add("Set-Cookie", "app=1; Path=/")
 		h.Set("Content-Type", "text/plain")
 		_, _ = w.Write([]byte("ok"))
@@ -39,7 +39,7 @@ func TestHostModeOpenRedirect(t *testing.T) {
 	// A token parameter on a network-path reference with a valid browser session: the clean-up redirect stays on the
 	// proxy origin.
 	for _, path := range []string{"//evil.example/x", "/\\evil.example/x", "///evil.example/x"} {
-		resp, _ := b.get(p.Base+path+"?__termstead_proxy_token=spent", withCookie(ck))
+		resp, _ := b.get(p.Base+path+"?__astraterm_proxy_token=spent", withCookie(ck))
 		loc := resp.Header.Get("Location")
 		if resp.StatusCode != http.StatusFound || strings.HasPrefix(loc, "//") || strings.HasPrefix(loc, "/\\") || !strings.HasPrefix(loc, "/") {
 			t.Fatalf("%s: %d Location %q", path, resp.StatusCode, loc)
@@ -61,12 +61,12 @@ func TestOriginConfigHeadersStripped(t *testing.T) {
 		t.Fatal("Alt-Svc passed in host mode")
 	}
 	for _, c := range resp.Cookies() {
-		if c.Name == "termstead_session" {
-			t.Fatal("upstream set Termstead's session cookie")
+		if c.Name == "astraterm_session" {
+			t.Fatal("upstream set AstraTerm's session cookie")
 		}
 	}
 
-	// Path mode: the upstream is served on Termstead's origin and may not configure it.
+	// Path mode: the upstream is served on AstraTerm's origin and may not configure it.
 	pp := create(t, admin, map[string]any{"url": up.URL + "/", "mode": "path"})
 	resp, _ = admin.Do("GET", pp.URL, nil)
 	for _, k := range []string{"Alt-Svc", "NEL", "Report-To", "Clear-Site-Data", "Strict-Transport-Security", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"} {
@@ -75,8 +75,8 @@ func TestOriginConfigHeadersStripped(t *testing.T) {
 		}
 	}
 	for _, c := range resp.Cookies() {
-		if c.Name == "termstead_session" {
-			t.Fatal("upstream overwrote Termstead's session cookie in path mode")
+		if c.Name == "astraterm_session" {
+			t.Fatal("upstream overwrote AstraTerm's session cookie in path mode")
 		}
 		if c.Name == "app" && !strings.HasPrefix(c.Path, pp.Base+"/") {
 			t.Fatalf("path-mode cookie escapes its prefix: %+v", c)

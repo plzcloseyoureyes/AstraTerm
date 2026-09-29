@@ -84,8 +84,8 @@ export default function AppearanceSection() {
       </SettingsGroup>
 
       <SettingsGroup title="Layout" description="Everything hidden here stays reachable from the command palette.">
-        <Toggle k="showMenuBar" label="Menu bar" />
-        <Toggle k="showRibbon" label="Toolbar" description="Large-button toolbar with quick connect." />
+        <Toggle k="showMenuBar" label="Title bar" description="App menu, tabs and quick connect in one row. When off, every pane shows its own tabs." />
+        <Toggle k="showRibbon" label="Toolbar" description="An extra row of tool buttons (the tools are also in the sidebar rail)." />
         <Toggle k="ribbonCompact" label="Compact toolbar" description="Show toolbar icons only." />
         <Toggle k="showSidebar" label="Sidebar" />
         <Toggle k="showStatusBar" label="Status bar" />

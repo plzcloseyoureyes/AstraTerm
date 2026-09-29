@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Event topics (subscribe with {type:'subscribe', topic, ...params} on /ws/events).

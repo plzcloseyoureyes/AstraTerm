@@ -16,11 +16,11 @@ import (
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/netguard"
-	"github.com/termstead/termstead/internal/sshx"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // answer builds a prompt answerer: host keys are accepted (and saved when save is set), passwords / passphrases /
@@ -70,7 +70,7 @@ func TestInstallKey(t *testing.T) {
 	p := e.c.prompter(t)
 	p.set(answer(true, nil, true))
 	var k keyJSON
-	e.c.must("POST", "/api/keys/generate", map[string]any{"name": "deploy", "comment": "deploy@termstead"}, &k)
+	e.c.must("POST", "/api/keys/generate", map[string]any{"name": "deploy", "comment": "deploy@astraterm"}, &k)
 
 	// SFTP path: ~/.ssh is created (0700), the key appended, the file 0600; a second install finds it.
 	home := t.TempDir()
@@ -133,7 +133,7 @@ func TestInstallKeyKeepsExistingKeys(t *testing.T) {
 	p := e.c.prompter(t)
 	p.set(answer(true, nil, true))
 	var k keyJSON
-	e.c.must("POST", "/api/keys/generate", map[string]any{"name": "deploy", "comment": "deploy@termstead"}, &k)
+	e.c.must("POST", "/api/keys/generate", map[string]any{"name": "deploy", "comment": "deploy@astraterm"}, &k)
 
 	home := t.TempDir()
 	if err := os.MkdirAll(filepath.Join(home, ".ssh"), 0o700); err != nil {
@@ -415,7 +415,7 @@ func TestAgentSocket(t *testing.T) {
 		t.Fatalf("reload: %d", len(keys))
 	}
 
-	// ssh-add -x / -X, and locks from Termstead (which only Termstead can undo).
+	// ssh-add -x / -X, and locks from AstraTerm (which only AstraTerm can undo).
 	if err := ac.Lock([]byte("lock-pw")); err != nil {
 		t.Fatal(err)
 	}
@@ -427,7 +427,7 @@ func TestAgentSocket(t *testing.T) {
 	}
 	e.c.must("POST", "/api/agent/lock", nil, nil)
 	if ac.Unlock([]byte("lock-pw")) == nil {
-		t.Fatal("Termstead lock undone by ssh-add -X")
+		t.Fatal("AstraTerm lock undone by ssh-add -X")
 	}
 	e.c.must("POST", "/api/agent/unlock", nil, nil)
 	if keys, _ = ac.List(); len(keys) != 2 {
@@ -573,7 +573,7 @@ func serveTestHostAgent(t *testing.T, keyring agent.Agent) {
 	t.Setenv("SSH_AUTH_SOCK", filepath.Join(dir, "a.sock"))
 }
 
-// TestLockedAgentKeepsHostAgent: a locked built-in agent holds no usable key, so the merged agents of Termstead (agent
+// TestLockedAgentKeepsHostAgent: a locked built-in agent holds no usable key, so the merged agents of AstraTerm (agent
 // forwarding, logins) still sign with the host agent's keys; a locked agent also refuses extensions, and wrong
 // ssh-add -X passphrases are throttled.
 func TestLockedAgentKeepsHostAgent(t *testing.T) {
@@ -595,7 +595,7 @@ func TestLockedAgentKeepsHostAgent(t *testing.T) {
 	t.Cleanup(func() { os.Remove(filepath.Dir(st.SocketPath)) })
 	e.c.must("POST", "/api/agent/lock", nil, nil)
 
-	// The view Termstead merges with the host agent: locked → "key not found", so the next agent is tried.
+	// The view AstraTerm merges with the host agent: locked → "key not found", so the next agent is tried.
 	view := e.handler().agent.Agent(context.Background(), e.admin, nil, true)
 	if _, err := view.SignWithFlags(mustParsePub(t, k.PublicKey), []byte("x"), 0); !errors.Is(err, sshx.ErrAgentKeyNotFound) {
 		t.Fatalf("locked view: %v", err)

@@ -20,16 +20,16 @@ import (
 	"github.com/labstack/echo/v5"
 	"golang.org/x/time/rate"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // Live session sharing (MU-18). A share link maps a random 256-bit token (base64url; only its SHA-256 is stored in
 // the core share_links table, plus the token sealed with the vault system key in recording_share_meta so the owner can
 // copy the link again) to a live terminal session in read-only or interactive mode, with an expiry, an optional
-// "viewers must be signed in to Termstead" flag and a viewer cap. Viewers attach anonymously through the public
+// "viewers must be signed in to AstraTerm" flag and a viewer cap. Viewers attach anonymously through the public
 // /ws/share/{token} (the terminal WebSocket protocol of SPEC §6.2); read-only viewers can never send input or resize.
 // Links die with their session (runtime sessions do not survive a restart), when revoked, or at expiry (connected
 // viewers are disconnected then). Public endpoints are rate-limited per client IP.
@@ -483,7 +483,7 @@ func (s *Service) handleCreateShare(c *echo.Context) error {
 			return err
 		}
 		_, err := tx.ExecContext(ctx, `INSERT INTO recording_share_meta (share_id, token_enc, require_login, max_viewers, label)
-			VALUES (?, ?, ?, ?, ?)`, link.ID, sealed, b2i(body.RequireLogin), maxViewers, label)
+			VALUES (?, ?, ?, ?, ?)`, link.ID, sealed, store.B2I(body.RequireLogin), maxViewers, label)
 		return err
 	})
 	if err != nil {
@@ -503,13 +503,6 @@ func (s *Service) handleCreateShare(c *echo.Context) error {
 	v := s.shares.view(ctx, link)
 	v.Token, v.URL = tok, shareURL(tok)
 	return c.JSON(http.StatusCreated, v)
-}
-
-func b2i(b bool) int {
-	if b {
-		return 1
-	}
-	return 0
 }
 
 func (s *Service) handleListShares(c *echo.Context) error {
@@ -669,7 +662,7 @@ type ShareInfo struct {
 
 var (
 	errShareNotFound = httpx.NewError(http.StatusNotFound, "share_not_found", "this share link is invalid, expired or was revoked")
-	errLoginRequired = httpx.Unauthorized("login_required", "sign in to Termstead to open this shared session")
+	errLoginRequired = httpx.Unauthorized("login_required", "sign in to AstraTerm to open this shared session")
 	errTooManyViews  = httpx.NewError(http.StatusConflict, "too_many_viewers", "this shared session has reached its viewer limit")
 )
 

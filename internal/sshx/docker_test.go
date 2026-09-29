@@ -18,11 +18,11 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
-// Docker integration tests against lscr.io/linuxserver/openssh-server (enable with TERMSTEAD_TEST_DOCKER=1). The test
+// Docker integration tests against lscr.io/linuxserver/openssh-server (enable with ASTRATERM_TEST_DOCKER=1). The test
 // starts two containers on a private network: a jump host with a published port and an internal-only target.
 
 const sshImage = "lscr.io/linuxserver/openssh-server:latest"
@@ -41,19 +41,19 @@ func docker(args ...string) (string, error) {
 
 func startDockerLab(t *testing.T) *dockerLab {
 	t.Helper()
-	if os.Getenv("TERMSTEAD_TEST_DOCKER") != "1" {
-		t.Skip("set TERMSTEAD_TEST_DOCKER=1 to run Docker SSH integration tests")
+	if os.Getenv("ASTRATERM_TEST_DOCKER") != "1" {
+		t.Skip("set ASTRATERM_TEST_DOCKER=1 to run Docker SSH integration tests")
 	}
 	if _, err := docker("version"); err != nil {
 		t.Skip("docker unavailable")
 	}
 	_, priv, _ := ed25519.GenerateKey(rand.Reader)
 	signer, _ := ssh.NewSignerFromKey(priv)
-	block, _ := ssh.MarshalPrivateKey(priv, "termstead-test")
+	block, _ := ssh.MarshalPrivateKey(priv, "astraterm-test")
 	suffix := make([]byte, 4)
 	rand.Read(suffix)
 	id := hex.EncodeToString(suffix)
-	lab := &dockerLab{net: "termstead-b1-net-" + id, jump: "termstead-b1-ssh1-" + id, target: "termstead-b1-ssh2-" + id,
+	lab := &dockerLab{net: "astraterm-b1-net-" + id, jump: "astraterm-b1-ssh1-" + id, target: "astraterm-b1-ssh2-" + id,
 		keyPEM: pem.EncodeToMemory(block), signer: signer}
 	t.Cleanup(func() {
 		docker("rm", "-f", lab.jump, lab.target)
@@ -233,19 +233,19 @@ func TestDockerSSH(t *testing.T) {
 			t.Fatal(err)
 		}
 		wd, _ := sc.Getwd()
-		f, err := sc.Create(wd + "/termstead-sftp.txt")
+		f, err := sc.Create(wd + "/astraterm-sftp.txt")
 		if err != nil {
 			t.Fatal(err)
 		}
 		io.WriteString(f, "through the jump host")
 		f.Close()
-		rf, err := sc.Open(wd + "/termstead-sftp.txt")
+		rf, err := sc.Open(wd + "/astraterm-sftp.txt")
 		if err != nil {
 			t.Fatal(err)
 		}
 		data, _ := io.ReadAll(rf)
 		rf.Close()
-		sc.Remove(wd + "/termstead-sftp.txt")
+		sc.Remove(wd + "/astraterm-sftp.txt")
 		if string(data) != "through the jump host" {
 			t.Fatalf("sftp read %q", data)
 		}
@@ -254,7 +254,7 @@ func TestDockerSSH(t *testing.T) {
 	t.Run("terminal session", func(t *testing.T) {
 		a.setAnswer(accept(true, nil))
 		s, err := a.Server.Core.Sessions.Create(context.Background(), a.user, term.CreateRequest{
-			Connection: jumpConn(model.Options{"env": map[string]any{"LC_TERMSTEAD": "yes"}}),
+			Connection: jumpConn(model.Options{"env": map[string]any{"LC_ASTRATERM": "yes"}}),
 			Secrets:    map[string]string{"password": "test"}, Cols: 100, Rows: 30,
 		})
 		if err != nil {

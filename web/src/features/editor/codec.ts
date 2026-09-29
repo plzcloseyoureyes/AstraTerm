@@ -151,7 +151,7 @@ export class EncodeError extends Error {
   constructor(encoding: string, index: number, char: string) {
     super(
       index < 0
-        ? `${encodingInfo(encoding).label} cannot be written by Termstead. Save as UTF-8 instead.`
+        ? `${encodingInfo(encoding).label} cannot be written by AstraTerm. Save as UTF-8 instead.`
         : `The character "${char}" (U+${char.codePointAt(0)?.toString(16).toUpperCase().padStart(4, '0')}) cannot be represented in ${encodingInfo(encoding).label}.`,
     )
     this.name = 'EncodeError'

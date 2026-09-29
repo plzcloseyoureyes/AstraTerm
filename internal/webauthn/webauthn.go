@@ -26,12 +26,12 @@ import (
 	"github.com/labstack/echo/v5"
 	"golang.org/x/time/rate"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/auth"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/auth"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 func init() {
@@ -66,7 +66,7 @@ const (
 	maxCeremonies   = 5000
 	maxCredsPerUser = 32
 	maxNameLen      = 64
-	rpDisplayName   = "Termstead"
+	rpDisplayName   = "AstraTerm"
 	configScope     = "auth"
 	configKey       = "webauthn"
 )
@@ -167,7 +167,7 @@ func (s *Service) janitor() {
 type Config struct {
 	// RPID is the registrable domain passkeys are bound to ("" = the host name of each request).
 	RPID string `json:"rpId"`
-	// Origins are the accepted page origins, e.g. "https://termstead.example.com" (required with RPID).
+	// Origins are the accepted page origins, e.g. "https://astraterm.example.com" (required with RPID).
 	Origins []string `json:"origins"`
 }
 
@@ -183,7 +183,7 @@ func (s *Service) config(ctx context.Context) Config {
 }
 
 var errUnavailable = httpx.NewError(http.StatusConflict, "webauthn_unavailable",
-	"passkeys need a host name (not an IP address): open Termstead via http://localhost or its DNS name")
+	"passkeys need a host name (not an IP address): open AstraTerm via http://localhost or its DNS name")
 
 type relyingParty struct {
 	id     string
@@ -214,7 +214,7 @@ func (s *Service) relyingParty(c *echo.Context) (relyingParty, error) {
 			}
 		}
 		return relyingParty{}, httpx.NewError(http.StatusConflict, "webauthn_origin",
-			"passkeys are configured for "+strings.Join(cfg.Origins, ", ")+": open Termstead there to use them")
+			"passkeys are configured for "+strings.Join(cfg.Origins, ", ")+": open AstraTerm there to use them")
 	}
 	if hostname == "" {
 		return relyingParty{}, errUnavailable
@@ -247,7 +247,7 @@ func (rp relyingParty) webauthn(uv protocol.UserVerificationRequirement) (*gwa.W
 
 // ---- users & credentials --------------------------------------------------------------------------------------------
 
-// waUser adapts a Termstead user to go-webauthn's User.
+// waUser adapts a AstraTerm user to go-webauthn's User.
 type waUser struct {
 	u      *model.User
 	handle []byte
@@ -546,15 +546,8 @@ func (s *Service) saveAfterAssertion(ctx context.Context, stored *storedCredenti
 	}
 	_, err = s.d.Store.DB.ExecContext(ctx, `UPDATE webauthn_credentials SET data = ?, sign_count = ?, backup_state = ?,
 		user_verified = MAX(user_verified, ?), last_used_at = ? WHERE id = ?`, string(data), int64(cred.Authenticator.SignCount),
-		b2i(cred.Flags.BackupState), b2i(cred.Flags.UserVerified), store.Now().UnixMilli(), stored.ID)
+		store.B2I(cred.Flags.BackupState), store.B2I(cred.Flags.UserVerified), store.Now().UnixMilli(), stored.ID)
 	return err
-}
-
-func b2i(b bool) int {
-	if b {
-		return 1
-	}
-	return 0
 }
 
 // findStored returns the stored credential matching cred's raw ID among w's credentials.

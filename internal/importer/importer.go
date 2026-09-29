@@ -1,6 +1,6 @@
-// Package importer implements Termstead's import/export module (SPEC §6 "Import / export", RESEARCH IMP-1..4, SSH-36):
+// Package importer implements AstraTerm's import/export module (SPEC §6 "Import / export", RESEARCH IMP-1..4, SSH-36):
 // importing saved sessions from MobaXterm, PuTTY/KiTTY, OpenSSH ssh_config, Termius, mRemoteNG, Remmina, FileZilla,
-// WinSCP, SecureCRT, generic CSV, Termstead JSON and OpenSSH known_hosts; exporting the user's sessions; and admin
+// WinSCP, SecureCRT, generic CSV, AstraTerm JSON and OpenSSH known_hosts; exporting the user's sessions; and admin
 // backup/restore. See model.go for the security posture (no credential extraction from third-party files).
 package importer
 
@@ -11,9 +11,9 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 // maxImportBody bounds an import request body (file content is JSON-embedded; base64 inflates it ~33%).

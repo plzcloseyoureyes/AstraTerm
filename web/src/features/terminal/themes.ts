@@ -71,7 +71,7 @@ function scheme(id: string, name: string, s: S): TerminalScheme {
 
 /** Built-in schemes, in gallery order. */
 export const BUILTIN_SCHEMES: readonly TerminalScheme[] = Object.freeze([
-  scheme('termstead-dark', 'Termstead Dark', {
+  scheme('astraterm-dark', 'AstraTerm Dark', {
     background: '#16181d',
     foreground: '#d4d8df',
     cursor: '#8cbcff',
@@ -94,7 +94,7 @@ export const BUILTIN_SCHEMES: readonly TerminalScheme[] = Object.freeze([
     brightCyan: '#7fe0ee',
     brightWhite: '#f2f4f8',
   }),
-  scheme('termstead-light', 'Termstead Light', {
+  scheme('astraterm-light', 'AstraTerm Light', {
     background: '#ffffff',
     foreground: '#1f2430',
     cursor: '#1f5fd1',
@@ -797,7 +797,7 @@ export function listSchemes(custom: readonly TerminalScheme[] = []): TerminalSch
   return [...BUILTIN_SCHEMES, ...custom.map((c) => ({ ...c, id: c.id.startsWith(CUSTOM_PREFIX) ? c.id : CUSTOM_PREFIX + c.id }))]
 }
 
-/** Look a scheme up by id (built-in or custom); falls back to Termstead Dark/Light. */
+/** Look a scheme up by id (built-in or custom); falls back to AstraTerm Dark/Light. */
 export function findScheme(id: string | undefined, custom: readonly TerminalScheme[] = [], fallbackDark = true): TerminalScheme {
   if (id) {
     const b = byId.get(ALIASES[id] ?? id)
@@ -808,7 +808,7 @@ export function findScheme(id: string | undefined, custom: readonly TerminalSche
       if (c) return normalizeScheme(c)
     }
   }
-  return byId.get(fallbackDark ? 'termstead-dark' : 'termstead-light')!
+  return byId.get(fallbackDark ? 'astraterm-dark' : 'astraterm-light')!
 }
 
 /** Scheme for the current UI theme (TERM-9 auto light/dark switching). */

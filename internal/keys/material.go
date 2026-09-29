@@ -23,7 +23,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 // Key material: detection and parsing of private keys in every supported format (OpenSSH, traditional PEM with or
@@ -190,7 +190,7 @@ func parseTraditionalPEM(block *pem.Block, passphrase string) (*parsedKey, error
 			}
 			return nil, unsupportedKey("cannot decrypt the PEM key: " + err.Error())
 		}
-		defer wipe(d) // the parsed key copies what it keeps
+		defer clear(d) // the parsed key copies what it keeps
 		der = d
 	}
 	var (

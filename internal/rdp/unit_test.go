@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 func TestTicketStore(t *testing.T) {
@@ -119,7 +119,7 @@ func TestGuacParams(t *testing.T) {
 	if _, ok := p["resize-method"]; ok {
 		t.Error("resize-method set although resizing is disabled")
 	}
-	// Termstead records guacd sessions itself (guacrecord.go): guacd must not write recordings of its own.
+	// AstraTerm records guacd sessions itself (guacrecord.go): guacd must not write recordings of its own.
 	if _, ok := p["recording-path"]; ok {
 		t.Errorf("recording-path %q passed to guacd", p["recording-path"])
 	}

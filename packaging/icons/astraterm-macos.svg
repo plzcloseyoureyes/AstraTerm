@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- macOS variant: the master artwork on the macOS icon grid (824 px body with margin and a soft shadow). -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7c6cff"/>
+      <stop offset="1" stop-color="#2459e0"/>
+    </linearGradient>
+    <radialGradient id="shine" cx="0.28" cy="0.18" r="0.85">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+  <g transform="translate(100 100) scale(0.8046875)">
+    <rect width="1024" height="1024" rx="230" fill="url(#bg)" filter="url(#shadow)"/>
+    <rect width="1024" height="1024" rx="230" fill="url(#shine)"/>
+    <path d="M234 290L426 482L234 674" fill="none" stroke="#fff" stroke-width="88" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M666 442Q698 578 834 610Q698 642 666 778Q634 642 498 610Q634 578 666 442Z" fill="#fff"/>
+  </g>
+</svg>

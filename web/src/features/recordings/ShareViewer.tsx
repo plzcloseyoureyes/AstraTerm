@@ -59,9 +59,9 @@ export default function ShareViewer() {
       setProblem(null)
       setRevoked(false)
       hadInfo.current = true
-      document.title = `${i.title} — shared session · Termstead`
+      document.title = `${i.title} — shared session · AstraTerm`
     } catch (err) {
-      if (isApiError(err) && err.status === 401) setProblem({ kind: 'login', message: 'The owner requires viewers to be signed in to Termstead.' })
+      if (isApiError(err) && err.status === 401) setProblem({ kind: 'login', message: 'The owner requires viewers to be signed in to AstraTerm.' })
       else if (isApiError(err) && err.status === 404 && hadInfo.current) setRevoked(true) // keep what was seen on screen
       else if (isApiError(err) && err.status === 404) setProblem({ kind: 'invalid', message: 'This share link is invalid, has expired or was revoked.' })
       else if (isApiError(err) && err.status === 429) setProblem({ kind: 'limited', message: 'Too many attempts from this address. Try again in a minute.' })
@@ -222,7 +222,7 @@ function ProblemPage({ problem, onRetry }: { problem: Problem; onRetry: () => vo
           {problem.kind === 'login' && (
             <Button asChild>
               <a href="/" target="_blank" rel="noopener noreferrer">
-                <LogIn /> Sign in to Termstead
+                <LogIn /> Sign in to AstraTerm
               </a>
             </Button>
           )}

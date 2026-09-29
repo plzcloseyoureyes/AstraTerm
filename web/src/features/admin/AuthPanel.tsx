@@ -174,7 +174,7 @@ function PolicyEditor() {
           <div className="grid gap-2 px-4 py-3">
             <div className="grid gap-0.5">
               <span className="text-base font-medium">Allowed networks</span>
-              <p className="text-sm text-muted-foreground">Only these addresses may sign in (IPs or CIDRs, e.g. 10.0.0.0/8). Empty = anywhere. The Termstead host itself is always allowed.</p>
+              <p className="text-sm text-muted-foreground">Only these addresses may sign in (IPs or CIDRs, e.g. 10.0.0.0/8). Empty = anywhere. The AstraTerm host itself is always allowed.</p>
             </div>
             <TagInput value={draft.allowedNetworks} onChange={(v) => set('allowedNetworks', v)} placeholder="Add an address or network…" aria-label="Allowed networks" />
           </div>
@@ -368,7 +368,7 @@ function PasskeyRelyingParty() {
           <Fingerprint className="size-4" /> Passkey domain
         </span>
       }
-      description="Passkeys are bound to a domain (relying party). By default Termstead uses the host name of each request; pin it when Termstead is reachable under several names."
+      description="Passkeys are bound to a domain (relying party). By default AstraTerm uses the host name of each request; pin it when AstraTerm is reachable under several names."
     >
       <div className="grid gap-4 rounded-lg border bg-card p-4">
         <div className="grid gap-1.5">

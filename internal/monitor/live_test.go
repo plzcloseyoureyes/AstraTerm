@@ -13,14 +13,14 @@ import (
 )
 
 // Live tests against the shared Docker test environment (ssh1: Alpine/BusyBox with procps + coreutils, user test/test,
-// sudo with password). Enable with TERMSTEAD_TESTENV=1; TERMSTEAD_TESTENV_SSH1 overrides the address.
+// sudo with password). Enable with ASTRATERM_TESTENV=1; ASTRATERM_TESTENV_SSH1 overrides the address.
 
 func liveClient(t *testing.T) *ssh.Client {
 	t.Helper()
-	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
-		t.Skip("set TERMSTEAD_TESTENV=1 to run tests against the Docker test environment")
+	if os.Getenv("ASTRATERM_TESTENV") != "1" {
+		t.Skip("set ASTRATERM_TESTENV=1 to run tests against the Docker test environment")
 	}
-	addr := os.Getenv("TERMSTEAD_TESTENV_SSH1")
+	addr := os.Getenv("ASTRATERM_TESTENV_SSH1")
 	if addr == "" {
 		addr = "127.0.0.1:22022"
 	}

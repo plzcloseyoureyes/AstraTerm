@@ -2,7 +2,7 @@
  * Languages of the editor (Monaco language ids) and language detection: file name (incl. sysadmin conventions Monaco
  * does not know), path, shebang, modelines and content sniffing. Pure: no Monaco import, so tab code, tests and the
  * status bar can use it before the editor bundle has loaded. The ids marked "custom" are registered by
- * monaco/grammars.ts (Monarch grammars shipped with Termstead).
+ * monaco/grammars.ts (Monarch grammars shipped with AstraTerm).
  */
 
 export interface LanguageInfo {

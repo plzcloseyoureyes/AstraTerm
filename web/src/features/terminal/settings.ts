@@ -116,8 +116,8 @@ export interface TerminalSettings {
 }
 
 export const TERMINAL_DEFAULTS: TerminalSettings = {
-  theme: 'termstead-dark',
-  lightTheme: 'termstead-light',
+  theme: 'astraterm-dark',
+  lightTheme: 'astraterm-light',
   matchAppTheme: true,
   customSchemes: [],
   minimumContrastRatio: 1,

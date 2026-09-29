@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // mobaxterm_full.mxtsessions is generated from the documented field tables (see mobaxterm.go) — CP1252 + CRLF like

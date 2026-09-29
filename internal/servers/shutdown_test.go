@@ -13,7 +13,7 @@ import (
 )
 
 // WaitShutdown (called by internal/server's Close) returns only once the syslog file has been flushed and closed, so
-// messages received just before Termstead exits are on disk.
+// messages received just before AstraTerm exits are on disk.
 func TestWaitShutdownFlushesSyslogFile(t *testing.T) {
 	h := newHarness(t)
 	u := h.user("admin", true)
@@ -36,7 +36,7 @@ func TestWaitShutdownFlushesSyslogFile(t *testing.T) {
 		t.Fatalf("message not received: %+v", page)
 	}
 
-	h.cancel() // Termstead shuts down
+	h.cancel() // AstraTerm shuts down
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := WaitShutdown(ctx, h.d); err != nil {

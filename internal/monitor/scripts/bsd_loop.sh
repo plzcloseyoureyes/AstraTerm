@@ -1,4 +1,4 @@
-# Termstead remote monitor — FreeBSD / OpenBSD / NetBSD / DragonFly sampler (MON-2). CPU from kern.cp_time(s) tick
+# AstraTerm remote monitor — FreeBSD / OpenBSD / NetBSD / DragonFly sampler (MON-2). CPU from kern.cp_time(s) tick
 # counters, memory from vm.stats (FreeBSD) or vmstat -s, swap from swapinfo / swapctl, network from netstat -ibn.
 export LC_ALL=C
 nx_n=0

@@ -67,7 +67,7 @@ async function confirmClose(tab: TabInfo<VncTabParams>): Promise<boolean> {
   if (!c || c.state.phase !== 'connected' || c.readOnly) return true
   const r = await confirmEx({
     title: `Close ${tab.title}?`,
-    description: 'The remote desktop keeps running on the server. Closing the tab ends this Termstead session (use Detach to keep it).',
+    description: 'The remote desktop keeps running on the server. Closing the tab ends this AstraTerm session (use Detach to keep it).',
     confirmLabel: 'Close session',
     destructive: true,
     checkboxLabel: "Don't ask again",

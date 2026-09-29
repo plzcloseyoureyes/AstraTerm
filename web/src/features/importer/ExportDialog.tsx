@@ -29,8 +29,8 @@ const ALL = '__all__'
 const FORMATS: { value: ExportFormat; label: string; description: string; secrets: boolean }[] = [
   {
     value: 'json',
-    label: 'Termstead JSON',
-    description: 'Full fidelity — folders, sessions, identities, snippets. Re-importable in Termstead.',
+    label: 'AstraTerm JSON',
+    description: 'Full fidelity — folders, sessions, identities, snippets. Re-importable in AstraTerm.',
     secrets: true,
   },
   { value: 'csv', label: 'CSV', description: 'A spreadsheet of sessions (Termius-compatible columns). No secrets.', secrets: false },

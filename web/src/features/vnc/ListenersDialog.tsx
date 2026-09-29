@@ -71,14 +71,14 @@ function ListenersBody() {
           Incoming VNC connections
         </DialogTitle>
         <DialogDescription>
-          Let VNC servers connect to Termstead (reverse connection), e.g. <code className="font-mono">x11vnc -connect host:5500</code>,
+          Let VNC servers connect to AstraTerm (reverse connection), e.g. <code className="font-mono">x11vnc -connect host:5500</code>,
           UltraVNC SC or TightVNC &ldquo;Attach listening viewer&rdquo;. Each connection opens as a new VNC session.
         </DialogDescription>
       </DialogHeader>
       <DialogBody className="grid gap-4">
         {!allowed ? (
           <p className="rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-sm">
-            In server mode only administrators can listen for incoming connections (they open a port on the Termstead
+            In server mode only administrators can listen for incoming connections (they open a port on the AstraTerm
             host).
           </p>
         ) : (

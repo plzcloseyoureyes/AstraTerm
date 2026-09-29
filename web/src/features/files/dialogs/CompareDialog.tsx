@@ -43,7 +43,7 @@ export default function CompareDialog({ left, right, onClose }: { left: CompareS
   const rightCtx: FsContext | null = givenRight && right ? right.ctx : rightFs.ctx
   const [recursive, setRecursive] = useState(true)
   const [mode, setMode] = useState<'size-mtime' | 'checksum'>('size-mtime')
-  // (The server skips partial uploads, "*.termstead-part", itself.)
+  // (The server skips partial uploads, "*.astraterm-part", itself.)
   const [excludes, setExcludes] = useState('.git, node_modules')
   const [result, setResult] = useState<CompareResult | null>(null)
   const [busy, setBusy] = useState(false)

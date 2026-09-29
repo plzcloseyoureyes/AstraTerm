@@ -22,7 +22,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/vnc/anontls/anontlstest"
+	"github.com/plzcloseyoureyes/astraterm/internal/vnc/anontls/anontlstest"
 )
 
 // Security types used by the fake server.
@@ -162,7 +162,7 @@ func (s *Server) serve(c net.Conn) error {
 		return fmt.Errorf("unexpected client version %q", cv)
 	}
 
-	var rw net.Conn = c
+	rw := c
 	var chosen uint32
 	if minor == 3 {
 		chosen = s.Type33
@@ -368,7 +368,7 @@ func (s *Server) veNCrypt(c net.Conn) (net.Conn, bool, error) {
 		return nil, false, fmt.Errorf("client chose unoffered subtype %d", sub)
 	}
 	s.record(func() { s.Subtypes = append(s.Subtypes, sub) })
-	var rw net.Conn = c
+	rw := c
 	switch sub {
 	case VcTLSNone, VcTLSVnc, VcTLSPlain:
 		if _, err := c.Write([]byte{1}); err != nil {

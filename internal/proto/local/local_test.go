@@ -12,8 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // readUntil reads from b until out contains want (or the deadline passes).
@@ -50,7 +50,7 @@ func TestLocalShellEchoAndExit(t *testing.T) {
 	}
 	dir := t.TempDir()
 	conn := &model.Connection{Protocol: model.ProtoLocal, Options: model.Options{
-		"shell": "/bin/sh", "loginShell": false, "cwd": dir, "env": map[string]any{"TERMSTEAD_TEST_VAR": "fromenv"},
+		"shell": "/bin/sh", "loginShell": false, "cwd": dir, "env": map[string]any{"ASTRATERM_TEST_VAR": "fromenv"},
 	}}
 	b, err := Open(context.Background(), term.OpenRequest{Connection: conn})
 	if err != nil {
@@ -61,7 +61,7 @@ func TestLocalShellEchoAndExit(t *testing.T) {
 		t.Fatal(err)
 	}
 	var out bytes.Buffer
-	if _, err := b.Write([]byte("echo marker-$((20+22)) $TERMSTEAD_TEST_VAR $TERM; stty size; pwd\r")); err != nil {
+	if _, err := b.Write([]byte("echo marker-$((20+22)) $ASTRATERM_TEST_VAR $TERM; stty size; pwd\r")); err != nil {
 		t.Fatal(err)
 	}
 	readUntil(t, b, &out, "marker-42 fromenv xterm-256color")

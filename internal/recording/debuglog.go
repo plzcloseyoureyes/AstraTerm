@@ -16,8 +16,8 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 // Debug log viewer (REC-9): an in-memory ring of recent log records behind GET /api/admin/logs (admin).
@@ -176,9 +176,6 @@ func CaptureLogs(h slog.Handler) slog.Handler {
 	return &captureHandler{base: h}
 }
 
-// MarkRootCapture records that the process logger was built with CaptureLogs (reported by the API).
-func MarkRootCapture() { rootHooked.Store(true) }
-
 func installDebugCapture(d *app.Deps) {
 	if d.Log == nil {
 		d.Log = slog.New(CaptureLogs(slog.DiscardHandler))
@@ -310,7 +307,7 @@ var secretValue = []struct {
 	// share links, and the capability key of path-mode web proxies (/proxy/<id>-<key>/)
 	{regexp.MustCompile(`(/share/|/ws/share/|/api/share/)[A-Za-z0-9_\-]{16,}`), "${1}[redacted]"},
 	{regexp.MustCompile(`(/proxy/[a-z2-7]{20}-)[A-Za-z0-9_\-]+`), "${1}[redacted]"},
-	// query parameters carrying credentials (?launch=, ?token=, ?__termstead_proxy_token=, ?api_key=, ?password=…)
+	// query parameters carrying credentials (?launch=, ?token=, ?__astraterm_proxy_token=, ?api_key=, ?password=…)
 	{regexp.MustCompile(`(?i)([?&][A-Za-z0-9_.\-]*(?:launch|setup|token|password|passwd|secret|api_?key|access_?key|signature|sig)=)[^&\s"]+`), "${1}[redacted]"},
 	{regexp.MustCompile(`(?i)((?:bearer|basic)\s+)[A-Za-z0-9._~+/\-]+=*`), "${1}[redacted]"},
 	// user:password@ in URLs
@@ -480,7 +477,7 @@ func (s *Service) handleLogsExport(c *echo.Context) error {
 		return err
 	}
 	var b strings.Builder
-	fmt.Fprintf(&b, "# Termstead debug log export %s (version %s, %s mode); secrets redacted\n",
+	fmt.Fprintf(&b, "# AstraTerm debug log export %s (version %s, %s mode); secrets redacted\n",
 		time.Now().UTC().Format(time.RFC3339), versionOf(s), modeOf(s.d))
 	for _, e := range debugRing.entries(0) {
 		if !keep(e) {
@@ -502,7 +499,7 @@ func (s *Service) handleLogsExport(c *echo.Context) error {
 	}
 	s.d.Audit.Log(c, "admin.logs.export", "", nil)
 	h := c.Response().Header()
-	h.Set(echo.HeaderContentDisposition, `attachment; filename="termstead-debug-`+time.Now().Format("20060102-150405")+`.log"`)
+	h.Set(echo.HeaderContentDisposition, `attachment; filename="astraterm-debug-`+time.Now().Format("20060102-150405")+`.log"`)
 	h.Set(echo.HeaderCacheControl, "no-store")
 	return c.Blob(http.StatusOK, "text/plain; charset=utf-8", []byte(b.String()))
 }

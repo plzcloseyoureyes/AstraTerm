@@ -341,7 +341,7 @@ export function downloadText(name: string, text: string, type = 'text/plain') {
 
 function recoveryText(codes: string[], username: string): string {
   return [
-    `Termstead recovery codes for ${username} (${location.host})`,
+    `AstraTerm recovery codes for ${username} (${location.host})`,
     `Generated ${new Date().toLocaleString()}`,
     '',
     'Each code works once. Keep them somewhere safe.',
@@ -358,7 +358,7 @@ function printCodes(codes: string[], username: string) {
     return
   }
   const doc = w.document
-  doc.title = 'Termstead recovery codes'
+  doc.title = 'AstraTerm recovery codes'
   const pre = doc.createElement('pre')
   pre.style.font = '14px/1.6 ui-monospace, monospace'
   pre.textContent = recoveryText(codes, username)
@@ -386,7 +386,7 @@ export function RecoveryCodeActions({ codes, username }: { codes: string[]; user
   return (
     <div className="flex flex-wrap gap-2">
       <CopyButton text={codes.join('\n')} label="Copy all" />
-      <Button variant="secondary" size="sm" onClick={() => downloadText(`termstead-recovery-codes-${name}.txt`, recoveryText(codes, name))}>
+      <Button variant="secondary" size="sm" onClick={() => downloadText(`astraterm-recovery-codes-${name}.txt`, recoveryText(codes, name))}>
         <Download /> Download
       </Button>
       <Button variant="secondary" size="sm" onClick={() => printCodes(codes, name)}>
@@ -482,7 +482,7 @@ function CreateTokenDialog() {
           <DialogDescription>
             {created
               ? 'This is the only time the token is shown. It acts as you: store it like a password.'
-              : 'Tokens let scripts and tools call the Termstead REST API as you (Authorization: Bearer …).'}
+              : 'Tokens let scripts and tools call the AstraTerm REST API as you (Authorization: Bearer …).'}
           </DialogDescription>
         </DialogHeader>
         {created ? (

@@ -11,7 +11,7 @@ export type FsSource =
   | { kind: 'session'; sessionId: string }
   /** A saved connection (sftp / ftp / s3, or ssh opened on its own transport); `sudo`: browse as root (FILE-11). */
   | { kind: 'connection'; connectionId: string; sudo?: boolean }
-  /** The file system of the machine running Termstead. */
+  /** The file system of the machine running AstraTerm. */
   | { kind: 'local' }
   /** An unsaved quick-connect spec (never contains secrets; the backend prompts). */
   | { kind: 'quick'; quick: QuickSpec }

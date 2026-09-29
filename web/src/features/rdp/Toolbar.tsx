@@ -70,7 +70,7 @@ export const ENGINE_LABEL: Record<RdpEngine, string> = {
 }
 
 const ENGINE_HINT: Record<RdpEngine, string> = {
-  ironrdp: 'IronRDP — RDP runs in the browser (WebAssembly); Termstead relays the connection',
+  ironrdp: 'IronRDP — RDP runs in the browser (WebAssembly); AstraTerm relays the connection',
   guacd: 'guacd — Apache Guacamole renders the session; credentials stay on the server',
 }
 
@@ -286,7 +286,7 @@ export function RdpToolbar({ params, ctrl, viewer, session }: ToolbarProps) {
           <>
             <IconButton
               icon={Upload}
-              label={`Upload files to the remote drive "${viewer.driveName || 'Termstead'}" (or drop them on the desktop)`}
+              label={`Upload files to the remote drive "${viewer.driveName || 'AstraTerm'}" (or drop them on the desktop)`}
               disabled={!connected}
               onClick={() => fileRef.current?.click()}
             />

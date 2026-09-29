@@ -1,6 +1,6 @@
 /*
  * Opening monitor views: one 'monitor' tab per monitored session (id `monitor:<session>`), the singleton 'sysinfo' tab
- * for the Termstead host, and the target resolution shared by commands and the monitoring bar.
+ * for the AstraTerm host, and the target resolution shared by commands and the monitoring bar.
  */
 import { toast } from 'sonner'
 import { queryClient } from '@/api/queryClient'
@@ -56,7 +56,7 @@ export function openMonitor(target: string, panel?: MonitorPanel, extra: Partial
   return openTab<MonitorTabParams>({ kind: MONITOR_KIND, id, params })
 }
 
-/** Open the System information view of the Termstead host. */
+/** Open the System information view of the AstraTerm host. */
 export function openSystemInfo(panel?: SysInfoTabParams['panel']): string {
   return openTab<SysInfoTabParams>({ kind: SYSINFO_KIND, params: panel ? { panel } : {} })
 }

@@ -12,8 +12,9 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 // Policy is the administrator's login policy (SEC-20, MU-1, MU-5). It lives in the module-private settings scope
@@ -174,7 +175,7 @@ func (p Policy) ValidatePasswordFor(password, username string) error {
 				other = true
 			}
 		}
-		n := b2i(lower) + b2i(upper) + b2i(digit) + b2i(other)
+		n := store.B2I(lower) + store.B2I(upper) + store.B2I(digit) + store.B2I(other)
 		if n < p.PasswordRequireClasses {
 			return fmt.Errorf("password must mix at least %d of: lowercase letters, uppercase letters, digits, symbols", p.PasswordRequireClasses)
 		}

@@ -1,5 +1,5 @@
-// Command termstead runs the Termstead remote-access workstation: a single binary serving the web UI, REST API and
-// WebSockets, with every protocol handled in the Go backend.
+// Command astraterm runs AstraTerm, an organized remote-management workspace: a single binary serving the web UI,
+// REST API and WebSockets, with every protocol handled in the Go backend.
 package main
 
 import (
@@ -18,11 +18,11 @@ import (
 
 	"golang.org/x/term"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/server"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/server"
 )
 
-// Build information, set at build time (Makefile, .goreleaser.yaml):
+// Build information, set at build time (Makefile, scripts/release/dist):
 //
 //	-ldflags "-X main.version=v1.2.3 -X main.commit=<git sha> -X main.date=<RFC 3339, UTC>"
 //
@@ -53,11 +53,13 @@ func run(args []string, stdin *os.File, stdout, stderr io.Writer) int {
 		return 0
 	case "reset-password":
 		return resetPassword(args, stdin, stdout, stderr)
+	case "sidecar": // internal: started by the desktop app (desktop/), not listed in the help
+		return sidecar(args, stdin, stdout, stderr)
 	case "help":
 		usage(stdout, nil)
 		return 0
 	default:
-		fmt.Fprintf(stderr, "termstead: unknown command %q\n\n", cmd)
+		fmt.Fprintf(stderr, "astraterm: unknown command %q\n\n", cmd)
 		usage(stderr, nil)
 		return 2
 	}
@@ -86,30 +88,30 @@ func printVersion(w io.Writer) {
 	if d == "" {
 		d = "unknown"
 	}
-	fmt.Fprintf(w, "termstead %s\n  commit:   %s\n  built:    %s\n  go:       %s %s/%s\n",
+	fmt.Fprintf(w, "astraterm %s\n  commit:   %s\n  built:    %s\n  go:       %s %s/%s\n",
 		version, c, d, runtime.Version(), runtime.GOOS, runtime.GOARCH)
 }
 
 func usage(w io.Writer, fs *flag.FlagSet) {
-	fmt.Fprint(w, `Termstead — remote access workstation (SSH, SFTP, RDP, VNC, telnet, serial, …) in your browser.
+	fmt.Fprint(w, `AstraTerm — an organized remote-management workspace (SSH, SFTP, RDP, VNC, telnet, serial, …).
 
 Usage:
-  termstead [serve] [flags]                       start the server (default command)
-  termstead version                               print the version
-  termstead reset-password <username> [flags]     set a user's password (prompts when --password is omitted)
-  termstead help                                  show this help
+  astraterm [serve] [flags]                       start the server (default command)
+  astraterm version                               print the version
+  astraterm reset-password <username> [flags]     set a user's password (prompts when --password is omitted)
+  astraterm help                                  show this help
 
-Serve flags (each can also be set with the TERMSTEAD_<NAME> environment variable):
+Serve flags (each can also be set with the ASTRATERM_<NAME> environment variable):
 `)
 	if fs == nil {
-		fs, _ = config.FlagSet("termstead", w)
+		fs, _ = config.FlagSet("astraterm", w)
 	}
 	fs.SetOutput(w)
 	fs.PrintDefaults()
 }
 
 func serve(args []string, stdout, stderr io.Writer) int {
-	fs, apply := config.FlagSet("termstead", stderr)
+	fs, apply := config.FlagSet("astraterm", stderr)
 	fs.Usage = func() { usage(stderr, fs) }
 	if err := fs.Parse(args); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
@@ -118,12 +120,12 @@ func serve(args []string, stdout, stderr io.Writer) int {
 		return 2
 	}
 	if fs.NArg() > 0 {
-		fmt.Fprintf(stderr, "termstead: unexpected argument %q\n", fs.Arg(0))
+		fmt.Fprintf(stderr, "astraterm: unexpected argument %q\n", fs.Arg(0))
 		return 2
 	}
 	cfg, err := apply()
 	if err != nil {
-		fmt.Fprintf(stderr, "termstead: %v\n", err)
+		fmt.Fprintf(stderr, "astraterm: %v\n", err)
 		return 1
 	}
 	cfg.Version = version
@@ -132,20 +134,20 @@ func serve(args []string, stdout, stderr io.Writer) int {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	if err := server.Run(ctx, cfg, log, stdout); err != nil {
-		log.Error("termstead stopped", "err", err)
+		log.Error("astraterm stopped", "err", err)
 		return 1
 	}
 	return 0
 }
 
 func resetPassword(args []string, stdin *os.File, stdout, stderr io.Writer) int {
-	fs := flag.NewFlagSet("termstead reset-password", flag.ContinueOnError)
+	fs := flag.NewFlagSet("astraterm reset-password", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	password := fs.String("password", "", "new password (prompted when omitted; avoid: visible in the process list)")
-	dataDir := fs.String("data-dir", os.Getenv("TERMSTEAD_DATA_DIR"), "data directory")
+	dataDir := fs.String("data-dir", os.Getenv("ASTRATERM_DATA_DIR"), "data directory")
 	portable := fs.Bool("portable", false, "portable mode (data beside the executable)")
 	fs.Usage = func() {
-		fmt.Fprintln(stderr, "Usage: termstead reset-password <username> [--password P] [--data-dir DIR] [--portable]")
+		fmt.Fprintln(stderr, "Usage: astraterm reset-password <username> [--password P] [--data-dir DIR] [--portable]")
 		fs.PrintDefaults()
 	}
 	// Accept flags before and after the username.
@@ -165,17 +167,17 @@ func resetPassword(args []string, stdin *os.File, stdout, stderr io.Writer) int 
 		return 2
 	}
 	if fs.NArg() > 0 {
-		fmt.Fprintf(stderr, "termstead: unexpected argument %q\n", fs.Arg(0))
+		fmt.Fprintf(stderr, "astraterm: unexpected argument %q\n", fs.Arg(0))
 		return 2
 	}
 
 	dir, isPortable, err := config.ResolveDataDir(*dataDir, *portable)
 	if err != nil {
-		fmt.Fprintf(stderr, "termstead: %v\n", err)
+		fmt.Fprintf(stderr, "astraterm: %v\n", err)
 		return 1
 	}
 	if _, err := os.Stat(dir); err != nil {
-		fmt.Fprintf(stderr, "termstead: data directory %s not found: %v\n", dir, err)
+		fmt.Fprintf(stderr, "astraterm: data directory %s not found: %v\n", dir, err)
 		return 1
 	}
 	cfg := &config.Config{DataDir: dir, Portable: isPortable}
@@ -183,12 +185,12 @@ func resetPassword(args []string, stdin *os.File, stdout, stderr io.Writer) int 
 	pw := *password
 	if pw == "" {
 		if pw, err = readNewPassword(stdin, stderr); err != nil {
-			fmt.Fprintf(stderr, "termstead: %v\n", err)
+			fmt.Fprintf(stderr, "astraterm: %v\n", err)
 			return 1
 		}
 	}
 	if err := server.ResetPassword(context.Background(), cfg, username, pw); err != nil {
-		fmt.Fprintf(stderr, "termstead: %v\n", err)
+		fmt.Fprintf(stderr, "astraterm: %v\n", err)
 		return 1
 	}
 	fmt.Fprintf(stdout, "Password for %q updated; existing login sessions were revoked.\n", username)

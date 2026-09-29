@@ -6,12 +6,12 @@ import (
 	"testing"
 )
 
-// These tests hit the shared Docker test environment and the internet; they run only when TERMSTEAD_TESTENV=1.
+// These tests hit the shared Docker test environment and the internet; they run only when ASTRATERM_TESTENV=1.
 // (Tools that run "via" a saved SSH connection are covered end-to-end through the real server in ./apitest.)
 func requireTestenv(t *testing.T) {
 	t.Helper()
-	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
-		t.Skip("set TERMSTEAD_TESTENV=1 to run tests against the Docker test environment")
+	if os.Getenv("ASTRATERM_TESTENV") != "1" {
+		t.Skip("set ASTRATERM_TESTENV=1 to run tests against the Docker test environment")
 	}
 }
 

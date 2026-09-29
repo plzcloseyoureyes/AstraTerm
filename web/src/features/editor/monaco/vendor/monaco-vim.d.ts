@@ -1,4 +1,4 @@
-/* Types of the vendored monaco-vim build (the subset Termstead uses; see monaco-vim.js). */
+/* Types of the vendored monaco-vim build (the subset AstraTerm uses; see monaco-vim.js). */
 import type * as Monaco from 'monaco-editor/editor'
 
 export interface VimAdapter {

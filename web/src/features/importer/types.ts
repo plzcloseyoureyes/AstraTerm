@@ -57,7 +57,7 @@ export interface PreviewConnection {
   keyName?: string
   /** SSH jump chain / gateway, first hop first (display strings). */
   via?: string[]
-  /** Opening it runs a program on the Termstead host (ProxyCommand, local shell) — highlighted in the preview. */
+  /** Opening it runs a program on the AstraTerm host (ProxyCommand, local shell) — highlighted in the preview. */
   runsLocalCommand?: boolean
   warnings?: string[]
 }

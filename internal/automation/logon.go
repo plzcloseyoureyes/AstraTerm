@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // Logon actions (AUTO-8): connection.options.logonActions is an ordered list of expect/send steps executed by the

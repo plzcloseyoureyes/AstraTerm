@@ -222,7 +222,7 @@ function LogPane({ kind }: { kind: ServerKindEx }) {
     const url = URL.createObjectURL(new Blob([text + '\n'], { type: 'text/plain;charset=utf-8' }))
     const a = document.createElement('a')
     a.href = url
-    a.download = `termstead-${kind}-server-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '')}.log`
+    a.download = `astraterm-${kind}-server-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '')}.log`
     a.click()
     setTimeout(() => URL.revokeObjectURL(url), 5000)
   }

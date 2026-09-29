@@ -10,7 +10,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/termstead/termstead/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 func init() {

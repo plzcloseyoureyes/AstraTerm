@@ -28,12 +28,23 @@ export const DropdownMenuPortal = DropdownMenuPrimitive.Portal
 export const DropdownMenuSub = DropdownMenuPrimitive.Sub
 export const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
 
+/**
+ * onCloseAutoFocus for menus: when the chosen action moved focus somewhere (e.g. "Quick connect" focusing a field),
+ * keep it there instead of returning it to the trigger — which blurred the field right away. Escape / no action
+ * leaves focus inside the menu, so it still goes back to the trigger.
+ */
+export function keepMovedFocus(e: Event): void {
+  const el = (e.target as Node | null)?.ownerDocument?.activeElement ?? document.activeElement
+  if (el && el !== el.ownerDocument.body && !el.closest('[role="menu"], [role="menubar"]')) e.preventDefault()
+}
+
 export function DropdownMenuContent({ className, sideOffset = 4, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
   return (
     <DropdownMenuPrimitive.Portal container={usePortalContainer()}>
       <DropdownMenuPrimitive.Content
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
+        onCloseAutoFocus={keepMovedFocus}
         className={cn(menuContentClass, 'max-h-(--radix-dropdown-menu-content-available-height)', className)}
         {...props}
       />

@@ -9,7 +9,7 @@ import (
 
 	"github.com/likexian/whois"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 type whoisRequest struct {

@@ -1,5 +1,5 @@
 /*
- * Local shell editor (PROTO-14): a shell on the Termstead host. Shells are detected by GET /api/local/shells.
+ * Local shell editor (PROTO-14): a shell on the AstraTerm host. Shells are detected by GET /api/local/shells.
  */
 import { SquareTerminal } from 'lucide-react'
 import type { ProtocolEditorProps } from '@/app/registry'
@@ -18,7 +18,7 @@ export function LocalEditor({ value, onChange }: ProtocolEditorProps) {
   return (
     <div className="grid gap-5">
       {mode === 'server' && !isAdmin && (
-        <EditorNote tone="warning">In server mode, local shells on the Termstead host are available to administrators only.</EditorNote>
+        <EditorNote tone="warning">In server mode, local shells on the AstraTerm host are available to administrators only.</EditorNote>
       )}
       <OptionSection title="Shell">
         <ComboOption
@@ -51,7 +51,7 @@ export function LocalEditor({ value, onChange }: ProtocolEditorProps) {
         />
       </OptionSection>
       <OptionSection title="Environment" columns={1}>
-        <KeyValueOption {...p} name="env" label="Environment variables" hint="Added to the Termstead process environment." />
+        <KeyValueOption {...p} name="env" label="Environment variables" hint="Added to the AstraTerm process environment." />
       </OptionSection>
     </div>
   )
@@ -71,7 +71,7 @@ defineProtocol({
   defaultPort: 0,
   group: 'terminal',
   order: 60,
-  description: 'Shell on the Termstead host',
+  description: 'Shell on the AstraTerm host',
   component: LocalEditor,
   tabLabel: 'Shell settings',
   profile: { host: 'hidden', port: false, username: false, auth: 'none', kind: 'terminal', network: false },

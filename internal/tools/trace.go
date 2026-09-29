@@ -11,11 +11,12 @@ import (
 	"os/exec"
 	"regexp"
 	"runtime"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 // Traceroute (RESEARCH TOOL-8) comes in two modes:
@@ -71,19 +72,19 @@ func (r *tracerouteRequest) normalize() error {
 	if r.MaxHops <= 0 {
 		r.MaxHops = 30
 	}
-	r.MaxHops = clampInt(r.MaxHops, 1, 64)
+	r.MaxHops = min(max(r.MaxHops, 1), 64)
 	if r.Probes <= 0 {
 		r.Probes = 3
 	}
-	r.Probes = clampInt(r.Probes, 1, 10)
+	r.Probes = min(max(r.Probes, 1), 10)
 	if r.TimeoutMs <= 0 {
 		r.TimeoutMs = ternary(r.Mode == "mtr", 1000, 2000)
 	}
-	r.TimeoutMs = clampInt(r.TimeoutMs, 200, 15000)
+	r.TimeoutMs = min(max(r.TimeoutMs, 200), 15000)
 	if r.IntervalMs <= 0 {
 		r.IntervalMs = 1000
 	}
-	r.IntervalMs = clampInt(r.IntervalMs, 200, 60000)
+	r.IntervalMs = min(max(r.IntervalMs, 200), 60000)
 	if r.Rounds < 0 {
 		r.Rounds = 0
 	}
@@ -648,7 +649,7 @@ func parseTraceLine(line string) row {
 		default:
 			ipTok := strings.Trim(tok, "()[],")
 			if ip := net.ParseIP(ipTok); ip != nil {
-				if s := ip.String(); !containsString(froms, s) {
+				if s := ip.String(); !slices.Contains(froms, s) {
 					froms = append(froms, s)
 				}
 			}
@@ -675,15 +676,6 @@ func parseTraceLine(line string) row {
 	return r
 }
 
-func containsString(list []string, s string) bool {
-	for _, v := range list {
-		if v == s {
-			return true
-		}
-	}
-	return false
-}
-
 // hopFroms returns the responder list of a parsed hop row.
 func hopFroms(r row) []string {
 	switch v := r["from"].(type) {
@@ -699,7 +691,7 @@ func hopFroms(r row) []string {
 func mergeHop(dst, src row) {
 	froms := hopFroms(dst)
 	for _, f := range hopFroms(src) {
-		if !containsString(froms, f) {
+		if !slices.Contains(froms, f) {
 			froms = append(froms, f)
 		}
 	}

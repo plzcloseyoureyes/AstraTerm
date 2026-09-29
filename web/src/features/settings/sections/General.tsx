@@ -16,7 +16,7 @@ export default function GeneralSection() {
       <SettingsGroup title="Workspace">
         <SettingRow
           label="Restore workspace on start"
-          description="Reopen your tabs, splits and floating windows when Termstead loads. Running sessions are re-attached."
+          description="Reopen your tabs, splits and floating windows when AstraTerm loads. Running sessions are re-attached."
           htmlFor="general-restore"
         >
           <Switch id="general-restore" checked={g.restoreWorkspace} onCheckedChange={(v) => generalSettings.set({ restoreWorkspace: v })} />

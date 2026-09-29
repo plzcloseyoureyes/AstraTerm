@@ -147,7 +147,7 @@ type davWriter struct {
 
 func (d *davWriter) Write(b []byte) (int, error) {
 	if d.n-d.checked >= 64<<20 || d.checked == 0 {
-		// The whole file is staged on the Termstead host: keep its disk from filling up.
+		// The whole file is staged on the AstraTerm host: keep its disk from filling up.
 		if err := stagingRoom(d.w.tmpDir, 64<<20); err != nil {
 			return 0, err
 		}

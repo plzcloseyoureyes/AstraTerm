@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 func TestSensitiveMask(t *testing.T) {

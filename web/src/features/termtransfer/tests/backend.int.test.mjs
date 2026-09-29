@@ -1,14 +1,14 @@
 /*
- * End-to-end: the transfer engines driven over Termstead's real terminal WebSocket (SPEC §6.2: binary output frames,
+ * End-to-end: the transfer engines driven over AstraTerm's real terminal WebSocket (SPEC §6.2: binary output frames,
  * acks, binary input into the server's 8 MiB per-session input queue) to an SSH session on the term-transfer test
- * container (lrzsz + trzsz-go, see testenv.Dockerfile and protocols.int.test.mjs). Guarded by TERMSTEAD_TESTENV=1;
- * needs a Termstead binary:
+ * container (lrzsz + trzsz-go, see testenv.Dockerfile and protocols.int.test.mjs). Guarded by ASTRATERM_TESTENV=1;
+ * needs a AstraTerm binary:
  *
- *   TERMSTEAD_TESTENV=1 TERMSTEAD_BIN=../bin/termstead [TERMSTEAD_TT_SSH=127.0.0.1:23050] \
+ *   ASTRATERM_TESTENV=1 ASTRATERM_BIN=../bin/astraterm [ASTRATERM_TT_SSH=127.0.0.1:23050] \
  *     node --import ./src/features/termtransfer/tests/register.mjs --test src/features/termtransfer/tests/backend.int.test.mjs
  *
  * The server runs on a random loopback port with a temporary data dir; the SSH user/password default to test/test
- * (TERMSTEAD_TT_SSH_USER / TERMSTEAD_TT_SSH_PASSWORD) — the container's throwaway credentials.
+ * (ASTRATERM_TT_SSH_USER / ASTRATERM_TT_SSH_PASSWORD) — the container's throwaway credentials.
  */
 import assert from 'node:assert/strict'
 import { execFileSync, spawn } from 'node:child_process'
@@ -22,11 +22,11 @@ import { sendBinaryPaced, sendTextPaced, PromptWatcher, stripAnsi, timeoutClock 
 import { TrzszStage } from '../engine/trzsz.ts'
 import { ZmodemStage, zmodemReceive, zmodemSend } from '../engine/zmodem.ts'
 
-const ENABLED = process.env.TERMSTEAD_TESTENV === '1' && !!process.env.TERMSTEAD_BIN
-const SSH = process.env.TERMSTEAD_TT_SSH || '127.0.0.1:23050'
-const SSH_USER = process.env.TERMSTEAD_TT_SSH_USER || 'test'
-const SSH_PASSWORD = process.env.TERMSTEAD_TT_SSH_PASSWORD || 'test'
-const CONTAINER = process.env.TERMSTEAD_TT_CONTAINER || 'termstead-termtransfer-ssh'
+const ENABLED = process.env.ASTRATERM_TESTENV === '1' && !!process.env.ASTRATERM_BIN
+const SSH = process.env.ASTRATERM_TT_SSH || '127.0.0.1:23050'
+const SSH_USER = process.env.ASTRATERM_TT_SSH_USER || 'test'
+const SSH_PASSWORD = process.env.ASTRATERM_TT_SSH_PASSWORD || 'test'
+const CONTAINER = process.env.ASTRATERM_TT_CONTAINER || 'astraterm-termtransfer-ssh'
 const sha = (b) => crypto.createHash('sha256').update(b).digest('hex')
 const enc = (s) => new TextEncoder().encode(s)
 const sh = (cmd) => execFileSync('docker', ['exec', '-u', SSH_USER, CONTAINER, 'sh', '-c', cmd]).toString()
@@ -56,8 +56,8 @@ function until(what, pred, ms = 30_000) {
 
 class Server {
   async start() {
-    this.dir = fs.mkdtempSync(path.join(os.tmpdir(), 'termstead-tt-e2e-'))
-    this.proc = spawn(process.env.TERMSTEAD_BIN, ['serve', '--listen', '127.0.0.1:0', '--data-dir', this.dir, '--no-open', '--guacd', 'off'], { stdio: ['ignore', 'pipe', 'pipe'] })
+    this.dir = fs.mkdtempSync(path.join(os.tmpdir(), 'astraterm-tt-e2e-'))
+    this.proc = spawn(process.env.ASTRATERM_BIN, ['serve', '--listen', '127.0.0.1:0', '--data-dir', this.dir, '--no-open', '--guacd', 'off'], { stdio: ['ignore', 'pipe', 'pipe'] })
     let out = ''
     this.base = await new Promise((resolve, reject) => {
       const t = setTimeout(() => reject(new Error('server did not start')), 30_000)
@@ -77,7 +77,7 @@ class Server {
     return this
   }
   async req(method, p, body) {
-    const h = { Accept: 'application/json', 'X-Termstead': '1' }
+    const h = { Accept: 'application/json', 'X-AstraTerm': '1' }
     if (this.cookie) h.Cookie = this.cookie
     if (body !== undefined) h['Content-Type'] = 'application/json'
     const init = { method, headers: h }
@@ -85,7 +85,7 @@ class Server {
     const res = await fetch(this.base + p, init)
     for (const sc of res.headers.getSetCookie?.() ?? []) {
       const [pair] = sc.split(';')
-      if (pair.startsWith('termstead_session=')) this.cookie = pair
+      if (pair.startsWith('astraterm_session=')) this.cookie = pair
     }
     const text = await res.text()
     if (!res.ok) throw new Error(`${method} ${p} → ${res.status} ${text.slice(0, 200)}`)
@@ -163,7 +163,7 @@ class View {
   }
 }
 
-describe('transfers through the Termstead backend', { skip: !ENABLED && 'set TERMSTEAD_TESTENV=1 and TERMSTEAD_BIN' }, () => {
+describe('transfers through the AstraTerm backend', { skip: !ENABLED && 'set ASTRATERM_TESTENV=1 and ASTRATERM_BIN' }, () => {
   let server
   let view
   let events

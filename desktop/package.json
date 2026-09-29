@@ -1,0 +1,12 @@
+{
+  "name": "astraterm-desktop",
+  "private": true,
+  "version": "0.0.0",
+  "description": "AstraTerm desktop app (Tauri): a native window around the AstraTerm server, which runs as a sidecar.",
+  "scripts": {
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.12.0"
+  }
+}

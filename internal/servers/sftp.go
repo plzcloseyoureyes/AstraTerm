@@ -213,7 +213,7 @@ func (h *sftpHandler) setstat(r *sftp.Request) error {
 			return err
 		}
 	}
-	// Ownership changes (UidGid) are ignored: files belong to the Termstead OS user.
+	// Ownership changes (UidGid) are ignored: files belong to the AstraTerm OS user.
 	return nil
 }
 

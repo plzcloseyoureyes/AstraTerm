@@ -1,4 +1,4 @@
-# Termstead remote monitor — Linux listening sockets (MON-3): ss, else netstat, plus /proc/net as the fallback.
+# AstraTerm remote monitor — Linux listening sockets (MON-3): ss, else netstat, plus /proc/net as the fallback.
 export LC_ALL=C
 if command -v ss >/dev/null 2>&1; then
 	echo @@SS

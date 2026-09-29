@@ -15,7 +15,7 @@ export const keysSettings = defineSettings('keys', {
   /** "Remember passphrase in the vault" default of generate / import. */
   rememberPassphrase: true,
 
-  /** Start the built-in agent when Termstead starts (desktop mode). */
+  /** Start the built-in agent when AstraTerm starts (desktop mode). */
   agentAutostart: false,
   /** Ask before a local program uses a key through the agent socket. */
   agentConfirm: false,

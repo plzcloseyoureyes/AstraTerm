@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/netguard"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // countingListener counts TCP connections to a loopback port.
@@ -36,7 +36,7 @@ func countingListener(t *testing.T) (*net.TCPAddr, *atomic.Int32) {
 	return ln.Addr().(*net.TCPAddr), &n
 }
 
-// TestGuardedRoutes: every connection a route opens from the Termstead host — direct dials, the proxy server, TCP and
+// TestGuardedRoutes: every connection a route opens from the AstraTerm host — direct dials, the proxy server, TCP and
 // UDP port knocks — is vetted by the route's guard (SEC-7); a nil guard is unrestricted.
 func TestGuardedRoutes(t *testing.T) {
 	addr, tcpHits := countingListener(t)

@@ -25,7 +25,7 @@ import {
   stopTunnel,
   updateTunnel,
 } from './api'
-import { browserOnTermsteadHost, browserReachableHost, browserUrl, copyTarget, dockerHost, hostPort, isActive, kindOf, webEndpoint, webScheme } from './model'
+import { browserOnAstraTermHost, browserReachableHost, browserUrl, copyTarget, dockerHost, hostPort, isActive, kindOf, webEndpoint, webScheme } from './model'
 import { tunnelsSettings } from './settings'
 import type { RemotePort, SessionForward, TunnelEx } from './types'
 
@@ -173,14 +173,14 @@ function webProxyAvailable(): boolean {
 }
 
 /**
- * Whether web services should open through the Termstead web proxy: it is registered, and preferred — or needed
- * because this browser does not run on the Termstead host (server mode, remote access), where tunnel listeners live.
+ * Whether web services should open through the AstraTerm web proxy: it is registered, and preferred — or needed
+ * because this browser does not run on the AstraTerm host (server mode, remote access), where tunnel listeners live.
  */
 function preferWebProxy(): boolean {
   if (!webProxyAvailable()) return false
   const pref = tunnelsSettings.get().openWith
   const server = useAuthStore.getState().state?.mode === 'server'
-  return pref === 'proxy' || (pref === 'auto' && (server || !browserOnTermsteadHost()))
+  return pref === 'proxy' || (pref === 'auto' && (server || !browserOnAstraTermHost()))
 }
 
 function openViaProxy(t: TunnelEx): void {
@@ -191,18 +191,18 @@ function openViaProxy(t: TunnelEx): void {
   )
 }
 
-/** Explain that a listener on the Termstead host is loopback-only and this browser runs elsewhere. */
+/** Explain that a listener on the AstraTerm host is loopback-only and this browser runs elsewhere. */
 function unreachableToast(addr: string): void {
   toast.info('This browser cannot reach the tunnel', {
-    description: `It listens on ${addr} of the Termstead host, which is another machine. ${
-      webProxyAvailable() ? 'Open it through the Termstead web proxy, or listen' : 'Listen'
+    description: `It listens on ${addr} of the AstraTerm host, which is another machine. ${
+      webProxyAvailable() ? 'Open it through the AstraTerm web proxy, or listen' : 'Listen'
     } on an address this browser can reach.`,
     duration: 10_000,
   })
 }
 
 /**
- * Open a tunnel's web service: through the Termstead web proxy when preferred / needed and available, else directly at
+ * Open a tunnel's web service: through the AstraTerm web proxy when preferred / needed and available, else directly at
  * the tunnel's address as this browser reaches it (starting the tunnel first when needed).
  */
 export async function openTunnelInBrowser(t: TunnelEx): Promise<void> {
@@ -245,7 +245,7 @@ export async function exportTunnelsAction(): Promise<void> {
     const blob = new Blob([JSON.stringify(file, null, 2)], { type: 'application/json' })
     const a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
-    a.download = `termstead-tunnels-${new Date().toISOString().slice(0, 10)}.json`
+    a.download = `astraterm-tunnels-${new Date().toISOString().slice(0, 10)}.json`
     document.body.appendChild(a)
     a.click()
     a.remove()
@@ -278,13 +278,13 @@ export async function forwardRemotePort(
   target: { sessionId?: string; connectionId?: string },
   opts: { open?: boolean } = {},
 ): Promise<string | null> {
-  // The forward listens on the Termstead host (loopback). A browser elsewhere opens web services through the web
+  // The forward listens on the AstraTerm host (loopback). A browser elsewhere opens web services through the web
   // proxy instead (no forward needed), or cannot open them at all.
   if (opts.open && preferWebProxy()) {
     openRemotePortViaProxy(p, target)
     return null
   }
-  const openHere = !!opts.open && browserOnTermsteadHost()
+  const openHere = !!opts.open && browserOnAstraTermHost()
   // Keep the popup inside the user gesture.
   const win = openHere ? window.open('', '_blank') : null
   let local: string | null = null
@@ -337,7 +337,7 @@ export async function forwardRemotePort(
   const hp = /^(.*):(\d+)$/.exec(local)
   const host = hp ? browserReachableHost(hp[1].replace(/^\[|\]$/g, '')) : null
   if (opts.open && !host) {
-    toast.success(`Port ${p.port} forwarded`, { description: `Listening on ${local} of the Termstead host — this browser runs on another machine and cannot open it.` })
+    toast.success(`Port ${p.port} forwarded`, { description: `Listening on ${local} of the AstraTerm host — this browser runs on another machine and cannot open it.` })
   } else {
     toast.success(`Port ${p.port} forwarded`, { description: `Reachable at ${local}` })
   }
@@ -352,7 +352,7 @@ export async function forwardRemotePort(
   return local
 }
 
-/** Open a remote port's web service through the Termstead web proxy (it dials through the session / connection). */
+/** Open a remote port's web service through the AstraTerm web proxy (it dials through the session / connection). */
 export function openRemotePortViaProxy(p: RemotePort, target: { sessionId?: string; connectionId?: string }): void {
   void runCommand(
     'webproxy.open',

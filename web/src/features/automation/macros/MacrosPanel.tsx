@@ -135,9 +135,10 @@ export default function MacrosPanel() {
   const list = (data ?? []).filter((m) => !needle || m.name.toLowerCase().includes(needle))
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="flex shrink-0 items-center gap-1 border-b px-2 py-1.5">
+      <div className="flex h-9 shrink-0 items-center gap-1 px-1.5">
         <Input
           inputSize="sm"
+          variant="filled"
           leading={<Search />}
           trailing={q ? <IconButton icon={X} label="Clear search" size="xs" onClick={() => setQ('')} /> : undefined}
           placeholder="Search macros…"

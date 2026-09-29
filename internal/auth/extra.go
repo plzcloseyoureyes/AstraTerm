@@ -16,9 +16,9 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 // extraRoutes registers the endpoints added by the security module (SPEC §9 "security").
@@ -443,7 +443,7 @@ func (s *Service) handleAuditExport(c *echo.Context) error {
 		return err
 	}
 	w.Flush()
-	name := "termstead-audit-" + time.Now().UTC().Format("20060102-150405") + ".csv"
+	name := "astraterm-audit-" + time.Now().UTC().Format("20060102-150405") + ".csv"
 	h := c.Response().Header()
 	h.Set(echo.HeaderContentDisposition, `attachment; filename="`+name+`"`)
 	h.Set(echo.HeaderCacheControl, "no-store")

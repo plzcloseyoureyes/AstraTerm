@@ -17,7 +17,7 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // syncBuffer collects log output from concurrent handlers.
@@ -130,6 +130,7 @@ func TestErrorMapping(t *testing.T) {
 	if w := serve(r, "GET", "/api/err", nil, ""); w.Header().Get("Retry-After") != "7" {
 		t.Fatal("Retry-After missing")
 	}
+	//lint:ignore SA1032 both directions on purpose
 	if !errors.Is(model.ErrLocked, ErrLocked) || !errors.Is(ErrLocked, model.ErrLocked) {
 		t.Fatal("model/httpx locked errors should match both ways")
 	}
@@ -364,24 +365,24 @@ func TestRouterPolicies(t *testing.T) {
 }
 
 func TestHostGuardAllowedHosts(t *testing.T) {
-	r, _ := newTestRouter(Options{LoopbackOnly: true, AllowedHosts: []string{"termstead.example.com", "10.1.2.3"}})
+	r, _ := newTestRouter(Options{LoopbackOnly: true, AllowedHosts: []string{"astraterm.example.com", "10.1.2.3"}})
 	r.Public().GET("/pub", func(c *echo.Context) error { return OK(c) })
 	for host, want := range map[string]int{
-		"termstead.example.com":      200,
-		"TERMSTEAD.example.com:443":  200, // case and port do not matter
-		"termstead.example.com.":     200, // fully qualified form
+		"astraterm.example.com":      200,
+		"ASTRATERM.example.com:443":  200, // case and port do not matter
+		"astraterm.example.com.":     200, // fully qualified form
 		"10.1.2.3:8443":              200,
 		"localhost:7822":             200, // loopback names still pass
 		"example.com":                421,
-		"evil.termstead.example.com": 421, // exact names only, no suffix match
-		"termstead.example.com.evil": 421,
+		"evil.astraterm.example.com": 421, // exact names only, no suffix match
+		"astraterm.example.com.evil": 421,
 	} {
 		if got := serve(r, "GET", "/api/pub", map[string]string{"Host": host}, "").Code; got != want {
 			t.Fatalf("host %q: got %d want %d", host, got, want)
 		}
 	}
 	// The option only extends the loopback guard; without LoopbackOnly any Host passes as before.
-	open, _ := newTestRouter(Options{AllowedHosts: []string{"termstead.example.com"}})
+	open, _ := newTestRouter(Options{AllowedHosts: []string{"astraterm.example.com"}})
 	open.Public().GET("/pub", func(c *echo.Context) error { return OK(c) })
 	if got := serve(open, "GET", "/api/pub", map[string]string{"Host": "other.example"}, "").Code; got != 200 {
 		t.Fatalf("network listener: %d", got)
@@ -392,7 +393,7 @@ func TestSecurityHeaders(t *testing.T) {
 	for _, tls := range []bool{false, true} {
 		r, _ := newTestRouter(Options{TLS: tls})
 		r.Public().GET("/x", func(c *echo.Context) error { return OK(c) })
-		w := serve(r, "GET", "/api/x", map[string]string{"Host": "termstead.test:7822"}, "")
+		w := serve(r, "GET", "/api/x", map[string]string{"Host": "astraterm.test:7822"}, "")
 		h := w.Header()
 		want := map[string]string{
 			"X-Content-Type-Options":       "nosniff",
@@ -403,7 +404,7 @@ func TestSecurityHeaders(t *testing.T) {
 			"Permissions-Policy":           "camera=(), geolocation=(), payment=(), usb=()",
 			"Content-Security-Policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; " +
 				"img-src 'self' data: blob:; font-src 'self' data:; media-src 'self' data: blob:; " +
-				"connect-src 'self' ws://termstead.test:7822 wss://termstead.test:7822; worker-src 'self' blob:; frame-src 'self' blob:; " +
+				"connect-src 'self' ws://astraterm.test:7822 wss://astraterm.test:7822; worker-src 'self' blob:; frame-src 'self' blob:; " +
 				"object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'",
 		}
 		for k, v := range want {

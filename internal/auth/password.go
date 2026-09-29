@@ -108,7 +108,7 @@ func VerifyPassword(encoded, password string) bool {
 // burnPasswordCheck spends the same work as a real verification (used for unknown users to avoid a timing oracle).
 func burnPasswordCheck(password string) {
 	dummyOnce.Do(func() {
-		dummyHash, _ = HashPassword("termstead-dummy-password")
+		dummyHash, _ = HashPassword("astraterm-dummy-password")
 	})
 	VerifyPassword(dummyHash, password)
 }

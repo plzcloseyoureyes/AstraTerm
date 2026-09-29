@@ -11,7 +11,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // maxImportItems caps how many connections/folders a single import may contain (guards pathological inputs).
@@ -190,7 +190,7 @@ func cleanSecrets(m map[string]string) map[string]string {
 	return out
 }
 
-// cleanColor keeps a short CSS colour value ("#rrggbb" from importers, anything ≤ 64 runes from a Termstead export).
+// cleanColor keeps a short CSS colour value ("#rrggbb" from importers, anything ≤ 64 runes from a AstraTerm export).
 func cleanColor(s string) string {
 	s = strings.TrimSpace(stripControl(s))
 	if utf8.RuneCountInString(s) > maxColorRunes {
@@ -268,18 +268,6 @@ func cleanName(name, alt string) string {
 	return truncate(name, maxNameRunes)
 }
 
-// authMethodFor derives a sensible authMethod from what the source provided.
-func authMethodFor(hasKey, hasPassword bool) string {
-	switch {
-	case hasKey:
-		return model.AuthKey
-	case hasPassword:
-		return model.AuthPassword
-	default:
-		return model.AuthAuto
-	}
-}
-
 // atoiSafe parses an int, returning def on failure.
 func atoiSafe(s string, def int) int {
 	s = strings.TrimSpace(s)
@@ -349,7 +337,7 @@ func isSSHFamily(p model.Protocol) bool {
 	return p == model.ProtoSSH || p == model.ProtoSFTP || p == model.ProtoMosh
 }
 
-// runsLocalCommand reports whether opening c executes a program on the Termstead host (ProxyCommand or a local shell).
+// runsLocalCommand reports whether opening c executes a program on the AstraTerm host (ProxyCommand or a local shell).
 func runsLocalCommand(c *model.Connection) bool {
 	if c.Protocol == model.ProtoLocal || c.Protocol == model.ProtoKube {
 		return true

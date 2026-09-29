@@ -10,7 +10,7 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 type handlers struct{ s *Service }
@@ -50,7 +50,7 @@ func apiError(err error) error {
 	return httpx.NewError(http.StatusBadGateway, "monitor_failed", clip(strings.TrimSpace(err.Error()), 300))
 }
 
-// GET /api/monitor/local — System information of the Termstead host (MON-6).
+// GET /api/monitor/local — System information of the AstraTerm host (MON-6).
 func (h *handlers) systemInfo(c *echo.Context) error {
 	user := httpx.UserFrom(c)
 	if !h.s.allowLocal(user) {
@@ -299,38 +299,6 @@ func (h *handlers) tail(c *echo.Context) error {
 	return nil
 }
 
-// GET /api/system/caffeine → CaffeineStatus
-func (h *handlers) caffeineStatus(c *echo.Context) error {
-	st := h.s.caffeine.status()
-	st.Allowed = h.s.allowLocal(httpx.UserFrom(c))
-	return c.JSON(http.StatusOK, st)
-}
-
-// POST /api/system/caffeine {enabled, durationMin?} → CaffeineStatus (desktop mode or administrators)
-func (h *handlers) caffeineSet(c *echo.Context) error {
-	user := httpx.UserFrom(c)
-	if !h.s.allowLocal(user) {
-		return httpx.Forbidden("Caffeine is available in desktop mode or to administrators")
-	}
-	var req struct {
-		Enabled     bool `json:"enabled"`
-		DurationMin int  `json:"durationMin"`
-	}
-	if err := httpx.Bind(c, &req); err != nil {
-		return err
-	}
-	if req.DurationMin < 0 || req.DurationMin > 7*24*60 {
-		return httpx.BadRequest("durationMin must be between 0 (no limit) and 10080")
-	}
-	st, err := h.s.caffeine.set(req.Enabled, time.Duration(req.DurationMin)*time.Minute)
-	h.s.audit(c.Request().Context(), "system.caffeine", "", map[string]any{"enabled": req.Enabled, "durationMin": req.DurationMin, "ok": err == nil})
-	if err != nil {
-		return httpx.NewError(http.StatusUnprocessableEntity, "caffeine_failed", err.Error())
-	}
-	st.Allowed = true
-	return c.JSON(http.StatusOK, st)
-}
-
 func auditName(t *target, action string) string {
 	if t.local {
 		return "monitor.local." + action
@@ -345,18 +313,4 @@ func (s *Service) forgetProcesses(id string) {
 		ps.procs = nil
 	}
 	s.mu.Unlock()
-}
-
-// caffeineEvent is broadcast on every Caffeine change ({type:'caffeine', status}).
-type caffeineEvent struct {
-	Type   string         `json:"type"`
-	Status CaffeineStatus `json:"status"`
-}
-
-func (s *Service) broadcastCaffeine(st CaffeineStatus) {
-	if s.d == nil || s.d.Events == nil {
-		return
-	}
-	st.Allowed = false // per viewer; clients keep their own value
-	s.d.Events.Broadcast(caffeineEvent{Type: "caffeine", Status: st})
 }

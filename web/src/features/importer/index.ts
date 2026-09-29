@@ -4,7 +4,7 @@
  * entries, and the Settings → Import & Export section (SSH-config live sync, admin backup/restore).
  *
  * Formats: MobaXterm, PuTTY/KiTTY, OpenSSH ssh_config & known_hosts, Termius, mRemoteNG, Remmina, FileZilla, WinSCP,
- * SecureCRT, generic CSV and Termstead JSON. No passwords are ever read from third-party files.
+ * SecureCRT, generic CSV and AstraTerm JSON. No passwords are ever read from third-party files.
  */
 import { lazy } from 'react'
 import { Download, FolderInput } from 'lucide-react'

@@ -15,7 +15,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/termstead/termstead/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
 )
 
 // tlsConfig builds the server TLS configuration from --tls-cert/--tls-key or a generated self-signed certificate.
@@ -59,7 +59,7 @@ func selfSignedCert(dir, listen string) (tls.Certificate, error) {
 	}
 	tmpl := &x509.Certificate{
 		SerialNumber:          serial,
-		Subject:               pkix.Name{CommonName: "Termstead self-signed", Organization: []string{"Termstead"}},
+		Subject:               pkix.Name{CommonName: "AstraTerm self-signed", Organization: []string{"AstraTerm"}},
 		NotBefore:             time.Now().Add(-time.Hour),
 		NotAfter:              time.Now().Add(397 * 24 * time.Hour),
 		KeyUsage:              x509.KeyUsageDigitalSignature,

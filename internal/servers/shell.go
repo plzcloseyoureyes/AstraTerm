@@ -16,7 +16,7 @@ import (
 	"github.com/charmbracelet/x/xpty"
 )
 
-// shellSpec describes a shell started for an SSH or Telnet client (as the Termstead OS user).
+// shellSpec describes a shell started for an SSH or Telnet client (as the AstraTerm OS user).
 type shellSpec struct {
 	command string   // configured shell program ("" = default)
 	dir     string   // working directory ("" = home)
@@ -96,7 +96,7 @@ func buildShellCmd(spec shellSpec) (*exec.Cmd, error) {
 	return cmd, nil
 }
 
-// shellEnv inherits Termstead's environment (without TERMSTEAD_* variables) and applies the terminal settings.
+// shellEnv inherits AstraTerm's environment (without ASTRATERM_* variables) and applies the terminal settings.
 func shellEnv(spec shellSpec) []string {
 	vars := map[string]string{}
 	var order []string
@@ -115,7 +115,7 @@ func shellEnv(spec shellSpec) []string {
 		vars[key] = kv
 	}
 	for _, kv := range os.Environ() {
-		if !strings.HasPrefix(kv, "TERMSTEAD_") {
+		if !strings.HasPrefix(kv, "ASTRATERM_") {
 			set(kv)
 		}
 	}

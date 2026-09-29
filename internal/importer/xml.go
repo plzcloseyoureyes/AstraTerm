@@ -10,7 +10,7 @@ import (
 
 	"golang.org/x/text/encoding/htmlindex"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // XML-based importers: mRemoteNG (confCons.xml), FileZilla (sitemanager.xml) and SecureCRT (VanDyke export).
@@ -205,7 +205,7 @@ func mrngProtocol(s string) model.Protocol {
 	case "raw":
 		return model.ProtoRaw
 	}
-	return "" // HTTP/HTTPS/ICA/IntApp/PowerShell have no Termstead connection type
+	return "" // HTTP/HTTPS/ICA/IntApp/PowerShell have no AstraTerm connection type
 }
 
 // ---- FileZilla ----------------------------------------------------------------------------------------------------
@@ -277,7 +277,7 @@ func fzConn(b *builder, folderID string, s fzServer) {
 	proto, tls, ok := fzProtocol(s.Protocol)
 	if !ok {
 		b.p.unsupported++
-		b.warn("Skipped %q: FileZilla protocol %s has no Termstead equivalent", cleanName(name, host), strings.TrimSpace(s.Protocol))
+		b.warn("Skipped %q: FileZilla protocol %s has no AstraTerm equivalent", cleanName(name, host), strings.TrimSpace(s.Protocol))
 		return
 	}
 	c := model.Connection{
@@ -316,7 +316,7 @@ func fzConn(b *builder, folderID string, s fzServer) {
 }
 
 // fzProtocol maps FileZilla's ServerProtocol: 0 FTP (TLS if available) · 1 SFTP · 3 FTPS implicit · 4 FTPES explicit
-// · 6 plain FTP · 7 S3. HTTP(S), WebDAV and the cloud-storage protocols have no Termstead connection type.
+// · 6 plain FTP · 7 S3. HTTP(S), WebDAV and the cloud-storage protocols have no AstraTerm connection type.
 func fzProtocol(code string) (model.Protocol, string, bool) {
 	switch strings.TrimSpace(code) {
 	case "0", "":

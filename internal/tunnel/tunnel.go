@@ -1,4 +1,4 @@
-// Package tunnel is Termstead's SSH port-forward manager (MobaSSHTunnel, RESEARCH TUN-1…TUN-9):
+// Package tunnel is AstraTerm's SSH port-forward manager (MobaSSHTunnel, RESEARCH TUN-1…TUN-9):
 //
 //   - saved tunnels (core `tunnels` table + module table tunnel_meta): local (-L), remote (-R), dynamic SOCKS/HTTP
 //     proxies (-D) and reverse dynamic proxies (-R SOCKS), each optionally on Unix sockets;
@@ -14,8 +14,8 @@
 package tunnel
 
 import (
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
 )
 
 // Mount wires the tunnel manager: REST routes, the session hooks for session-integrated forwards, the

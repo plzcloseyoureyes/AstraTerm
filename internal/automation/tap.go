@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Output taps: the automation features that read session output (expect in scripts, logon actions, triggers, batch

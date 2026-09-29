@@ -21,10 +21,10 @@ import (
 
 // notBuiltPage is served when the embedded frontend has no index.html (backend built without `make web`).
 const notBuiltPage = `<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>Termstead — frontend not built</title>
+<html lang="en"><head><meta charset="utf-8"><title>AstraTerm — frontend not built</title>
 <style>body{font:15px/1.5 system-ui,sans-serif;background:#0f1115;color:#e6e6e6;display:grid;place-items:center;height:100vh;margin:0}
 main{max-width:34rem;padding:2rem}code{background:#1d2129;padding:.1rem .35rem;border-radius:4px}</style></head>
-<body><main><h1>Termstead backend is running</h1>
+<body><main><h1>AstraTerm backend is running</h1>
 <p>The web UI has not been built into this binary. Run <code>make web</code> (or <code>make build</code>) and restart,
 or start the Vite dev server with <code>make dev-web</code> and open <code>http://localhost:5173</code>.</p>
 <p>The REST API is available under <code>/api</code>.</p></main></body></html>`

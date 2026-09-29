@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // ---- folders ------------------------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ func scanFolder(sc scanner) (*model.Folder, error) {
 		return nil, mapErr(err)
 	}
 	f.ParentID, f.Shared = parent.String, shared != 0
-	f.CreatedAt, f.UpdatedAt = fromMs(created), fromMs(updated)
+	f.CreatedAt, f.UpdatedAt = FromMs(created), FromMs(updated)
 	return &f, nil
 }
 
@@ -72,7 +72,7 @@ func (r *Folders) Create(ctx context.Context, f *model.Folder) error {
 	now := Now()
 	f.CreatedAt, f.UpdatedAt = now, now
 	_, err := r.db.ExecContext(ctx, `INSERT INTO folders (`+folderCols+`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		f.ID, f.OwnerID, nullStr(f.ParentID), f.Name, f.Color, f.Icon, f.SortOrder, b2i(f.Shared), ms(now), ms(now))
+		f.ID, f.OwnerID, nullStr(f.ParentID), f.Name, f.Color, f.Icon, f.SortOrder, B2I(f.Shared), ms(now), ms(now))
 	return mapErr(err)
 }
 
@@ -81,7 +81,7 @@ func (r *Folders) Update(ctx context.Context, f *model.Folder) error {
 	f.UpdatedAt = Now()
 	return expectOne(r.db.ExecContext(ctx, `UPDATE folders SET parent_id = ?, name = ?, color = ?, icon = ?, sort_order = ?,
 		shared = ?, updated_at = ? WHERE id = ?`,
-		nullStr(f.ParentID), f.Name, f.Color, f.Icon, f.SortOrder, b2i(f.Shared), ms(f.UpdatedAt), f.ID))
+		nullStr(f.ParentID), f.Name, f.Color, f.Icon, f.SortOrder, B2I(f.Shared), ms(f.UpdatedAt), f.ID))
 }
 
 const subtreeCTE = `WITH RECURSIVE sub(id) AS (SELECT ? UNION SELECT f.id FROM folders f JOIN sub ON f.parent_id = sub.id)`
@@ -182,7 +182,7 @@ func scanConnection(sc scanner) (*model.Connection, error) {
 		c.SecretsEnc = nil
 	}
 	c.Favorite, c.Shared = favorite != 0, shared != 0
-	c.LastUsedAt, c.CreatedAt, c.UpdatedAt = fromNullMs(lastUsed), fromMs(created), fromMs(updated)
+	c.LastUsedAt, c.CreatedAt, c.UpdatedAt = FromNullMs(lastUsed), FromMs(created), FromMs(updated)
 	c.Normalize()
 	return &c, nil
 }
@@ -232,7 +232,7 @@ func connArgs(c *model.Connection) ([]any, error) {
 	}
 	return []any{c.ID, c.OwnerID, nullStr(c.FolderID), c.Name, string(c.Protocol), c.Host, c.Port, c.Username,
 		nullStr(c.IdentityID), nullStr(c.KeyID), c.AuthMethod, c.Color, c.Icon, stringsJSON(c.Tags), c.Notes,
-		b2i(c.Favorite), c.SortOrder, opts, enc, stringsJSON(c.SecretKeys), b2i(c.Shared), nullMs(c.LastUsedAt),
+		B2I(c.Favorite), c.SortOrder, opts, enc, stringsJSON(c.SecretKeys), B2I(c.Shared), NullMs(c.LastUsedAt),
 		ms(c.CreatedAt), ms(c.UpdatedAt)}, nil
 }
 
@@ -268,8 +268,8 @@ func (r *Connections) Update(ctx context.Context, c *model.Connection) error {
 		username = ?, identity_id = ?, key_id = ?, auth_method = ?, color = ?, icon = ?, tags = ?, notes = ?, favorite = ?,
 		sort_order = ?, options = ?, secrets_enc = ?, secret_keys = ?, shared = ?, updated_at = ? WHERE id = ?`,
 		nullStr(c.FolderID), c.Name, string(c.Protocol), c.Host, c.Port, c.Username, nullStr(c.IdentityID),
-		nullStr(c.KeyID), c.AuthMethod, c.Color, c.Icon, stringsJSON(c.Tags), c.Notes, b2i(c.Favorite), c.SortOrder,
-		opts, enc, stringsJSON(c.SecretKeys), b2i(c.Shared), ms(c.UpdatedAt), c.ID))
+		nullStr(c.KeyID), c.AuthMethod, c.Color, c.Icon, stringsJSON(c.Tags), c.Notes, B2I(c.Favorite), c.SortOrder,
+		opts, enc, stringsJSON(c.SecretKeys), B2I(c.Shared), ms(c.UpdatedAt), c.ID))
 }
 
 // TouchUsed records that a connection was opened.
@@ -342,7 +342,7 @@ func scanIdentity(sc scanner) (*model.Identity, error) {
 	if len(i.SecretsEnc) == 0 {
 		i.SecretsEnc = nil
 	}
-	i.CreatedAt, i.UpdatedAt = fromMs(created), fromMs(updated)
+	i.CreatedAt, i.UpdatedAt = FromMs(created), FromMs(updated)
 	return &i, nil
 }
 

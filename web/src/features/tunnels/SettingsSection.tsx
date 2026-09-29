@@ -25,7 +25,7 @@ export default function TunnelsSettingsSection() {
         </SettingRow>
         <SettingRow
           label="Open web services"
-          description="“Open in browser” for tunnels to HTTP(S) services. The Termstead web proxy also works when Termstead runs on another machine."
+          description="“Open in browser” for tunnels to HTTP(S) services. The AstraTerm web proxy also works when AstraTerm runs on another machine."
         >
           <SimpleSelect<TunnelsSettings['openWith']>
             aria-label="Open web services"
@@ -35,7 +35,7 @@ export default function TunnelsSettingsSection() {
             onValueChange={(openWith) => tunnelsSettings.set({ openWith })}
             options={[
               { value: 'auto', label: 'Automatic (proxy in server mode)' },
-              { value: 'proxy', label: 'Through the Termstead web proxy' },
+              { value: 'proxy', label: 'Through the AstraTerm web proxy' },
               { value: 'direct', label: 'Directly at the tunnel address' },
             ]}
           />
@@ -44,7 +44,7 @@ export default function TunnelsSettingsSection() {
       <SettingsGroup title="Listening ports">
         <SettingRow
           label="Watch SSH sessions for new listening ports"
-          description="While an SSH session is connected, Termstead checks the server every few seconds and offers to forward ports that start listening (for example a dev server)."
+          description="While an SSH session is connected, AstraTerm checks the server every few seconds and offers to forward ports that start listening (for example a dev server)."
           htmlFor="tunnels-watch"
         >
           <Switch id="tunnels-watch" checked={s.watchPorts} onCheckedChange={(v) => tunnelsSettings.set({ watchPorts: v })} />

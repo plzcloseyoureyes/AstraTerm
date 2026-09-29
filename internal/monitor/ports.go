@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 // ListeningPort is a socket accepting connections (TCP LISTEN) or bound for datagrams (UDP) on a monitored host.

@@ -2,9 +2,9 @@
 /*
  * Flash audit (docs/UX.md "Loading states"): drives the built binary in headless Chrome and MEASURES flashing.
  *
- *   make build && node scripts/flash-audit.mjs [--latency 250] [--strict] [--keep] [--bin bin/termstead]
+ *   make build && node scripts/flash-audit.mjs [--latency 250] [--strict] [--keep] [--bin bin/astraterm]
  *
- * It starts a throwaway Termstead (temporary HOME/USERPROFILE and data dir, random loopback port, reached as
+ * It starts a throwaway AstraTerm (temporary HOME/USERPROFILE and data dir, random loopback port, reached as
  * http://flash-audit.localhost:<port>), a headless Chrome with its own temporary profile (downloads denied), and runs
  * the scenarios below while recording every painted frame (Page.startScreencast) plus a DOM probe:
  *
@@ -47,7 +47,7 @@ import { randomBytes } from 'node:crypto'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const { values: opt } = parseArgs({
   options: {
-    bin: { type: 'string', default: path.join(ROOT, 'bin', process.platform === 'win32' ? 'termstead.exe' : 'termstead') },
+    bin: { type: 'string', default: path.join(ROOT, 'bin', process.platform === 'win32' ? 'astraterm.exe' : 'astraterm') },
     latency: { type: 'string', default: '0' },
     strict: { type: 'boolean', default: false },
     keep: { type: 'boolean', default: false },
@@ -78,7 +78,7 @@ const CHROME =
 // throwaway server + browser
 // ---------------------------------------------------------------------------------------------------------------------
 
-const work = mkdtempSync(path.join(tmpdir(), 'termstead-flash-audit-'))
+const work = mkdtempSync(path.join(tmpdir(), 'astraterm-flash-audit-'))
 const home = path.join(work, 'home')
 mkdirSync(home, { recursive: true, mode: 0o700 })
 const cleanups = []
@@ -95,7 +95,7 @@ for (const sig of ['SIGINT', 'SIGTERM']) process.on(sig, () => process.exit(130)
 
 async function startServer() {
   if (!existsSync(opt.bin)) throw new Error(`${opt.bin} not found — run make build first`)
-  const env = { ...process.env, HOME: home, USERPROFILE: home, TERMSTEAD_NO_OPEN: '1' }
+  const env = { ...process.env, HOME: home, USERPROFILE: home, ASTRATERM_NO_OPEN: '1' }
   const args = ['serve', '--listen', '127.0.0.1:0', '--data-dir', path.join(work, 'data'), '--no-open', '--guacd', 'off']
   const proc = spawn(opt.bin, args, { env, stdio: ['ignore', 'pipe', 'ignore'] })
   cleanups.push(() => proc.kill('SIGTERM'))
@@ -631,7 +631,7 @@ async function runNavigation({ b, checks, waitFor, palette, record, recordNav })
     console.log('skip  SFTP side panel scenarios (no SSH target: start scripts/testenv or pass --ssh user:pass@host:port)')
     return
   }
-  const conn = await b.evaluate(`fetch('/api/connections',{method:'POST',headers:{'X-Termstead':'1','Content-Type':'application/json'},body:JSON.stringify(${JSON.stringify({
+  const conn = await b.evaluate(`fetch('/api/connections',{method:'POST',headers:{'X-AstraTerm':'1','Content-Type':'application/json'},body:JSON.stringify(${JSON.stringify({
     name: 'flash-audit-ssh',
     protocol: 'ssh',
     host: target.host,
@@ -716,7 +716,7 @@ const results = []
 const checks = []
 
 async function main() {
-  writeFileSync(path.join(home, 'notes.txt'), 'Termstead flash audit: a file for the editor caret check.\n')
+  writeFileSync(path.join(home, 'notes.txt'), 'AstraTerm flash audit: a file for the editor caret check.\n')
   const srv = await startServer()
   const b = await startChrome()
   const latency = Number(opt.latency) || 0
@@ -819,9 +819,9 @@ async function main() {
   await record('cold load (setup screen)', () => navigate(srv.base + '/'), 3000, true)
   console.log(`      (prefers-reduced-motion: ${(await b.evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches")) ? 'reduce' : 'no-preference'})`)
   const pw = randomBytes(18).toString('base64url')
-  const st = await b.evaluate(`fetch('/api/auth/setup',{method:'POST',headers:{'X-Termstead':'1','Content-Type':'application/json'},body:JSON.stringify({username:'admin',password:${JSON.stringify(pw)}})}).then(r=>r.status)`)
+  const st = await b.evaluate(`fetch('/api/auth/setup',{method:'POST',headers:{'X-AstraTerm':'1','Content-Type':'application/json'},body:JSON.stringify({username:'admin',password:${JSON.stringify(pw)}})}).then(r=>r.status)`)
   if (st !== 200 && st !== 201) throw new Error('setup failed: ' + st)
-  await b.evaluate(`fetch('/api/auth/logout',{method:'POST',headers:{'X-Termstead':'1'}}).then(r=>r.status)`)
+  await b.evaluate(`fetch('/api/auth/logout',{method:'POST',headers:{'X-AstraTerm':'1'}}).then(r=>r.status)`)
   await record('launch link → shell', () => navigate(`${srv.base}/?launch=${srv.launch}`), 3500, true)
   await waitFor(`!!document.querySelector('[data-workspace]')`)
   if (!opt['nav-only']) {
@@ -917,7 +917,7 @@ async function main() {
 
     // Sessions panel: tag chips and grouping by tag / protocol (a few tagged sessions first).
     for (const [name, tags, protocol] of [['web-1', ['prod', 'web'], 'ssh'], ['db-1', ['prod'], 'ssh'], ['lab-vnc', [], 'vnc']]) {
-      await b.evaluate(`fetch('/api/connections',{method:'POST',headers:{'X-Termstead':'1','Content-Type':'application/json'},body:JSON.stringify(${JSON.stringify({ name, protocol, host: '192.0.2.10', username: 'audit', tags })})}).then((r) => r.status)`)
+      await b.evaluate(`fetch('/api/connections',{method:'POST',headers:{'X-AstraTerm':'1','Content-Type':'application/json'},body:JSON.stringify(${JSON.stringify({ name, protocol, host: '192.0.2.10', username: 'audit', tags })})}).then((r) => r.status)`)
     }
     await reload()
     await sleep(2000)
@@ -976,7 +976,7 @@ async function main() {
 
     // Light theme: the very first painted frame of a reload must already be light (public/boot.js), not dark → light.
     const setTheme = (theme) =>
-      b.evaluate(`fetch('/api/settings',{method:'PUT',headers:{'X-Termstead':'1','Content-Type':'application/json'},body:JSON.stringify({appearance:{theme:'${theme}'}})}).then(r=>r.status)`)
+      b.evaluate(`fetch('/api/settings',{method:'PUT',headers:{'X-AstraTerm':'1','Content-Type':'application/json'},body:JSON.stringify({appearance:{theme:'${theme}'}})}).then(r=>r.status)`)
     await setTheme('light')
     await reload() // the app applies and caches the light theme
     await sleep(2000)
@@ -1023,7 +1023,7 @@ async function main() {
     // Settings → Highlighting & triggers → "Allow scripts for every user" (stored ON): after a reload the switch must
     // appear in its final state — never unchecked first and then flipped once the admin settings arrive.
     const putAdmin = (patch) =>
-      b.evaluate(`fetch('/api/admin/settings',{method:'PUT',headers:{'X-Termstead':'1','Content-Type':'application/json'},body:JSON.stringify(${JSON.stringify(patch)})}).then(r=>r.status)`)
+      b.evaluate(`fetch('/api/admin/settings',{method:'PUT',headers:{'X-AstraTerm':'1','Content-Type':'application/json'},body:JSON.stringify(${JSON.stringify(patch)})}).then(r=>r.status)`)
     await putAdmin({ automation: { userScripts: true } })
     await palette('Open Settings')
     if (!(await waitFor(`!!document.querySelector('nav[aria-label="Settings sections"]')`, 8000))) await evidence('settings-not-open')

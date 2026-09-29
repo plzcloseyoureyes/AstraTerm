@@ -437,7 +437,7 @@ useAuthStore.subscribe((s, prev) => {
     try {
       for (let i = localStorage.length - 1; i >= 0; i--) {
         const key = localStorage.key(i)
-        if (key?.startsWith('termstead:automation:compose-history:')) localStorage.removeItem(key)
+        if (key?.startsWith('astraterm:automation:compose-history:')) localStorage.removeItem(key)
       }
     } catch {
       /* storage unavailable */

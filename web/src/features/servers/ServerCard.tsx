@@ -112,7 +112,7 @@ export const ServerCard = memo(function ServerCard({ status, home }: { status: S
             <span className="tabular-nums">
               {info.transport} {port}
             </span>
-            {cfg.autoStart === true && <span title="Starts with Termstead">· autostart</span>}
+            {cfg.autoStart === true && <span title="Starts with AstraTerm">· autostart</span>}
           </div>
         </div>
         {/* The tooltip wraps a span: Radix tooltip triggers set data-state, which would clobber the switch's. */}

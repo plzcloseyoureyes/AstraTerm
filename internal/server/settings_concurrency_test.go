@@ -5,7 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
 // Concurrent merge patches of the same settings section (several tabs saving at once) must all survive: the

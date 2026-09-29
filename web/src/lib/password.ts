@@ -65,7 +65,7 @@ const COMMON = new Set([
   'changeme',
   'root',
   'toor',
-  'termstead',
+  'astraterm',
   'secret',
   'abc123',
   '111111',

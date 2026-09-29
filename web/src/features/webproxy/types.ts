@@ -80,7 +80,7 @@ export interface WebTabParams {
   url?: string
   kind?: 'web' | 'xpra'
   title?: string
-  /** How to recreate the proxy after it expired / Termstead restarted. */
+  /** How to recreate the proxy after it expired / AstraTerm restarted. */
   spec?: ProxySpec
   /** Xpra app to start again after it ended. */
   xpra?: XpraStartRequest
@@ -106,7 +106,7 @@ export interface OpenArgs extends ProxySpec {
 
 /** Messages exchanged with the in-page bridge (internal/webproxy/pages.go). */
 export interface BridgeMessage {
-  source: 'termstead-webproxy'
+  source: 'astraterm-webproxy'
   proxyId?: string
   type: 'hello' | 'location' | 'unload' | 'error'
   path?: string

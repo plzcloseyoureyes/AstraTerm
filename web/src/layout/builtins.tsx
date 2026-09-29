@@ -72,7 +72,7 @@ import { toggleFullscreen } from '@/lib/hooks'
 import { errorMessage } from '@/lib/utils'
 import { setVaultLocked, useAppVersion, useAuthStore, useIsAdmin, useVaultLocked } from '@/stores/auth'
 import { appearanceSettings, workspacesSettings } from '@/stores/settings'
-import { focusQuickConnect, lockApp, openPalette, requestVaultUnlock, setAboutOpen, setDrawerOpen, useUIStore } from '@/stores/ui'
+import { focusQuickConnect, lockApp, openPalette, requestVaultUnlock, setAboutOpen, setAppMenuOpen, setDrawerOpen, useUIStore } from '@/stores/ui'
 import {
   activateTabIndex,
   arrangeLayout,
@@ -148,11 +148,23 @@ registerCommand({
   keybinding: 'Control+Shift+q',
   global: true,
   run: () => {
-    if (!appearanceSettings.get().showRibbon || window.matchMedia('(max-width: 767px)').matches) openPalette('connections')
+    const a = appearanceSettings.get()
+    if (!(a.showMenuBar || a.showRibbon) || window.matchMedia('(max-width: 767px)').matches) openPalette('connections')
     else focusQuickConnect()
   },
 })
 
+registerCommand({
+  id: 'app.menu',
+  title: 'Open Menu',
+  category: 'View',
+  keybinding: 'F10',
+  run: () => {
+    // Title bar: the logo's app menu; classic menu bar: focus its first menu (arrow keys move between menus).
+    if (document.querySelector('[aria-label="AstraTerm menu"]')) setAppMenuOpen(true)
+    else document.querySelector<HTMLElement>('[role="menubar"] [role="menuitem"]')?.focus()
+  },
+})
 registerCommand({
   id: 'app.lock',
   title: 'Lock Screen',
@@ -174,7 +186,7 @@ registerCommand({
 })
 registerCommand({
   id: 'app.about',
-  title: 'About Termstead',
+  title: 'About AstraTerm',
   category: 'Help',
   icon: Info,
   run: () => setAboutOpen(true),
@@ -500,7 +512,7 @@ registerCommand({
 registerCommand({ id: 'view.toggleRibbon', title: 'Toggle Toolbar', category: 'View', run: toggle('showRibbon') })
 registerCommand({ id: 'view.toggleCompact', title: 'Toggle Compact Toolbar', category: 'View', run: toggle('ribbonCompact') })
 registerCommand({ id: 'view.toggleStatusBar', title: 'Toggle Status Bar', category: 'View', run: toggle('showStatusBar') })
-registerCommand({ id: 'view.toggleMenuBar', title: 'Toggle Menu Bar', category: 'View', run: toggle('showMenuBar') })
+registerCommand({ id: 'view.toggleMenuBar', title: 'Toggle Title Bar', category: 'View', run: toggle('showMenuBar') })
 registerCommand({
   id: 'view.toggleFullscreen',
   title: 'Toggle Full Screen',
@@ -643,7 +655,7 @@ registerMenu({
   items: () => {
     const a = appearanceSettings.get()
     return [
-      { label: 'Menu bar', checked: a.showMenuBar, command: 'view.toggleMenuBar' },
+      { label: 'Title bar', checked: a.showMenuBar, command: 'view.toggleMenuBar' },
       { label: 'Toolbar', checked: a.showRibbon, command: 'view.toggleRibbon' },
       { label: 'Compact toolbar', checked: a.ribbonCompact, command: 'view.toggleCompact' },
       { label: 'Sidebar', checked: a.showSidebar, command: 'view.toggleSidebar' },
@@ -729,7 +741,7 @@ registerMenu({
     { label: 'Keyboard shortcuts', icon: Keyboard, command: 'help.shortcuts' },
     { label: 'Home', command: 'app.home' },
     { type: 'separator' },
-    { label: 'About Termstead', icon: Info, command: 'app.about' },
+    { label: 'About AstraTerm', icon: Info, command: 'app.about' },
   ],
 })
 
@@ -774,7 +786,7 @@ registerRibbonButton({
       { label: 'Compact toolbar', checked: a.ribbonCompact, command: 'view.toggleCompact' },
       { label: 'Sidebar', checked: a.showSidebar, command: 'view.toggleSidebar' },
       { label: 'Status bar', checked: a.showStatusBar, command: 'view.toggleStatusBar' },
-      { label: 'Menu bar', checked: a.showMenuBar, command: 'view.toggleMenuBar' },
+      { label: 'Title bar', checked: a.showMenuBar, command: 'view.toggleMenuBar' },
       { type: 'separator' },
       { label: 'Full screen', checked: !!document.fullscreenElement, command: 'view.toggleFullscreen' },
       { label: 'Toggle light/dark', command: 'view.toggleTheme' },
@@ -812,7 +824,7 @@ registerRibbonButton({
     { label: 'Keyboard shortcuts', icon: Keyboard, command: 'help.shortcuts' },
     { label: 'Home', command: 'app.home' },
     { type: 'separator' },
-    { label: 'About Termstead', icon: Info, command: 'app.about' },
+    { label: 'About AstraTerm', icon: Info, command: 'app.about' },
   ],
 })
 
@@ -824,7 +836,7 @@ function EventsStatusItem() {
   const status = useEventsStore((s) => s.status)
   const failures = useEventsStore((s) => s.failures)
   if (status === 'open') {
-    return <StatusBarItem icon={Wifi} tone="muted" tooltip="Connected to the Termstead server (live updates)" aria-label="Server connected" />
+    return <StatusBarItem icon={Wifi} tone="muted" tooltip="Connected to the AstraTerm server (live updates)" aria-label="Server connected" />
   }
   const connecting = status === 'connecting'
   return (
@@ -897,8 +909,8 @@ function VaultStatusItem() {
 function VersionItem() {
   const version = useAppVersion()
   return (
-    <StatusBarItem tone="muted" tooltip="About Termstead" onClick={() => setAboutOpen(true)} aria-label="About Termstead">
-      {version ? `v${version.replace(/^v/, '')}` : 'Termstead'}
+    <StatusBarItem tone="muted" tooltip="About AstraTerm" onClick={() => setAboutOpen(true)} aria-label="About AstraTerm">
+      {version ? `v${version.replace(/^v/, '')}` : 'AstraTerm'}
     </StatusBarItem>
   )
 }

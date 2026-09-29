@@ -10,12 +10,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/netguard"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // SEC-7: the direct UDP transport of a restricted user is vetted by netguard.
@@ -29,7 +29,7 @@ var (
 	root  = &model.User{ID: "u-admin", Username: "admin", Role: model.RoleAdmin}
 )
 
-// udpService is a loopback-only datagram service of the Termstead host; it counts datagrams and answers "pong".
+// udpService is a loopback-only datagram service of the AstraTerm host; it counts datagrams and answers "pong".
 func udpService(t *testing.T) (port int, received *atomic.Int32) {
 	t.Helper()
 	pc, err := net.ListenPacket("udp", "127.0.0.1:0")

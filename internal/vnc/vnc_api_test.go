@@ -17,12 +17,12 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
-	"github.com/termstead/termstead/internal/vnc"
-	"github.com/termstead/termstead/internal/vnc/anontls/anontlstest"
-	"github.com/termstead/termstead/internal/vnc/vnctest"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/vnc"
+	"github.com/plzcloseyoureyes/astraterm/internal/vnc/anontls/anontlstest"
+	"github.com/plzcloseyoureyes/astraterm/internal/vnc/vnctest"
 )
 
 // ---- helpers ------------------------------------------------------------------------------------------------------
@@ -650,7 +650,7 @@ func TestVNCWeakTLSConfirmation(t *testing.T) {
 }
 
 // TestVNCClipboardPolicy: options.clipboardDirection and the administrator's global vncPolicy limit the clipboard;
-// local→remote is enforced by Termstead (ClientCutText never reaches the server).
+// local→remote is enforced by AstraTerm (ClientCutText never reaches the server).
 func TestVNCClipboardPolicy(t *testing.T) {
 	h := newHarness(t, config.ModeDesktop)
 	admin := h.user("admin", model.RoleAdmin)

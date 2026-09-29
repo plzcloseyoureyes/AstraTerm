@@ -11,8 +11,8 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
 )
 
 // Windows socket error numbers (syscall.EADDRINUSE & co. are synthetic values there).
@@ -32,7 +32,7 @@ func errnoIs(err error, unix syscall.Errno, windows uintptr) bool {
 
 func isAddrInUse(err error) bool { return errnoIs(err, syscall.EADDRINUSE, wsaEADDRINUSE) }
 
-// listenError turns a failure to open a listener on the Termstead host into a typed API error with a clear message.
+// listenError turns a failure to open a listener on the AstraTerm host into a typed API error with a clear message.
 func listenError(addr string, err error) error {
 	switch {
 	case isAddrInUse(err):

@@ -10,9 +10,9 @@ import (
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
 const adminPass = "correct horse battery"
@@ -71,7 +71,7 @@ func TestSetupLoginStateLogout(t *testing.T) {
 
 	// Cookie attributes.
 	resp, _ := env.Client().Do("POST", "/api/auth/login", map[string]any{"username": "admin", "password": adminPass, "remember": true})
-	ck := findCookie(resp, "termstead_session")
+	ck := findCookie(resp, "astraterm_session")
 	if ck == nil || !ck.HttpOnly || ck.SameSite != http.SameSiteStrictMode || ck.MaxAge != 30*24*3600 || ck.Path != "/" {
 		t.Fatalf("cookie: %+v", ck)
 	}

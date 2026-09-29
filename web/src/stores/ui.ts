@@ -18,9 +18,11 @@ interface UIStore {
   locked: boolean
   /** Focus request counter for the ribbon quick-connect field. */
   quickConnectFocus: number
+  /** The title bar's app menu (logo button). */
+  appMenuOpen: boolean
 }
 
-const LOCK_KEY = 'termstead:locked'
+const LOCK_KEY = 'astraterm:locked'
 
 export const useUIStore = create<UIStore>(() => ({
   paletteOpen: false,
@@ -32,6 +34,7 @@ export const useUIStore = create<UIStore>(() => ({
   // A reload must not bypass the lock screen.
   locked: storage.get<boolean>(LOCK_KEY, false) === true,
   quickConnectFocus: 0,
+  appMenuOpen: false,
 }))
 
 // --- command palette ---------------------------------------------------------------------------------------------------
@@ -91,4 +94,8 @@ export function setDrawerOpen(open: boolean): void {
 
 export function focusQuickConnect(): void {
   useUIStore.setState((s) => ({ quickConnectFocus: s.quickConnectFocus + 1 }))
+}
+
+export function setAppMenuOpen(open: boolean): void {
+  useUIStore.setState({ appMenuOpen: open })
 }

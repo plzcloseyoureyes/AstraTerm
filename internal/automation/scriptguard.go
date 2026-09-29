@@ -17,7 +17,7 @@ import (
 // Script resource guards. goja has no allocation hooks, so memory is bounded by a watchdog: while scripts run, the
 // Go heap is sampled every 50 ms and, when it grew by more than the script heap budget over the level it had before
 // the first script started, every running script is interrupted with errScriptMemory (the process cannot tell which
-// VM allocated; a runaway script is the only plausible cause of such growth). Budget: TERMSTEAD_SCRIPT_HEAP_MB
+// VM allocated; a runaway script is the only plausible cause of such growth). Budget: ASTRATERM_SCRIPT_HEAP_MB
 // (default 1 GiB; the baseline follows the heap down, so garbage collected later does not count). CPU time is bounded by the run timeout, call depth by SetMaxCallStackSize, output by caps.
 
 var errScriptMemory = errors.New("the script used too much memory and was stopped")
@@ -40,7 +40,7 @@ type heapWatch struct {
 var scriptHeap = &heapWatch{vms: map[*goja.Runtime]struct{}{}, budget: heapBudgetFromEnv(), sample: heapObjectBytes}
 
 func heapBudgetFromEnv() uint64 {
-	if v, err := strconv.Atoi(os.Getenv("TERMSTEAD_SCRIPT_HEAP_MB")); err == nil && v >= 32 {
+	if v, err := strconv.Atoi(os.Getenv("ASTRATERM_SCRIPT_HEAP_MB")); err == nil && v >= 32 {
 		return uint64(v) << 20
 	}
 	return defaultScriptHeapBudget

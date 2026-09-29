@@ -145,7 +145,7 @@ export async function downloadExport(req: ExportRequest): Promise<void> {
     },
     { as: 'response' },
   )
-  await saveResponse(res, `termstead-export.${req.format === 'ssh_config' ? 'txt' : req.format}`)
+  await saveResponse(res, `astraterm-export.${req.format === 'ssh_config' ? 'txt' : req.format}`)
 }
 
 /** Download an admin backup: a raw database snapshot, or an encrypted archive (optionally with the system key). */
@@ -155,13 +155,13 @@ export async function downloadBackup(opts: { includeSystemKey: boolean; passphra
     { includeSystemKey: opts.includeSystemKey, passphrase: opts.passphrase || undefined },
     { as: 'response' },
   )
-  await saveResponse(res, opts.passphrase ? 'termstead-backup.ntbak' : 'termstead-backup.db')
+  await saveResponse(res, opts.passphrase ? 'astraterm-backup.ntbak' : 'astraterm-backup.db')
 }
 
 export interface RestoreResult {
   staged: boolean
   stagedDbPath: string
-  /** The next start of Termstead applies the staged restore. */
+  /** The next start of AstraTerm applies the staged restore. */
   applyOnRestart: boolean
   instructions: string[]
   warnings?: string[]

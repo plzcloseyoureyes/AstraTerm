@@ -1,4 +1,4 @@
-// Package vault encrypts Termstead's secrets (SPEC §4 "Vault keys", RESEARCH SEC-1).
+// Package vault encrypts AstraTerm's secrets (SPEC §4 "Vault keys", RESEARCH SEC-1).
 //
 // Two keys exist:
 //   - the system key: 32 random bytes in <data>/system.key (0600), always available; it protects server-internal
@@ -26,8 +26,8 @@ import (
 	"golang.org/x/crypto/argon2"
 	"golang.org/x/crypto/chacha20poly1305"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 // Errors.
@@ -50,7 +50,7 @@ const (
 	metaDEKMaster  = "dek.master" // DEK sealed with the master-password KEK
 	metaKDF        = "kdf"        // JSON kdfParams
 	metaVerifier   = "verifier"   // constant sealed with the KEK (fast wrong-password detection)
-	verifierPlain  = "termstead-vault-verifier-v1"
+	verifierPlain  = "astraterm-vault-verifier-v1"
 	minPasswordLen = 8
 	maxPasswordLen = 1024
 )
@@ -220,7 +220,7 @@ func (v *Vault) SealJSON(m map[string]string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer wipe(b)
+	defer clear(b)
 	return v.Seal(b)
 }
 
@@ -235,7 +235,7 @@ func (v *Vault) OpenJSON(ciphertext []byte) (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer wipe(b)
+	defer clear(b)
 	if err := json.Unmarshal(b, &out); err != nil {
 		return nil, fmt.Errorf("%w: invalid secrets payload", ErrCorrupt)
 	}
@@ -265,7 +265,7 @@ func (v *Vault) Unlock(ctx context.Context, password string) error {
 	v.mu.Lock()
 	if v.dek != nil { // unlocked concurrently
 		v.mu.Unlock()
-		wipe(dek)
+		clear(dek)
 		return nil
 	}
 	v.dek = dek
@@ -286,7 +286,7 @@ func (v *Vault) Lock() error {
 		v.mu.Unlock()
 		return nil
 	}
-	wipe(v.dek)
+	clear(v.dek)
 	v.dek = nil
 	v.mu.Unlock()
 	v.notify(true)
@@ -302,7 +302,7 @@ func (v *Vault) VerifyMasterPassword(ctx context.Context, password string) error
 	if err != nil {
 		return err
 	}
-	wipe(dek)
+	clear(dek)
 	return nil
 }
 
@@ -334,7 +334,7 @@ func (v *Vault) SetMasterPassword(ctx context.Context, current, newPassword stri
 	}
 	dek := bytes.Clone(v.dek)
 	v.mu.RUnlock()
-	defer wipe(dek)
+	defer clear(dek)
 
 	if newPassword == "" {
 		wrapped, err := seal(v.sysKey, dek)
@@ -356,7 +356,7 @@ func (v *Vault) SetMasterPassword(ctx context.Context, current, newPassword stri
 	if err != nil {
 		return err
 	}
-	defer wipe(kek)
+	defer clear(kek)
 	wrapped, err := seal(kek, dek)
 	if err != nil {
 		return err
@@ -395,7 +395,7 @@ func (v *Vault) unwrapWithPassword(ctx context.Context, password string) ([]byte
 	if err != nil {
 		return nil, err
 	}
-	defer wipe(kek)
+	defer clear(kek)
 	if ver := all[metaVerifier]; ver != nil {
 		pt, err := open(kek, ver)
 		if err != nil || subtle.ConstantTimeCompare(pt, []byte(verifierPlain)) != 1 {
@@ -462,11 +462,4 @@ func randomBytes(n int) []byte {
 		panic("vault: crypto/rand failed: " + err.Error())
 	}
 	return b
-}
-
-// wipe zeroes b (best effort: Go may have copied the data elsewhere).
-func wipe(b []byte) {
-	for i := range b {
-		b[i] = 0
-	}
 }

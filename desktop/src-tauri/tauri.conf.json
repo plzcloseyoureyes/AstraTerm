@@ -1,0 +1,50 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "AstraTerm",
+  "version": "0.0.0",
+  "identifier": "com.astraterm.desktop",
+  "build": {
+    "frontendDist": "../loading"
+  },
+  "app": {
+    "windows": [],
+    "security": {
+      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:",
+      "capabilities": []
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["app", "dmg", "nsis", "msi", "deb", "rpm", "appimage"],
+    "externalBin": ["binaries/astraterm"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "DeveloperTool",
+    "shortDescription": "An organized remote-management workspace",
+    "longDescription": "SSH, SFTP, RDP, VNC, telnet, serial, tunnels and more in one organized, self-hosted workspace.",
+    "copyright": "AstraTerm contributors",
+    "publisher": "AstraTerm",
+    "homepage": "https://github.com/plzcloseyoureyes/astraterm",
+    "license": "Apache-2.0",
+    "licenseFile": "../../LICENSE",
+    "macOS": {
+      "minimumSystemVersion": "12.0",
+      "signingIdentity": "-"
+    },
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser"
+      }
+    },
+    "linux": {
+      "deb": {
+        "depends": []
+      }
+    }
+  }
+}

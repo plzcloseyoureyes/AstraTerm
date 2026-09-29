@@ -17,13 +17,13 @@ const (
 	ClassLinkLocal      = "link-local"      // 169.254.0.0/16, fe80::/10
 	ClassMulticast      = "multicast"       // link-local / interface-local multicast
 	ClassMetadata       = "metadata"        // cloud metadata / platform endpoints
-	ClassHost           = "host"            // an address of the Termstead host's interfaces
-	ClassTermstead      = "termstead"       // Termstead's own listener (never allowed)
+	ClassHost           = "host"            // an address of the AstraTerm host's interfaces
+	ClassAstraTerm      = "astraterm"       // AstraTerm's own listener (never allowed)
 	ClassDenyRule       = "deny-rule"       // administrator deny entry
 	ClassAllowRule      = "allow-rule"      // administrator allow entry (exception)
 	ClassPort           = "port"            // port not in allowedPorts
 	ClassEmbedded       = "embedded"        // NAT64 / 6to4 address embedding a refused IPv4 address
-	ClassLocalSocket    = "local-socket"    // Unix socket on the Termstead host
+	ClassLocalSocket    = "local-socket"    // Unix socket on the AstraTerm host
 	ClassInvalid        = "invalid"         // not an IP address
 )
 
@@ -53,10 +53,10 @@ type builtinRule struct {
 }
 
 var builtinDeny = []builtinRule{
-	{"127.0.0.0/8", ClassLoopback, "loopback (the Termstead host itself)"},
-	{"::1/128", ClassLoopback, "loopback (the Termstead host itself)"},
-	{"0.0.0.0/8", ClassUnspecified, `"this network" (0.0.0.0 reaches the Termstead host)`},
-	{"::/128", ClassUnspecified, "unspecified (:: reaches the Termstead host)"},
+	{"127.0.0.0/8", ClassLoopback, "loopback (the AstraTerm host itself)"},
+	{"::1/128", ClassLoopback, "loopback (the AstraTerm host itself)"},
+	{"0.0.0.0/8", ClassUnspecified, `"this network" (0.0.0.0 reaches the AstraTerm host)`},
+	{"::/128", ClassUnspecified, "unspecified (:: reaches the AstraTerm host)"},
 	{"::/96", ClassIPv4Compatible, "a deprecated IPv4-compatible IPv6 address (may reach IPv4 loopback)"},
 	{"169.254.0.0/16", ClassLinkLocal, "link-local (includes the 169.254.169.254 cloud metadata service)"},
 	{"fe80::/10", ClassLinkLocal, "link-local"},
@@ -106,7 +106,7 @@ func builtinReason(class string, pfx netip.Prefix) string {
 	case ClassPrivate:
 		return "a private-network address (private networks are disabled by the network policy)"
 	case ClassHost:
-		return "an address of the Termstead host itself"
+		return "an address of the AstraTerm host itself"
 	}
 	return class
 }
@@ -145,7 +145,7 @@ var defaultCompiled = func() *compiled {
 	return c
 }()
 
-// env is what a check knows about the Termstead host: its own listener and interface addresses.
+// env is what a check knows about the AstraTerm host: its own listener and interface addresses.
 type env struct {
 	listenPort     int
 	listenIPs      []netip.Addr // specific listen addresses (loopback for "localhost")
@@ -160,7 +160,7 @@ func (e *env) isHostAddr(a netip.Addr) bool {
 	return e.hostAddrs()[a]
 }
 
-// isSelf reports whether a:port reaches Termstead's own listener.
+// isSelf reports whether a:port reaches AstraTerm's own listener.
 func (e *env) isSelf(a netip.Addr, port int) bool {
 	if e == nil || e.listenPort <= 0 || port != e.listenPort {
 		return false
@@ -189,7 +189,7 @@ func (c *compiled) check(a netip.Addr, port int, e *env) Decision {
 	a = a.WithZone("").Unmap()
 	d.IP = a.String()
 	if e.isSelf(a, port) {
-		d.Class, d.Reason = ClassTermstead, "the address of Termstead's own listener"
+		d.Class, d.Reason = ClassAstraTerm, "the address of AstraTerm's own listener"
 		return d
 	}
 	if !portAllowed(c.ports, port) {
@@ -231,7 +231,7 @@ func (c *compiled) check(a netip.Addr, port int, e *env) Decision {
 }
 
 // match returns the most specific matching rule: longest prefix; then administrator over built-in; then deny over
-// allow. The Termstead host's own addresses count as built-in single-address denies.
+// allow. The AstraTerm host's own addresses count as built-in single-address denies.
 func (c *compiled) match(a netip.Addr, e *env) (rule, bool) {
 	var best rule
 	found := false

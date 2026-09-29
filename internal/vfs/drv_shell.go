@@ -361,7 +361,6 @@ type execStream struct {
 	stderr  *capWriter
 	waitErr chan error
 	once    sync.Once
-	closeFn func() error
 }
 
 func (s *shellFS) start(ctx context.Context, cmd string, wantStdin bool) (*execStream, error) {

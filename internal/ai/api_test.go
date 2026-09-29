@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/termstead/termstead/internal/ai"
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/ai"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
 const testKey = "sk-ant-test-0123456789abcdefghijklmnop"

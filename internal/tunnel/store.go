@@ -9,8 +9,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 // The core `tunnels` table (SPEC §5.1) holds the SPEC fields; everything else lives in the module table

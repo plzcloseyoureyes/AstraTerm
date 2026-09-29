@@ -2,7 +2,6 @@ package recording_test
 
 import (
 	"context"
-	"encoding/json"
 	"io"
 	"net/http"
 	"strings"
@@ -10,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/server/servertest"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // fakeShell is a deterministic terminal backend: it echoes typed characters (except while a password is asked),
@@ -193,13 +192,4 @@ func waitFor(t *testing.T, what string, cond func() bool) {
 		}
 		time.Sleep(25 * time.Millisecond)
 	}
-}
-
-func decode[T any](t *testing.T, data []byte) T {
-	t.Helper()
-	var v T
-	if err := json.Unmarshal(data, &v); err != nil {
-		t.Fatalf("decode %q: %v", data, err)
-	}
-	return v
 }

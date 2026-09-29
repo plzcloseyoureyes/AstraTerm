@@ -557,7 +557,7 @@ export default function TerminalSettingsSection() {
         <Toggle k="altArrowWordJump" label="Alt + ←/→ jumps words" description="Sends ESC b / ESC f like macOS Terminal." />
         <Toggle k="ctrlZoom" label="Ctrl / ⌘ + = − 0 zoom the terminal" description="Also Ctrl + mouse wheel. When off, these keys reach the browser / shell." />
         <Toggle k="altKeysToTerminal" label="Send Alt + key to the shell" description="App shortcuts using Alt are ignored while a terminal is focused (for Emacs / readline Meta keys)." />
-        <SettingRow label="Keys always sent to the shell" description="Shortcuts that should reach the terminal instead of Termstead, e.g. Alt+w or Control+Shift+x." stacked>
+        <SettingRow label="Keys always sent to the shell" description="Shortcuts that should reach the terminal instead of AstraTerm, e.g. Alt+w or Control+Shift+x." stacked>
           <TagInput
             aria-label="Keys always sent to the shell"
             className="w-full"
@@ -576,7 +576,7 @@ export default function TerminalSettingsSection() {
 
       <SettingsGroup
         title="Bell & notifications"
-        description={perm === 'denied' ? 'Desktop notifications are blocked by the browser; Termstead falls back to in-app notifications.' : undefined}
+        description={perm === 'denied' ? 'Desktop notifications are blocked by the browser; AstraTerm falls back to in-app notifications.' : undefined}
       >
         <SettingRow label="Bell">
           <div className="flex items-center gap-2">
@@ -603,7 +603,7 @@ export default function TerminalSettingsSection() {
         <NumberRow k="silenceSeconds" label="Silence threshold" unit="s" description="Used by “Notify after silence” (terminal context menu → Monitor)." />
         <Toggle k="osc9Notifications" label="Application notifications (OSC 9 / 777)" onEnable={askPermission} />
         {perm === 'default' && (
-          <SettingRow label="Desktop notifications" description="Allow Termstead to show system notifications.">
+          <SettingRow label="Desktop notifications" description="Allow AstraTerm to show system notifications.">
             <Button size="sm" variant="secondary" onClick={askPermission}>
               Allow notifications
             </Button>

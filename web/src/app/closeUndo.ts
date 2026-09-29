@@ -112,7 +112,7 @@ function flush(): void {
   for (const [id, p] of pending) {
     clearTimeout(p.timer)
     p.onEnd?.()
-    void fetch(apiUrl(`/api/sessions/${seg(id)}`), { method: 'DELETE', keepalive: true, credentials: 'same-origin', headers: { 'X-Termstead': '1' } }).catch(
+    void fetch(apiUrl(`/api/sessions/${seg(id)}`), { method: 'DELETE', keepalive: true, credentials: 'same-origin', headers: { 'X-AstraTerm': '1' } }).catch(
       () => undefined,
     )
   }

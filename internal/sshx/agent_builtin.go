@@ -8,10 +8,10 @@ import (
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
-// Built-in agent integration (SSH-11/12). The keys module runs Termstead's own SSH agent ("MobAgent") and registers it
+// Built-in agent integration (SSH-11/12). The keys module runs AstraTerm's own SSH agent ("MobAgent") and registers it
 // with Pool.SetBuiltinAgent:
 //
 //   - authentication: while the built-in agent runs for the user, its keys are offered after the connection's own key,

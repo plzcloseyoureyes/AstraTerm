@@ -9,14 +9,15 @@ import (
 	"net/http"
 	"net/textproto"
 	"os"
+	"strconv"
 	"strings"
 	"syscall"
 
 	"github.com/pkg/sftp"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // Error codes of the files API (SPEC §9 files-backend).
@@ -187,7 +188,7 @@ func shellError(stderr []byte, code int, fallback string) error {
 	if msg == "" {
 		msg = fallback + " failed"
 		if code > 0 {
-			msg += " (exit status " + itoa(code) + ")"
+			msg += " (exit status " + strconv.Itoa(code) + ")"
 		}
 	}
 	return errors.New(cleanMsg(firstLine(msg)))

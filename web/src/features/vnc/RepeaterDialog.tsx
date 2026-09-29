@@ -1,5 +1,5 @@
 /*
- * Connect through an UltraVNC repeater (GFX-17): quick-connects to the repeater with options.repeaterId; Termstead sends
+ * Connect through an UltraVNC repeater (GFX-17): quick-connects to the repeater with options.repeaterId; AstraTerm sends
  * "ID:<id>" when the repeater greets with RFB 000.000, then authenticates with the real server behind it.
  */
 import { useState } from 'react'
@@ -60,7 +60,7 @@ function RepeaterForm() {
           Connect through a VNC repeater
         </DialogTitle>
         <DialogDescription>
-          For servers behind NAT that register with an UltraVNC repeater (mode II). Termstead asks the repeater for the
+          For servers behind NAT that register with an UltraVNC repeater (mode II). AstraTerm asks the repeater for the
           server with the given ID.
         </DialogDescription>
       </DialogHeader>

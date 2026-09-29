@@ -105,7 +105,7 @@ const COLUMNS: Column<ToolRow>[] = [
   },
 ]
 
-/** IPv4 subnets of the Termstead host's interfaces (sweep suggestions). */
+/** IPv4 subnets of the AstraTerm host's interfaces (sweep suggestions). */
 function useLocalSubnets(enabled: boolean): string[] {
   const q = useQuery({ queryKey: ['tools', 'interfaces'], queryFn: getInterfaces, enabled, staleTime: 60_000 })
   return React.useMemo(() => {

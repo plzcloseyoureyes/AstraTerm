@@ -18,7 +18,7 @@ import (
 	"github.com/kayrus/putty"
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
 )
 
 func fixture(t *testing.T, name string) []byte {

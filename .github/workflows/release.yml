@@ -1,8 +1,10 @@
 name: Release
 
-# Pushing a version tag (v1.2.3, v1.2.3-rc.1) builds the web UI once, cross-compiles every platform with GoReleaser
-# (.goreleaser.yaml), and creates a DRAFT GitHub release with the archives, SHA256SUMS, one SBOM per archive and a
-# build-provenance attestation. Review the draft, then publish it by hand (docs/RELEASING.md).
+# Pushing a version tag (v1.2.3, v1.2.3-rc.1) builds a DRAFT GitHub release (docs/RELEASING.md):
+#   server   the web UI once, then the server / CLI archives for every platform (scripts/release/dist, `make dist`)
+#   desktop  the desktop app (desktop/, Tauri) natively per platform: .dmg, setup .exe + .msi, .deb/.rpm/.AppImage
+#   publish  SHA256SUMS over everything, an SBOM per server archive, a build-provenance attestation, the draft release
+# Review the draft, then publish it by hand.
 on:
   push:
     tags: ["v*"]
@@ -16,21 +18,16 @@ concurrency:
 
 env:
   NODE_VERSION: "24"
-  GORELEASER_VERSION: "v2.18.2" # keep in sync with GORELEASER_VERSION in the Makefile
 
 jobs:
-  release:
-    name: Build and draft the release
+  server:
+    name: Web UI and server archives
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-    permissions:
-      contents: write # create the draft release and upload assets
-      id-token: write # sign the provenance attestation (Sigstore)
-      attestations: write # store the attestation
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 0 # GoReleaser needs the tags and history
+          fetch-depth: 0 # the build date comes from the tagged commit
           persist-credentials: false
 
       - name: Require a license
@@ -39,9 +36,6 @@ jobs:
             echo "::error::No LICENSE file: choose a license and commit it before releasing (docs/RELEASING.md)."
             exit 1
           fi
-
-      - name: Release notes from CHANGELOG.md
-        run: scripts/release/changelog-notes.sh "$GITHUB_REF_NAME" > "$RUNNER_TEMP/release-notes.md"
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -58,18 +52,167 @@ jobs:
       - name: Third-party notices match the tagged dependencies
         run: make notices-check
 
+      - name: Server archives for every platform
+        run: make dist VERSION="$GITHUB_REF_NAME"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: webui-dist
+          path: internal/webui/dist
+          include-hidden-files: true
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-server
+          path: |
+            dist/*.tar.gz
+            dist/*.zip
+
+  desktop:
+    name: Desktop app (${{ matrix.target }})
+    needs: server
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: macos-latest, target: aarch64-apple-darwin, bundles: "app,dmg" }
+          - { os: macos-latest, target: x86_64-apple-darwin, bundles: "app,dmg" }
+          - { os: windows-latest, target: x86_64-pc-windows-msvc, bundles: "nsis,msi" }
+          - { os: ubuntu-22.04, target: x86_64-unknown-linux-gnu, bundles: "deb,rpm,appimage" }
+          - { os: ubuntu-22.04-arm, target: aarch64-unknown-linux-gnu, bundles: "deb,rpm,appimage" }
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
+      - name: Rust toolchain for ${{ matrix.target }}
+        run: rustup toolchain install stable --profile minimal --target "${{ matrix.target }}" && rustup default stable
+
+      - name: Linux build dependencies (WebKitGTK)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libwebkit2gtk-4.1-dev libayatana-appindicator3-dev \
+            librsvg2-dev libxdo-dev libssl-dev patchelf file
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: webui-dist
+          path: internal/webui/dist
+
+      - name: The server as the sidecar
+        run: scripts/desktop-sidecar.sh "${{ matrix.target }}" "$GITHUB_REF_NAME"
+
+      - name: Build the desktop app
+        working-directory: desktop
+        run: |
+          npm ci --no-audit --no-fund
+          # Installers need a numeric version (v1.2.3-rc.1 → 1.2.3).
+          version=$(echo "${GITHUB_REF_NAME#v}" | sed 's/[-+].*//')
+          npx tauri build --target "${{ matrix.target }}" --bundles "${{ matrix.bundles }}" \
+            --config "{\"version\":\"$version\"}"
+
+      - name: Collect the installers
+        run: |
+          mkdir -p out
+          b="desktop/src-tauri/target/${{ matrix.target }}/release/bundle"
+          find "$b" -maxdepth 2 -type f \( -name '*.dmg' -o -name '*.msi' -o -name '*-setup.exe' \
+            -o -name '*.deb' -o -name '*.rpm' -o -name '*.AppImage' \) -exec cp {} out/ \;
+          ls -la out
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-desktop-${{ matrix.target }}
+          path: out/*
+          if-no-files-found: error
+
+  publish:
+    name: Draft the GitHub release
+    needs: [server, desktop]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write # create the draft release and upload assets
+      id-token: write # sign the provenance attestation (Sigstore)
+      attestations: write # store the attestation
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+
+      - name: Checksums
+        run: cd dist && sha256sum -- * | sort -k2 > SHA256SUMS && cat SHA256SUMS
+
       - uses: anchore/sbom-action/download-syft@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
 
-      - name: GoReleaser
-        uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
-        with:
-          distribution: goreleaser
-          version: ${{ env.GORELEASER_VERSION }}
-          args: release --clean --release-notes=${{ runner.temp }}/release-notes.md
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: One SPDX SBOM per server archive
+        run: |
+          for a in dist/*.tar.gz dist/*.zip; do
+            syft scan "file:$a" --output "spdx-json=$a.sbom.json"
+          done
 
       - name: Build-provenance attestation
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
           subject-checksums: dist/SHA256SUMS
+
+      - name: Release notes
+        run: |
+          notes="$RUNNER_TEMP/release-notes.md"
+          scripts/release/changelog-notes.sh "$GITHUB_REF_NAME" > "$notes"
+          version="${GITHUB_REF_NAME#v}"
+          cat >> "$notes" <<EOF
+
+          ## Download
+
+          | | Desktop app | Server / command line |
+          |---|---|---|
+          | macOS | \`AstraTerm_*_aarch64.dmg\` (Apple silicon), \`AstraTerm_*_x64.dmg\` (Intel) | \`astraterm_${version}_darwin_*.tar.gz\` |
+          | Windows | \`AstraTerm_*_x64-setup.exe\` (or the \`.msi\`) | \`astraterm_${version}_windows_*.zip\` |
+          | Linux | \`.AppImage\`, \`.deb\` or \`.rpm\` (x64 and ARM64) | \`astraterm_${version}_linux_*.tar.gz\` |
+          | FreeBSD | | \`astraterm_${version}_freebsd_amd64.tar.gz\` |
+
+          The desktop app is not code-signed yet: see the README for the one-time confirmation on macOS and Windows.
+
+          ## Verify the download
+
+          \`\`\`sh
+          sha256sum --ignore-missing -c SHA256SUMS        # macOS: shasum -a 256 --ignore-missing -c SHA256SUMS
+          gh attestation verify <file> --repo ${GITHUB_REPOSITORY}
+          \`\`\`
+
+          Third-party licenses: THIRD_PARTY_NOTICES.md inside every server archive.
+          EOF
+
+      - name: Draft the GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          prerelease=""
+          case "$GITHUB_REF_NAME" in *-*) prerelease="--prerelease" ;; esac
+          # Replace an earlier DRAFT of this tag; never touch a published release.
+          if [ "$(gh release view "$GITHUB_REF_NAME" --json isDraft --jq .isDraft 2>/dev/null)" = "true" ]; then
+            gh release delete "$GITHUB_REF_NAME" --yes
+          fi
+          gh release create "$GITHUB_REF_NAME" --draft $prerelease --verify-tag \
+            --title "AstraTerm $GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/release-notes.md" dist/*

@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // SSHInfo is the SSH connection card (SSH-38 display, MON-4): the transport's negotiated parameters plus a latency

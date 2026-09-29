@@ -1,4 +1,4 @@
-# Termstead remote monitor — macOS sampler (MON-2). Same framing as the Linux sampler: one sample between @@S and @@E
+# AstraTerm remote monitor — macOS sampler (MON-2). Same framing as the Linux sampler: one sample between @@S and @@E
 # every __INTERVAL__ s, __COUNT__ samples (0 = forever). CPU usage comes from a 1 s iostat window, memory from vm_stat,
 # network counters from netstat -ibn, disks from df -kP -l (local volumes only).
 export LC_ALL=C

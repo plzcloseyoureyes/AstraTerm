@@ -156,7 +156,7 @@ export default function DetectPortsDialog({ request, onClose }: { request: Detec
 
         <DialogBody className="min-h-48">
           {!target ? (
-            <EmptyState size="sm" icon={Radar} title="Choose an SSH server" description="Termstead connects and lists the ports listening on it." />
+            <EmptyState size="sm" icon={Radar} title="Choose an SSH server" description="AstraTerm connects and lists the ports listening on it." />
           ) : firstLoad.hold ? (
             firstLoad.show && <LoadingPane immediate label="Asking the server…" />
           ) : q.isError ? (
@@ -246,7 +246,7 @@ export default function DetectPortsDialog({ request, onClose }: { request: Detec
                               </DropdownMenuItem>
                               {web && proxyAvailable && (
                                 <DropdownMenuItem onSelect={() => openViaProxy(p)}>
-                                  <ExternalLink /> Open through the Termstead web proxy
+                                  <ExternalLink /> Open through the AstraTerm web proxy
                                 </DropdownMenuItem>
                               )}
                             </DropdownMenuContent>

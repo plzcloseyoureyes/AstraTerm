@@ -1,4 +1,4 @@
-# Termstead remote monitor — one-shot Windows host probe (PowerShell).
+# AstraTerm remote monitor — one-shot Windows host probe (PowerShell).
 $ProgressPreference='SilentlyContinue';$ErrorActionPreference='SilentlyContinue'
 $o=Get-CimInstance Win32_OperatingSystem
 $c=@(Get-CimInstance Win32_Processor)

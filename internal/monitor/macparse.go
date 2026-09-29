@@ -124,7 +124,7 @@ func parseDarwinSample(lines []string, at time.Time) *rawSample {
 
 // darwinMemory computes macOS memory from `vm_stat` output the way Activity Monitor does: used = app memory
 // (anonymous − purgeable pages) + wired + compressed (pages occupied by the compressor); cached = file-backed +
-// purgeable pages. It serves the remote macOS sampler and the local sampler of a macOS Termstead host, so both report
+// purgeable pages. It serves the remote macOS sampler and the local sampler of a macOS AstraTerm host, so both report
 // the same numbers for the same Mac. page is the fallback page size (vm_stat prints its own).
 func darwinMemory(total, page int64, lines []string) (MemStats, bool) {
 	vm := map[string]int64{}

@@ -15,9 +15,9 @@ import (
 	"github.com/labstack/echo/v5"
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
 )
 
 // Known hosts manager (SSH-19/20). Entries live in the core known_hosts table (global, shared by every user and
@@ -211,12 +211,12 @@ func (h *handler) importKnownHosts(c *echo.Context) error {
 	if req.Source == "system" {
 		home, err := os.UserHomeDir()
 		if err != nil {
-			return httpx.BadRequest("the home directory of the Termstead host is unknown")
+			return httpx.BadRequest("the home directory of the AstraTerm host is unknown")
 		}
 		b, err := readLimited(filepath.Join(home, ".ssh", "known_hosts"), maxKnownHostsBody)
 		if err != nil {
 			if errors.Is(err, os.ErrNotExist) {
-				return httpx.NotFound("~/.ssh/known_hosts does not exist on the Termstead host")
+				return httpx.NotFound("~/.ssh/known_hosts does not exist on the AstraTerm host")
 			}
 			return httpx.BadRequest("cannot read ~/.ssh/known_hosts: " + err.Error())
 		}
@@ -386,7 +386,7 @@ func (h *handler) exportKnownHosts(c *echo.Context) error {
 	}
 	hashed := c.QueryParam("hashed") == "1" || c.QueryParam("hashed") == "true"
 	var b strings.Builder
-	fmt.Fprintf(&b, "# Termstead known hosts, exported %s\n", now().Format("2006-01-02T15:04:05Z"))
+	fmt.Fprintf(&b, "# AstraTerm known hosts, exported %s\n", now().Format("2006-01-02T15:04:05Z"))
 	for _, m := range h.markers.list() {
 		line := "@" + m.Marker + " " + m.Hosts + " " + m.PublicKey
 		if m.Comment != "" {
@@ -432,7 +432,7 @@ func (h *handler) addMarker(c *echo.Context) error {
 		Marker    string `json:"marker"`
 		Hosts     string `json:"hosts"`
 		PublicKey string `json:"publicKey"`
-		KeyID     string `json:"keyId"` // or: one of the caller's stored keys (e.g. a CA key made in Termstead)
+		KeyID     string `json:"keyId"` // or: one of the caller's stored keys (e.g. a CA key made in AstraTerm)
 		Comment   string `json:"comment"`
 	}
 	if err := httpx.BindLimit(c, &req, 256<<10); err != nil {

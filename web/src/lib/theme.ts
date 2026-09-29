@@ -109,7 +109,7 @@ let current: AppearanceLike = { theme: 'dark', accent: DEFAULT_ACCENT, uiScale: 
 let resolvedDark = true
 const listeners = new Set<(dark: boolean) => void>()
 
-const CACHE_KEY = 'termstead:appearance'
+const CACHE_KEY = 'astraterm:appearance'
 
 function applyTo(doc: Document): void {
   const root = doc.documentElement

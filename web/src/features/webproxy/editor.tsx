@@ -1,5 +1,5 @@
 /*
- * Session editor for protocol 'web' (saved web page session, PROTO-28): a saved URL opened in a Termstead tab,
+ * Session editor for protocol 'web' (saved web page session, PROTO-28): a saved URL opened in a AstraTerm tab,
  * reached directly or through an SSH gateway (sshTunnelVia) / proxy (Network tab). Optional HTTP Basic credentials use
  * the connection's user name and password.
  */
@@ -35,7 +35,7 @@ function WebEditor({ value, onChange }: ProtocolEditorProps) {
         />
       </OptionSection>
       <EditorNote>
-        The page opens in a Termstead tab. To reach a site only an SSH server can see, choose that server as the SSH gateway
+        The page opens in a AstraTerm tab. To reach a site only an SSH server can see, choose that server as the SSH gateway
         (Network → SSH gateway); "localhost" then means the SSH server.
       </EditorNote>
     </div>

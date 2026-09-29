@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 // Module table (migration auth/1): per-user security metadata the core users table has no columns for — the
@@ -132,13 +132,6 @@ func (s *Service) setPasswordState(ctx context.Context, userID string, set bool)
 	now := store.Now().UnixMilli()
 	_, err := s.d.Store.DB.ExecContext(ctx, `INSERT INTO auth_user_meta (user_id, password_set, password_changed_at) VALUES (?, ?, ?)
 		ON CONFLICT(user_id) DO UPDATE SET password_set = excluded.password_set, password_changed_at = excluded.password_changed_at`,
-		userID, b2i(set), now)
+		userID, store.B2I(set), now)
 	return err
-}
-
-func b2i(b bool) int {
-	if b {
-		return 1
-	}
-	return 0
 }

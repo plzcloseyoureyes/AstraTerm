@@ -149,7 +149,12 @@ export default function TerminalView({ tabId, params }: TabProps<TerminalTabPara
   const participant = isParticipant(tabId, multi)
 
   const containerStyle: CSSProperties = opaque ? { background: theme.background } : {}
-  const hostStyle: CSSProperties = { inset: pad, ...(opaque ? { background: theme.background } : { boxShadow: `0 0 0 ${pad}px ${theme.background}` }) }
+  // No bottom padding: rows are whole, so the fit's leftover (0..1 row) already pads the bottom — a fixed pad there
+  // would often cost a whole row.
+  const hostStyle: CSSProperties = {
+    inset: `${pad}px ${pad}px ${Math.min(pad, 2)}px`,
+    ...(opaque ? { background: theme.background } : { boxShadow: `0 0 0 ${pad}px ${theme.background}` }),
+  }
 
   if (!sessionId) {
     return <div className="flex h-full items-center justify-center text-sm text-muted-foreground">This tab has no session.</div>

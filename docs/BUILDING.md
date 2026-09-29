@@ -1,6 +1,6 @@
-# Building Termstead
+# Building AstraTerm
 
-Termstead is one Go executable with the React UI embedded (`go:embed` of `internal/webui/dist`). Building it means:
+AstraTerm is one Go executable with the React UI embedded (`go:embed` of `internal/webui/dist`). Building it means:
 build the UI, precompress it, compile Go with `CGO_ENABLED=0`.
 
 ## Requirements
@@ -18,9 +18,9 @@ which needs cgo.
 ## Everyday builds
 
 ```sh
-make build          # npm ci (first time / lockfile change) → vite build → precompress → bin/termstead
+make build          # npm ci (first time / lockfile change) → vite build → precompress → bin/astraterm
 make build-go       # Go only, reusing the UI already in internal/webui/dist
-./bin/termstead version
+./bin/astraterm version
 ```
 
 `make web` does the UI part alone: it installs the locked npm dependencies when `web/package-lock.json` changed,
@@ -56,7 +56,7 @@ The Makefile and the release tooling set, through `-ldflags -X`:
 | `main.commit` | `git rev-parse HEAD` |
 | `main.date` | RFC 3339 UTC time from `SOURCE_DATE_EPOCH`, else the last commit's time |
 
-`termstead version` prints them with the Go version and platform. A plain `go build` falls back to Go's VCS stamp
+`astraterm version` prints them with the Go version and platform. A plain `go build` falls back to Go's VCS stamp
 (`vcs.revision`, `vcs.time`) when built inside a git checkout.
 
 ## Cross-compilation and release archives
@@ -68,19 +68,20 @@ make dist           # archives from the UI already in internal/webui/dist
 ```
 
 `make dist` runs `go run ./scripts/release/dist`, which builds `darwin`, `linux` and `windows` × `amd64`/`arm64` plus
-`freebsd/amd64` (`PLATFORMS` in the Makefile) and writes to `dist/`:
+`linux/arm/7` and `freebsd/amd64` (`PLATFORMS` in the Makefile) and writes to `dist/`:
 
 ```text
 dist/
-  build/<os>_<arch>/termstead[.exe]                 the raw binaries
-  termstead_<version>_<os>_<arch>.tar.gz            macOS, Linux, FreeBSD
-  termstead_<version>_windows_<arch>.zip            Windows
+  build/<os>_<arch>/astraterm[.exe]                 the raw binaries
+  astraterm_<version>_<os>_<arch>.tar.gz            macOS, Linux, FreeBSD
+  astraterm_<version>_windows_<arch>.zip            Windows
   SHA256SUMS                                      sha256sum -c / shasum -a 256 -c compatible
 ```
 
-Each archive contains one top-level folder `termstead_<version>_<os>_<arch>/` with the executable, `README.md`,
-`LICENSE` (once it exists), `CHANGELOG.md` and `THIRD_PARTY_NOTICES.md`. Names match the GoReleaser pipeline
-(`.goreleaser.yaml`), which CI uses for the actual releases; `make snapshot` runs that pipeline locally.
+Each archive contains one top-level folder `astraterm_<version>_<os>_<arch>/` with the `astraterm` executable,
+`README.md`, `LICENSE` (once it exists), `CHANGELOG.md` and `THIRD_PARTY_NOTICES.md`. Windows executables carry the
+icon, version information and manifest (`packaging/windows/winres.json`). The release workflow publishes exactly these
+archives, next to the desktop app's installers ([DESKTOP.md](DESKTOP.md#building), built per platform).
 
 To build a subset: `go run ./scripts/release/dist -version v1.2.3 -platforms linux/amd64,linux/arm64`. A 32-bit ARM
 target is written `linux/arm/7` (GOARM=7).

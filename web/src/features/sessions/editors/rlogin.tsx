@@ -19,7 +19,7 @@ export function RloginEditor({ value, onChange }: ProtocolEditorProps) {
     <div className="grid gap-5">
       <EditorNote tone="warning">
         {rsh ? 'Rsh' : 'Rlogin'} sends everything, including credentials, in clear text. Use it only on trusted networks or through an
-        SSH gateway. Trusted (.rhosts) logins need Termstead to run as root to use a reserved source port; otherwise the server asks
+        SSH gateway. Trusted (.rhosts) logins need AstraTerm to run as root to use a reserved source port; otherwise the server asks
         for the password{rsh ? ' (rsh then refuses the connection)' : ''}.
       </EditorNote>
       <OptionSection title="Mode" columns={1}>

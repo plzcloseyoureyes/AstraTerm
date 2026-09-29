@@ -85,7 +85,7 @@ export function ErrorPane({
         }
       >
         The session or file browser that opened <span className="font-mono">{path}</span>
-        {host ? ` on ${host}` : ''} was closed, or the Termstead server restarted. {canReconnect ? '' : 'Open the file again from the file browser.'}
+        {host ? ` on ${host}` : ''} was closed, or the AstraTerm server restarted. {canReconnect ? '' : 'Open the file again from the file browser.'}
       </PaneMessage>
     )
   }

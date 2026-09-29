@@ -5,9 +5,9 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/vfs"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/vfs"
 )
 
 // Mount creates the transfer manager on the vfs registry and registers /api/transfers:

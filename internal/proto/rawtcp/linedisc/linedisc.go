@@ -1,4 +1,4 @@
-// Package linedisc is the small client-side line discipline shared by Termstead's byte-stream terminal backends (raw
+// Package linedisc is the small client-side line discipline shared by AstraTerm's byte-stream terminal backends (raw
 // sockets, serial ports, rlogin/rsh and telnet): translation of the Enter key to the line ending a device expects,
 // and local echo for peers that do not echo typed input themselves.
 //

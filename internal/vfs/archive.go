@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // storedExts are already-compressed formats stored without deflate in zips (FILE-9).
@@ -425,7 +425,7 @@ func (x *extractor) tar(tr *tar.Reader) error {
 				return err
 			}
 			_ = x.fsys.Chmod(x.ctx, p, uint32(h.Mode)&0o7777|0o700)
-		case tar.TypeReg, tar.TypeRegA:
+		case tar.TypeReg: // the reader already maps legacy TypeRegA entries to TypeReg
 			if h.Size > x.limit-x.written {
 				return errExtractBomb
 			}

@@ -229,14 +229,14 @@ func parseOpenSSHPrivateKey(der []byte, passphrase []byte) (*parsedKey, error) {
 			return nil, invalidKey("invalid OpenSSH key derivation options")
 		}
 		plain, err := c.decrypt(kiv, block, env.Rest)
-		wipe(kiv)
+		clear(kiv)
 		if err != nil {
 			if errors.Is(err, errAuthFailed) {
 				return nil, &passphraseError{pub: pub, wrong: true}
 			}
 			return nil, err
 		}
-		defer wipe(plain)
+		defer clear(plain)
 		block = plain
 	} else if env.KdfName != "none" {
 		return nil, invalidKey("invalid OpenSSH private key (unencrypted key with a key derivation)")

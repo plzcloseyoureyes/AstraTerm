@@ -6,7 +6,7 @@ declare module 'monaco-editor/languages/definitions/*' {
 }
 
 /*
- * Internal Monaco modules used by monaco/services.ts (no published types). Only the members Termstead touches are
+ * Internal Monaco modules used by monaco/services.ts (no published types). Only the members AstraTerm touches are
  * declared; the shapes match monaco-editor 0.57 (esm/vs/...).
  */
 declare module 'monaco-editor/editor/standalone/browser/standaloneServices.js' {

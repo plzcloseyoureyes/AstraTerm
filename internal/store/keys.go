@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // ---- SSH keys -----------------------------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ func scanKey(sc scanner) (*model.SSHKey, error) {
 		&hasPass, &k.Fingerprint, &k.Comment, &k.Certificate, &created); err != nil {
 		return nil, mapErr(err)
 	}
-	k.HasPassphrase, k.CreatedAt = hasPass != 0, fromMs(created)
+	k.HasPassphrase, k.CreatedAt = hasPass != 0, FromMs(created)
 	return &k, nil
 }
 
@@ -63,7 +63,7 @@ func (r *Keys) Create(ctx context.Context, k *model.SSHKey) error {
 	}
 	_, err := r.db.ExecContext(ctx, `INSERT INTO ssh_keys (`+keyCols+`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		k.ID, k.OwnerID, k.Name, k.Type, k.Bits, k.PublicKey, encArg(k.PrivateKeyEnc), encArg(k.PassphraseEnc),
-		b2i(k.HasPassphrase), k.Fingerprint, k.Comment, k.Certificate, ms(k.CreatedAt))
+		B2I(k.HasPassphrase), k.Fingerprint, k.Comment, k.Certificate, ms(k.CreatedAt))
 	return mapErr(err)
 }
 
@@ -71,7 +71,7 @@ func (r *Keys) Create(ctx context.Context, k *model.SSHKey) error {
 func (r *Keys) Update(ctx context.Context, k *model.SSHKey) error {
 	return expectOne(r.db.ExecContext(ctx, `UPDATE ssh_keys SET name = ?, comment = ?, certificate = ?, private_key_enc = ?,
 		passphrase_enc = ?, has_passphrase = ?, public_key = ?, fingerprint = ?, type = ?, bits = ? WHERE id = ?`,
-		k.Name, k.Comment, k.Certificate, encArg(k.PrivateKeyEnc), encArg(k.PassphraseEnc), b2i(k.HasPassphrase),
+		k.Name, k.Comment, k.Certificate, encArg(k.PrivateKeyEnc), encArg(k.PassphraseEnc), B2I(k.HasPassphrase),
 		k.PublicKey, k.Fingerprint, k.Type, k.Bits, k.ID))
 }
 
@@ -107,7 +107,7 @@ func scanKnownHost(sc scanner) (*model.KnownHost, error) {
 	if err := sc.Scan(&h.ID, &h.Host, &h.Port, &h.KeyType, &h.PublicKey, &h.Fingerprint, &h.Comment, &created); err != nil {
 		return nil, mapErr(err)
 	}
-	h.CreatedAt = fromMs(created)
+	h.CreatedAt = FromMs(created)
 	return &h, nil
 }
 
@@ -198,7 +198,7 @@ func scanSnippet(sc scanner) (*model.Snippet, error) {
 		&created, &updated); err != nil {
 		return nil, mapErr(err)
 	}
-	s.Tags, s.CreatedAt, s.UpdatedAt = parseStrings(tags), fromMs(created), fromMs(updated)
+	s.Tags, s.CreatedAt, s.UpdatedAt = parseStrings(tags), FromMs(created), FromMs(updated)
 	return &s, nil
 }
 
@@ -274,7 +274,7 @@ func scanMacro(sc scanner) (*model.Macro, error) {
 	if m.Steps == nil {
 		m.Steps = []model.MacroStep{}
 	}
-	m.CreatedAt, m.UpdatedAt = fromMs(created), fromMs(updated)
+	m.CreatedAt, m.UpdatedAt = FromMs(created), FromMs(updated)
 	return &m, nil
 }
 
@@ -356,7 +356,7 @@ func scanTunnel(sc scanner) (*model.Tunnel, error) {
 		&auto, &created, &updated); err != nil {
 		return nil, mapErr(err)
 	}
-	t.AutoStart, t.CreatedAt, t.UpdatedAt = auto != 0, fromMs(created), fromMs(updated)
+	t.AutoStart, t.CreatedAt, t.UpdatedAt = auto != 0, FromMs(created), FromMs(updated)
 	t.Status = model.TunnelStatus{State: model.TunnelStopped}
 	return &t, nil
 }
@@ -400,7 +400,7 @@ func (r *Tunnels) Create(ctx context.Context, t *model.Tunnel) error {
 	now := Now()
 	t.CreatedAt, t.UpdatedAt = now, now
 	_, err := r.db.ExecContext(ctx, `INSERT INTO tunnels (`+tunnelCols+`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		t.ID, t.OwnerID, t.Name, t.Type, t.ConnectionID, t.BindHost, t.BindPort, t.DestHost, t.DestPort, b2i(t.AutoStart), ms(now), ms(now))
+		t.ID, t.OwnerID, t.Name, t.Type, t.ConnectionID, t.BindHost, t.BindPort, t.DestHost, t.DestPort, B2I(t.AutoStart), ms(now), ms(now))
 	return mapErr(err)
 }
 
@@ -409,7 +409,7 @@ func (r *Tunnels) Update(ctx context.Context, t *model.Tunnel) error {
 	t.UpdatedAt = Now()
 	return expectOne(r.db.ExecContext(ctx, `UPDATE tunnels SET name = ?, type = ?, connection_id = ?, bind_host = ?, bind_port = ?,
 		dest_host = ?, dest_port = ?, auto_start = ?, updated_at = ? WHERE id = ?`,
-		t.Name, t.Type, t.ConnectionID, t.BindHost, t.BindPort, t.DestHost, t.DestPort, b2i(t.AutoStart), ms(t.UpdatedAt), t.ID))
+		t.Name, t.Type, t.ConnectionID, t.BindHost, t.BindPort, t.DestHost, t.DestPort, B2I(t.AutoStart), ms(t.UpdatedAt), t.ID))
 }
 
 // Delete removes a tunnel.

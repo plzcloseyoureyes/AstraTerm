@@ -133,7 +133,7 @@ registerSettingsSection({
   icon: FolderSync,
   order: 20,
   group: 'files',
-  keywords: ['sftp', 'ssh-browser', 'files', 'upload', 'download', 'transfer', 'hidden files', 'partial uploads', 'termstead-part', 'follow', 'folder', 'double-click', 'conflict', 'overwrite'],
+  keywords: ['sftp', 'ssh-browser', 'files', 'upload', 'download', 'transfer', 'hidden files', 'partial uploads', 'astraterm-part', 'follow', 'folder', 'double-click', 'conflict', 'overwrite'],
   component: lazy(() => import('./SettingsSection')),
 })
 
@@ -179,7 +179,7 @@ registerCommand<{ path?: string } | undefined>({
   category: 'Files',
   icon: HardDrive,
   keywords: ['browse', 'file manager', 'host'],
-  description: 'Browse the files of the computer running Termstead',
+  description: 'Browse the files of the computer running AstraTerm',
   run: ({ args }) => {
     openFilesTab({ kind: 'local' }, { path: argString(args, 'path'), title: 'Local files' })
   },

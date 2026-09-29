@@ -159,7 +159,7 @@ function Ended({ c, s, onRestart, onCloseTab }: { c: VncController; s: VncState;
 }
 
 /**
- * The server offered more protection than Termstead can use right now (anonymous TLS failed or only has a weak key
+ * The server offered more protection than AstraTerm can use right now (anonymous TLS failed or only has a weak key
  * exchange, or the only way on sends the password in clear text). Nothing happens without an explicit choice:
  * Cancel is the default action, the weaker options are named for what they are.
  */
@@ -234,7 +234,7 @@ function ConfirmInsecure({
                   : 'the desktop and everything you type would cross the network unencrypted (the VNC password itself is not sent).'}
               </li>
             )}
-            {!info.weakTls && !info.unencrypted && <li>The server offers no alternative Termstead could use.</li>}
+            {!info.weakTls && !info.unencrypted && <li>The server offers no alternative AstraTerm could use.</li>}
           </ul>
         )}
         {connection && (info?.weakTls || info?.unencrypted) && (

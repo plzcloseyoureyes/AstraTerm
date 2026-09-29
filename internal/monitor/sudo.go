@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/termstead/termstead/internal/events"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/events"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Privileged actions (MON-3 "optional sudo"): `sudo -n` first; when sudo wants a password, the session's stored
@@ -162,7 +162,7 @@ func (s *Service) askSudo(ctx context.Context, t *target, message string) (pw st
 	resp, err := s.d.Events.Prompt(ctx, t.user.ID, p)
 	switch {
 	case errors.Is(err, events.ErrNoInteractiveClient):
-		return "", false, httpx.Conflict("sudo needs a password but no Termstead window is connected to ask for it")
+		return "", false, httpx.Conflict("sudo needs a password but no AstraTerm window is connected to ask for it")
 	case errors.Is(err, events.ErrPromptTimeout):
 		return "", false, httpx.NewError(http.StatusRequestTimeout, "timeout", "no answer to the sudo password prompt")
 	case err != nil:

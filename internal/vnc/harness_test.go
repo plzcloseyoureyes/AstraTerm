@@ -16,21 +16,21 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/audit"
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/events"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/sshx"
-	"github.com/termstead/termstead/internal/store"
-	"github.com/termstead/termstead/internal/term"
-	"github.com/termstead/termstead/internal/vault"
-	"github.com/termstead/termstead/internal/vnc"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/audit"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/events"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/vault"
+	"github.com/plzcloseyoureyes/astraterm/internal/vnc"
 )
 
-// harness is a minimal Termstead server built from the foundation packages only (store, vault, events, audit, term,
+// harness is a minimal AstraTerm server built from the foundation packages only (store, vault, events, audit, term,
 // sshx) plus this module, so the tests do not depend on other feature modules. Requests authenticate with the
 // X-Test-User header (user ID) as Bearer-like token logins (no CSRF header needed).
 type harness struct {
@@ -47,7 +47,7 @@ func newHarness(t *testing.T, mode string) *harness {
 	t.Helper()
 	// Own temp dir (not t.TempDir): hijacked WebSocket handlers are not awaited by httptest.Server.Close, so a late
 	// write may race with the removal; retry instead of failing the test.
-	dataDir, err := os.MkdirTemp("", "termstead-vnc-test-")
+	dataDir, err := os.MkdirTemp("", "astraterm-vnc-test-")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,7 +64,7 @@ func newHarness(t *testing.T, mode string) *harness {
 		t.Fatal(err)
 	}
 	var log *slog.Logger
-	if testing.Verbose() && os.Getenv("TERMSTEAD_TEST_LOG") != "" {
+	if testing.Verbose() && os.Getenv("ASTRATERM_TEST_LOG") != "" {
 		log = slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelDebug}))
 	} else {
 		log = slog.New(slog.NewTextHandler(io.Discard, nil))

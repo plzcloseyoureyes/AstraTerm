@@ -414,86 +414,13 @@ export default function SessionsPanel() {
 
   return (
     <div className="@container flex h-full min-h-0 flex-col">
-      <div role="toolbar" aria-label="Session actions" className="flex h-8 shrink-0 items-center gap-0.5 border-b px-1">
-        <IconButton icon={Plus} label="New session" shortcut={newSession.keybindings[0]} size="xs" onClick={onNewSession} disabled={!newSession.enabled} />
-        <IconButton icon={FolderPlus} label="New folder" size="xs" onClick={onNewFolder} />
-        <span className="mx-0.5 h-4 w-px bg-border" aria-hidden />
-        <IconButton icon={ChevronsUpDown} label="Expand all" size="xs" onClick={() => treeRef.current?.expandAll()} disabled={searching || !!grouped} />
-        <IconButton icon={ChevronsDownUp} label="Collapse all" size="xs" onClick={() => treeRef.current?.collapseAll()} disabled={searching || !!grouped} />
-        <DropdownMenu>
-          <Tooltip content="Sort and group">
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon-xs"
-                aria-label="Sort and group sessions"
-                className={cn('text-muted-foreground hover:text-foreground', (settings.sortMode !== 'manual' || grouped) && 'text-primary')}
-              >
-                <ArrowDownUp />
-              </Button>
-            </DropdownMenuTrigger>
-          </Tooltip>
-          <DropdownMenuContent align="start">
-            <DropdownMenuLabel>Sort sessions by</DropdownMenuLabel>
-            <DropdownMenuRadioGroup value={settings.sortMode} onValueChange={(v) => sessionsSettings.set({ sortMode: v as SortMode })}>
-              {SORT_MODES.map((m) => (
-                <DropdownMenuRadioItem key={m.value} value={m.value}>
-                  {m.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel>Group by</DropdownMenuLabel>
-            <DropdownMenuRadioGroup value={settings.groupBy} onValueChange={(v) => sessionsSettings.set({ groupBy: v as GroupBy })}>
-              {GROUP_MODES.map((m) => (
-                <DropdownMenuRadioItem key={m.value} value={m.value}>
-                  {m.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <IconButton
-          icon={ListFilter}
-          label={settings.showFilters ? 'Hide filters' : 'Show filters'}
-          size="xs"
-          active={settings.showFilters || filtering}
-          onClick={() => sessionsSettings.set({ showFilters: !settings.showFilters })}
-        />
-        <span className="flex-1" />
-        <DropdownMenu>
-          <Tooltip content="More">
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon-xs" aria-label="More session actions" className="text-muted-foreground hover:text-foreground">
-                <Ellipsis />
-              </Button>
-            </DropdownMenuTrigger>
-          </Tooltip>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem disabled={!importer.enabled} onSelect={() => void importer.run(undefined, 'menu')}>
-              <Import /> Import / export…
-            </DropdownMenuItem>
-            <DropdownMenuItem disabled={!identities.enabled} onSelect={() => void identities.run(undefined, 'menu')}>
-              <UserRoundCog /> Manage identities…
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem checked={settings.showFavorites} onCheckedChange={(v) => sessionsSettings.set({ showFavorites: v === true })}>
-              Show favorites
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem checked={settings.showRecent} onCheckedChange={(v) => sessionsSettings.set({ showRecent: v === true })}>
-              Show recent
-              <span className="ml-auto pl-3 text-2xs text-muted-foreground">{RECENT_MIN_LIBRARY}+ sessions</span>
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => void runCommand('settings.open', { section: 'sessions' }, { source: 'menu' })}>Session settings…</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
-      <div className="shrink-0 px-2 pt-1.5 pb-1.5">
+      {/* One row: search (type-to-connect) and the actions; less frequent ones live in the ⋯ menu. */}
+      <div role="toolbar" aria-label="Session actions" className="flex h-9 shrink-0 items-center gap-0.5 px-1.5">
         <Input
           ref={searchRef}
           inputSize="sm"
+          variant="filled"
+          className="mr-0.5 min-w-0 flex-1"
           leading={<Search />}
           trailing={
             query ? (
@@ -523,6 +450,84 @@ export default function SessionsPanel() {
           autoComplete="off"
           spellCheck={false}
         />
+        <IconButton icon={Plus} label="New session" shortcut={newSession.keybindings[0]} size="xs" onClick={onNewSession} disabled={!newSession.enabled} />
+        <DropdownMenu>
+          <Tooltip content="Sort and group">
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                aria-label="Sort and group sessions"
+                className={cn('text-muted-foreground hover:text-foreground', (settings.sortMode !== 'manual' || grouped) && 'text-primary')}
+              >
+                <ArrowDownUp />
+              </Button>
+            </DropdownMenuTrigger>
+          </Tooltip>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Sort sessions by</DropdownMenuLabel>
+            <DropdownMenuRadioGroup value={settings.sortMode} onValueChange={(v) => sessionsSettings.set({ sortMode: v as SortMode })}>
+              {SORT_MODES.map((m) => (
+                <DropdownMenuRadioItem key={m.value} value={m.value}>
+                  {m.label}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Group by</DropdownMenuLabel>
+            <DropdownMenuRadioGroup value={settings.groupBy} onValueChange={(v) => sessionsSettings.set({ groupBy: v as GroupBy })}>
+              {GROUP_MODES.map((m) => (
+                <DropdownMenuRadioItem key={m.value} value={m.value}>
+                  {m.label}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <IconButton
+          icon={ListFilter}
+          label={settings.showFilters ? 'Hide filters' : 'Show filters'}
+          size="xs"
+          active={settings.showFilters || filtering}
+          onClick={() => sessionsSettings.set({ showFilters: !settings.showFilters })}
+        />
+        <DropdownMenu>
+          <Tooltip content="More">
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon-xs" aria-label="More session actions" className="text-muted-foreground hover:text-foreground">
+                <Ellipsis />
+              </Button>
+            </DropdownMenuTrigger>
+          </Tooltip>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onSelect={onNewFolder}>
+              <FolderPlus /> New folder
+            </DropdownMenuItem>
+            <DropdownMenuItem disabled={searching || !!grouped} onSelect={() => treeRef.current?.expandAll()}>
+              <ChevronsUpDown /> Expand all
+            </DropdownMenuItem>
+            <DropdownMenuItem disabled={searching || !!grouped} onSelect={() => treeRef.current?.collapseAll()}>
+              <ChevronsDownUp /> Collapse all
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem disabled={!importer.enabled} onSelect={() => void importer.run(undefined, 'menu')}>
+              <Import /> Import / export…
+            </DropdownMenuItem>
+            <DropdownMenuItem disabled={!identities.enabled} onSelect={() => void identities.run(undefined, 'menu')}>
+              <UserRoundCog /> Manage identities…
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuCheckboxItem checked={settings.showFavorites} onCheckedChange={(v) => sessionsSettings.set({ showFavorites: v === true })}>
+              Show favorites
+            </DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem checked={settings.showRecent} onCheckedChange={(v) => sessionsSettings.set({ showRecent: v === true })}>
+              Show recent
+              <span className="ml-auto pl-3 text-2xs text-muted-foreground">{RECENT_MIN_LIBRARY}+ sessions</span>
+            </DropdownMenuCheckboxItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => void runCommand('settings.open', { section: 'sessions' }, { source: 'menu' })}>Session settings…</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {(settings.showFilters || filtering) && (
@@ -609,7 +614,7 @@ export default function SessionsPanel() {
 
       <SessionContextMenu items={() => getContextMenuItems('session-node', ctxRef.current)}>
         <div
-          className="min-h-0 flex-1 border-t"
+          className="min-h-0 flex-1"
           onContextMenu={(e) => {
             const el = e.target as Element
             const connEl = el.closest<HTMLElement>('[data-conn-id]')

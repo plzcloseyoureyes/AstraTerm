@@ -1,4 +1,4 @@
-# Termstead remote monitor — macOS / BSD listening sockets (MON-3): sockstat (FreeBSD) or lsof for process names,
+# AstraTerm remote monitor — macOS / BSD listening sockets (MON-3): sockstat (FreeBSD) or lsof for process names,
 # netstat -an for the complete socket list.
 export LC_ALL=C
 if [ "$(uname -s)" != Darwin ] && command -v sockstat >/dev/null 2>&1; then

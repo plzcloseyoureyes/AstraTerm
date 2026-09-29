@@ -215,7 +215,7 @@ export function SecurityBadge({
         )}
         {info.passthrough && (
           <p className="mt-2 text-xs text-muted-foreground">
-            This server&apos;s authentication runs in the browser (Termstead does not implement it), so credentials are
+            This server&apos;s authentication runs in the browser (AstraTerm does not implement it), so credentials are
             typed here and not taken from the vault.
           </p>
         )}
@@ -569,7 +569,7 @@ function DisplaySettings({ c, s }: { c: VncController; s: VncState }) {
         <label className="flex items-center justify-between gap-3 text-sm">
           <span>
             Send all keys to the remote desktop
-            <span className="block text-xs text-muted-foreground">Termstead shortcuts do not fire while the desktop has focus</span>
+            <span className="block text-xs text-muted-foreground">AstraTerm shortcuts do not fire while the desktop has focus</span>
           </span>
           <Switch
             size="sm"

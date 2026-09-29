@@ -8,11 +8,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 type fakeSource struct {
@@ -116,7 +116,7 @@ func TestSubscribeValidationAndLocalFeed(t *testing.T) {
 		t.Fatalf("unknown session: %v", err)
 	}
 
-	// The local feed samples the Termstead host with gopsutil.
+	// The local feed samples the AstraTerm host with gopsutil.
 	f := s.attachSubscriber("local-session", user, true, "c1")
 	if again := s.attachSubscriber("local-session", user, true, "c2"); again != f {
 		t.Fatal("second socket got another feed")
@@ -139,7 +139,7 @@ func TestSubscribeValidationAndLocalFeed(t *testing.T) {
 	}
 	eventually(t, "local collector stop", func() bool { return s.collectorFor(localKey{}) == nil })
 
-	// sessionId "local" watches the Termstead host itself (System information view)…
+	// sessionId "local" watches the AstraTerm host itself (System information view)…
 	unsub, err := s.subscribe(ctx, user, "c9", json.RawMessage(`{"sessionId":"local"}`))
 	if err != nil || s.feeds["local"] == nil {
 		t.Fatalf("local host subscription: %v", err)

@@ -97,7 +97,9 @@ export function ConnectionLabel({
   children?: ReactNode
 }) {
   const color = safeColor(conn.color)
-  const tgt = target ?? connectionTarget(conn)
+  // A session named after its address ("root@10.0.0.5") would show it twice.
+  const auto = connectionTarget(conn)
+  const tgt = target ?? (auto === conn.name ? '' : auto)
   return (
     <>
       <span className="relative flex shrink-0">

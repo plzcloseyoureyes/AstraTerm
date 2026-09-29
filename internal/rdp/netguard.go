@@ -8,18 +8,18 @@ import (
 	"strings"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
 )
 
 // Destination policy (SEC-7, internal/netguard) for RDP.
 //
 //   - IronRDP relay, certificate probe and the gateway forwarder dial through dialConnection: the sshx route (direct
 //     dials and the first hop / proxy vetted in net.Dialer.Control), or a guarded dialer without a pool.
-//   - guacd connects to its "hostname" itself, out of Termstead's reach. For a restricted user on a direct route the
+//   - guacd connects to its "hostname" itself, out of AstraTerm's reach. For a restricted user on a direct route the
 //     destination is resolved and vetted here before guacd gets it, and the vetted IP is handed to guacd as its
 //     hostname (pinning: a DNS answer changing between the check and guacd's own lookup cannot redirect guacd). The
-//     host name stays in the ticket for display, audit and certificate trust (Termstead's probe verifies the certificate
+//     host name stays in the ticket for display, audit and certificate trust (AstraTerm's probe verifies the certificate
 //     by name; guacd then skips its own verification). Routed connections reach guacd through the loopback forwarder,
 //     whose dial is guarded. An RD Gateway (gateway-hostname), which guacd also connects to directly, is resolved
 //     and vetted the same way but not pinned (its HTTPS certificate is checked against the name).

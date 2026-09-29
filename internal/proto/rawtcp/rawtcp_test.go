@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/proto/rawtcp/linedisc"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/proto/rawtcp/linedisc"
 )
 
 func TestRoutedDetection(t *testing.T) {

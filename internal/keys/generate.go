@@ -15,7 +15,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Key generation (TOOL-1, MobaKeyGen): Ed25519, RSA 2048/3072/4096 and ECDSA P-256/384/521. The generator dialog

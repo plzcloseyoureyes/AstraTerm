@@ -17,8 +17,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/events"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/events"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Server certificate verification for the RDCleanPath relay. RDP servers usually present self-signed certificates,
@@ -211,7 +211,7 @@ func (t *certTrust) ask(leaf *x509.Certificate, fp string, known []*model.KnownH
 	h.setState(t.sessionID, model.StateConnecting, "Securing the connection (TLS)")
 	switch {
 	case errors.Is(err, events.ErrNoInteractiveClient):
-		return &certRejectedError{msg: "the server certificate must be confirmed, but no Termstead window is connected"}
+		return &certRejectedError{msg: "the server certificate must be confirmed, but no AstraTerm window is connected"}
 	case errors.Is(err, events.ErrPromptTimeout):
 		return &certRejectedError{msg: "the server certificate was not confirmed in time"}
 	case err != nil:

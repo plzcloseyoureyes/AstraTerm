@@ -1,5 +1,5 @@
-// Package servers implements Termstead's embedded servers (RESEARCH SRV-1…6, CC-5): an HTTP(S) file server, TFTP,
-// FTP(S), SSH/SFTP (optional shell), Telnet and a syslog receiver. They run on the Termstead host with persisted
+// Package servers implements AstraTerm's embedded servers (RESEARCH SRV-1…6, CC-5): an HTTP(S) file server, TFTP,
+// FTP(S), SSH/SFTP (optional shell), Telnet and a syslog receiver. They run on the AstraTerm host with persisted
 // configurations, autostart, automatic stop, per-server activity logs, connected-client lists and live status events.
 // Desktop mode: any signed-in user; server mode: administrators only (SPEC principle 7).
 //
@@ -28,8 +28,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
 )
 
 // Mount creates the servers manager, loads the stored configurations, registers the REST routes and event topics,

@@ -6,9 +6,9 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
 )
 
 // buildPreview turns a parsed import into the JSON preview, marking connections that already exist for the user.

@@ -215,7 +215,7 @@ export default function WebView({ tabId, params }: TabProps<WebTabParams>) {
       const frame = iframeRef.current
       if (!frame || e.source !== frame.contentWindow) return
       const d = e.data as BridgeMessage
-      if (!d || d.source !== 'termstead-webproxy') return
+      if (!d || d.source !== 'astraterm-webproxy') return
       switch (d.type) {
         case 'hello':
           setBridge(true)
@@ -260,7 +260,7 @@ export default function WebView({ tabId, params }: TabProps<WebTabParams>) {
         } else {
           setBanner({
             tone: 'warning',
-            text: 'Your browser blocks the proxy’s cookie inside Termstead tabs.',
+            text: 'Your browser blocks the proxy’s cookie inside AstraTerm tabs.',
             actions: [
               { label: 'Open in new window', primary: true, run: () => void openExternal() },
               { label: 'Compatibility mode', run: () => void load(undefined, { mode: 'path' }) },
@@ -315,7 +315,7 @@ export default function WebView({ tabId, params }: TabProps<WebTabParams>) {
           return false
         }
       }
-      w.postMessage({ source: 'termstead-webproxy', cmd, ...extra }, target)
+      w.postMessage({ source: 'astraterm-webproxy', cmd, ...extra }, target)
       return true
     },
     [entry],

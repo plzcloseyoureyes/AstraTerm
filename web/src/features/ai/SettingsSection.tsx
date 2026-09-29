@@ -237,7 +237,7 @@ function ProviderForm({ scope, view, isAdmin, mode }: { scope: 'global' | 'user'
                 view.hasKey && key === null
                   ? 'Stored encrypted in the vault. It is never shown again.'
                   : preset.keyRequired
-                    ? 'Required. Encrypted in the vault; only the Termstead server uses it.'
+                    ? 'Required. Encrypted in the vault; only the AstraTerm server uses it.'
                     : 'Optional for local servers.'
               }
             >

@@ -1,23 +1,21 @@
 /*
- * Monitor feature (MON-1..6, SSH-38 display, SEC-22): the remote monitoring bar in the status bar, the
+ * Monitor feature (MON-1..6, SSH-38 display): the remote monitoring bar in the status bar, the
  * per-session 'monitor' tab (live charts, processes, services, ports, disk usage, logs, SSH connection), the local
- * 'sysinfo' tab, and Caffeine.
+ * 'sysinfo' tab.
  *
  * Commands (category Monitor):
  *   monitor.open {sessionId?|target?, panel?}   host monitor of a session (default: the active tab / terminal)
  *   monitor.toggleBar {enabled?}                remote monitoring bar on / off (definition carries `checked()`)
  *   monitor.processes | services | ports | diskUsage | logs | connectionInfo   monitor tab on that panel
- *   monitor.systemInfo, monitor.taskManager     the Termstead host (desktop mode / admins)
- *   monitor.caffeine.toggle | on {minutes?} | off
+ *   monitor.systemInfo, monitor.taskManager     the AstraTerm host (desktop mode / admins)
  */
 import { lazy } from 'react'
 import { toast } from 'sonner'
-import { Activity, Cable, Coffee, Cog, HardDrive, ListTree, Monitor, MonitorCog, Plug, ScrollText } from 'lucide-react'
+import { Activity, Cable, Cog, HardDrive, ListTree, Monitor, MonitorCog, Plug, ScrollText } from 'lucide-react'
 import {
   registerCommand,
   registerContextMenu,
   registerMenu,
-  registerOverlay,
   registerSettingsSection,
   registerStatusItem,
   registerTabKind,
@@ -25,7 +23,6 @@ import {
   type MenuItem,
 } from '@/app/registry'
 import { getActiveTerminal } from '@/features/terminal/bus'
-import { CaffeineKeeper, CaffeineStatusItem, CAFFEINE_DURATIONS, caffeineStatus, toggleCaffeine } from './caffeine'
 import { MonitorBar } from './MonitorBar'
 import { cachedSession, canMonitorLocal, isMonitorable, MONITOR_KIND, noTargetToast, openMonitor, openSystemInfo, resolveMonitorTarget, SYSINFO_KIND } from './open'
 import { getMonitorBarOverride, isMonitorBarEnabled, setMonitorBarEnabled, setMonitorBarForSession } from './settings'
@@ -57,8 +54,6 @@ registerTabKind<SysInfoTabParams>({
 })
 
 registerStatusItem({ id: 'monitor.bar', align: 'left', order: 30, component: MonitorBar })
-registerStatusItem({ id: 'monitor.caffeine', align: 'right', order: 80, component: CaffeineStatusItem })
-registerOverlay({ id: 'monitor.caffeine', component: CaffeineKeeper })
 
 registerSettingsSection({
   id: 'monitor',
@@ -66,7 +61,7 @@ registerSettingsSection({
   icon: Activity,
   order: 45,
   group: 'connections',
-  keywords: ['remote monitoring', 'status bar', 'cpu', 'memory', 'ram', 'disk', 'network', 'threshold', 'processes', 'logs', 'caffeine', 'sleep'],
+  keywords: ['remote monitoring', 'status bar', 'cpu', 'memory', 'ram', 'disk', 'network', 'threshold', 'processes', 'logs'],
   component: MonitoringSettings,
 })
 
@@ -142,7 +137,7 @@ registerCommand({
   category: 'Tools',
   icon: MonitorCog,
   keywords: ['swinfo', 'hwinfo', 'hardware', 'software', 'this computer', 'local host'],
-  description: 'Hardware, software and live statistics of the computer Termstead runs on',
+  description: 'Hardware, software and live statistics of the computer AstraTerm runs on',
   run: () => void openSystemInfo(),
   when: canMonitorLocal,
 })
@@ -155,36 +150,6 @@ registerCommand({
   keywords: ['tasklist', 'killtask', 'processes', 'kill'],
   run: () => void openSystemInfo('processes'),
   when: canMonitorLocal,
-})
-
-const caffeineAllowed = () => canMonitorLocal() && caffeineStatus()?.supported !== false
-
-registerCommand({
-  id: 'monitor.caffeine.toggle',
-  title: 'Caffeine: Keep This Computer Awake',
-  category: 'Tools',
-  icon: Coffee,
-  keywords: ['sleep', 'awake', 'screen saver', 'caffeinate', 'prevent sleep'],
-  run: () => toggleCaffeine(),
-  when: caffeineAllowed,
-})
-registerCommand<{ minutes?: number } | undefined>({
-  id: 'monitor.caffeine.on',
-  title: 'Caffeine: On',
-  category: 'Tools',
-  icon: Coffee,
-  hidden: true,
-  run: ({ args }) => toggleCaffeine(true, typeof args?.minutes === 'number' ? args.minutes : 0),
-  when: caffeineAllowed,
-})
-registerCommand({
-  id: 'monitor.caffeine.off',
-  title: 'Caffeine: Off',
-  category: 'Tools',
-  icon: Coffee,
-  hidden: true,
-  run: () => toggleCaffeine(false),
-  when: caffeineAllowed,
 })
 
 // --- menus -------------------------------------------------------------------------------------------------------------
@@ -207,25 +172,11 @@ registerMenu({
   id: 'monitor.tools',
   menu: 'tools',
   order: 400,
-  items: (): MenuItem[] => {
-    const caf = caffeineStatus()
-    return [
-      { label: 'Monitor host', icon: Activity, command: 'monitor.open' },
-      { label: 'System information', icon: MonitorCog, command: 'monitor.systemInfo' },
-      { label: 'Task manager (this computer)', icon: ListTree, command: 'monitor.taskManager' },
-      {
-        type: 'submenu',
-        label: caf?.enabled ? 'Caffeine (on)' : 'Caffeine',
-        icon: Coffee,
-        disabled: !caffeineAllowed(),
-        items: () => [
-          ...CAFFEINE_DURATIONS.map((d) => ({ label: d.label, command: 'monitor.caffeine.on', args: { minutes: d.minutes } }) satisfies MenuItem),
-          { type: 'separator' as const },
-          { label: 'Turn off', command: 'monitor.caffeine.off', disabled: !caf?.enabled },
-        ],
-      },
-    ]
-  },
+  items: (): MenuItem[] => [
+    { label: 'Monitor host', icon: Activity, command: 'monitor.open' },
+    { label: 'System information', icon: MonitorCog, command: 'monitor.systemInfo' },
+    { label: 'Task manager (this computer)', icon: ListTree, command: 'monitor.taskManager' },
+  ],
 })
 
 registerContextMenu({

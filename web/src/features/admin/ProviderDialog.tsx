@@ -113,7 +113,7 @@ export function ProviderDialog({ value, redirectUri, onClose, onSaved }: { value
             <DialogTitle>
               <Link2 className="size-4" /> {isNew ? 'Add identity provider' : `Edit ${(value as OidcProvider | null)?.name ?? ''}`}
             </DialogTitle>
-            <DialogDescription>Register Termstead as a confidential web application (authorization code flow) at your provider.</DialogDescription>
+            <DialogDescription>Register AstraTerm as a confidential web application (authorization code flow) at your provider.</DialogDescription>
           </DialogHeader>
           <DialogBody className="grid max-h-[65vh] gap-4 overflow-y-auto">
             <div className="flex flex-wrap items-center gap-2 rounded-md border bg-muted/30 px-3 py-2 text-sm">
@@ -129,7 +129,7 @@ export function ProviderDialog({ value, redirectUri, onClose, onSaved }: { value
                 <Input value={draft.clientId ?? ''} onChange={(e) => set('clientId', e.target.value)} autoComplete="off" spellCheck={false} />
               </Field>
             </div>
-            <Field label="Issuer URL" hint="Its /.well-known/openid-configuration must be reachable from the Termstead server." required>
+            <Field label="Issuer URL" hint="Its /.well-known/openid-configuration must be reachable from the AstraTerm server." required>
               <div className="flex gap-2">
                 <Input
                   value={draft.issuer ?? ''}
@@ -187,7 +187,7 @@ export function ProviderDialog({ value, redirectUri, onClose, onSaved }: { value
                 onCheckedChange={(v) => set('autoProvision', v)}
               />
               <Field label="Administrator groups" hint="Members of these groups become administrators.">
-                <TagInput value={draft.adminGroups ?? []} onChange={(v) => set('adminGroups', v)} placeholder="termstead-admins" aria-label="Administrator groups" />
+                <TagInput value={draft.adminGroups ?? []} onChange={(v) => set('adminGroups', v)} placeholder="astraterm-admins" aria-label="Administrator groups" />
               </Field>
               <SwitchField
                 label="Update the role on every sign-in"

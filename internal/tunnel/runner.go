@@ -11,9 +11,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // Reconnect backoff (1 s … 60 s, ±20 % jitter), as for terminal sessions.
@@ -72,7 +72,7 @@ func newRunner(m *Manager, owner *model.User, rec *record, autostart bool) *runn
 	}
 }
 
-// prepare builds the spec and forward and, for listeners on the Termstead host, binds the listener. Errors are typed
+// prepare builds the spec and forward and, for listeners on the AstraTerm host, binds the listener. Errors are typed
 // API errors (vault locked, address in use, invalid configuration…).
 func (r *runner) prepare(ctx context.Context) error {
 	sp, err := r.m.specFor(ctx, r.owner, r.rec)
@@ -418,8 +418,8 @@ func (r *runner) waitAfterFailure(err error, attempt *int) bool {
 	case errors.Is(err, httpx.ErrLocked):
 		r.set(model.TunnelStarting, "the vault is locked: the tunnel connects once it is unlocked", "vault", time.Time{})
 		return r.waitUntil(func() bool { return !r.m.d.Vault.Locked() })
-	case strings.Contains(msg, "no Termstead window is connected"):
-		r.set(model.TunnelStarting, "a login prompt needs an answer: waiting for a Termstead window", "client", time.Time{})
+	case strings.Contains(msg, "no AstraTerm window is connected"):
+		r.set(model.TunnelStarting, "a login prompt needs an answer: waiting for a AstraTerm window", "client", time.Time{})
 		return r.waitUntil(func() bool { return r.m.d.Events.HasClient(r.owner.ID) })
 	case permanent(err):
 		r.fail(msg)

@@ -15,9 +15,9 @@ import (
 	"github.com/labstack/echo/v5"
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
 )
 
 const maxKeyRequestBody = 512 << 10
@@ -160,7 +160,7 @@ func (h *handler) storeKey(ctx context.Context, u *model.User, p storeParams) (*
 		return nil, err
 	}
 	sealed, err := h.d.Vault.Seal(text)
-	wipe(text)
+	clear(text)
 	if err != nil {
 		if errors.Is(err, model.ErrLocked) {
 			return nil, httpx.ErrLocked
@@ -547,7 +547,7 @@ func (h *handler) updateKey(c *echo.Context) error {
 			return err
 		}
 		sealed, err := h.d.Vault.Seal(text)
-		wipe(text)
+		clear(text)
 		if err != nil {
 			return err
 		}

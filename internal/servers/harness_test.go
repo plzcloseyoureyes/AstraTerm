@@ -20,15 +20,15 @@ import (
 	"github.com/coder/websocket"
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/audit"
-	"github.com/termstead/termstead/internal/auth"
-	cfgpkg "github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/events"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
-	"github.com/termstead/termstead/internal/vault"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/audit"
+	"github.com/plzcloseyoureyes/astraterm/internal/auth"
+	cfgpkg "github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/events"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/vault"
 )
 
 func TestMain(m *testing.M) {
@@ -38,7 +38,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-// harness is a minimal Termstead backend (store, vault, events, router with a header-based test authenticator) with the
+// harness is a minimal AstraTerm backend (store, vault, events, router with a header-based test authenticator) with the
 // servers module mounted (no autostart).
 type harness struct {
 	t      *testing.T
@@ -70,7 +70,7 @@ func newHarness(t *testing.T, mutate ...func(*cfgpkg.Config)) *harness {
 	if testing.Verbose() && os.Getenv("SERVERS_TEST_LOG") != "" {
 		log = slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelDebug}))
 	}
-	st, err := store.Open(ctx, filepath.Join(dataDir, "termstead.db"))
+	st, err := store.Open(ctx, filepath.Join(dataDir, "astraterm.db"))
 	if err != nil {
 		t.Fatal(err)
 	}

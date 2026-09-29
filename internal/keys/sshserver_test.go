@@ -9,7 +9,6 @@ import (
 	"io"
 	"net"
 	"os/exec"
-	"strconv"
 	"sync"
 	"testing"
 	"time"
@@ -18,7 +17,7 @@ import (
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // An in-process SSH server for the module's integration tests: host key or host certificate, password / public key /
@@ -256,8 +255,6 @@ func (s *testServer) conn(owner *model.User, keyID, auth string, opts model.Opti
 	c.Normalize()
 	return c
 }
-
-func (s *testServer) addr() string { return net.JoinHostPort(s.Host, strconv.Itoa(s.Port)) }
 
 func ctxT(t *testing.T) context.Context {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)

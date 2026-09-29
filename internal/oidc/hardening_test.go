@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
 func whoAmI(t *testing.T, c *servertest.Client) *model.User {

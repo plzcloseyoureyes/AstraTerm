@@ -258,11 +258,11 @@ export function isHiddenName(name: string): boolean {
   return name.startsWith('.')
 }
 
-/** The backend receives uploads and transfers into "<target>.termstead-part" and renames it onto the target at the end. */
-export const PART_SUFFIX = '.termstead-part'
+/** The backend receives uploads and transfers into "<target>.astraterm-part" and renames it onto the target at the end. */
+export const PART_SUFFIX = '.astraterm-part'
 
 /**
- * A partial upload / transfer left by Termstead ("<name>.termstead-part"): an upload in progress, or one that was
+ * A partial upload / transfer left by AstraTerm ("<name>.astraterm-part"): an upload in progress, or one that was
  * interrupted (page reload, cancel). Listings hide them unless settings.files.showPartialUploads is on.
  */
 export function isPartialUpload(e: Pick<FileEntry, 'name' | 'type'>): boolean {

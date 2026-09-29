@@ -5,17 +5,14 @@ SOURCE_DATE_EPOCH ?= $(shell git log -1 --format=%ct 2>/dev/null)
 BUILD_DATE := $(if $(SOURCE_DATE_EPOCH),$(shell date -u -d @$(SOURCE_DATE_EPOCH) +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -r $(SOURCE_DATE_EPOCH) +%Y-%m-%dT%H:%M:%SZ))
 LDFLAGS := -s -w -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.date=$(BUILD_DATE)
 GOFLAGS := -trimpath
-BIN := bin/termstead
-# Release matrix; keep in sync with .goreleaser.yaml, scripts/release/dist and scripts/release/notices.
-# linux/arm/7 (32-bit ARMv7) can be added once internal/recording builds on 32-bit platforms (see docs/RELEASING.md).
+BIN := bin/astraterm
+# Release matrix; keep in sync with scripts/release/dist and scripts/release/notices.
 PLATFORMS := darwin/amd64 darwin/arm64 linux/amd64 linux/arm64 linux/arm/7 windows/amd64 windows/arm64 freebsd/amd64
-# GoReleaser version used by `make snapshot` / `make goreleaser-check` (keep in sync with .github/workflows/release.yml).
-GORELEASER_VERSION ?= v2.18.2
 empty :=
 space := $(empty) $(empty)
 comma := ,
 
-.PHONY: all web precompress build build-go dev dev-backend dev-web test go-test test-race test-web cross-check vet fmt fmt-check typecheck lint lint-ui check smoke flash-audit release dist snapshot goreleaser-check notices notices-check clean
+.PHONY: all web precompress build build-go dev dev-backend dev-web test go-test test-race test-web cross-check vet fmt fmt-check typecheck lint lint-ui check smoke flash-audit release dist desktop icons notices notices-check clean
 
 all: build
 
@@ -37,15 +34,16 @@ web: web/node_modules/.package-lock.json
 precompress:
 	go run ./internal/webui/precompress internal/webui/dist
 
+# bin/astraterm: the server / CLI with the UI embedded.
 build: web
-	CGO_ENABLED=0 go build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o $(BIN) ./cmd/termstead
+	$(MAKE) build-go
 
 # Backend only (assumes the frontend was already built into internal/webui/dist)
 build-go:
-	CGO_ENABLED=0 go build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o $(BIN) ./cmd/termstead
+	CGO_ENABLED=0 go build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o $(BIN) ./cmd/astraterm
 
 dev-backend:
-	go run ./cmd/termstead --dev --no-open --data-dir ./.termstead-data
+	go run ./cmd/astraterm --dev --no-open --data-dir ./.astraterm-data
 
 dev-web:
 	cd web && npm run dev
@@ -114,13 +112,17 @@ dist:
 	SOURCE_DATE_EPOCH=$(SOURCE_DATE_EPOCH) go run ./scripts/release/dist -version $(VERSION) -out dist \
 		-platforms $(subst $(space),$(comma),$(PLATFORMS))
 
-# Local dry run of the CI release pipeline (.goreleaser.yaml): builds, archives, checksums, nothing is published.
-snapshot:
-	go run github.com/goreleaser/goreleaser/v2@$(GORELEASER_VERSION) release --snapshot --clean \
-		$(if $(shell command -v syft 2>/dev/null),,--skip=sbom)
+# The desktop app (desktop/, Tauri) for this machine: the server as its sidecar, then the native bundles (.app/.dmg,
+# .msi/setup .exe, .deb/.rpm/.AppImage) in desktop/src-tauri/target/release/bundle/. Needs Rust (docs/DESKTOP.md).
+desktop: web
+	scripts/desktop-sidecar.sh
+	cd desktop && if [ -d node_modules ]; then npm install --no-audit --no-fund; else npm ci --no-audit --no-fund; fi
+	cd desktop && npx tauri build
 
-goreleaser-check:
-	go run github.com/goreleaser/goreleaser/v2@$(GORELEASER_VERSION) check
+# Regenerate the app icons (packaging/, web/public/icons/) from the SVG masters in packaging/icons/. macOS + Chrome only;
+# the results are committed, so builds never need this.
+icons:
+	scripts/icons/generate.sh
 
 # THIRD_PARTY_NOTICES.md from the Go modules in the binary and the npm packages in the UI bundle (needs web/node_modules).
 notices:

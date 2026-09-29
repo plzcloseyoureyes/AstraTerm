@@ -11,19 +11,19 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
 )
 
-// Integration tests against the shared Docker test environment (scripts/testenv): enable with TERMSTEAD_TESTENV=1.
+// Integration tests against the shared Docker test environment (scripts/testenv): enable with ASTRATERM_TESTENV=1.
 // ssh1 listens on 127.0.0.1:22022 (test/test).
 
 const testenvSSH = "127.0.0.1:22022"
 
 func requireTestenv(t *testing.T) {
 	t.Helper()
-	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
-		t.Skip("set TERMSTEAD_TESTENV=1 to run tests against the shared Docker test environment")
+	if os.Getenv("ASTRATERM_TESTENV") != "1" {
+		t.Skip("set ASTRATERM_TESTENV=1 to run tests against the shared Docker test environment")
 	}
 	c, err := net.DialTimeout("tcp", testenvSSH, 2*time.Second)
 	if err != nil {

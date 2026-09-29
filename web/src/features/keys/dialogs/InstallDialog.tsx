@@ -1,6 +1,6 @@
 /*
  * Install a public key on a server (TOOL-1, ssh-copy-id semantics): pick a stored key and a saved SSH connection;
- * Termstead logs in with the connection's credentials (prompts appear as usual), creates ~/.ssh (0700) and appends the
+ * AstraTerm logs in with the connection's credentials (prompts appear as usual), creates ~/.ssh (0700) and appends the
  * key to ~/.ssh/authorized_keys (0600) unless it is already there. Optionally the connection then uses the key.
  */
 import { useMemo, useState } from 'react'

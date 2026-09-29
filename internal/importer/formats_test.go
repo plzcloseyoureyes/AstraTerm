@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 func TestSSHConfigMatchQuotesForwardsTokens(t *testing.T) {

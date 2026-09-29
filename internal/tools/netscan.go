@@ -17,7 +17,7 @@ import (
 	"golang.org/x/net/ipv4"
 	"golang.org/x/sync/semaphore"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 type netscanRequest struct {
@@ -61,8 +61,8 @@ func prepareNetscan(ctx context.Context, cl *call) (runner, error) {
 	if err := checkProbeBudget(len(hosts), len(ports)); err != nil {
 		return nil, err
 	}
-	timeout := time.Duration(clampInt(orDefault(req.TimeoutMs, 600), 50, 10000)) * time.Millisecond
-	conc := clampInt(orDefault(req.Concurrency, 256), 1, 1024)
+	timeout := time.Duration(min(max(orDefault(req.TimeoutMs, 600), 50), 10000)) * time.Millisecond
+	conc := min(max(orDefault(req.Concurrency, 256), 1), 1024)
 	if req.ViaConnectionID != "" {
 		if err := cl.checkSSHConnection(ctx, req.ViaConnectionID); err != nil {
 			return nil, err
@@ -366,7 +366,7 @@ func icmpSweep(ctx context.Context, ips []net.IP, timeout time.Duration) map[str
 			continue
 		}
 		seq++
-		wb, err := (&icmp.Message{Type: ipv4.ICMPTypeEcho, Body: &icmp.Echo{ID: id, Seq: seq, Data: []byte("termstead-netscan")}}).Marshal(nil)
+		wb, err := (&icmp.Message{Type: ipv4.ICMPTypeEcho, Body: &icmp.Echo{ID: id, Seq: seq, Data: []byte("astraterm-netscan")}}).Marshal(nil)
 		if err != nil {
 			continue
 		}

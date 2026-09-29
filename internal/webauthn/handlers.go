@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"slices"
 	"strings"
 	"unicode/utf8"
 
@@ -13,10 +14,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/auth"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/auth"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 // ceremonyResponse starts a ceremony in the browser: options is the PublicKeyCredential{Creation,Request}OptionsJSON
@@ -175,8 +176,8 @@ func (s *Service) handleRegisterFinish(c *echo.Context) error {
 		BackupState: cred.Flags.BackupState, UserVerified: cred.Flags.UserVerified, Transports: transports,
 		SignCount: cred.Authenticator.SignCount, CreatedAt: now}
 	_, err = s.d.Store.DB.ExecContext(ctx, `INSERT INTO webauthn_credentials (`+credCols+`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)`,
-		sc.ID, sc.UserID, sc.CredentialID, sc.RPID, sc.Name, string(data), sc.AAGUID, b2i(sc.Discoverable), b2i(sc.BackupElig),
-		b2i(sc.BackupState), b2i(sc.UserVerified), string(tj), int64(sc.SignCount), now.UnixMilli())
+		sc.ID, sc.UserID, sc.CredentialID, sc.RPID, sc.Name, string(data), sc.AAGUID, store.B2I(sc.Discoverable), store.B2I(sc.BackupElig),
+		store.B2I(sc.BackupState), store.B2I(sc.UserVerified), string(tj), int64(sc.SignCount), now.UnixMilli())
 	if err != nil {
 		if strings.Contains(err.Error(), "UNIQUE") {
 			return httpx.Conflict("this passkey is already registered")
@@ -388,7 +389,7 @@ func (s *Service) handleMFABegin(c *echo.Context) error {
 	if err != nil {
 		return err
 	}
-	if ch.Enroll || !contains(ch.Methods, "webauthn") {
+	if ch.Enroll || !slices.Contains(ch.Methods, "webauthn") {
 		return httpx.BadRequest("this sign-in does not accept a passkey")
 	}
 	rp, err := s.relyingParty(c)
@@ -548,15 +549,6 @@ func (s *Service) verifyAssertion(c *echo.Context, cer *ceremony, userID string,
 	return w, stored, cred, nil
 }
 
-func contains(list []string, v string) bool {
-	for _, x := range list {
-		if x == v {
-			return true
-		}
-	}
-	return false
-}
-
 // ---- admin configuration ----------------------------------------------------------------------------------------------
 
 func (s *Service) handleGetConfig(c *echo.Context) error {
@@ -588,7 +580,7 @@ func (s *Service) handlePutConfig(c *echo.Context) error {
 	cfg.Origins = origins
 	if cfg.RPID != "" {
 		if err := protocol.ValidateRPID(cfg.RPID); err != nil {
-			return httpx.BadRequest("rpId must be a domain name such as termstead.example.com")
+			return httpx.BadRequest("rpId must be a domain name such as astraterm.example.com")
 		}
 		if len(cfg.Origins) == 0 {
 			return httpx.BadRequest("list at least one origin, e.g. https://" + cfg.RPID)
@@ -600,7 +592,7 @@ func (s *Service) handlePutConfig(c *echo.Context) error {
 			}
 		}
 		origin, _ := s.requestOrigin(c)
-		if !contains(cfg.Origins, origin) {
+		if !slices.Contains(cfg.Origins, origin) {
 			return httpx.NewError(http.StatusConflict, "self_lockout", "include the address you are using ("+origin+") in the origins")
 		}
 	} else {

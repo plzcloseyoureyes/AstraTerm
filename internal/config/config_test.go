@@ -39,7 +39,7 @@ func TestLoadDefaultsAndFlags(t *testing.T) {
 		t.Fatal("--no-open ignored")
 	}
 
-	t.Setenv("TERMSTEAD_LISTEN", "127.0.0.1:9999")
+	t.Setenv("ASTRATERM_LISTEN", "127.0.0.1:9999")
 	if c, _ = Load([]string{"--data-dir", dir}); c.Listen != "127.0.0.1:9999" {
 		t.Fatalf("env: %s", c.Listen)
 	}
@@ -59,7 +59,7 @@ func TestValidate(t *testing.T) {
 		{"--scrollback-bytes", "1k"},
 		{"--trusted-proxies", "not-an-ip"},
 		{"--detached-ttl", "soon"},
-		{"--allowed-hosts", "https://termstead.example.com"},
+		{"--allowed-hosts", "https://astraterm.example.com"},
 		{"--allowed-hosts", "*.example.com"},
 		{"--allowed-hosts", "bad host!"},
 	}
@@ -85,14 +85,14 @@ func TestAllowedHosts(t *testing.T) {
 	if err != nil || len(c.AllowedHosts) != 0 {
 		t.Fatalf("default: %v %v", c.AllowedHosts, err)
 	}
-	c, err = Load([]string{"--data-dir", dir, "--allowed-hosts", "Termstead.Example.com:443, [fd00::1]:8443 10.0.0.5;termstead.example.com."})
+	c, err = Load([]string{"--data-dir", dir, "--allowed-hosts", "AstraTerm.Example.com:443, [fd00::1]:8443 10.0.0.5;astraterm.example.com."})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := strings.Join(c.AllowedHosts, ","); got != "termstead.example.com,fd00::1,10.0.0.5" {
+	if got := strings.Join(c.AllowedHosts, ","); got != "astraterm.example.com,fd00::1,10.0.0.5" {
 		t.Fatalf("flag: %q", got)
 	}
-	t.Setenv("TERMSTEAD_ALLOWED_HOSTS", "proxy.lan")
+	t.Setenv("ASTRATERM_ALLOWED_HOSTS", "proxy.lan")
 	if c, _ = Load([]string{"--data-dir", dir}); len(c.AllowedHosts) != 1 || c.AllowedHosts[0] != "proxy.lan" {
 		t.Fatalf("env: %v", c.AllowedHosts)
 	}

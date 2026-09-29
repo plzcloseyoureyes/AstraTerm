@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// signalLocal ends a process of the Termstead host; Windows has no signals, every one terminates the process.
+// signalLocal ends a process of the AstraTerm host; Windows has no signals, every one terminates the process.
 func signalLocal(pid int, sig string) error {
 	if sig == "STOP" || sig == "CONT" || sig == "USR1" || sig == "USR2" {
 		return errBadSignal

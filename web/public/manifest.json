@@ -1,0 +1,14 @@
+{
+  "name": "AstraTerm",
+  "short_name": "AstraTerm",
+  "description": "An organized remote-management workspace: SSH, SFTP, RDP, VNC, tunnels and more.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#15181d",
+  "theme_color": "#15181d",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

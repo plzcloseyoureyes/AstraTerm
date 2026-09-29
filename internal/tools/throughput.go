@@ -17,7 +17,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 // TCP throughput test (RESEARCH TOOL-8 "iperf client"). Two modes, labelled as such in the UI:
@@ -34,7 +34,7 @@ type throughputRequest struct {
 	Port            int    `json:"port"`
 	DurationSec     int    `json:"durationSec"`
 	Parallel        int    `json:"parallel"`
-	Reverse         bool   `json:"reverse"` // download (server → Termstead) instead of upload
+	Reverse         bool   `json:"reverse"` // download (server → AstraTerm) instead of upload
 	BlockSize       int    `json:"blockSize"`
 	ViaConnectionID string `json:"viaConnectionId"` // mode "ssh": the SSH host to measure against
 }
@@ -48,9 +48,9 @@ func prepareThroughput(ctx context.Context, cl *call) (runner, error) {
 	if req.Mode == "" {
 		req.Mode = "iperf3"
 	}
-	req.DurationSec = clampInt(orDefault(req.DurationSec, 10), 1, 60)
-	req.Parallel = clampInt(orDefault(req.Parallel, 1), 1, 8)
-	req.BlockSize = clampInt(orDefault(req.BlockSize, 128*1024), 4096, 1<<20)
+	req.DurationSec = min(max(orDefault(req.DurationSec, 10), 1), 60)
+	req.Parallel = min(max(orDefault(req.Parallel, 1), 1), 8)
+	req.BlockSize = min(max(orDefault(req.BlockSize, 128*1024), 4096), 1<<20)
 	switch req.Mode {
 	case "iperf3":
 		req.Host = strings.Trim(strings.TrimSpace(req.Host), "[]")
@@ -242,7 +242,7 @@ func iperfStreamID(i int) int {
 
 func runIperf3(ctx context.Context, guard *netGuard, req *throughputRequest, out *sink) error {
 	addr := net.JoinHostPort(req.Host, strconv.Itoa(req.Port))
-	dir := ternary(req.Reverse, "download (server → Termstead)", "upload (Termstead → server)")
+	dir := ternary(req.Reverse, "download (server → AstraTerm)", "upload (AstraTerm → server)")
 	out.emitNow(row{"kind": "info", "message": fmt.Sprintf("iperf3 TCP test with %s: %d stream(s), %ds, %s", addr, req.Parallel, req.DurationSec, dir)})
 
 	dialer := guard.dialer(10 * time.Second)
@@ -445,7 +445,7 @@ func runSSHThroughput(ctx context.Context, cl *call, req *throughputRequest, out
 		return err
 	}
 	defer release()
-	dir := ternary(req.Reverse, "download (host → Termstead)", "upload (Termstead → host)")
+	dir := ternary(req.Reverse, "download (host → AstraTerm)", "upload (AstraTerm → host)")
 	out.emitNow(row{"kind": "info", "message": fmt.Sprintf("SSH channel throughput with %s: %d channel(s), %ds, %s", client.Conn.Name, req.Parallel, req.DurationSec, dir)})
 
 	type chanSess struct {

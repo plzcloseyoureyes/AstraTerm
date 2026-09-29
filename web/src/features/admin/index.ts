@@ -72,7 +72,7 @@ registerCommand({
   when: isAdmin,
   run: () => openAdmin('network'),
 })
-registerCommand({ id: 'admin.system', title: 'Termstead Server Status', category: CATEGORY, icon: Server, keywords: ['system', 'version', 'data dir', 'tls', 'guacd', 'uptime'], when: isAdmin, run: () => openAdmin('system') })
+registerCommand({ id: 'admin.system', title: 'AstraTerm Server Status', category: CATEGORY, icon: Server, keywords: ['system', 'version', 'data dir', 'tls', 'guacd', 'uptime'], when: isAdmin, run: () => openAdmin('system') })
 
 registerMenu({
   id: 'admin.menu',

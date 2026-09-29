@@ -5,7 +5,7 @@
  *   openConnection(connOrId, {position})   POST /api/sessions {connectionId, cols, rows} → tab by kind
  *                                          (terminal | vnc | rdp); sftp/ftp/s3 → a `files` tab {connectionId}
  *   openQuick(quick & {password?})         unsaved session (quick connect)
- *   openLocalShell(shellId?)               local terminal on the Termstead host
+ *   openLocalShell(shellId?)               local terminal on the AstraTerm host
  *   attachSession(sessionId)               focus the tab showing a running/detached session, or open one
  *   duplicateSession(tabId)                a new session with the same parameters (split/duplicate/reopen)
  *
@@ -267,7 +267,7 @@ export async function openQuick(quick: Partial<Connection> & { password?: string
   return openSessionTab(s, { quick: spec, color: spec.color, title }, opts)
 }
 
-/** Open a local shell on the Termstead host (default shell unless `shellId`). */
+/** Open a local shell on the AstraTerm host (default shell unless `shellId`). */
 export async function openLocalShell(shellId?: string, opts: OpenOptions = {}): Promise<string | null> {
   const shells = queryClient.getQueryData<LocalShell[]>(queryKeys.localShells)
   const shell = shellId ? shells?.find((x) => x.id === shellId || x.path === shellId) : undefined

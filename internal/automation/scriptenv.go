@@ -12,8 +12,8 @@ import (
 
 	"github.com/dop251/goja"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // scriptParams describes one execution of a script program.
@@ -696,7 +696,7 @@ func (js *jsSession) object() goja.Value {
 	_ = o.Set("screen", func(call goja.FunctionCall) goja.Value {
 		n := 24
 		if v := call.Argument(0); !isNullish(v) {
-			n = clampInt(int(v.ToInteger()), 1, 5000)
+			n = min(max(int(v.ToInteger()), 1), 5000)
 		}
 		return vm.ToValue(js.t.screen(n))
 	})

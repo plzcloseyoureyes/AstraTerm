@@ -12,14 +12,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/netguard"
-	"github.com/termstead/termstead/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
 )
 
 // Spec is what a client asks for (POST /api/webproxy). Exactly one of ConnectionID / SessionID / TunnelID selects the
-// route (none = directly from the Termstead host). URL is a shorthand for Scheme + Host + Port + Path.
+// route (none = directly from the AstraTerm host). URL is a shorthand for Scheme + Host + Port + Path.
 type Spec struct {
 	ConnectionID string `json:"connectionId,omitempty"`
 	SessionID    string `json:"sessionId,omitempty"`
@@ -335,7 +335,7 @@ func (s *Service) resolve(ctx context.Context, user *model.User, sp Spec) (*rout
 				rt.auth = "Basic " + base64.StdEncoding.EncodeToString([]byte(conn.Username+":"+secrets[model.SecretPassword]))
 			}
 			rt.title = conn.Name
-			label := "Termstead host"
+			label := "AstraTerm host"
 			if via := conn.Options.String("sshTunnelVia", ""); via != "" {
 				label = "SSH gateway"
 				if gw, err := s.d.Store.Connections.Get(ctx, via); err == nil {
@@ -368,7 +368,7 @@ func (s *Service) resolve(ctx context.Context, user *model.User, sp Spec) (*rout
 		}
 
 	default:
-		rt.via = Via{Kind: "direct", Label: "Termstead host"}
+		rt.via = Via{Kind: "direct", Label: "AstraTerm host"}
 		rt.dial = func(ctx context.Context) (net.Conn, error) {
 			u := s.ownerOf(ctx, user)
 			conn := &model.Connection{Protocol: model.ProtoWeb, Host: rt.target.Host, Port: rt.target.Port, Options: model.Options{}}
@@ -527,7 +527,7 @@ func classifyDialErr(err error, t Target) (code, msg string) {
 	}
 	var ae interface{ ErrorCode() string }
 	if errors.As(err, &ae) && ae.ErrorCode() == model.CodeLocked {
-		return model.CodeLocked, "the vault is locked: unlock Termstead to use this connection"
+		return model.CodeLocked, "the vault is locked: unlock AstraTerm to use this connection"
 	}
 	s := err.Error()
 	switch {

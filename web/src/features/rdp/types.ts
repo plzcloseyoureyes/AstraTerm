@@ -60,7 +60,7 @@ export interface RdpTicketInfo extends RdpTicket {
   autoReconnect: boolean
   /** A shadow ticket: the view sends no input. */
   readOnly?: boolean
-  /** The connection records sessions (only guacd sessions are recorded, by Termstead). */
+  /** The connection records sessions (only guacd sessions are recorded, by AstraTerm). */
   recording?: boolean
 }
 

@@ -1,6 +1,6 @@
 package automation
 
-import "github.com/termstead/termstead/internal/store"
+import "github.com/plzcloseyoureyes/astraterm/internal/store"
 
 // Module-owned tables (SPEC §3 "Migrations"). Snippets and macros live in the core tables (SPEC §5.1); everything the
 // automation module adds — scripts, triggers, schedules, run history and the trigger log — is stored here.

@@ -15,9 +15,9 @@ import (
 	"github.com/kayrus/putty"
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/events"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/events"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // Authentication orchestration (SSH-1/2/3/6/8/9): the ssh.ClientConfig.AuthCallback picks the next method from the
@@ -250,7 +250,7 @@ func (a *authFlow) prompt(p model.Prompt) (model.PromptResponse, error) {
 	case err == nil:
 		return resp, nil
 	case errors.Is(err, events.ErrNoInteractiveClient):
-		return resp, fmt.Errorf("%s input is required but no Termstead window is connected", p.Kind)
+		return resp, fmt.Errorf("%s input is required but no AstraTerm window is connected", p.Kind)
 	case errors.Is(err, events.ErrPromptTimeout):
 		return resp, fmt.Errorf("no answer to the %s prompt", p.Kind)
 	}

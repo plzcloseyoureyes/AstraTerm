@@ -124,7 +124,7 @@ export function KeysPanel() {
             <EmptyState
               icon={KeyRound}
               title="No SSH keys yet"
-              description="Generate a new key pair, or import an existing private key (OpenSSH, PEM or PuTTY .ppk). Keys are encrypted in the Termstead vault."
+              description="Generate a new key pair, or import an existing private key (OpenSSH, PEM or PuTTY .ppk). Keys are encrypted in the AstraTerm vault."
               action={
                 <>
                   <Button size="sm" onClick={() => openKeysDialog('generate', {})}>

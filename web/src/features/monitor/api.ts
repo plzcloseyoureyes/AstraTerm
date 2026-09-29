@@ -1,11 +1,10 @@
 /*
  * REST + WebSocket endpoints of the monitor module (SPEC §6.0 Monitoring, §9 monitor notes) and react-query hooks.
- * Targets are runtime session ids or 'local' (the Termstead host, desktop mode / admins).
+ * Targets are runtime session ids or 'local' (the AstraTerm host, desktop mode / admins).
  */
 import { useQuery } from '@tanstack/react-query'
 import { api, seg, wsUrl } from '@/api/client'
 import type {
-  CaffeineStatus,
   DiskUsage,
   HostInfo,
   ListeningPort,
@@ -29,7 +28,6 @@ export const monitorKeys = {
   du: (id: TargetId, path: string, sudo: boolean) => ['monitor', id, 'du', path, sudo] as const,
   sshInfo: (id: TargetId) => ['monitor', id, 'ssh-info'] as const,
   systemInfo: ['monitor', 'local', 'system-info'] as const,
-  caffeine: ['monitor', 'caffeine'] as const,
 }
 
 export const getHost = (id: TargetId) => api.get<HostInfo>(`${base(id)}/host`)
@@ -49,8 +47,6 @@ export const getDiskUsage = (id: TargetId, path: string, sudo = false) =>
   api.get<DiskUsage>(`${base(id)}/du`, { query: { path, sudo: sudo ? 1 : undefined } })
 export const getSSHInfo = (id: TargetId) => api.get<SSHInfo>(`${base(id)}/ssh-info`)
 export const getSystemInfo = () => api.get<SystemInfo>('/api/monitor/local')
-export const getCaffeine = () => api.get<CaffeineStatus>('/api/system/caffeine')
-export const setCaffeine = (enabled: boolean, durationMin = 0) => api.post<CaffeineStatus>('/api/system/caffeine', { enabled, durationMin })
 
 /** WebSocket URL of the log follower. */
 export function tailUrl(id: TargetId, opts: { paths?: string[]; journal?: boolean; unit?: string; lines?: number; sudo?: boolean }): string {
@@ -108,8 +104,4 @@ export function useSystemInfo(enabled: boolean, refetchMs: number | false = fals
     staleTime: 2_000,
     placeholderData: (prev) => prev,
   })
-}
-
-export function useCaffeineStatus(enabled = true) {
-  return useQuery({ queryKey: monitorKeys.caffeine, queryFn: getCaffeine, enabled, staleTime: 30_000 })
 }

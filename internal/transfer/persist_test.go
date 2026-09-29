@@ -10,13 +10,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/events"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
-	"github.com/termstead/termstead/internal/transfer"
-	"github.com/termstead/termstead/internal/vfs"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/events"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/transfer"
+	"github.com/plzcloseyoureyes/astraterm/internal/vfs"
 )
 
 // slowFS reads slowly so a transfer is still running when the "server" stops.

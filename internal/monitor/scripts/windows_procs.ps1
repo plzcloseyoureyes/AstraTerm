@@ -1,4 +1,4 @@
-# Termstead remote monitor — Windows process list (MON-3).
+# AstraTerm remote monitor — Windows process list (MON-3).
 $ProgressPreference='SilentlyContinue';$ErrorActionPreference='SilentlyContinue'
 $m=[int64](Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory
 $w=@{};try{Get-Process -IncludeUserName -ErrorAction Stop|%{$w[[int]$_.Id]=$_.UserName}}catch{}

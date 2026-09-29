@@ -1,9 +1,9 @@
-// Package netguard is Termstead's single destination policy (RESEARCH SEC-7 "SSRF and destination controls"). In server
-// mode every connection Termstead opens *from its own host* on behalf of an ordinary user — SSH targets and first jump
+// Package netguard is AstraTerm's single destination policy (RESEARCH SEC-7 "SSRF and destination controls"). In server
+// mode every connection AstraTerm opens *from its own host* on behalf of an ordinary user — SSH targets and first jump
 // hops, proxy servers, port knocks, telnet / rlogin / raw / VNC / RDP / FTP / S3 / WebDAV sockets, tool probes, the
-// host side of remote port forwards — is vetted against this policy, so a user cannot aim Termstead at the host itself
-// (loopback services, other users' tunnel listeners, Termstead's own API), at link-local / cloud metadata endpoints or at
-// networks the administrator excluded. Connections that an SSH server, jump host or proxy makes on Termstead's behalf
+// host side of remote port forwards — is vetted against this policy, so a user cannot aim AstraTerm at the host itself
+// (loopback services, other users' tunnel listeners, AstraTerm's own API), at link-local / cloud metadata endpoints or at
+// networks the administrator excluded. Connections that an SSH server, jump host or proxy makes on AstraTerm's behalf
 // are that hop's business and are not checked.
 //
 // Enforcement happens on the concrete address being connected to (net.Dialer.Control), after DNS resolution, so DNS
@@ -40,7 +40,7 @@ type Policy struct {
 	// AllowPrivate allows RFC 1918 / RFC 4193 private networks (10/8, 172.16/12, 192.168/16, fc00::/7, fec0::/10) —
 	// the bastion use case. Default true.
 	AllowPrivate bool `json:"allowPrivate"`
-	// BlockHostAddresses refuses every address configured on the Termstead host's own interfaces (any port): services
+	// BlockHostAddresses refuses every address configured on the AstraTerm host's own interfaces (any port): services
 	// bound to all interfaces but protected by an external firewall / security group are otherwise reachable from
 	// the host itself. Default true.
 	BlockHostAddresses bool `json:"blockHostAddresses"`
@@ -48,7 +48,7 @@ type Policy struct {
 	Deny []string `json:"deny"`
 	// Allow lists exceptions (IP or CIDR), e.g. one loopback-bound service the administrator wants to expose. The
 	// most specific (longest) matching prefix wins; an administrator rule beats a built-in rule of the same length and
-	// deny beats allow on a tie. Termstead's own listener can never be allowed.
+	// deny beats allow on a tie. AstraTerm's own listener can never be allowed.
 	Allow []string `json:"allow"`
 	// AllowedPorts restricts destination ports ("22,80,443,5900-5999"); "" = every port. Applies to allowed
 	// exceptions too.

@@ -13,7 +13,7 @@ import (
 	probing "github.com/prometheus-community/pro-bing"
 	"golang.org/x/net/icmp"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 type pingRequest struct {
@@ -40,11 +40,11 @@ func (r *pingRequest) normalize() error {
 	if r.IntervalMs <= 0 {
 		r.IntervalMs = 1000
 	}
-	r.IntervalMs = clampInt(r.IntervalMs, 100, 60000)
+	r.IntervalMs = min(max(r.IntervalMs, 100), 60000)
 	if r.TimeoutMs <= 0 {
 		r.TimeoutMs = 2000
 	}
-	r.TimeoutMs = clampInt(r.TimeoutMs, 100, 60000)
+	r.TimeoutMs = min(max(r.TimeoutMs, 100), 60000)
 	if r.Port == 0 {
 		r.Port = 80
 	}
@@ -110,7 +110,7 @@ func icmpPing(ctx context.Context, req *pingRequest, privileged bool, out *sink)
 	pinger.Timeout = time.Duration(req.Count)*pinger.Interval + time.Duration(req.TimeoutMs)*time.Millisecond
 	pinger.RecordRtts = false
 	if req.Size > 0 {
-		pinger.Size = clampInt(req.Size, 24, 65000)
+		pinger.Size = min(max(req.Size, 24), 65000)
 	}
 	if req.IPv6 {
 		pinger.SetNetwork("ip6")

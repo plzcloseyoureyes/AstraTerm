@@ -103,7 +103,7 @@ func (s *ftpService) stop() {
 func (s *ftpService) GetSettings() (*ftpserver.Settings, error) {
 	st := &ftpserver.Settings{
 		Listener:                s.ln,
-		Banner:                  "Termstead FTP server",
+		Banner:                  "AstraTerm FTP server",
 		IdleTimeout:             s.cfg.IdleTimeoutSec,
 		ConnectionTimeout:       30,
 		ActiveTransferPortNon20: true,
@@ -191,7 +191,7 @@ func (s *ftpService) ClientConnected(cc ftpserver.ClientContext) (string, error)
 			}
 		})
 	}
-	return "Termstead FTP server ready", nil
+	return "AstraTerm FTP server ready", nil
 }
 
 func (s *ftpService) ClientDisconnected(cc ftpserver.ClientContext) {

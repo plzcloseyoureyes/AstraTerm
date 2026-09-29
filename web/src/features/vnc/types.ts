@@ -12,7 +12,7 @@ export interface VncTabParams {
   quick?: Partial<Connection>
   color?: string
   title?: string
-  /** Incoming (reverse) connection: cannot be re-established from Termstead. */
+  /** Incoming (reverse) connection: cannot be re-established from AstraTerm. */
   reverse?: boolean
   /** Start in view-only mode (listener option for incoming connections). */
   viewOnly?: boolean

@@ -13,9 +13,9 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/rdp/guac"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/rdp/guac"
 )
 
 // fakeGuacd is a scripted guacd.
@@ -30,7 +30,7 @@ type fakeGuacd struct {
 	// joined: per "select" argument ("rdp" or "$connection"), the connect values and later client instructions.
 	joined     map[string]map[string]string
 	joinScript func(c net.Conn, r *guac.Reader, f *fakeGuacd) // serves joining users (select $id) when set
-	accepted   atomic.Int32                                   // connections Termstead opened to this guacd
+	accepted   atomic.Int32                                   // connections AstraTerm opened to this guacd
 }
 
 var fakeArgs = []string{"hostname", "port", "username", "password", "domain", "security", "ignore-cert", "disable-copy",
@@ -273,8 +273,8 @@ func TestGuacTunnelFakeGuacd(t *testing.T) {
 	gd.mu.Unlock()
 	if cp["hostname"] != "127.0.0.1" || cp["port"] != "3389" || cp["username"] != "alice" || cp["password"] != "" ||
 		cp["ignore-cert"] != "true" || cp["disable-copy"] != "true" || cp["disable-paste"] != "true" ||
-		cp["enable-drive"] != "true" || cp["drive-path"] != "/tmp/termstead/drives/"+admin.user.ID || cp["security"] != "any" ||
-		cp["resize-method"] != "display-update" || cp["client-name"] != "Termstead" {
+		cp["enable-drive"] != "true" || cp["drive-path"] != "/tmp/astraterm/drives/"+admin.user.ID || cp["security"] != "any" ||
+		cp["resize-method"] != "display-update" || cp["client-name"] != "AstraTerm" {
 		t.Fatalf("connect params %v", cp)
 	}
 	if argv != "prompted-pw" || size != "1024x768x96" {
@@ -348,11 +348,11 @@ func TestGuacTunnelBadTicketAndGuacdDown(t *testing.T) {
 	}
 }
 
-// TestGuacTunnelTestEnv connects through the shared test environment's guacd to its xrdp (TERMSTEAD_TESTENV=1) and
+// TestGuacTunnelTestEnv connects through the shared test environment's guacd to its xrdp (ASTRATERM_TESTENV=1) and
 // expects display instructions.
 func TestGuacTunnelTestEnv(t *testing.T) {
 	if !testEnvEnabled() {
-		t.Skip("TERMSTEAD_TESTENV=1 not set")
+		t.Skip("ASTRATERM_TESTENV=1 not set")
 	}
 	env := newTestEnv(t, func(c *config.Config) { c.Guacd = "127.0.0.1:22822" })
 	admin := env.setup()

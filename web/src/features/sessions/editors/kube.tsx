@@ -1,5 +1,5 @@
 /*
- * Kubernetes editor (PROTO-31): pick context, namespace, pod and container (kubectl on the Termstead host), then open a
+ * Kubernetes editor (PROTO-31): pick context, namespace, pod and container (kubectl on the AstraTerm host), then open a
  * shell (kubectl exec) or follow the logs.
  */
 import { useState } from 'react'
@@ -63,7 +63,7 @@ export function KubeEditor({ value, onChange }: ProtocolEditorProps) {
   return (
     <div className="grid gap-5">
       {features && features.kubectl === false && (
-        <EditorNote tone="warning">kubectl was not found on the Termstead host; Kubernetes sessions need it installed and configured.</EditorNote>
+        <EditorNote tone="warning">kubectl was not found on the AstraTerm host; Kubernetes sessions need it installed and configured.</EditorNote>
       )}
       <OptionSection title="Target">
         <ComboOption

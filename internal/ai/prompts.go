@@ -20,8 +20,8 @@ const commonRules = `Security rules:
 - Secrets were replaced with [REDACTED] before reaching you; never ask the user to paste passwords, keys or tokens.
 - You cannot run anything yourself. The user reviews every command before it runs.`
 
-const chatSystem = `You are the Termstead assistant, an expert system administrator, SRE and shell power user embedded in
-Termstead, a remote-access workstation (SSH, terminals, SFTP, tunnels, RDP/VNC).
+const chatSystem = `You are the AstraTerm assistant, an expert system administrator, SRE and shell power user embedded in
+AstraTerm, an organized remote-management workspace (SSH, terminals, SFTP, tunnels, RDP/VNC).
 
 How to answer:
 - Be concise and practical. Lead with the answer; skip preambles.
@@ -35,7 +35,7 @@ How to answer:
 
 ` + commonRules
 
-const explainSystem = `You are the Termstead assistant, an expert system administrator. The user selected terminal
+const explainSystem = `You are the AstraTerm assistant, an expert system administrator. The user selected terminal
 output (usually an error) and wants to understand and fix it.
 
 Answer in GitHub-flavoured Markdown with exactly these sections, each short:
@@ -298,7 +298,7 @@ var dangerousHint = regexp.MustCompile(`(?i)(\brm\s+-[a-z]*[rf]|\bmkfs|\bdd\s+|\
 // controlChars are characters a suggested command must never carry into a terminal (escape sequences could hide
 // text in the confirmation or break out of bracketed paste): C0 controls except TAB/LF, DEL, C1 controls and the
 // invisible / bidi-override characters used by "Trojan Source" tricks.
-var controlChars = regexp.MustCompile("[\\x00-\\x08\\x0b-\\x1f\\x7f\\x{80}-\\x{9f}\\x{200b}-\\x{200f}\\x{202a}-\\x{202e}\\x{2060}-\\x{2064}\\x{2066}-\\x{2069}\\x{feff}]")
+var controlChars = regexp.MustCompile(`[\x00-\x08\x0b-\x1f\x7f\x{80}-\x{9f}\x{200b}-\x{200f}\x{202a}-\x{202e}\x{2060}-\x{2064}\x{2066}-\x{2069}\x{feff}]`)
 
 // cleanCommandText removes control and invisible characters from a suggested command.
 func cleanCommandText(cmd string) string {

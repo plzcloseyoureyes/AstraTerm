@@ -1,4 +1,4 @@
-// Package local implements the "local" terminal protocol: a shell on the machine running Termstead, on a Unix PTY or a
+// Package local implements the "local" terminal protocol: a shell on the machine running AstraTerm, on a Unix PTY or a
 // Windows ConPTY (github.com/charmbracelet/x/xpty), plus shell detection for GET /api/local/shells (PROTO-14/15,
 // RESEARCH §3.9). In server mode local shells are restricted to administrators.
 package local
@@ -21,11 +21,11 @@ import (
 	"github.com/charmbracelet/x/xpty"
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // Mount registers the "local" protocol and GET /api/local/shells.
@@ -180,7 +180,7 @@ func workingDir(cwd string) (string, error) {
 	return cwd, nil
 }
 
-// buildEnv inherits the Termstead process environment and applies terminal variables and options.env.
+// buildEnv inherits the AstraTerm process environment and applies terminal variables and options.env.
 func buildEnv(o model.Options) []string {
 	env := map[string]string{}
 	var order []string
@@ -196,14 +196,14 @@ func buildEnv(o model.Options) []string {
 	}
 	for _, kv := range os.Environ() {
 		k, v, ok := strings.Cut(kv, "=")
-		if !ok || k == "" || strings.HasPrefix(k, "TERMSTEAD_") {
+		if !ok || k == "" || strings.HasPrefix(k, "ASTRATERM_") {
 			continue
 		}
 		set(k, v)
 	}
 	set("TERM", o.String("term"))
 	set("COLORTERM", "truecolor")
-	set("TERM_PROGRAM", "Termstead")
+	set("TERM_PROGRAM", "AstraTerm")
 	if runtime.GOOS != "windows" && os.Getenv("LANG") == "" && os.Getenv("LC_ALL") == "" && os.Getenv("LC_CTYPE") == "" {
 		set("LANG", "en_US.UTF-8")
 	}

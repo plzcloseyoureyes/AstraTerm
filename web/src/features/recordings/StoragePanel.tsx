@@ -120,7 +120,7 @@ export default function StoragePanel() {
   const ro = !isAdmin
   return (
     <div className="mx-auto grid max-w-3xl gap-4 p-4">
-      <Section icon={HardDrive} title={isAdmin ? 'Storage (all users)' : 'Your storage'} description="Session recordings (asciicast) and text logs kept on the Termstead host.">
+      <Section icon={HardDrive} title={isAdmin ? 'Storage (all users)' : 'Your storage'} description="Session recordings (asciicast) and text logs kept on the AstraTerm host.">
         <LoadingState
           busy={!usage.data && usage.isPending}
           skeleton={

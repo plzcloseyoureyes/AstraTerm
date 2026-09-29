@@ -5,20 +5,18 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"strconv"
 	"strings"
-	"time"
 	"unicode/utf8"
 )
 
-// asciicast v2 / v3 reading and writing (REC-2). v3 (what Termstead records): a header line
+// asciicast v2 / v3 reading and writing (REC-2). v3 (what AstraTerm records): a header line
 // {"version":3,"term":{"cols","rows","type"},"timestamp",...} followed by [interval, code, data] events whose first
 // element is the time since the previous event. v2: {"version":2,"width","height","timestamp",...} and [time, code,
 // data] with absolute times.
 
-// castHeader is the union of the v2 and v3 header fields Termstead reads.
+// castHeader is the union of the v2 and v3 header fields AstraTerm reads.
 type castHeader struct {
 	Version       int             `json:"version"`
 	Term          *castTerm       `json:"term,omitempty"`
@@ -377,19 +375,6 @@ func (tr *transcriber) finish() error {
 		return tr.fn(transcriptLine{Time: tr.started, Text: line})
 	}
 	return nil
-}
-
-// formatClock renders seconds as [h:]mm:ss.
-func formatClock(sec float64) string {
-	d := time.Duration(sec * float64(time.Second)).Round(time.Second)
-	h := int(d / time.Hour)
-	// Divide Durations before converting: int(time.Minute) overflows a 32-bit int (linux/arm).
-	m := int(d % time.Hour / time.Minute)
-	s := int(d % time.Minute / time.Second)
-	if h > 0 {
-		return fmt.Sprintf("%d:%02d:%02d", h, m, s)
-	}
-	return fmt.Sprintf("%02d:%02d", m, s)
 }
 
 // validUTF8Prefix returns the longest prefix of p that does not end inside a UTF-8 sequence, and the rest.

@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // Session-integrated forwards (TUN-7): an SSH connection's options.forwards ([{type, bindHost, bindPort, destHost,

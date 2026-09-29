@@ -2,7 +2,7 @@
  * Clipboard panel (GFX-2): remote → local (last text the server sent, with Copy) and local → remote (send to the
  * remote clipboard, or type it as keystrokes for consoles without clipboard support). Automatic sync (settings
  * `vnc.clipboard = auto`) works where the browser allows clipboard access; this panel always works — within the
- * effective direction policy (connection / administrator policy, Termstead-enforced for local → remote, and the
+ * effective direction policy (connection / administrator policy, AstraTerm-enforced for local → remote, and the
  * user's own setting). Typing text is disabled with local → remote too, so the policy is not bypassed by keystrokes.
  */
 import { useState } from 'react'

@@ -95,7 +95,7 @@ export function RdpEditor({ value, onChange }: ProtocolEditorProps) {
         </div>
       </OptionSection>
       {engine === 'guacd' && guacdMissing && (
-        <EditorNote tone="warning">guacd is not reachable from the Termstead server; this session will fail until it is available.</EditorNote>
+        <EditorNote tone="warning">guacd is not reachable from the AstraTerm server; this session will fail until it is available.</EditorNote>
       )}
 
       <OptionSection title="Display" description="Leave width and height empty to fit the tab.">
@@ -133,7 +133,7 @@ export function RdpEditor({ value, onChange }: ProtocolEditorProps) {
         <SwitchOption {...p} name="enablePrinting" label="Printing" hint="Print to a PDF delivered to the browser (guacd)." />
         <SwitchOption {...p} name="disableClipboard" label="Disable clipboard" />
         <SwitchOption {...p} name="enableDrive" label="Shared drive" hint="Expose a transfer drive to the remote session (guacd)." />
-        {optBool(value, 'enableDrive') && <TextOption {...p} name="driveName" label="Drive name" placeholder="Termstead" trim />}
+        {optBool(value, 'enableDrive') && <TextOption {...p} name="driveName" label="Drive name" placeholder="AstraTerm" trim />}
       </OptionSection>
 
       <OptionSection title="Session">

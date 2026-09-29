@@ -522,7 +522,7 @@ var CMAdapter = class CMAdapter {
 		this.ctxInsert.set(true);
 		this.editor.updateOptions({
 			cursorWidth: this.initialCursorWidth || 0,
-			cursorBlinking: "solid", // Termstead: keep the caret steady after leaving vim mode (docs/UX.md)
+			cursorBlinking: "solid", // AstraTerm: keep the caret steady after leaving vim mode (docs/UX.md)
 			cursorStyle: "line"
 		});
 	}

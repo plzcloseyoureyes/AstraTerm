@@ -8,7 +8,7 @@ import (
 
 	"github.com/dop251/goja"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Tests added by the automation review: macro wait / secret steps, event triggers, the trigger loop guard, the
@@ -37,7 +37,7 @@ func TestMacroWaitAndSecretSteps(t *testing.T) {
 	var js jobStarted
 	h.must(alice, "POST", "/api/macros/"+mc.ID+"/run", map[string]any{"sessionIds": []string{rs.ID}}, &js)
 	sb := h.waitOutput(alice, rs.ID, "macro-secret-42") // typed at the prompt: the shell echoes it as a command
-	if i, j := strings.Index(sb, "READY-2\n"), strings.Index(sb, "AFTER-WAIT"); i < 0 || j < 0 || strings.Index(sb[i:], "AFTER-WAIT") < 0 {
+	if i := strings.Index(sb, "READY-2\n"); i < 0 || !strings.Contains(sb[i:], "AFTER-WAIT") {
 		t.Fatalf("wait step did not wait: %q", sb)
 	}
 
@@ -229,8 +229,11 @@ func TestLogThrottleAndLimiters(t *testing.T) {
 		t.Fatalf("throttle: sent %d notices %d", sent, notices)
 	}
 	l := newCountLimiter(2, 3)
-	if !l.acquire("a") || !l.acquire("a") || l.acquire("a") || !l.acquire("b") || l.acquire("c") {
-		t.Fatal("limits not enforced")
+	// Two per key, three in total: a, a, (a refused), b, (c refused).
+	for i, want := range []bool{true, true, false, true, false} {
+		if got := l.acquire([]string{"a", "a", "a", "b", "c"}[i]); got != want {
+			t.Fatalf("acquire #%d = %v, want %v", i+1, got, want)
+		}
 	}
 	l.release("a")
 	if !l.acquire("c") {

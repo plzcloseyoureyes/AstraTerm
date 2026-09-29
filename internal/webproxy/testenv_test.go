@@ -13,16 +13,16 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
-// Integration tests against the shared Docker test environment (TERMSTEAD_TESTENV=1): ssh1 on 127.0.0.1:22022
-// (test/test) reaches the internal nginx "web:80". TERMSTEAD_TEST_XPRA=host:port points at an SSH server with xpra
+// Integration tests against the shared Docker test environment (ASTRATERM_TESTENV=1): ssh1 on 127.0.0.1:22022
+// (test/test) reaches the internal nginx "web:80". ASTRATERM_TEST_XPRA=host:port points at an SSH server with xpra
 // (test/test) for the Xpra test.
 
 func testenv(t *testing.T) {
-	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
-		t.Skip("set TERMSTEAD_TESTENV=1 to run against the Docker test environment")
+	if os.Getenv("ASTRATERM_TESTENV") != "1" {
+		t.Skip("set ASTRATERM_TESTENV=1 to run against the Docker test environment")
 	}
 }
 
@@ -95,15 +95,15 @@ func TestTestenvProxyThroughSSH(t *testing.T) {
 	}
 	b := newBrowser(t, env)
 	ck := b.enter(p)
-	resp, body := b.get(p.Base+"/", http.Header{"Cookie": {"__termstead_proxy=" + ck}, "Sec-Fetch-Dest": {"iframe"}})
+	resp, body := b.get(p.Base+"/", http.Header{"Cookie": {"__astraterm_proxy=" + ck}, "Sec-Fetch-Dest": {"iframe"}})
 	if resp.StatusCode != 200 || !strings.Contains(body, "Welcome to nginx") {
 		t.Fatalf("nginx page: %d %s", resp.StatusCode, body)
 	}
-	if !strings.Contains(body, "termstead-webproxy") {
+	if !strings.Contains(body, "astraterm-webproxy") {
 		t.Fatal("bridge not injected")
 	}
-	// A missing page is the upstream's 404, not Termstead's.
-	if resp, body := b.get(p.Base+"/nope", http.Header{"Cookie": {"__termstead_proxy=" + ck}}); resp.StatusCode != 404 || !strings.Contains(body, "nginx") {
+	// A missing page is the upstream's 404, not AstraTerm's.
+	if resp, body := b.get(p.Base+"/nope", http.Header{"Cookie": {"__astraterm_proxy=" + ck}}); resp.StatusCode != 404 || !strings.Contains(body, "nginx") {
 		t.Fatalf("404: %d %s", resp.StatusCode, body)
 	}
 
@@ -120,7 +120,7 @@ func TestTestenvProxyThroughSSH(t *testing.T) {
 		t.Fatalf("web session proxy: %+v", p2)
 	}
 	ck2 := b.enter(p2)
-	if resp, body := b.get(p2.Base+"/", http.Header{"Cookie": {"__termstead_proxy=" + ck2}}); resp.StatusCode != 200 || !strings.Contains(body, "Welcome to nginx") {
+	if resp, body := b.get(p2.Base+"/", http.Header{"Cookie": {"__astraterm_proxy=" + ck2}}); resp.StatusCode != 200 || !strings.Contains(body, "Welcome to nginx") {
 		t.Fatalf("web session: %d %s", resp.StatusCode, body)
 	}
 
@@ -147,9 +147,9 @@ func TestTestenvProxyThroughSSH(t *testing.T) {
 
 func TestTestenvXpra(t *testing.T) {
 	testenv(t)
-	addr := os.Getenv("TERMSTEAD_TEST_XPRA")
+	addr := os.Getenv("ASTRATERM_TEST_XPRA")
 	if addr == "" {
-		t.Skip("set TERMSTEAD_TEST_XPRA=host:port (SSH server with xpra, user test/test)")
+		t.Skip("set ASTRATERM_TEST_XPRA=host:port (SSH server with xpra, user test/test)")
 	}
 	host, portStr, _ := strings.Cut(addr, ":")
 	port := 22
@@ -177,7 +177,7 @@ func TestTestenvXpra(t *testing.T) {
 	}
 	b := newBrowser(t, env)
 	ck := b.enter(p)
-	resp, body := b.get(p.Base+"/", http.Header{"Cookie": {"__termstead_proxy=" + ck}, "Sec-Fetch-Dest": {"iframe"}})
+	resp, body := b.get(p.Base+"/", http.Header{"Cookie": {"__astraterm_proxy=" + ck}, "Sec-Fetch-Dest": {"iframe"}})
 	if resp.StatusCode != 200 || !strings.Contains(strings.ToLower(body), "xpra") {
 		t.Fatalf("xpra html5 client: %d %.300s", resp.StatusCode, body)
 	}
@@ -186,7 +186,7 @@ func TestTestenvXpra(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 	ws, _, err := websocket.Dial(ctx, "ws"+strings.TrimPrefix(env.URL("/"), "http"), &websocket.DialOptions{
-		Host: pu.Host, HTTPHeader: http.Header{"Cookie": {"__termstead_proxy=" + ck}, "Origin": {p.Base}},
+		Host: pu.Host, HTTPHeader: http.Header{"Cookie": {"__astraterm_proxy=" + ck}, "Origin": {p.Base}},
 		Subprotocols: []string{"binary"},
 	})
 	if err != nil {

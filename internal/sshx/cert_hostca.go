@@ -12,7 +12,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Host certificates, @cert-authority and @revoked markers (SSH-18/20). The markers live in the keys module (its
@@ -35,7 +35,7 @@ type HostKeyMarkers interface {
 	IsRevoked(host string, port int, key ssh.PublicKey) bool
 }
 
-// providers holds the per-pool registrations of the keys module (a process may run several Termstead instances, e.g.
+// providers holds the per-pool registrations of the keys module (a process may run several AstraTerm instances, e.g.
 // in tests, each with its own store): host key markers and the built-in agent.
 type providers struct {
 	markers HostKeyMarkers

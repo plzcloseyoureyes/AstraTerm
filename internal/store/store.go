@@ -1,4 +1,4 @@
-// Package store is Termstead's persistence layer: SQLite via modernc.org/sqlite (pure Go), a per-module migration
+// Package store is AstraTerm's persistence layer: SQLite via modernc.org/sqlite (pure Go), a per-module migration
 // registry, and typed repositories for every core table (SPEC §5.1). Secrets are stored as opaque ciphertext
 // ([]byte) produced by the vault; the store never sees plaintext secrets.
 package store
@@ -15,8 +15,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 
 	_ "modernc.org/sqlite" // registers driver "sqlite"
 )
@@ -260,20 +260,23 @@ func Now() time.Time { return time.Now().UTC().Truncate(time.Millisecond) }
 
 func ms(t time.Time) int64 { return t.UnixMilli() }
 
-func nullMs(t *time.Time) any {
+// NullMs stores an optional time as unix milliseconds (NULL when nil or zero).
+func NullMs(t *time.Time) any {
 	if t == nil || t.IsZero() {
 		return nil
 	}
 	return t.UnixMilli()
 }
 
-func fromMs(v int64) time.Time { return time.UnixMilli(v).UTC() }
+// FromMs reads a unix-millisecond column.
+func FromMs(v int64) time.Time { return time.UnixMilli(v).UTC() }
 
-func fromNullMs(v sql.NullInt64) *time.Time {
+// FromNullMs reads an optional unix-millisecond column.
+func FromNullMs(v sql.NullInt64) *time.Time {
 	if !v.Valid {
 		return nil
 	}
-	t := fromMs(v.Int64)
+	t := FromMs(v.Int64)
 	return &t
 }
 
@@ -284,7 +287,8 @@ func nullStr(s string) any {
 	return s
 }
 
-func b2i(b bool) int {
+// B2I stores a bool as 0 / 1.
+func B2I(b bool) int {
 	if b {
 		return 1
 	}

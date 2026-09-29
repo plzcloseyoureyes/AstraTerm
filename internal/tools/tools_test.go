@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // collector accumulates the rows a sink emits so job runners can be tested without an events hub.

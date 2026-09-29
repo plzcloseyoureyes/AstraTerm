@@ -1,5 +1,5 @@
 /*
- * "Agent" sub-tab (SSH-11/12): Termstead's built-in SSH agent (MobAgent) — status, start / stop / lock, the socket path
+ * "Agent" sub-tab (SSH-11/12): AstraTerm's built-in SSH agent (MobAgent) — status, start / stop / lock, the socket path
  * with shell snippets (export SSH_AUTH_SOCK=…), the keys it offers (stored keys, keys added with ssh-add) and its
  * options (confirmations, auto-lock, key lifetime). The same key selection and confirmations apply to agent
  * forwarding.
@@ -80,7 +80,7 @@ export function AgentPanel({ visible }: { visible: boolean }) {
             <CardHeader>
               <CardTitle>Agent forwarding</CardTitle>
               <CardDescription>
-                In server mode Termstead does not open an agent socket on the server. Sessions with agent forwarding still offer your stored keys
+                In server mode AstraTerm does not open an agent socket on the server. Sessions with agent forwarding still offer your stored keys
                 (the ones enabled below) to the remote host.
               </CardDescription>
             </CardHeader>
@@ -218,7 +218,7 @@ function StatusCard({ st }: { st: AgentStatus }) {
     <Card>
       <CardHeader>
         <CardTitle>
-          <KeyRound className="size-4 text-primary" /> Termstead SSH agent
+          <KeyRound className="size-4 text-primary" /> AstraTerm SSH agent
           <Badge variant={tone} className="ml-auto">
             <span className="size-1.5 rounded-full bg-current" /> {state}
           </Badge>
@@ -275,8 +275,8 @@ function StatusCard({ st }: { st: AgentStatus }) {
           </div>
           <label className="flex items-center justify-between gap-3 border-t pt-3 text-base">
             <span>
-              Start automatically with Termstead
-              <span className="block text-sm text-muted-foreground">When Termstead starts, the agent starts for the desktop user.</span>
+              Start automatically with AstraTerm
+              <span className="block text-sm text-muted-foreground">When AstraTerm starts, the agent starts for the desktop user.</span>
             </span>
             <Switch checked={keysSettings.useValue('agentAutostart')} onCheckedChange={(v) => keysSettings.set({ agentAutostart: v })} />
           </label>

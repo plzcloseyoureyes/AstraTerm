@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// Local file discovery (desktop mode). The importer offers to read well-known config files from the Termstead host so
+// Local file discovery (desktop mode). The importer offers to read well-known config files from the AstraTerm host so
 // the user can "Import from ~/.ssh/config" or "Scan for PuTTY/MobaXterm/FileZilla files" without hunting for paths.
 // Only sources returned by discovery may later be read by preview/commit (a supplied path is re-validated against the
 // candidate set), so a client cannot point the server at an arbitrary file. On Windows, PuTTY / KiTTY / WinSCP

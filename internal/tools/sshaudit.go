@@ -16,7 +16,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 type sshAuditRequest struct {
@@ -59,7 +59,7 @@ func prepareSSHAudit(_ context.Context, cl *call) (runner, error) {
 	if req.Port < 1 || req.Port > 65535 {
 		return nil, httpx.BadRequest("port must be between 1 and 65535")
 	}
-	req.TimeoutMs = clampInt(orDefault(req.TimeoutMs, 8000), 500, 30000)
+	req.TimeoutMs = min(max(orDefault(req.TimeoutMs, 8000), 500), 30000)
 	cl.target = net.JoinHostPort(req.Host, strconv.Itoa(req.Port))
 	guard := cl.guard
 	return func(ctx context.Context, out *sink) error { return runSSHAudit(ctx, guard, &req, out) }, nil
@@ -150,7 +150,7 @@ func hostKeyFingerprints(ctx context.Context, guard *netGuard, addr string, offe
 		}
 		var key ssh.PublicKey
 		cfg := &ssh.ClientConfig{
-			User:              "termstead-audit",
+			User:              "astraterm-audit",
 			HostKeyAlgorithms: []string{p.algo},
 			Timeout:           timeout,
 			HostKeyCallback: func(_ string, _ net.Addr, k ssh.PublicKey) error {
@@ -229,7 +229,7 @@ func sshHandshake(conn net.Conn) (string, *kexInit, error) {
 	if !strings.HasPrefix(banner, "SSH-2.0") && !strings.HasPrefix(banner, "SSH-1.99") {
 		return banner, nil, fmt.Errorf("unsupported protocol: %s", banner)
 	}
-	if _, err := conn.Write([]byte("SSH-2.0-Termstead_audit\r\n")); err != nil {
+	if _, err := conn.Write([]byte("SSH-2.0-AstraTerm_audit\r\n")); err != nil {
 		return banner, nil, err
 	}
 	// Read binary packets until we see KEXINIT (msg type 20), skipping others.

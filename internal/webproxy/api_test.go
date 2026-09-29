@@ -16,8 +16,8 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
 const adminPass = "correct horse battery staple"
@@ -85,7 +85,7 @@ func newUpstream(t *testing.T) *upstream {
 	mux.HandleFunc("/echo", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{"host": r.Host, "path": r.URL.RequestURI(), "cookie": r.Header.Get("Cookie"),
-			"origin": r.Header.Get("Origin"), "referer": r.Header.Get("Referer"), "xtermstead": r.Header.Get("X-Termstead")})
+			"origin": r.Header.Get("Origin"), "referer": r.Header.Get("Referer"), "xastraterm": r.Header.Get("X-AstraTerm")})
 	})
 	mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		c, err := websocket.Accept(w, r, &websocket.AcceptOptions{OriginPatterns: []string{"*"}})
@@ -171,15 +171,15 @@ func (b *browser) enter(p proxyInfo) string {
 	if resp.StatusCode != http.StatusFound {
 		b.t.Fatalf("token exchange: status %d", resp.StatusCode)
 	}
-	if loc := resp.Header.Get("Location"); strings.Contains(loc, "__termstead_proxy_token") {
+	if loc := resp.Header.Get("Location"); strings.Contains(loc, "__astraterm_proxy_token") {
 		b.t.Fatalf("redirect keeps the token: %s", loc)
 	}
-	ck := cookieRe(resp, "__termstead_proxy")
+	ck := cookieRe(resp, "__astraterm_proxy")
 	if ck == "" {
 		b.t.Fatal("no proxy cookie")
 	}
 	for _, c := range resp.Cookies() {
-		if c.Name == "__termstead_proxy" && (!c.HttpOnly || !c.Secure || c.SameSite != http.SameSiteNoneMode || !c.Partitioned) {
+		if c.Name == "__astraterm_proxy" && (!c.HttpOnly || !c.Secure || c.SameSite != http.SameSiteNoneMode || !c.Partitioned) {
 			b.t.Fatalf("cookie attributes: %+v", c)
 		}
 	}
@@ -187,7 +187,7 @@ func (b *browser) enter(p proxyInfo) string {
 }
 
 func withCookie(v string) http.Header {
-	return http.Header{"Cookie": {"__termstead_proxy=" + v + "; termstead_session=must-not-leak"}}
+	return http.Header{"Cookie": {"__astraterm_proxy=" + v + "; astraterm_session=must-not-leak"}}
 }
 
 func TestHostModeProxy(t *testing.T) {
@@ -203,7 +203,7 @@ func TestHostModeProxy(t *testing.T) {
 
 	// Without the cookie: the auth page, never the upstream.
 	resp, body := b.get(p.Base+"/echo", nil)
-	if resp.StatusCode != http.StatusUnauthorized || !strings.Contains(body, "Open this page from Termstead") {
+	if resp.StatusCode != http.StatusUnauthorized || !strings.Contains(body, "Open this page from AstraTerm") {
 		t.Fatalf("anonymous: %d %s", resp.StatusCode, body)
 	}
 	ck := b.enter(p)
@@ -212,11 +212,11 @@ func TestHostModeProxy(t *testing.T) {
 		t.Fatalf("token reuse: %d", resp.StatusCode)
 	}
 
-	// Transparent request: upstream Host / Origin / Referer, no Termstead cookies or headers.
+	// Transparent request: upstream Host / Origin / Referer, no AstraTerm cookies or headers.
 	origin := p.Base
 	resp, body = b.get(p.Base+"/echo?q=1", http.Header{
-		"Cookie": {"__termstead_proxy=" + ck + "; termstead_session=must-not-leak; app=1"}, "Origin": {origin},
-		"Referer": {origin + "/page"}, "X-Termstead": {"1"},
+		"Cookie": {"__astraterm_proxy=" + ck + "; astraterm_session=must-not-leak; app=1"}, "Origin": {origin},
+		"Referer": {origin + "/page"}, "X-AstraTerm": {"1"},
 	})
 	if resp.StatusCode != 200 {
 		t.Fatalf("echo: %d %s", resp.StatusCode, body)
@@ -225,7 +225,7 @@ func TestHostModeProxy(t *testing.T) {
 	_ = json.Unmarshal([]byte(body), &echo)
 	upHost := strings.TrimPrefix(up.URL, "http://")
 	if echo["host"] != upHost || echo["path"] != "/echo?q=1" || echo["cookie"] != "app=1" ||
-		echo["origin"] != up.URL || echo["referer"] != up.URL+"/page" || echo["xtermstead"] != "" {
+		echo["origin"] != up.URL || echo["referer"] != up.URL+"/page" || echo["xastraterm"] != "" {
 		t.Fatalf("upstream saw %+v", echo)
 	}
 	if resp.Header.Get("X-Frame-Options") != "" {
@@ -233,9 +233,9 @@ func TestHostModeProxy(t *testing.T) {
 	}
 
 	// HTML: bridge injected with a nonce allowed by the (rewritten) upstream CSP; framing limited to the UI origin.
-	resp, body = b.get(p.Base+"/", http.Header{"Cookie": {"__termstead_proxy=" + ck}, "Sec-Fetch-Dest": {"iframe"}})
+	resp, body = b.get(p.Base+"/", http.Header{"Cookie": {"__astraterm_proxy=" + ck}, "Sec-Fetch-Dest": {"iframe"}})
 	csp := strings.Join(resp.Header.Values("Content-Security-Policy"), " | ")
-	if !strings.Contains(body, "termstead-webproxy") || !strings.Contains(csp, "'nonce-") || strings.Contains(csp, "frame-ancestors 'none'") ||
+	if !strings.Contains(body, "astraterm-webproxy") || !strings.Contains(csp, "'nonce-") || strings.Contains(csp, "frame-ancestors 'none'") ||
 		!strings.Contains(csp, "frame-ancestors http://127.0.0.1") {
 		t.Fatalf("html: csp=%q body=%s", csp, body)
 	}
@@ -246,18 +246,18 @@ func TestHostModeProxy(t *testing.T) {
 		t.Fatalf("set-cookie = %q", sc)
 	}
 	// A gzip-encoded document is decoded, given the bridge and delivered completely.
-	resp, body = b.get(p.Base+"/gz", http.Header{"Cookie": {"__termstead_proxy=" + ck}, "Sec-Fetch-Dest": {"document"},
+	resp, body = b.get(p.Base+"/gz", http.Header{"Cookie": {"__astraterm_proxy=" + ck}, "Sec-Fetch-Dest": {"document"},
 		"Accept": {"text/html"}, "Accept-Encoding": {"gzip, deflate, br"}})
 	if resp.StatusCode != 200 || !strings.HasSuffix(body, "</body></html>") || !strings.Contains(body, "line 4999") ||
-		!strings.Contains(body, "termstead-webproxy") || resp.Header.Get("Content-Encoding") != "" {
+		!strings.Contains(body, "astraterm-webproxy") || resp.Header.Get("Content-Encoding") != "" {
 		t.Fatalf("gzip document: %d enc=%q len=%d tail=%q", resp.StatusCode, resp.Header.Get("Content-Encoding"), len(body), body[max(0, len(body)-40):])
 	}
 	if got := up.last().Header.Get("Accept-Encoding"); got != "gzip" {
 		t.Fatalf("upstream Accept-Encoding for documents = %q", got)
 	}
 	// XHR HTML fragments are not given the bridge.
-	_, body = b.get(p.Base+"/", http.Header{"Cookie": {"__termstead_proxy=" + ck}, "Sec-Fetch-Dest": {"empty"}})
-	if strings.Contains(body, "termstead-webproxy") {
+	_, body = b.get(p.Base+"/", http.Header{"Cookie": {"__astraterm_proxy=" + ck}, "Sec-Fetch-Dest": {"empty"}})
+	if strings.Contains(body, "astraterm-webproxy") {
 		t.Fatal("bridge injected into a fetch")
 	}
 
@@ -270,7 +270,7 @@ func TestHostModeProxy(t *testing.T) {
 	// A fresh entry URL (reload / new window).
 	var fresh proxyInfo
 	admin.MustJSON("POST", "/api/webproxy/"+p.ID+"/url", map[string]any{"path": "/echo"}, &fresh)
-	if !strings.Contains(fresh.URL, "/echo?__termstead_proxy_token=") {
+	if !strings.Contains(fresh.URL, "/echo?__astraterm_proxy_token=") {
 		t.Fatalf("fresh url %q", fresh.URL)
 	}
 
@@ -295,7 +295,7 @@ func TestWebSocketPassthrough(t *testing.T) {
 	b := newBrowser(t, env)
 	ck := b.enter(p)
 
-	hdr := http.Header{"Cookie": {"__termstead_proxy=" + ck}, "Origin": {p.Base}}
+	hdr := http.Header{"Cookie": {"__astraterm_proxy=" + ck}, "Origin": {p.Base}}
 	pu, _ := url.Parse(p.Base)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -353,9 +353,9 @@ func TestPathModeProxy(t *testing.T) {
 	if !strings.Contains(body2(body), `href="`+p.Base+`/abs"`) || !strings.Contains(body2(body), `href="`+p.Base+`/next"`) {
 		t.Fatalf("links not prefixed: %s", body)
 	}
-	// Redirects keep the prefix; Termstead's session cookie never reaches the upstream.
+	// Redirects keep the prefix; AstraTerm's session cookie never reaches the upstream.
 	resp, _ = admin.Do("GET", p.Base+"/echo", nil)
-	if resp.StatusCode != 200 || strings.Contains(up.last().Header.Get("Cookie"), "termstead_session") {
+	if resp.StatusCode != 200 || strings.Contains(up.last().Header.Get("Cookie"), "astraterm_session") {
 		t.Fatalf("echo: %d cookie=%q", resp.StatusCode, up.last().Header.Get("Cookie"))
 	}
 	// A wrong key is indistinguishable from a closed proxy.
@@ -406,7 +406,7 @@ func TestServerModeGuard(t *testing.T) {
 	admin := env.Setup("admin", adminPass)
 	up := newUpstream(t)
 	user := env.CreateUser(admin, "carol", adminPass, "user")
-	// Non-admins may not reach the Termstead host's loopback directly…
+	// Non-admins may not reach the AstraTerm host's loopback directly…
 	st, code := user.ErrorCode("POST", "/api/webproxy", map[string]any{"url": up.URL})
 	if st != 403 || code != "destination_blocked" {
 		t.Fatalf("user → loopback: %d %s", st, code)

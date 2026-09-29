@@ -31,7 +31,7 @@ export async function pickDirectory(win: Window = window): Promise<DirectoryHand
   const fn = (win as PickerWindow).showDirectoryPicker
   if (typeof fn !== 'function') throw new Error('This browser cannot save into a folder')
   try {
-    return await fn.call(win, { id: 'termstead-terminal-transfer', mode: 'readwrite', startIn: 'downloads' })
+    return await fn.call(win, { id: 'astraterm-terminal-transfer', mode: 'readwrite', startIn: 'downloads' })
   } catch (err) {
     if ((err as { name?: string })?.name === 'AbortError') return null
     throw err
@@ -61,7 +61,7 @@ export function asDirLike(h: DirectoryHandle): DirHandleLike {
 
 // --- remembered folder (IndexedDB: handles are structured-cloneable, not JSON) --------------------------------------
 
-const DB = 'termstead-termtransfer'
+const DB = 'astraterm-termtransfer'
 const STORE = 'handles'
 
 function openDb(): Promise<IDBDatabase> {

@@ -1,6 +1,6 @@
 /*
  * Direct manipulation (docs/UX.md): drag a snippet or a macro from the sidebar onto any terminal to run it there —
- * also a terminal that is not the active one (split panes). Only Termstead's own drag types are handled; file drops
+ * also a terminal that is not the active one (split panes). Only AstraTerm's own drag types are handled; file drops
  * (upload to the session) are left to the file-transfer plugin.
  */
 import type { Terminal } from '@xterm/xterm'
@@ -13,8 +13,8 @@ import { playMacroOnSessions } from '../macros/play'
 import { sendSnippet, targetForSession } from '../send'
 import type { Macro } from '../types'
 
-export const SNIPPET_MIME = 'application/x-termstead-snippet'
-export const MACRO_MIME = 'application/x-termstead-macro'
+export const SNIPPET_MIME = 'application/x-astraterm-snippet'
+export const MACRO_MIME = 'application/x-astraterm-macro'
 
 /** Start dragging a snippet / macro (sidebar rows). */
 export function startLibraryDrag(e: React.DragEvent, kind: 'snippet' | 'macro', id: string, label: string): void {

@@ -1,6 +1,6 @@
 /*
  * Types for @novnc/novnc 1.7 (package entry `core/rfb.js`). @types/novnc__novnc lags at 1.6 and declares the old
- * `@novnc/novnc/lib/rfb` path, so the parts Termstead uses are declared here (RESEARCH §3.12).
+ * `@novnc/novnc/lib/rfb` path, so the parts AstraTerm uses are declared here (RESEARCH §3.12).
  */
 declare module '@novnc/novnc' {
   export interface RFBCredentials {

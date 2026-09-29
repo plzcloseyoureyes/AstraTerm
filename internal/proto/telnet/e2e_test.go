@@ -11,15 +11,15 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
 // TestTelnetSessionEndToEnd drives a telnet session through the whole app (REST create + /ws/terminal), connecting to
 // the busybox telnetd in the shared docker test environment (127.0.0.1:22023).
 func TestTelnetSessionEndToEnd(t *testing.T) {
-	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
-		t.Skip("set TERMSTEAD_TESTENV=1 to run against the docker test environment")
+	if os.Getenv("ASTRATERM_TESTENV") != "1" {
+		t.Skip("set ASTRATERM_TESTENV=1 to run against the docker test environment")
 	}
 	env := servertest.New(t)
 	admin := env.Setup("admin", "correct horse battery staple")
@@ -63,15 +63,15 @@ func TestTelnetSessionEndToEnd(t *testing.T) {
 		// Once the shell is up (state connected or first output arrived), send the command exactly once.
 		if !sentCmd && (connected || out.Len() > 0) {
 			sentCmd = true
-			if werr := ws.Write(context.Background(), websocket.MessageBinary, []byte("echo TERMSTEAD_E2E\r")); werr != nil {
+			if werr := ws.Write(context.Background(), websocket.MessageBinary, []byte("echo ASTRATERM_E2E\r")); werr != nil {
 				t.Fatalf("send command: %v", werr)
 			}
 		}
-		if bytes.Contains(out.Bytes(), []byte("TERMSTEAD_E2E")) {
+		if bytes.Contains(out.Bytes(), []byte("ASTRATERM_E2E")) {
 			break
 		}
 	}
-	if !bytes.Contains(out.Bytes(), []byte("TERMSTEAD_E2E")) {
+	if !bytes.Contains(out.Bytes(), []byte("ASTRATERM_E2E")) {
 		t.Fatalf("did not observe command output; got %q", out.String())
 	}
 

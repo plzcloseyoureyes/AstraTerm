@@ -304,7 +304,7 @@ export function MergePane(props: MergePaneProps) {
       insert = text
     }
     dest.pushUndoStop()
-    dest.executeEdits('termstead.copyChange', [{ range, text: insert }])
+    dest.executeEdits('astraterm.copyChange', [{ range, text: insert }])
     dest.pushUndoStop()
     return true
   }
@@ -338,7 +338,7 @@ export function MergePane(props: MergePaneProps) {
         if (m.getValue() === next) return
         // One undoable edit; a replaced side starts without marks (its breaks get the main line ending).
         ed.pushUndoStop()
-        ed.executeEdits('termstead.replace', [{ range: m.getFullModelRange(), text: next }])
+        ed.executeEdits('astraterm.replace', [{ range: m.getFullModelRange(), text: next }])
         ed.pushUndoStop()
         l.trackers[side].reset([], m.getAlternativeVersionId())
         reportChunks()

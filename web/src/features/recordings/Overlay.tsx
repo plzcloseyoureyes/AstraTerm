@@ -48,7 +48,7 @@ function MessageDialog({ locked }: { locked: boolean }) {
             <MessageSquare className="size-4 text-muted-foreground" /> Message the user
           </DialogTitle>
           <DialogDescription>
-            Shown in the session{title ? ` “${title}”` : ''} as a notice line and as a notification in the user’s Termstead windows.
+            Shown in the session{title ? ` “${title}”` : ''} as a notice line and as a notification in the user’s AstraTerm windows.
           </DialogDescription>
         </DialogHeader>
         <Textarea

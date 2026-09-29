@@ -8,39 +8,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 // repo gives typed access to the module tables (schema.go). Times are stored as unix milliseconds (SPEC §5.1).
 type repo struct{ db *sql.DB }
-
-func now() time.Time { return time.Now().UTC().Truncate(time.Millisecond) }
-
-func toMs(t time.Time) int64 { return t.UnixMilli() }
-
-func fromMs(v int64) time.Time { return time.UnixMilli(v).UTC() }
-
-func nullMs(t *time.Time) any {
-	if t == nil || t.IsZero() {
-		return nil
-	}
-	return t.UnixMilli()
-}
-
-func fromNullMs(v sql.NullInt64) *time.Time {
-	if !v.Valid {
-		return nil
-	}
-	t := fromMs(v.Int64)
-	return &t
-}
-
-func b2i(b bool) int {
-	if b {
-		return 1
-	}
-	return 0
-}
 
 func dbErr(err error) error {
 	if errors.Is(err, sql.ErrNoRows) {
@@ -93,7 +66,7 @@ func scanMacro(sc rowScanner) (*Macro, error) {
 	if mc.Steps == nil {
 		mc.Steps = []MacroStep{}
 	}
-	mc.CreatedAt, mc.UpdatedAt = fromMs(created), fromMs(updated)
+	mc.CreatedAt, mc.UpdatedAt = store.FromMs(created), store.FromMs(updated)
 	return &mc, nil
 }
 
@@ -123,10 +96,10 @@ func (r *repo) createMacro(ctx context.Context, mc *Macro) error {
 	if mc.Steps == nil {
 		mc.Steps = []MacroStep{}
 	}
-	t := now()
+	t := store.Now()
 	mc.CreatedAt, mc.UpdatedAt = t, t
 	_, err := r.db.ExecContext(ctx, `INSERT INTO macros (`+macroCols+`) VALUES (?, ?, ?, ?, ?, ?)`,
-		mc.ID, mc.OwnerID, mc.Name, mustJSON(mc.Steps), toMs(t), toMs(t))
+		mc.ID, mc.OwnerID, mc.Name, mustJSON(mc.Steps), t.UnixMilli(), t.UnixMilli())
 	return err
 }
 
@@ -134,9 +107,9 @@ func (r *repo) updateMacro(ctx context.Context, mc *Macro) error {
 	if mc.Steps == nil {
 		mc.Steps = []MacroStep{}
 	}
-	mc.UpdatedAt = now()
+	mc.UpdatedAt = store.Now()
 	return expectRow(r.db.ExecContext(ctx, `UPDATE macros SET name = ?, steps = ?, updated_at = ? WHERE id = ?`,
-		mc.Name, mustJSON(mc.Steps), toMs(mc.UpdatedAt), mc.ID))
+		mc.Name, mustJSON(mc.Steps), mc.UpdatedAt.UnixMilli(), mc.ID))
 }
 
 func (r *repo) deleteMacro(ctx context.Context, id string) error {
@@ -153,7 +126,7 @@ func scanScript(sc rowScanner) (*Script, error) {
 	if err := sc.Scan(&s.ID, &s.OwnerID, &s.Name, &s.Description, &s.Content, &created, &updated); err != nil {
 		return nil, dbErr(err)
 	}
-	s.CreatedAt, s.UpdatedAt = fromMs(created), fromMs(updated)
+	s.CreatedAt, s.UpdatedAt = store.FromMs(created), store.FromMs(updated)
 	return &s, nil
 }
 
@@ -186,17 +159,17 @@ func (r *repo) getScript(ctx context.Context, id string) (*Script, error) {
 
 func (r *repo) createScript(ctx context.Context, s *Script) error {
 	s.ID = model.NewID()
-	t := now()
+	t := store.Now()
 	s.CreatedAt, s.UpdatedAt = t, t
 	_, err := r.db.ExecContext(ctx, `INSERT INTO automation_scripts (`+scriptCols+`) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		s.ID, s.OwnerID, s.Name, s.Description, s.Content, toMs(t), toMs(t))
+		s.ID, s.OwnerID, s.Name, s.Description, s.Content, t.UnixMilli(), t.UnixMilli())
 	return err
 }
 
 func (r *repo) updateScript(ctx context.Context, s *Script) error {
-	s.UpdatedAt = now()
+	s.UpdatedAt = store.Now()
 	return expectRow(r.db.ExecContext(ctx, `UPDATE automation_scripts SET name = ?, description = ?, content = ?, updated_at = ? WHERE id = ?`,
-		s.Name, s.Description, s.Content, toMs(s.UpdatedAt), s.ID))
+		s.Name, s.Description, s.Content, s.UpdatedAt.UnixMilli(), s.ID))
 }
 
 func (r *repo) deleteScript(ctx context.Context, id string) error {
@@ -237,7 +210,7 @@ func scanTrigger(sc rowScanner) (*Trigger, error) {
 	if t.Actions == nil {
 		t.Actions = []TriggerAction{}
 	}
-	t.CreatedAt, t.UpdatedAt = fromMs(created), fromMs(updated)
+	t.CreatedAt, t.UpdatedAt = store.FromMs(created), store.FromMs(updated)
 	return &t, nil
 }
 
@@ -265,20 +238,20 @@ func (r *repo) getTrigger(ctx context.Context, id string) (*Trigger, error) {
 
 func (r *repo) createTrigger(ctx context.Context, t *Trigger) error {
 	t.ID = model.NewID()
-	ts := now()
+	ts := store.Now()
 	t.CreatedAt, t.UpdatedAt = ts, ts
 	_, err := r.db.ExecContext(ctx, `INSERT INTO automation_triggers (`+triggerCols+`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		t.ID, t.OwnerID, t.Name, b2i(t.Enabled), t.Pattern, b2i(t.CaseSensitive), mustJSON(t.Scope), mustJSON(t.Actions),
-		t.CooldownMs, b2i(t.Once), t.SortOrder, toMs(ts), toMs(ts), t.Event, mustJSON(triggerEventOpts{Exit: t.Exit, MinDuration: t.MinDuration}))
+		t.ID, t.OwnerID, t.Name, store.B2I(t.Enabled), t.Pattern, store.B2I(t.CaseSensitive), mustJSON(t.Scope), mustJSON(t.Actions),
+		t.CooldownMs, store.B2I(t.Once), t.SortOrder, ts.UnixMilli(), ts.UnixMilli(), t.Event, mustJSON(triggerEventOpts{Exit: t.Exit, MinDuration: t.MinDuration}))
 	return err
 }
 
 func (r *repo) updateTrigger(ctx context.Context, t *Trigger) error {
-	t.UpdatedAt = now()
+	t.UpdatedAt = store.Now()
 	return expectRow(r.db.ExecContext(ctx, `UPDATE automation_triggers SET name = ?, enabled = ?, pattern = ?, case_sensitive = ?,
 		scope = ?, actions = ?, cooldown_ms = ?, once = ?, sort_order = ?, updated_at = ?, event = ?, event_opts = ? WHERE id = ?`,
-		t.Name, b2i(t.Enabled), t.Pattern, b2i(t.CaseSensitive), mustJSON(t.Scope), mustJSON(t.Actions), t.CooldownMs,
-		b2i(t.Once), t.SortOrder, toMs(t.UpdatedAt), t.Event, mustJSON(triggerEventOpts{Exit: t.Exit, MinDuration: t.MinDuration}), t.ID))
+		t.Name, store.B2I(t.Enabled), t.Pattern, store.B2I(t.CaseSensitive), mustJSON(t.Scope), mustJSON(t.Actions), t.CooldownMs,
+		store.B2I(t.Once), t.SortOrder, t.UpdatedAt.UnixMilli(), t.Event, mustJSON(triggerEventOpts{Exit: t.Exit, MinDuration: t.MinDuration}), t.ID))
 }
 
 func (r *repo) deleteTrigger(ctx context.Context, id string) error {
@@ -288,7 +261,7 @@ func (r *repo) deleteTrigger(ctx context.Context, id string) error {
 func (r *repo) insertTriggerLog(ctx context.Context, owner string, e *TriggerLogEntry) error {
 	res, err := r.db.ExecContext(ctx, `INSERT INTO automation_trigger_log (owner_id, trigger_id, trigger_name, session_id, session_title,
 		connection_id, line, ts) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-		owner, e.TriggerID, e.TriggerName, e.SessionID, e.SessionTitle, e.ConnectionID, e.Line, toMs(e.TS))
+		owner, e.TriggerID, e.TriggerName, e.SessionID, e.SessionTitle, e.ConnectionID, e.Line, e.TS.UnixMilli())
 	if err != nil {
 		return err
 	}
@@ -320,7 +293,7 @@ func (r *repo) listTriggerLog(ctx context.Context, owner, triggerID string, limi
 		if err := rows.Scan(&e.ID, &e.TriggerID, &e.TriggerName, &e.SessionID, &e.SessionTitle, &e.ConnectionID, &e.Line, &ts); err != nil {
 			return nil, err
 		}
-		e.TS = fromMs(ts)
+		e.TS = store.FromMs(ts)
 		out = append(out, e)
 	}
 	return out, rows.Err()
@@ -353,8 +326,8 @@ func scanSchedule(sc rowScanner) (*Schedule, error) {
 	if s.ConnectionIDs == nil {
 		s.ConnectionIDs = []string{}
 	}
-	s.LastRunAt = fromNullMs(lastRun)
-	s.CreatedAt, s.UpdatedAt = fromMs(created), fromMs(updated)
+	s.LastRunAt = store.FromNullMs(lastRun)
+	s.CreatedAt, s.UpdatedAt = store.FromMs(created), store.FromMs(updated)
 	return &s, nil
 }
 
@@ -394,24 +367,24 @@ func (r *repo) countSchedules(ctx context.Context, owner string) (int, error) {
 
 func (r *repo) createSchedule(ctx context.Context, s *Schedule) error {
 	s.ID = model.NewID()
-	t := now()
+	t := store.Now()
 	s.CreatedAt, s.UpdatedAt = t, t
 	_, err := r.db.ExecContext(ctx, `INSERT INTO automation_schedules (`+scheduleCols+`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		s.ID, s.OwnerID, s.Name, b2i(s.Enabled), s.Spec, mustJSON(s.Action), mustJSON(s.ConnectionIDs), s.Notify,
-		nullMs(s.LastRunAt), s.LastStatus, s.LastRunID, toMs(t), toMs(t))
+		s.ID, s.OwnerID, s.Name, store.B2I(s.Enabled), s.Spec, mustJSON(s.Action), mustJSON(s.ConnectionIDs), s.Notify,
+		store.NullMs(s.LastRunAt), s.LastStatus, s.LastRunID, t.UnixMilli(), t.UnixMilli())
 	return err
 }
 
 func (r *repo) updateSchedule(ctx context.Context, s *Schedule) error {
-	s.UpdatedAt = now()
+	s.UpdatedAt = store.Now()
 	return expectRow(r.db.ExecContext(ctx, `UPDATE automation_schedules SET name = ?, enabled = ?, spec = ?, action = ?,
 		connection_ids = ?, notify = ?, updated_at = ? WHERE id = ?`,
-		s.Name, b2i(s.Enabled), s.Spec, mustJSON(s.Action), mustJSON(s.ConnectionIDs), s.Notify, toMs(s.UpdatedAt), s.ID))
+		s.Name, store.B2I(s.Enabled), s.Spec, mustJSON(s.Action), mustJSON(s.ConnectionIDs), s.Notify, s.UpdatedAt.UnixMilli(), s.ID))
 }
 
 func (r *repo) setScheduleResult(ctx context.Context, id string, at time.Time, status, runID string) error {
 	_, err := r.db.ExecContext(ctx, `UPDATE automation_schedules SET last_run_at = ?, last_status = ?, last_run_id = ? WHERE id = ?`,
-		toMs(at), status, runID, id)
+		at.UnixMilli(), status, runID, id)
 	return err
 }
 
@@ -441,7 +414,7 @@ func scanRun(sc rowScanner, full bool) (*Run, error) {
 		return nil, dbErr(err)
 	}
 	_ = json.Unmarshal([]byte(summary), &r.Summary)
-	r.StartedAt, r.FinishedAt = fromMs(started), fromNullMs(finished)
+	r.StartedAt, r.FinishedAt = store.FromMs(started), store.FromNullMs(finished)
 	if full {
 		r.Log = logText
 		_ = json.Unmarshal([]byte(results), &r.Results)
@@ -454,7 +427,7 @@ func (r *repo) insertRun(ctx context.Context, run *Run) error {
 		run.ID = model.NewID()
 	}
 	if run.StartedAt.IsZero() {
-		run.StartedAt = now()
+		run.StartedAt = store.Now()
 	}
 	results := run.Results
 	if results == nil {
@@ -463,7 +436,7 @@ func (r *repo) insertRun(ctx context.Context, run *Run) error {
 	_, err := r.db.ExecContext(ctx, `INSERT INTO automation_runs (id, owner_id, kind, ref_id, name, origin, target, status, job_id,
 		error, log, results, summary, started_at, finished_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		run.ID, run.OwnerID, run.Kind, run.RefID, run.Name, run.Origin, run.Target, run.Status, run.JobID, run.Error,
-		run.Log, mustJSON(results), mustJSON(run.Summary), toMs(run.StartedAt), nullMs(run.FinishedAt))
+		run.Log, mustJSON(results), mustJSON(run.Summary), run.StartedAt.UnixMilli(), store.NullMs(run.FinishedAt))
 	if err != nil {
 		return err
 	}
@@ -481,7 +454,7 @@ func (r *repo) finishRun(ctx context.Context, run *Run) error {
 	}
 	return expectRow(r.db.ExecContext(ctx, `UPDATE automation_runs SET status = ?, error = ?, log = ?, results = ?, summary = ?,
 		finished_at = ?, job_id = ?, target = ? WHERE id = ?`,
-		run.Status, run.Error, run.Log, mustJSON(results), mustJSON(run.Summary), nullMs(run.FinishedAt), run.JobID, run.Target, run.ID))
+		run.Status, run.Error, run.Log, mustJSON(results), mustJSON(run.Summary), store.NullMs(run.FinishedAt), run.JobID, run.Target, run.ID))
 }
 
 func (r *repo) setRunJob(ctx context.Context, id, jobID string) error {
@@ -556,7 +529,7 @@ func (r *repo) clearRuns(ctx context.Context, owner string) error {
 
 // interruptRuns marks runs left "running" by a previous process as failed (called at startup).
 func (r *repo) interruptRuns(ctx context.Context) error {
-	_, err := r.db.ExecContext(ctx, `UPDATE automation_runs SET status = 'error', error = 'interrupted (Termstead was restarted)',
-		finished_at = ? WHERE status = 'running'`, toMs(now()))
+	_, err := r.db.ExecContext(ctx, `UPDATE automation_runs SET status = 'error', error = 'interrupted (AstraTerm was restarted)',
+		finished_at = ? WHERE status = 'running'`, store.Now().UnixMilli())
 	return err
 }

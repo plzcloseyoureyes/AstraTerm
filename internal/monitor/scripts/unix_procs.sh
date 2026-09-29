@@ -1,4 +1,4 @@
-# Termstead remote monitor — macOS / BSD process list (MON-3).
+# AstraTerm remote monitor — macOS / BSD process list (MON-3).
 export LC_ALL=C
 echo "@@SELF $$"
 echo @@PS

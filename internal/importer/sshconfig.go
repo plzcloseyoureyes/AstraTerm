@@ -7,7 +7,7 @@ import (
 
 	sshconfig "github.com/kevinburke/ssh_config"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // OpenSSH ~/.ssh/config importer (IMP-2, SSH-36). Concrete `Host` aliases (no wildcards/negation) become SSH
@@ -243,7 +243,7 @@ func sshConfigConn(b *builder, alias string, s map[string]string, m map[string][
 		notes = append(notes, "LocalCommand is not supported and was not imported")
 	}
 	if v := s["stricthostkeychecking"]; v != "" && !strings.EqualFold(v, "ask") {
-		notes = append(notes, "StrictHostKeyChecking="+v+" is not imported (Termstead always verifies host keys)")
+		notes = append(notes, "StrictHostKeyChecking="+v+" is not imported (AstraTerm always verifies host keys)")
 	}
 	if len(m["certificatefile"]) > 0 {
 		notes = append(notes, "CertificateFile was not imported (attach the certificate to the key in Keys)")

@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// User is a Termstead account (SPEC §5.2). Credentials never live on this struct.
+// User is a AstraTerm account (SPEC §5.2). Credentials never live on this struct.
 type User struct {
 	ID          string     `json:"id"`
 	Username    string     `json:"username"`

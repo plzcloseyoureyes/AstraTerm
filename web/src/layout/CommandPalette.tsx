@@ -13,7 +13,7 @@ import { cn, formatRelativeTime, storage } from '@/lib/utils'
 import { focusTab, useTabs } from '@/stores/workspace'
 import { closePalette, useUIStore, type PaletteMode } from '@/stores/ui'
 
-const RECENT_KEY = 'termstead:palette-recent'
+const RECENT_KEY = 'astraterm:palette-recent'
 
 function recentCommandIds(): string[] {
   const v = storage.get<unknown>(RECENT_KEY, [])
@@ -46,6 +46,9 @@ const itemClass = cn(
 )
 const groupClass =
   '[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:pt-2 [&_[cmdk-group-heading]]:pb-1 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground'
+
+/** With nothing typed, everyday commands come right after the recently used ones (not "Sign Out" by alphabet). */
+const SUGGESTED = ['sessions.new', 'quickConnect.focus', 'terminal.newLocal', 'files.openLocal', 'workspace.split.right', 'workspace.reopenClosed', 'settings.open', 'help.shortcuts']
 
 /** Ctrl/Cmd+K launcher: commands, saved connections (fuzzy) and open tabs. Prefixes: ">" commands, "@" hosts, "%" tabs. */
 export function CommandPalette() {
@@ -143,10 +146,11 @@ function PaletteBody({ raw, setRaw, mode: initialMode }: { raw: string; setRaw: 
       const recent = recentCommandIds()
         .map((id) => cmdList.find((c) => c.id === id))
         .filter((c): c is CommandDef => !!c)
+      const suggested = SUGGESTED.map((id) => cmdList.find((c) => c.id === id)).filter((c): c is CommandDef => !!c && !recent.includes(c))
       const rest = cmdList
-        .filter((c) => !recent.includes(c))
+        .filter((c) => !recent.includes(c) && !suggested.includes(c))
         .sort((a, b) => (a.category ?? '').localeCompare(b.category ?? '') || a.title.localeCompare(b.title))
-      return [...recent, ...rest].slice(0, mode === 'all' ? 8 : 200)
+      return [...recent, ...suggested, ...rest].slice(0, mode === 'all' ? 8 : 200)
     }
     return literalFirst(cmdFuse.search(q, { limit }).map((r) => r.item), q, (c) => c.title)
   }, [showCommands, q, cmdList, cmdFuse, limit, mode])

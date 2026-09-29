@@ -71,7 +71,7 @@ export function OpenDialog({ init, onClose }: { init: OpenArgs; onClose: () => v
               <Globe className="size-4 text-primary" /> Open web page
             </DialogTitle>
             <DialogDescription>
-              Termstead fetches the page itself and shows it in a tab — from this Termstead host, or from an SSH server for services only
+              AstraTerm fetches the page itself and shows it in a tab — from this AstraTerm host, or from an SSH server for services only
               it can reach (Jupyter, Grafana, router and BMC pages).
             </DialogDescription>
           </DialogHeader>
@@ -110,7 +110,7 @@ export function OpenDialog({ init, onClose }: { init: OpenArgs; onClose: () => v
                 ))}
               </div>
             )}
-            <Field label="Reach it through" htmlFor={ids.route} hint={route === 'direct' ? 'The Termstead host connects to the address itself.' : 'The SSH server connects to the address ("localhost" is the SSH server).'}>
+            <Field label="Reach it through" htmlFor={ids.route} hint={route === 'direct' ? 'The AstraTerm host connects to the address itself.' : 'The SSH server connects to the address ("localhost" is the SSH server).'}>
               <RoutePicker id={ids.route} value={route} onChange={setRoute} tunnelLabel="The tunnel's SSH connection" />
             </Field>
             {parsed?.scheme === 'https' && (

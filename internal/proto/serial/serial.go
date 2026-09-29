@@ -1,5 +1,5 @@
 // Package serial implements the "serial" terminal protocol (PROTO-10, CC-18, RESEARCH §3.7): a console on a serial
-// port of the machine running Termstead (go.bug.st/serial), with hardware/software flow control, initial and live
+// port of the machine running AstraTerm (go.bug.st/serial), with hardware/software flow control, initial and live
 // DTR/RTS control, modem-status polling (CTS/DSR/DCD/RI), BREAK, local echo and Enter translation, reconnect after a
 // replug (autoReconnect) and auto-baud detection. Serial ports are host hardware, so in server mode they are
 // restricted to administrators (SPEC principle 7).
@@ -26,12 +26,12 @@ import (
 	"github.com/labstack/echo/v5"
 	goserial "go.bug.st/serial"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/proto/rawtcp/linedisc"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/proto/rawtcp/linedisc"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // PortInfo is one entry of GET /api/serial/ports.
@@ -363,7 +363,7 @@ func classifyOpenError(device string, err error, reconnect bool) error {
 			}
 			return term.Permanent(fmt.Errorf("serial: %s: %s", device, pe.Error()))
 		case goserial.PermissionDenied:
-			return term.Permanent(fmt.Errorf("serial: %s: permission denied (on Linux, add the Termstead user to the dialout group)", device))
+			return term.Permanent(fmt.Errorf("serial: %s: permission denied (on Linux, add the AstraTerm user to the dialout group)", device))
 		}
 		// PortBusy / PortNotFound are transient: auto-reconnect keeps trying (e.g. until the device is replugged).
 		return fmt.Errorf("serial: %s: %s", device, pe.EncodedErrorString())

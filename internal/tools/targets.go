@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 // maxHosts and maxProbes bound a single scan so a broad spec cannot exhaust the host or flood the client: at most a

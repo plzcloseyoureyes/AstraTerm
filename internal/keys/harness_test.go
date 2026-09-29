@@ -16,18 +16,18 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/audit"
-	"github.com/termstead/termstead/internal/auth"
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/events"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/sshx"
-	"github.com/termstead/termstead/internal/store"
-	"github.com/termstead/termstead/internal/term"
-	"github.com/termstead/termstead/internal/vault"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/audit"
+	"github.com/plzcloseyoureyes/astraterm/internal/auth"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/events"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/vault"
 )
 
 // A self-contained test environment: the foundation services (store, vault, router, auth, events, term, sshx) plus

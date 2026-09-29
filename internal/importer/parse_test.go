@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 func loadFixture(t *testing.T, name string) []byte {
@@ -374,8 +374,8 @@ func TestParseKnownHosts(t *testing.T) {
 	}
 }
 
-func TestParseTermsteadJSON(t *testing.T) {
-	p := mustParse(t, fmtJSON, "termstead.json", previewOptions{})
+func TestParseAstraTermJSON(t *testing.T) {
+	p := mustParse(t, fmtJSON, "astraterm.json", previewOptions{})
 	bastion := findConn(t, p, "bastion")
 	if bastion.conn.Host != "bastion.aws.example.com" || folderPathOf(p, bastion) != "Cloud/AWS" {
 		t.Errorf("bastion mismatch: %+v folder=%s", bastion.conn, folderPathOf(p, bastion))

@@ -88,7 +88,7 @@ export function renderHtml(lines: readonly string[], tokens: readonly (readonly 
   return [
     '<!DOCTYPE html>',
     '<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">',
-    '<meta name="generator" content="Termstead">',
+    '<meta name="generator" content="AstraTerm">',
     `<title>${escapeHtml(o.title)}</title>`,
     `<style>${styles(o, lines.length)}</style>`,
     '</head><body><pre>',

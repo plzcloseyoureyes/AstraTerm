@@ -15,8 +15,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 func TestRoutedDetection(t *testing.T) {
@@ -189,7 +189,7 @@ func (f *fakeRlogind) port() int { return f.ln.Addr().(*net.TCPAddr).Port }
 func TestRloginSessionAgainstFakeServer(t *testing.T) {
 	f := startFakeRlogind(t, "")
 	conn := &model.Connection{Protocol: model.ProtoRlogin, Host: "127.0.0.1", Port: f.port(), Username: "alice",
-		Options: model.Options{"term": "vt220", "localUser": "termstead"}}
+		Options: model.Options{"term": "vt220", "localUser": "astraterm"}}
 	nc, err := dial(context.Background(), nil, nil, term.OpenRequest{Connection: conn}, f.port())
 	if err != nil {
 		t.Fatalf("dial: %v", err)
@@ -206,7 +206,7 @@ func TestRloginSessionAgainstFakeServer(t *testing.T) {
 	f.mu.Lock()
 	hs, ws, pw := f.handshake, f.winsize, f.password
 	f.mu.Unlock()
-	if strings.Join(hs, "|") != "termstead|alice|vt220/38400" {
+	if strings.Join(hs, "|") != "astraterm|alice|vt220/38400" {
 		t.Errorf("handshake = %q", hs)
 	}
 	if want := []byte{0xff, 0xff, 's', 's', 0, 43, 0, 132, 0, 0, 0, 0}; !bytes.Equal(ws, want) {
@@ -392,7 +392,7 @@ func TestRshStderrBackChannel(t *testing.T) {
 	}
 	defer b.Close()
 	col := collect(b)
-	if _, err := b.Write([]byte("x")); err != nil {
+	if _, err := b.Write([]byte("x\x04")); err != nil {
 		t.Fatal(err)
 	}
 	out := col.until(3*time.Second, func([]byte) bool { return false }) // until EOF
@@ -414,12 +414,12 @@ func TestRshStderrBackChannel(t *testing.T) {
 	}
 }
 
-// TestServeFakeRlogind is a manual end-to-end harness: with TERMSTEAD_SERVE_RLOGIND=host:port it serves the fake rlogind
+// TestServeFakeRlogind is a manual end-to-end harness: with ASTRATERM_SERVE_RLOGIND=host:port it serves the fake rlogind
 // (password prompt, then an echoing "$ " prompt) for any number of connections until the process is killed.
 func TestServeFakeRlogind(t *testing.T) {
-	addr := os.Getenv("TERMSTEAD_SERVE_RLOGIND")
+	addr := os.Getenv("ASTRATERM_SERVE_RLOGIND")
 	if addr == "" {
-		t.Skip("set TERMSTEAD_SERVE_RLOGIND=host:port to serve a fake rlogind for manual end-to-end tests")
+		t.Skip("set ASTRATERM_SERVE_RLOGIND=host:port to serve a fake rlogind for manual end-to-end tests")
 	}
 	ln, err := net.Listen("tcp", addr)
 	if err != nil {

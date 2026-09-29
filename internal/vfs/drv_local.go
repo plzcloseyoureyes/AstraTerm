@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-// localFS is the file system of the machine running Termstead (PROTO-29, FILE-13). Unrestricted (desktop mode) it
+// localFS is the file system of the machine running AstraTerm (PROTO-29, FILE-13). Unrestricted (desktop mode) it
 // exposes absolute host paths (on Windows "/C:/Users/..." with a virtual "/" listing the drives); jailed (server
 // mode) every operation goes through an os.Root so nothing outside the configured root is reachable, not even via
 // symlinks or "..".

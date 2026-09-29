@@ -84,14 +84,13 @@ func (p *openaiProvider) Open(ctx context.Context, req Request) (Stream, error) 
 }
 
 type openaiStream struct {
-	body     io.ReadCloser
-	sse      *sseReader
-	label    string
-	finish   string
-	usage    *Usage
-	done     bool
-	gotAny   bool
-	thinking bool
+	body   io.ReadCloser
+	sse    *sseReader
+	label  string
+	finish string
+	usage  *Usage
+	done   bool
+	gotAny bool
 }
 
 func (s *openaiStream) Close() error { return s.body.Close() }

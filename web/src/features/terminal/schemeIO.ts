@@ -1,6 +1,6 @@
 /*
  * Colour scheme import / export (TERM-9):
- *   - Termstead JSON (a TerminalScheme or an array of them)
+ *   - AstraTerm JSON (a TerminalScheme or an array of them)
  *   - Windows Terminal scheme JSON ({name, background, foreground, black, ..., brightWhite, cursorColor, selectionBackground},
  *     also a full settings.json with a "schemes" array)
  *   - iTerm2 .itermcolors (XML property list with "Ansi 0 Color" … "Ansi 15 Color" dictionaries)
@@ -161,7 +161,7 @@ function parseItermColor(dict: Element): string | undefined {
   return rgbToHex(r * 255, g * 255, b * 255)
 }
 
-/** Export as Windows-Terminal-compatible JSON (also re-importable by Termstead). */
+/** Export as Windows-Terminal-compatible JSON (also re-importable by AstraTerm). */
 export function schemeToJson(s: TerminalScheme): string {
   const n = normalizeScheme(s)
   const out: Record<string, string> = {

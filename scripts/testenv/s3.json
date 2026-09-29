@@ -1,1 +1,1 @@
-{"identities":[{"name":"termstead","credentials":[{"accessKey":"termstead","secretKey":"termstead-secret"}],"actions":["Admin","Read","Write","List","Tagging"]}]}
+{"identities":[{"name":"astraterm","credentials":[{"accessKey":"astraterm","secretKey":"astraterm-secret"}],"actions":["Admin","Read","Write","List","Tagging"]}]}

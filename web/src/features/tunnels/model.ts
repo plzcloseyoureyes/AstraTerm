@@ -137,7 +137,7 @@ export function isSSHConnection(c: Connection): boolean {
 const CONN_ID_RE = /^[a-z2-7]{20}$/
 
 /**
- * How Termstead reaches an SSH connection besides the direct route: its jump hosts (saved connections by name, ad-hoc
+ * How AstraTerm reaches an SSH connection besides the direct route: its jump hosts (saved connections by name, ad-hoc
  * "[user@]host[:port]" hops as written; deleted ones are skipped) and its proxy, first hop first.
  */
 export function connectionRoute(c: Connection | undefined, all: readonly Connection[] | undefined): string[] {
@@ -273,21 +273,21 @@ function urlHost(bound: string): { host: string; port: string } | null {
 }
 
 /**
- * Whether this browser runs on the Termstead host: the UI is served from a loopback address. Listeners of local tunnels
- * live on the Termstead host, so only then does "localhost:<port>" in the browser mean the tunnel.
+ * Whether this browser runs on the AstraTerm host: the UI is served from a loopback address. Listeners of local tunnels
+ * live on the AstraTerm host, so only then does "localhost:<port>" in the browser mean the tunnel.
  */
-export function browserOnTermsteadHost(): boolean {
+export function browserOnAstraTermHost(): boolean {
   const h = window.location.hostname.replace(/^\[|\]$/g, '').toLowerCase()
   return h === 'localhost' || h.endsWith('.localhost') || h === '::1' || h.startsWith('127.')
 }
 
 /**
- * Host this browser uses to reach a listener of the Termstead host bound to `boundHost` ('*' / '' / 0.0.0.0 / :: =
+ * Host this browser uses to reach a listener of the AstraTerm host bound to `boundHost` ('*' / '' / 0.0.0.0 / :: =
  * every interface), or null when it cannot: a loopback-only listener on another machine.
  */
 export function browserReachableHost(boundHost: string): string | null {
   const h = boundHost.replace(/^\[|\]$/g, '')
-  const local = browserOnTermsteadHost()
+  const local = browserOnAstraTermHost()
   if (h === '*' || h === '' || h === '0.0.0.0' || h === '::') return local ? 'localhost' : window.location.hostname.replace(/^\[|\]$/g, '')
   if (isLoopbackHost(h)) return local ? h : null
   return h

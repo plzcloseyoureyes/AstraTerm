@@ -3,7 +3,7 @@ package importer
 import (
 	"strings"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Remmina .remmina importer (IMP-2). Each file is an INI with a `[remmina]` section; several files may be

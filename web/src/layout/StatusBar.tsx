@@ -72,7 +72,7 @@ export function StatusBar() {
     <footer
       role="status"
       aria-label="Status bar"
-      className="flex h-6 shrink-0 items-center justify-between gap-2 border-t bg-statusbar px-1 text-xs text-statusbar-foreground select-none"
+      className="flex h-6 shrink-0 items-center justify-between gap-2 px-1.5 text-xs text-statusbar-foreground select-none"
     >
       <div className="flex h-full min-w-0 items-center gap-0.5 overflow-hidden">
         {left.map((i) => (

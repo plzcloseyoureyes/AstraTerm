@@ -14,6 +14,8 @@ export interface ResizeHandleProps {
   /** Double-click / Enter handler (e.g. collapse/expand). */
   onToggle?: () => void
   label?: string
+  /** No line at rest (the handle sits in a gap between surfaces); the accent line still shows on hover / drag / focus. */
+  quiet?: boolean
   className?: string
 }
 
@@ -21,7 +23,7 @@ export interface ResizeHandleProps {
  * Accessible splitter (role="separator"): pointer drag, arrow keys (Shift = 5×), Home/End to min/max.
  * (Replaces react-resizable-panels, which is not installed.)
  */
-export function ResizeHandle({ size, min, max, onResize, onResizeEnd, edge, onToggle, label = 'Resize', className }: ResizeHandleProps) {
+export function ResizeHandle({ size, min, max, onResize, onResizeEnd, edge, onToggle, label = 'Resize', quiet = false, className }: ResizeHandleProps) {
   const [dragging, setDragging] = React.useState(false)
   const start = React.useRef<{ pos: number; size: number; last: number } | null>(null)
   const horizontal = edge === 'left' || edge === 'right'
@@ -103,7 +105,8 @@ export function ResizeHandle({ size, min, max, onResize, onResizeEnd, edge, onTo
       <div className={cn('absolute', horizontal ? '-inset-x-1 inset-y-0' : '-inset-y-1 inset-x-0')} />
       <div
         className={cn(
-          'pointer-events-none absolute bg-border transition-colors delay-100',
+          'pointer-events-none absolute transition-colors delay-100',
+          quiet ? 'bg-transparent' : 'bg-border',
           horizontal ? 'inset-y-0 left-0 w-px' : 'inset-x-0 top-0 h-px',
           'group-hover/handle:bg-primary/70 group-focus-visible/handle:bg-primary group-data-[dragging]/handle:bg-primary',
           horizontal

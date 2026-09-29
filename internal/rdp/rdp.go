@@ -1,4 +1,4 @@
-// Package rdp implements Termstead's RDP session type (PROTO-16, GFX-1..9, GFX-11, GFX-18, CORE-16, CC-15; RESEARCH
+// Package rdp implements AstraTerm's RDP session type (PROTO-16, GFX-1..9, GFX-11, GFX-18, CORE-16, CC-15; RESEARCH
 // §3.10, §3.11; SPEC §6.3). RDP sessions are graphical runtime sessions (kind "rdp") created through
 // POST /api/sessions; they have no terminal backend — this module drives them:
 //
@@ -18,15 +18,16 @@ import (
 	"log/slog"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 type handler struct {
@@ -149,10 +150,10 @@ func (h *handler) setState(sessionID string, st model.SessionState, msg string) 
 	h.c.Sessions.SetState(sessionID, st, msg)
 }
 
-// failState reports a viewer's failure in the session state — unless another viewer of the owner keeps the session
-// running (a second tab failing must not mark a working desktop as failed).
-func (h *handler) failState(s *term.Session, msg string) {
-	if h.viewers.count(s.ID) > 1 {
+// failState reports viewer v's failure in the session state — unless another active viewer of the owner keeps the
+// session running (a second tab failing must not mark a working desktop as failed).
+func (h *handler) failState(s *term.Session, v *viewer, msg string) {
+	if h.viewers.count(s.ID, v) > 0 {
 		return
 	}
 	h.setState(s.ID, model.StateError, cleanMessage(msg))
@@ -160,7 +161,7 @@ func (h *handler) failState(s *term.Session, msg string) {
 
 // endState moves a session to "disconnected" (or "error") when its last (owner's) viewer left, unless it already ended.
 func (h *handler) endState(s *term.Session, st model.SessionState, msg string) {
-	if h.viewers.count(s.ID) > 0 {
+	if h.viewers.count(s.ID, nil) > 0 {
 		return
 	}
 	cur, _ := s.State()
@@ -192,12 +193,15 @@ func (h *handler) allowGlobalTrust(u *model.User) bool { return h.isDesktop() ||
 
 // ---- viewers --------------------------------------------------------------------------------------------------------
 
-// viewer is one attached relay (/ws/rdp) or tunnel (/ws/guac).
+// viewer is one attached relay (/ws/rdp) or tunnel (/ws/guac). It is registered from the start (so closing the
+// session cancels it) but counts as watching only once active: an IronRDP relay still in its handshake — or rejected
+// there, like a reused ticket — must not keep a session "connected" after its real viewer left.
 type viewer struct {
 	sessionID string
 	engine    string
 	shadow    bool // an administrator's read-only view: never drives the session state
 	cancel    context.CancelFunc
+	active    atomic.Bool
 }
 
 type viewerRegistry struct {
@@ -233,12 +237,13 @@ func (r *viewerRegistry) remove(v *viewer) int {
 }
 
 // count returns the number of the owner's viewers of a session (read-only shadows excluded).
-func (r *viewerRegistry) count(sessionID string) int {
+// count returns the active, non-shadow viewers of a session other than except (nil: all of them).
+func (r *viewerRegistry) count(sessionID string, except *viewer) int {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	n := 0
 	for v := range r.bySession[sessionID] {
-		if !v.shadow {
+		if v != except && !v.shadow && v.active.Load() {
 			n++
 		}
 	}

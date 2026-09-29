@@ -1,0 +1,4 @@
+/target/
+/gen/
+# Built by scripts/desktop-sidecar.sh (the astraterm server for the target platform)
+/binaries/

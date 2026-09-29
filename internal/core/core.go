@@ -2,8 +2,8 @@
 package core
 
 import (
-	"github.com/termstead/termstead/internal/sshx"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // Core holds the shared runtime managers built by internal/server.

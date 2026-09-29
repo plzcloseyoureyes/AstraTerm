@@ -77,7 +77,7 @@ async function flush(keepalive = false): Promise<void> {
         method: 'PUT',
         credentials: 'same-origin',
         keepalive: true,
-        headers: { 'Content-Type': 'application/json', 'X-Termstead': '1' },
+        headers: { 'Content-Type': 'application/json', 'X-AstraTerm': '1' },
         body: JSON.stringify(patch),
       }).catch(() => undefined)
       return
@@ -270,7 +270,8 @@ export const appearanceSettings = defineSettings<AppearanceSettings>('appearance
   uiScale: 1,
   density: 'comfortable',
   showMenuBar: true,
-  showRibbon: true,
+  // Tabs, quick connect and the app menu share the title bar; tool launchers sit in the sidebar rail.
+  showRibbon: false,
   ribbonCompact: false,
   showSidebar: true,
   showStatusBar: true,

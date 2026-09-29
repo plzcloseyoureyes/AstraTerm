@@ -42,7 +42,7 @@ func openTracer(dst net.IP, udp bool) (tracer, error) {
 		candidates = [][2]string{{"udp6", "::"}, {"ip6:ipv6-icmp", "::"}}
 	}
 	t := &icmpTracer{v6: v6, udp: udp, dst: dst, id: rand.IntN(0xffff) + 1, next: rand.IntN(0xffff),
-		payload: []byte("Termstead traceroute probe 0123456"), rb: make([]byte, 2048)}
+		payload: []byte("AstraTerm traceroute probe 0123456"), rb: make([]byte, 2048)}
 	var lastErr error
 	for _, c := range candidates {
 		if runtime.GOOS == "windows" && (c[0] == "udp4" || c[0] == "udp6") {

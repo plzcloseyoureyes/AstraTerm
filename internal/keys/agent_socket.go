@@ -10,8 +10,8 @@ import (
 
 	"golang.org/x/crypto/ssh/agent"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // The agent socket exposes the owner's keyring to local programs (git, ssh, IDEs): a Unix socket in the data
@@ -70,7 +70,7 @@ func (s *agentService) start(user *model.User) error {
 		return httpx.Conflict("the built-in agent is running for another user")
 	}
 	if d.Ctx != nil && d.Ctx.Err() != nil {
-		return httpx.Conflict("Termstead is shutting down")
+		return httpx.Conflict("AstraTerm is shutting down")
 	}
 	endpoint, err := agentEndpoint(d.Cfg.DataDir)
 	if err != nil {

@@ -1,4 +1,4 @@
-# Termstead remote monitor — one-shot host probe (runs as `/bin/sh -s`): kernel, OS release, CPU model and the helper
+# AstraTerm remote monitor — one-shot host probe (runs as `/bin/sh -s`): kernel, OS release, CPU model and the helper
 # tools the monitor can use. Selects the per-OS sampler.
 export LC_ALL=C
 nx_os=$(uname -s 2>/dev/null)

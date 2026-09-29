@@ -159,7 +159,7 @@ func (s *sudoHelper) validate(ctx context.Context, pw string) (bool, error) {
 func sudoMarker() string {
 	b := make([]byte, 12)
 	_, _ = rand.Read(b)
-	return "[termstead-sudo:" + hex.EncodeToString(b) + "]"
+	return "[astraterm-sudo:" + hex.EncodeToString(b) + "]"
 }
 
 // promptWatch is the stderr of a sudo command. It keeps a bounded copy for error messages and signals prompts: the

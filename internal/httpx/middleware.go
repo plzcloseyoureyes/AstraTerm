@@ -17,7 +17,7 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // ---- Pre (before routing) -----------------------------------------------------------------------------------------
@@ -220,7 +220,7 @@ func (r *Router) authenticate(next echo.HandlerFunc) echo.HandlerFunc {
 
 var errCSRF = NewError(http.StatusForbidden, "csrf", "missing "+CSRFHeader+" header")
 
-// csrf requires the X-Termstead: 1 header on every mutating request that was not authenticated with a Bearer token.
+// csrf requires the X-AstraTerm: 1 header on every mutating request that was not authenticated with a Bearer token.
 // Browsers cannot attach custom headers cross-origin without a CORS preflight (which we never grant).
 func csrf(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c *echo.Context) error {

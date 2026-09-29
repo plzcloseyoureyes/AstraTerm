@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"slices"
 
-	"github.com/termstead/termstead/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 // settingsSection is the settings key of the module (frontend: defineSettings('keys', …), Settings → SSH keys &
@@ -14,7 +14,7 @@ const settingsSection = "keys"
 
 // keysSettings are the backend-relevant values of the "keys" settings section (user values merged over global ones).
 type keysSettings struct {
-	// AgentAutostart starts the built-in agent socket when Termstead starts (desktop mode, the desktop user's setting).
+	// AgentAutostart starts the built-in agent socket when AstraTerm starts (desktop mode, the desktop user's setting).
 	AgentAutostart bool `json:"agentAutostart"`
 	// AgentConfirm asks before local processes use a key through the agent socket.
 	AgentConfirm bool `json:"agentConfirm"`

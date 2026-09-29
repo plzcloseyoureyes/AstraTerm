@@ -66,7 +66,7 @@ export default function TermTransferSettingsSection() {
         </Button>
       }
     >
-      <SettingsGroup title="In-terminal transfers" description="Run trz / tsz or rz / sz on the server; Termstead answers in the browser. Needs trzsz or lrzsz installed on the server.">
+      <SettingsGroup title="In-terminal transfers" description="Run trz / tsz or rz / sz on the server; AstraTerm answers in the browser. Needs trzsz or lrzsz installed on the server.">
         <SettingRow label="trzsz (trz / tsz)" description="tmux-friendly, folders (trz -d / tsz -d), binary mode (-b), progress bar in the terminal." htmlFor="tt-trzsz">
           <Switch id="tt-trzsz" checked={s.trzsz} onCheckedChange={(v) => transferSettings.set({ trzsz: v })} />
         </SettingRow>

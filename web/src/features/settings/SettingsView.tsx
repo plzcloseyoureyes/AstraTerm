@@ -69,7 +69,7 @@ export default function SettingsView({ tabId, params }: TabProps<SettingsTabPara
   return (
     <div className="@container h-full">
       <div className="flex h-full min-h-0 flex-col @3xl:flex-row">
-        <nav aria-label="Settings sections" className="flex shrink-0 flex-col gap-2 border-b bg-sidebar/60 p-2.5 @3xl:w-60 @3xl:border-r @3xl:border-b-0">
+        <nav aria-label="Settings sections" className="flex shrink-0 flex-col gap-2 bg-sidebar/60 p-2.5 @3xl:w-60">
           <Input
             inputSize="sm"
             value={query}
@@ -138,13 +138,14 @@ function SectionLink({
       onClick={() => onSelect(s.id)}
       aria-current={selected ? 'page' : undefined}
       className={cn(
-        'flex h-7 w-full shrink-0 items-center gap-2 rounded-md px-2 text-left text-base outline-none transition-colors',
+        // Narrow (a horizontal strip): natural width; wide (a column): full width with truncation.
+        'flex h-7 shrink-0 items-center gap-2 rounded-md px-2 text-left text-base whitespace-nowrap outline-none transition-colors @3xl:w-full',
         'hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-ring/60',
         selected ? 'bg-sidebar-accent font-medium text-foreground' : 'text-foreground/80',
       )}
     >
       <Icon className={cn('size-3.5 shrink-0', selected ? 'text-primary' : 'text-muted-foreground')} />
-      <span className="min-w-0 flex-1 truncate">{s.title}</span>
+      <span className="@3xl:min-w-0 @3xl:flex-1 @3xl:truncate">{s.title}</span>
       <Spinner active={loading} {...DELAY_PRESETS.NAVIGATION} className="size-3" label={`Loading ${s.title}`} />
     </button>
   )

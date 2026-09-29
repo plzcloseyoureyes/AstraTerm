@@ -205,7 +205,7 @@ function AdminScripts() {
   return (
     <SettingRow
       label="Allow scripts for every user"
-      description="Scripts run inside the Termstead server process. In server mode only administrators may run them unless this is on."
+      description="Scripts run inside the AstraTerm server process. In server mode only administrators may run them unless this is on."
       htmlFor="auto-user-scripts"
     >
       {/* The switch mounts only once the stored value is known (in its final state, so it never flips on load); until
@@ -281,7 +281,7 @@ export default function AutomationSettingsSection() {
         </SettingRow>
         <SettingRow
           label="Desktop notifications"
-          description={perm === 'denied' ? 'Blocked by the browser for this site.' : 'For triggers that ask for them, while Termstead is in the background.'}
+          description={perm === 'denied' ? 'Blocked by the browser for this site.' : 'For triggers that ask for them, while AstraTerm is in the background.'}
           htmlFor="tr-desktop"
         >
           {perm === 'default' && (

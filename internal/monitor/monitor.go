@@ -1,4 +1,4 @@
-// Package monitor implements Termstead's host monitoring (RESEARCH MON-1..6, SSH-38 display, SEC-22; SPEC §6.0
+// Package monitor implements AstraTerm's host monitoring (RESEARCH MON-1..6, SSH-38 display; SPEC §6.0
 // "Monitoring"):
 //
 //   - the MobaXterm-style remote monitoring bar: an events topic "monitor" ({type:'subscribe', topic:'monitor',
@@ -8,8 +8,7 @@
 //     after the last one leaves; local shell sessions are sampled in-process with gopsutil;
 //   - REST: snapshot, process list / kill / renice (optional sudo), systemd / Windows services, listening ports, disk
 //     usage drill-down, SSH connection details with a live latency probe, the local System info view;
-//   - a WebSocket log follower (tail -F / journalctl -f, MON-5);
-//   - Caffeine: keep the Termstead host awake (desktop mode or administrators).
+//   - a WebSocket log follower (tail -F / journalctl -f, MON-5).
 package monitor
 
 import (
@@ -24,12 +23,12 @@ import (
 
 	"golang.org/x/sync/singleflight"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/sshx"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // Topic is the events topic of the monitoring feed.
@@ -60,12 +59,11 @@ type Service struct {
 	procHist   map[string]*procState // previous process CPU counters, by target id
 	sessLogs   sync.Map              // session id → *sessionLog (connect history, terminal traffic of SSH sessions)
 
-	sf       singleflight.Group
-	local    localState
-	caffeine *caffeine
+	sf    singleflight.Group
+	local localState
 }
 
-// localKey identifies the Termstead host in the per-source maps.
+// localKey identifies the AstraTerm host in the per-source maps.
 type localKey struct{}
 
 // clientState caches what the monitor learned about one transport.
@@ -96,20 +94,17 @@ func New(d *app.Deps, c *core.Core) *Service {
 		clients:    map[any]*clientState{},
 		procHist:   map[string]*procState{},
 	}
-	s.caffeine = newCaffeine(ctx, s.log)
 	return s
 }
 
-// Mount registers the monitoring topic, REST endpoints and WebSocket, session hooks and the caffeine feature probe.
+// Mount registers the monitoring topic, REST endpoints and WebSocket and session hooks.
 func Mount(d *app.Deps, c *core.Core) error {
 	if d == nil || c == nil || c.Sessions == nil || c.SSH == nil {
 		return errors.New("monitor: missing dependencies")
 	}
 	s := New(d, c)
-	s.caffeine.onChange = s.broadcastCaffeine
 	d.Events.RegisterTopic(Topic, s.subscribe)
 	c.Sessions.AddHooks(term.Hooks{OnState: s.onSessionState, OnClose: s.onSessionClose, OnOutput: s.onOutput, OnInput: s.onInput})
-	app.RegisterFeature("caffeine", func(context.Context) bool { return s.caffeine.supported() })
 	s.routes()
 	return nil
 }
@@ -129,12 +124,10 @@ func (s *Service) routes() {
 	api.GET("/monitor/:id/ports", h.ports)
 	api.GET("/monitor/:id/du", h.diskUsage)
 	api.GET("/monitor/:id/ssh-info", h.sshInfo)
-	api.GET("/system/caffeine", h.caffeineStatus)
-	api.POST("/system/caffeine", h.caffeineSet)
 	s.d.Router.WS("/ws/monitor/:id/tail", h.tail)
 }
 
-// allowLocal reports whether user may monitor and act on the Termstead host itself (principle 7: desktop mode or admins).
+// allowLocal reports whether user may monitor and act on the AstraTerm host itself (principle 7: desktop mode or admins).
 func (s *Service) allowLocal(user *model.User) bool {
 	if user == nil {
 		return false
@@ -146,7 +139,7 @@ var errLocalForbidden = httpx.Forbidden("the local host monitor is available in 
 
 // ---- targets --------------------------------------------------------------------------------------------------------
 
-// target is a monitored host resolved for one request: a live SSH session's transport or the Termstead host.
+// target is a monitored host resolved for one request: a live SSH session's transport or the AstraTerm host.
 type target struct {
 	id      string // session id, or "local"
 	local   bool
@@ -162,7 +155,7 @@ type target struct {
 // label is "user@host" for prompts and audit details.
 func (t *target) label() string {
 	if t.local || t.sess == nil {
-		return "the Termstead host"
+		return "the AstraTerm host"
 	}
 	info := t.sess.Info()
 	switch {
@@ -174,7 +167,7 @@ func (t *target) label() string {
 	return info.Title
 }
 
-// resolveTarget resolves a target id from a URL: "local" (the Termstead host) or a runtime session the user owns.
+// resolveTarget resolves a target id from a URL: "local" (the AstraTerm host) or a runtime session the user owns.
 func (s *Service) resolveTarget(ctx context.Context, user *model.User, id string) (*target, error) {
 	if user == nil {
 		return nil, httpx.ErrUnauthorized

@@ -15,9 +15,9 @@ import (
 	"github.com/labstack/echo/v5"
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
 )
 
 // Xpra (PROTO-20): an X11 application started on the remote host under `xpra start --bind-ws=127.0.0.1:<port>
@@ -159,7 +159,7 @@ func validCommand(cmd string) error {
 
 func shellQuote(s string) string { return "'" + strings.ReplaceAll(s, "'", `'\''`) + "'" }
 
-// xpraScript runs xpra in the foreground under a stdin watchdog: when Termstead closes the channel (proxy closed, tab
+// xpraScript runs xpra in the foreground under a stdin watchdog: when AstraTerm closes the channel (proxy closed, tab
 // closed, shutdown), stdin reaches EOF and xpra is terminated (non-PTY execs get no SIGHUP).
 func xpraScript(bin, mode, cmd string, port int) string {
 	sub := "start"

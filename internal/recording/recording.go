@@ -1,4 +1,4 @@
-// Package recording implements Termstead's recording & sharing module (RESEARCH REC-1, REC-2, REC-4 session events,
+// Package recording implements AstraTerm's recording & sharing module (RESEARCH REC-1, REC-2, REC-4 session events,
 // REC-5, REC-7, REC-9, MU-18, MU-19, TERM-30):
 //
 //   - recordings browser REST over the core `recordings` table the terminal manager fills (asciicast v3 casts and
@@ -26,12 +26,12 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // settingsKey is the global settings section of this module (admin policy; read from the global scope only).

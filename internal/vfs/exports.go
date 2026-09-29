@@ -29,9 +29,6 @@ func ParentDir(p string) string { return parentDir(p) }
 // IsWithin reports whether p equals dir or lies below it.
 func IsWithin(p, dir string) bool { return isWithin(p, dir) }
 
-// FinishEntries completes driver entries (permission string, names, link types) like the list endpoint does.
-func FinishEntries(ctx context.Context, fsys FS, entries []*Entry) { finishEntries(ctx, fsys, entries) }
-
 // FSError maps a driver error to the HTTP error the files API would return.
 func FSError(err error, p string) error { return fsError(err, p) }
 

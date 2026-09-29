@@ -11,17 +11,22 @@ export const inputBase = cn(
   'dark:bg-input/25',
 )
 
+/** Overrides for the filled variant: tint instead of an outline; the focus ring still marks the field. */
+const filled = 'border-transparent bg-foreground/6 shadow-none hover:bg-foreground/8 focus-visible:bg-transparent focus-visible:border-ring dark:bg-foreground/6'
+
 export interface InputProps extends React.ComponentProps<'input'> {
   /** Compact height (h-7) for toolbars and dense forms. */
   inputSize?: 'sm' | 'md'
+  /** 'filled': a soft tinted field without an outline (search boxes on the chrome surface). */
+  variant?: 'outline' | 'filled'
   /** Element rendered inside the field on the left (icon). */
   leading?: React.ReactNode
   /** Element rendered inside the field on the right (button, unit). */
   trailing?: React.ReactNode
 }
 
-export function Input({ className, type = 'text', inputSize = 'md', leading, trailing, ...props }: InputProps) {
-  const height = inputSize === 'sm' ? 'h-7 text-sm' : 'h-8'
+export function Input({ className, type = 'text', inputSize = 'md', variant = 'outline', leading, trailing, ...props }: InputProps) {
+  const sizing = cn(inputSize === 'sm' ? 'h-7 text-sm' : 'h-8', variant === 'filled' && filled)
   if (!leading && !trailing) {
     return (
       <input
@@ -29,7 +34,7 @@ export function Input({ className, type = 'text', inputSize = 'md', leading, tra
         data-slot="input"
         className={cn(
           inputBase,
-          height,
+          sizing,
           'file:mr-2 file:h-full file:border-0 file:bg-transparent file:text-sm file:font-medium',
           className,
         )}
@@ -47,7 +52,7 @@ export function Input({ className, type = 'text', inputSize = 'md', leading, tra
       <input
         type={type}
         data-slot="input"
-        className={cn(inputBase, height, leading && 'pl-8', trailing && 'pr-8')}
+        className={cn(inputBase, sizing, leading && 'pl-8', trailing && 'pr-8')}
         {...props}
       />
       {trailing && <span className="absolute right-1 flex items-center gap-0.5 text-muted-foreground">{trailing}</span>}

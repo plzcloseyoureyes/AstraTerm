@@ -18,7 +18,7 @@ import (
 // SSH_AUTH_SOCK.
 func agentEndpoint(dataDir string) (string, error) {
 	sum := sha256.Sum256([]byte(strings.ToLower(dataDir)))
-	return `\\.\pipe\termstead-ssh-agent-` + hex.EncodeToString(sum[:6]), nil
+	return `\\.\pipe\astraterm-ssh-agent-` + hex.EncodeToString(sum[:6]), nil
 }
 
 // listenAgent creates the named pipe with a security descriptor granting access to the current user only.

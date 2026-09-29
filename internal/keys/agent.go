@@ -20,8 +20,8 @@ import (
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
 )
 
 // The built-in SSH agent (MobAgent, SSH-11) and the policy-aware keyrings served through agent forwarding (SSH-12).
@@ -30,7 +30,7 @@ import (
 // while the vault is unlocked), keys added with ssh-add while the agent socket runs, decrypted keys cached in memory
 // (optionally for a limited lifetime), the lock state and remembered confirm decisions. Views bind a keyring to a
 // requester and implement agent.ExtendedAgent: a local program on the agent socket, a remote server using a forwarded
-// agent, or Termstead itself authenticating a connection. Confirm-before-use and passphrase prompts go through the
+// agent, or AstraTerm itself authenticating a connection. Confirm-before-use and passphrase prompts go through the
 // prompt broker and name the requester and — when the client sent session-bind@openssh.com — the destination host.
 
 const (
@@ -41,7 +41,7 @@ const (
 
 var (
 	errAgentLocked = errors.New("agent: locked")
-	// errAgentLockedSign: a locked agent holds no usable key, so a merged agent (Termstead's logins and forwarding
+	// errAgentLockedSign: a locked agent holds no usable key, so a merged agent (AstraTerm's logins and forwarding
 	// combine the built-in agent with the host agent) goes on to the next agent instead of failing.
 	errAgentLockedSign = fmt.Errorf("agent: locked (%w)", sshx.ErrAgentKeyNotFound)
 	errAgentRefused    = errors.New("agent: the signature request was refused")
@@ -54,7 +54,7 @@ type originKind int
 const (
 	originLocal     originKind = iota // a program on the local agent socket
 	originForwarded                   // a remote server using agent forwarding
-	originTermstead                   // Termstead authenticating a connection
+	originAstraTerm                   // AstraTerm authenticating a connection
 )
 
 type agentOrigin struct {
@@ -91,8 +91,8 @@ func connOrigin(kind originKind, conn *model.Connection) agentOrigin {
 		}
 		o.label, o.scope, o.connID = who, "fwd:"+strings.ToLower(conn.Host)+fmt.Sprintf(":%d", conn.Port), conn.ID
 	}
-	if kind == originTermstead {
-		o.scope = "termstead"
+	if kind == originAstraTerm {
+		o.scope = "astraterm"
 	}
 	return o
 }
@@ -152,7 +152,7 @@ func (s *agentService) Agent(ctx context.Context, user *model.User, conn *model.
 	if conn != nil {
 		exclude = conn.KeyID
 	}
-	return s.ring(user.ID).view(ctx, connOrigin(originTermstead, conn), true, exclude)
+	return s.ring(user.ID).view(ctx, connOrigin(originAstraTerm, conn), true, exclude)
 }
 
 // Keyring implements sshx.BuiltinAgent: the forwarding keyring of the user's stored keys.
@@ -217,9 +217,9 @@ type keyring struct {
 	mu            sync.Mutex
 	added         []*addedKey
 	cache         map[string]*cachedSigner // stored key ID → decrypted signer
-	unloaded      map[string]bool          // stored keys removed for this agent run (ssh-add -d / -D, Termstead UI)
+	unloaded      map[string]bool          // stored keys removed for this agent run (ssh-add -d / -D, AstraTerm UI)
 	locked        bool
-	lockPass      []byte // passphrase of an ssh-add -x lock; nil when locked from Termstead (or by auto-lock)
+	lockPass      []byte // passphrase of an ssh-add -x lock; nil when locked from AstraTerm (or by auto-lock)
 	failedUnlocks int    // consecutive wrong ssh-add -X passphrases (throttling)
 	approvals     map[string]bool
 	lastUse       time.Time
@@ -288,7 +288,7 @@ func (r *keyring) expireLocked(now time.Time) {
 func (r *keyring) reset() {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	wipe(r.lockPass)
+	clear(r.lockPass)
 	r.added, r.locked, r.lockPass, r.failedUnlocks = nil, false, nil, 0
 	clear(r.cache)
 	clear(r.unloaded)
@@ -586,8 +586,8 @@ func (v *agentView) requestText(t *agentTarget) string {
 			s += " to log in to " + dest
 		}
 		return s + "."
-	case originTermstead:
-		return fmt.Sprintf("Termstead is logging in to %s with the key %s.", v.origin.label, key)
+	case originAstraTerm:
+		return fmt.Sprintf("AstraTerm is logging in to %s with the key %s.", v.origin.label, key)
 	}
 	s := fmt.Sprintf("%s wants to sign with the key %s", v.origin.requester(), key)
 	if dest != "" {
@@ -641,7 +641,7 @@ func (r *keyring) storedSigner(v *agentView, si *storedIdentity, cfg keysSetting
 	if err != nil {
 		return nil, err
 	}
-	defer wipe(pemBytes)
+	defer clear(pemBytes)
 	signer, err := sshx.ParsePrivateKey(pemBytes, pass)
 	var np *sshx.NeedsPassphraseError
 	if errors.As(err, &np) {
@@ -700,7 +700,7 @@ func (v *agentView) askPassphrase(si *storedIdentity, pemBytes []byte) (ssh.Sign
 	return nil, errors.New("agent: incorrect passphrase")
 }
 
-// Signers implements agent.Agent (in-process use: Termstead authenticating a connection).
+// Signers implements agent.Agent (in-process use: AstraTerm authenticating a connection).
 func (v *agentView) Signers() ([]ssh.Signer, error) {
 	keys, err := v.List()
 	if err != nil {
@@ -848,7 +848,7 @@ func (v *agentView) Unlock(passphrase []byte) error {
 	}
 	if r.lockPass == nil {
 		r.mu.Unlock()
-		return errors.New("agent: locked from Termstead; unlock it there")
+		return errors.New("agent: locked from AstraTerm; unlock it there")
 	}
 	if subtle.ConstantTimeCompare(passphrase, r.lockPass) != 1 {
 		r.failedUnlocks = min(r.failedUnlocks+1, 100)
@@ -860,7 +860,7 @@ func (v *agentView) Unlock(passphrase []byte) error {
 		}
 		return errors.New("agent: incorrect passphrase")
 	}
-	wipe(r.lockPass)
+	clear(r.lockPass)
 	r.locked, r.lockPass, r.failedUnlocks = false, nil, 0
 	r.mu.Unlock()
 	return nil
@@ -963,11 +963,5 @@ func (s *agentService) audit(ctx context.Context, userID, action, target string,
 	ctx = context.WithoutCancel(ctx)
 	if u, err := s.h.d.Store.Users.Get(ctx, userID); err == nil {
 		s.h.d.Audit.LogUser(ctx, u, action, target, details)
-	}
-}
-
-func wipe(b []byte) {
-	for i := range b {
-		b[i] = 0
 	}
 }

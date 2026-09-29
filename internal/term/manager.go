@@ -16,11 +16,11 @@ import (
 
 	"golang.org/x/text/encoding"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 // Manager owns every runtime session of the process.
@@ -832,7 +832,7 @@ func (m *Manager) startLogging(ctx context.Context, s *Session) error {
 	}
 	meta := m.newRecordingMeta(s, model.RecordingLog)
 	conn := s.conn
-	header := fmt.Sprintf("=== Termstead session log: %s | %s | session %s | started %s ===", meta.Title,
+	header := fmt.Sprintf("=== AstraTerm session log: %s | %s | session %s | started %s ===", meta.Title,
 		describeTarget(conn), s.ID, time.Now().Format(logTimeFormat))
 	s.mu.Unlock()
 

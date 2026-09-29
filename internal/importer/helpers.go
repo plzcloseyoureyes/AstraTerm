@@ -5,7 +5,6 @@ import (
 	"io"
 	"os"
 	"os/user"
-	"strconv"
 	"strings"
 )
 
@@ -32,8 +31,6 @@ func localUserName() string {
 	}
 	return os.Getenv("USERNAME")
 }
-
-func itoa(n int) string { return strconv.Itoa(n) }
 
 // isTruthy reports whether a query-string flag means "on".
 func isTruthy(v string) bool {

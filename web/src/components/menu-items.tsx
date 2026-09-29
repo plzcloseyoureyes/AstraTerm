@@ -9,7 +9,7 @@ import { commands, type CommandSource, type MenuItem } from '@/app/registry'
 import { getKeybindings, isCommandEnabled, runCommand } from '@/app/commands'
 import { formatKeybinding } from '@/lib/keys'
 import { cn } from '@/lib/utils'
-import { menuContentClass, menuItemClass, menuLabelClass, menuSeparatorClass, menuShortcutClass } from './ui/dropdown-menu'
+import { keepMovedFocus, menuContentClass, menuItemClass, menuLabelClass, menuSeparatorClass, menuShortcutClass } from './ui/dropdown-menu'
 
 type Flavor = 'dropdown' | 'context' | 'menubar'
 
@@ -138,7 +138,7 @@ export function DynamicDropdown({
     >
       <DM.Trigger asChild>{children}</DM.Trigger>
       <DM.Portal>
-        <DM.Content align={align} side={side} sideOffset={4} className={cn(menuContentClass, 'max-h-(--radix-dropdown-menu-content-available-height)', contentClassName)}>
+        <DM.Content align={align} side={side} sideOffset={4} onCloseAutoFocus={keepMovedFocus} className={cn(menuContentClass, 'max-h-(--radix-dropdown-menu-content-available-height)', contentClassName)}>
           {list.length ? (
             <MenuItems items={list} flavor="dropdown" source={source} />
           ) : (
@@ -173,7 +173,7 @@ export function DynamicContextMenu({
         {children}
       </CM.Trigger>
       <CM.Portal>
-        <CM.Content className={cn(menuContentClass, 'max-h-(--radix-context-menu-content-available-height)')}>
+        <CM.Content onCloseAutoFocus={keepMovedFocus} className={cn(menuContentClass, 'max-h-(--radix-context-menu-content-available-height)')}>
           {list.length ? (
             <MenuItems items={list} flavor="context" source={source} />
           ) : (

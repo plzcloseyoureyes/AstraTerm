@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 // ms converts a duration to milliseconds rounded to three decimals (µs precision) for JSON.
@@ -29,17 +29,6 @@ func round1(v float64) float64 { return math.Round(v*10) / 10 }
 func round3(v float64) float64 { return math.Round(v*1000) / 1000 }
 
 func sqrt(v float64) float64 { return math.Sqrt(v) }
-
-// clampInt clamps v into [lo, hi].
-func clampInt(v, lo, hi int) int {
-	if v < lo {
-		return lo
-	}
-	if v > hi {
-		return hi
-	}
-	return v
-}
 
 func orDefault(v, def int) int {
 	if v <= 0 {

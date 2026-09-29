@@ -13,8 +13,8 @@ import (
 
 // ---- browser side of the RFB handshake ----------------------------------------------------------------------------
 
-// presentNone performs the server side of the RFB handshake with the browser after Termstead authenticated upstream:
-// RFB 3.8, security type None, SecurityResult OK, then (after the viewer's ClientInit, whose shared flag Termstead has
+// presentNone performs the server side of the RFB handshake with the browser after AstraTerm authenticated upstream:
+// RFB 3.8, security type None, SecurityResult OK, then (after the viewer's ClientInit, whose shared flag AstraTerm has
 // already applied upstream) the VNC server's ServerInit. Older client versions are handled per the specification.
 func presentNone(r io.Reader, w io.Writer, serverInit []byte) error {
 	if _, err := w.Write(rfb38.line()); err != nil {
@@ -53,7 +53,7 @@ func presentNone(r io.Reader, w io.Writer, serverInit []byte) error {
 	return err
 }
 
-// presentPassthrough replays the server's version (as negotiated by Termstead) and security types to the browser,
+// presentPassthrough replays the server's version (as negotiated by AstraTerm) and security types to the browser,
 // which then authenticates itself; everything after flows through the relay unchanged.
 func presentPassthrough(r io.Reader, w io.Writer, p *passthrough) error {
 	if _, err := w.Write(p.version.line()); err != nil {

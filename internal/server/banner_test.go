@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
 )
 
 func TestListenURLs(t *testing.T) {

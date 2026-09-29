@@ -25,7 +25,7 @@ export function SettingsGroup({ title, description, children, className }: { tit
         <h2 className="text-md font-semibold">{title}</h2>
         {description && <p className="text-sm text-muted-foreground">{description}</p>}
       </div>
-      <div className="divide-y rounded-lg border bg-card">{children}</div>
+      <div className="divide-y divide-border/50 rounded-lg bg-card">{children}</div>
     </section>
   )
 }

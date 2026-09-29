@@ -7,7 +7,7 @@
  *                   "garbage" around it). The header that started a session is hidden from the screen.
  *   zmodemReceive   drives a receive session (`sz` on the remote): offers → save target, progress, cancel.
  *   zmodemSend      drives a send session (`rz` on the remote) with end-to-end flow control: zmodem.js streams a
- *                   file without waiting for the receiver, but Termstead's server queues at most 8 MiB of input per
+ *                   file without waiting for the receiver, but AstraTerm's server queues at most 8 MiB of input per
  *                   session, so every 64 KiB piece ends with ZCRCQ (the receiver answers ZACK with its file
  *                   position) and at most 1 MiB is in flight.
  *

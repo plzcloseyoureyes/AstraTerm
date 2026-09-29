@@ -160,17 +160,7 @@ export interface SystemInfo {
   server: { version: string; mode: string; pid: number; goVersion: string; goroutines: number; heapBytes: number; dataDir?: string; listen?: string }
 }
 
-export interface CaffeineStatus {
-  supported: boolean
-  allowed: boolean
-  enabled: boolean
-  since?: string
-  until?: string
-  method?: string
-  error?: string
-}
-
-/** A monitored target: a runtime session id or 'local' (the Termstead host). */
+/** A monitored target: a runtime session id or 'local' (the AstraTerm host). */
 export type TargetId = string
 
 /** Panels of the monitor tab. */
@@ -192,7 +182,7 @@ export interface MonitorTabParams {
   path?: string
 }
 
-/** Params of the 'sysinfo' tab kind (System information of the Termstead host). */
+/** Params of the 'sysinfo' tab kind (System information of the AstraTerm host). */
 export interface SysInfoTabParams {
   panel?: 'overview' | 'processes' | 'services' | 'ports' | 'disk' | 'logs'
 }

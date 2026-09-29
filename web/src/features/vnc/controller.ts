@@ -8,7 +8,7 @@
  *   - Scaling: fit (scaleViewport), remote-resize (resizeSession) and none + zoom (10–400 %, implemented by sizing the
  *     noVNC target and letting noVNC scale to it, so pointer coordinates stay exact).
  *   - Clipboard both ways within the effective direction policy (connection / administrator policy from vnc-info,
- *     combined with the user's own setting; Termstead also enforces local → remote server-side), send-keys, held
+ *     combined with the user's own setting; AstraTerm also enforces local → remote server-side), send-keys, held
  *     modifiers, paced typing, screenshots, view-only.
  *   - Weaker-than-offered security (close 4426) is never retried silently: the view asks, and the user's choice is sent
  *     as ?allow=weak|unencrypted for the rest of the tab's life (the backend also remembers it for the session).
@@ -125,7 +125,7 @@ const MAX_REMOTE_SIZE = 8192
 interface NoVNCResizeInternals {
   _requestRemoteResize?: () => void
   _screenSize?: () => { w: number; h: number }
-  _termsteadHiDpi?: boolean
+  _astratermHiDpi?: boolean
 }
 
 /**
@@ -135,11 +135,11 @@ interface NoVNCResizeInternals {
  */
 function patchHiDpiResize(rfb: RFB, factor: () => number): boolean {
   const r = rfb as unknown as NoVNCResizeInternals
-  if (r._termsteadHiDpi) return true
+  if (r._astratermHiDpi) return true
   const request = r._requestRemoteResize
   const screenSize = r._screenSize
   if (typeof request !== 'function' || typeof screenSize !== 'function') return false
-  r._termsteadHiDpi = true
+  r._astratermHiDpi = true
   r._requestRemoteResize = function (this: NoVNCResizeInternals) {
     const k = factor()
     if (k === 1) {
@@ -195,7 +195,7 @@ function closeMessage(code: number, reason: string): string {
     case VNC_CLOSE.serverEnded:
       return 'The connection was closed'
     case VNC_CLOSE.shutdown:
-      return 'Termstead is restarting'
+      return 'AstraTerm is restarting'
     case VNC_CLOSE.notFound:
       return 'The session no longer exists'
     case VNC_CLOSE.sessionClosed:
@@ -203,7 +203,7 @@ function closeMessage(code: number, reason: string): string {
     case VNC_CLOSE.locked:
       return 'The vault is locked'
     case 1006:
-      return 'Connection to Termstead lost'
+      return 'Connection to AstraTerm lost'
   }
   return `Connection closed (code ${code})`
 }
@@ -480,7 +480,7 @@ export class VncController {
       const gone = code === VNC_CLOSE.notFound
       this.set({ phase: 'error', message: reason, closeCode: code, permanent: true, sessionGone: !this.opts.reverse, held: [] })
       if (gone && !this.opts.reverse && !this.autoRestarted) {
-        // Typically after a Termstead restart: start an equivalent session once, transparently.
+        // Typically after a AstraTerm restart: start an equivalent session once, transparently.
         this.autoRestarted = true
         this.set({ phase: 'restarting', message: 'Starting a new session…' })
         this.opts.onSessionGone('gone', true)
@@ -565,7 +565,7 @@ export class VncController {
       phase: 'error',
       permanent: true,
       sessionGone: true,
-      message: automatic ? 'The session no longer exists (was Termstead restarted?)' : 'Could not start a new session',
+      message: automatic ? 'The session no longer exists (was AstraTerm restarted?)' : 'Could not start a new session',
     })
   }
 

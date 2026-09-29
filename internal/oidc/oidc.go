@@ -23,11 +23,11 @@ import (
 	gooidc "github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/time/rate"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/auth"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/auth"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 func init() {
@@ -55,7 +55,7 @@ const (
 	maxProviders  = 16
 	discoveryTTL  = time.Hour
 	httpTimeout   = 15 * time.Second
-	flowCookieFmt = "termstead_oidc_%s"
+	flowCookieFmt = "astraterm_oidc_%s"
 )
 
 // ProviderConfig is one identity provider (stored in the module-private settings scope "oidc", key "providers").
@@ -415,7 +415,7 @@ func (s *Service) LinkedProviders(ctx context.Context) (map[string][]string, err
 
 // ---- identities -----------------------------------------------------------------------------------------------------
 
-// Identity links a provider subject to a Termstead user.
+// Identity links a provider subject to a AstraTerm user.
 type Identity struct {
 	ID           string     `json:"id"`
 	ProviderID   string     `json:"providerId"`

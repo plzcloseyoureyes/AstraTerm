@@ -17,7 +17,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 var bg = context.Background()
@@ -170,7 +170,7 @@ func (f *fakeExec) Exec(ctx context.Context, cmd string, stdin io.Reader, stdout
 }
 
 func TestOwnerNamesAndChecksumParsing(t *testing.T) {
-	fx := &fakeExec{out: "root:x:0:0:root:/root:/bin/sh\ntest:x:1000:1000::/config:/bin/bash\n::termstead-groups::\nroot:x:0:root\nusers:x:1000:games,test\n"}
+	fx := &fakeExec{out: "root:x:0:0:root:/root:/bin/sh\ntest:x:1000:1000::/config:/bin/bash\n::astraterm-groups::\nroot:x:0:root\nusers:x:1000:games,test\n"}
 	oc := newOwnerCache(fx)
 	entries := []*Entry{{UID: intPtr(0), GID: intPtr(0)}, {UID: intPtr(1000), GID: intPtr(1000)}, {UID: intPtr(4242), GID: intPtr(4242)}}
 	oc.nameOwners(bg, entries)

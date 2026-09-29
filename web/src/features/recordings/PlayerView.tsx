@@ -121,7 +121,7 @@ let themeSeq = 0
 /** Registers an asciinema-player theme class from the current terminal colour scheme; returns its name. */
 function useSchemeTheme(): string {
   const dark = useUiDark()
-  const [name] = useState(() => `termstead-${++themeSeq}`)
+  const [name] = useState(() => `astraterm-${++themeSeq}`)
   useEffect(() => {
     const s = resolveScheme(effectiveTerminalSettings(terminalSettings.get()), dark)
     const colors = [s.black, s.red, s.green, s.yellow, s.blue, s.magenta, s.cyan, s.white, s.brightBlack, s.brightRed, s.brightGreen, s.brightYellow, s.brightBlue, s.brightMagenta, s.brightCyan, s.brightWhite]

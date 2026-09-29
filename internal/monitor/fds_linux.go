@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// localFDs reads the system-wide open file handles of the Termstead host (/proc/sys/fs/file-nr).
+// localFDs reads the system-wide open file handles of the AstraTerm host (/proc/sys/fs/file-nr).
 func localFDs() *FDStats {
 	b, err := os.ReadFile("/proc/sys/fs/file-nr")
 	if err != nil {

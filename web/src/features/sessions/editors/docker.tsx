@@ -54,7 +54,7 @@ export function DockerEditor({ value, onChange }: ProtocolEditorProps) {
   return (
     <div className="grid gap-5">
       {features && features.docker === false && !host && !via && (
-        <EditorNote tone="warning">No Docker engine was detected on the Termstead host. Set a remote engine or reach one through SSH.</EditorNote>
+        <EditorNote tone="warning">No Docker engine was detected on the AstraTerm host. Set a remote engine or reach one through SSH.</EditorNote>
       )}
       <OptionSection title="Container">
         <ComboOption

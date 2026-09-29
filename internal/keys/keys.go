@@ -1,4 +1,4 @@
-// Package keys is Termstead's SSH key module (MobaKeyGen + MobAgent; RESEARCH TOOL-1, SSH-5, SSH-11, SSH-12, SSH-19,
+// Package keys is AstraTerm's SSH key module (MobaKeyGen + MobAgent; RESEARCH TOOL-1, SSH-5, SSH-11, SSH-12, SSH-19,
 // SSH-20): stored keys (generate, import OpenSSH / PEM / PKCS#8 / PuTTY PPK, export OpenSSH / PPK / PEM / public,
 // OpenSSH user certificates, install on a server, sign certificates), the known hosts manager (entries,
 // @cert-authority and @revoked markers, OpenSSH and PuTTY import, export) and the built-in SSH agent (local socket /
@@ -23,11 +23,11 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
 )
 
 type handler struct {
@@ -152,7 +152,7 @@ func (h *handler) material(ctx context.Context, u *model.User, k *model.SSHKey, 
 	if err != nil {
 		return nil, err
 	}
-	defer wipe(text)
+	defer clear(text)
 	if passphrase == "" {
 		passphrase = remembered
 	}

@@ -19,7 +19,7 @@ export default function KeysSettingsSection() {
   return (
     <SettingsPage
       title="SSH keys & agent"
-      description="Key generation defaults and Termstead's built-in SSH agent."
+      description="Key generation defaults and AstraTerm's built-in SSH agent."
       actions={
         <div className="flex gap-1.5">
           <Button size="sm" variant="secondary" onClick={() => openKeysTab('keys')}>
@@ -89,7 +89,7 @@ export default function KeysSettingsSection() {
         description={desktop ? 'Exposes your stored keys to local programs through a socket; also used for agent forwarding.' : 'In server mode only agent forwarding uses these options.'}
       >
         {desktop && (
-          <SettingRow label="Start automatically" description="Start the agent when Termstead starts." htmlFor="keys-agent-autostart">
+          <SettingRow label="Start automatically" description="Start the agent when AstraTerm starts." htmlFor="keys-agent-autostart">
             <Switch id="keys-agent-autostart" checked={s.agentAutostart} onCheckedChange={(agentAutostart) => keysSettings.set({ agentAutostart })} />
           </SettingRow>
         )}

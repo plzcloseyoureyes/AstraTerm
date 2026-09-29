@@ -18,8 +18,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Remote listening-port detection (TUN-9): one exec runs a POSIX shell probe that picks the best available tool

@@ -412,16 +412,6 @@ func pipe(ch ssh.Channel, c net.Conn) {
 	c.Close()
 }
 
-// clientConfig returns an x/crypto client config for direct tests.
-func (s *testSSHServer) clientConfig() *ssh.ClientConfig {
-	return &ssh.ClientConfig{
-		User:            s.User,
-		Auth:            []ssh.AuthMethod{ssh.Password(s.Password)},
-		HostKeyCallback: ssh.FixedHostKey(s.HostKey.PublicKey()),
-		Timeout:         5 * time.Second,
-	}
-}
-
 func (s *testSSHServer) addr() string { return net.JoinHostPort(s.Host, strconv.Itoa(s.Port)) }
 
 // hasListener reports whether the server currently holds a remote listener whose key contains substr.

@@ -396,7 +396,7 @@ export default function TunnelEditorDialog({ request, onClose }: { request: Edit
                     <Field
                       label="Socket path"
                       error={err('bindSocket')}
-                      hint={hostListener ? 'Created on this machine, readable by the Termstead user only.' : 'Created on the SSH server (streamlocal forwarding).'}
+                      hint={hostListener ? 'Created on this machine, readable by the AstraTerm user only.' : 'Created on the SSH server (streamlocal forwarding).'}
                     >
                       <Input
                         className="font-mono"
@@ -563,7 +563,7 @@ export default function TunnelEditorDialog({ request, onClose }: { request: Edit
                       <p className="text-sm text-muted-foreground">
                         {kind === 'local'
                           ? '“localhost” is the SSH server itself; other hosts must be reachable from it.'
-                          : '“localhost” is this machine (the one running Termstead).'}
+                          : '“localhost” is this machine (the one running AstraTerm).'}
                       </p>
                     )}
                   </div>
@@ -574,8 +574,8 @@ export default function TunnelEditorDialog({ request, onClose }: { request: Edit
             <div className="grid gap-2 rounded-lg border px-3 py-2.5">
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
                 <label className="flex items-center gap-2 text-base">
-                  <Switch checked={draft.autoStart} onCheckedChange={(v) => set({ autoStart: v })} aria-label="Start with Termstead" />
-                  Start with Termstead
+                  <Switch checked={draft.autoStart} onCheckedChange={(v) => set({ autoStart: v })} aria-label="Start with AstraTerm" />
+                  Start with AstraTerm
                 </label>
                 <label className="flex items-center gap-2 text-base">
                   <Switch checked={draft.autoReconnect} onCheckedChange={(v) => set({ autoReconnect: v })} aria-label="Reconnect automatically" />
@@ -651,9 +651,9 @@ export default function TunnelEditorDialog({ request, onClose }: { request: Edit
 
             {runMode === 'server' && (
               <Note>
-                Termstead runs in server mode: listeners open on the Termstead server, not on your computer.
+                AstraTerm runs in server mode: listeners open on the AstraTerm server, not on your computer.
                 {restricted ? ' Remote forwarding, non-loopback addresses and ports below 1024 are reserved for administrators.' : ''} Use
-                “Open in browser” to reach web services through Termstead.
+                “Open in browser” to reach web services through AstraTerm.
               </Note>
             )}
             {serverError && (

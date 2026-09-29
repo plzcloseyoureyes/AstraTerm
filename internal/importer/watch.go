@@ -13,8 +13,8 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // SSH-36: optional live sync of ~/.ssh/config (desktop mode). When enabled, the importer re-reads the file (with its
@@ -24,7 +24,7 @@ import (
 // own connections are never touched and renaming a synced connection does not re-create it. Fields that come from the
 // file (address, login, protocol options) are authoritative; the user's name, colour, icon, favourite, tags, notes,
 // key and secrets are kept. Private keys are never copied: an IdentityFile whose public key (<file>.pub) matches a
-// key already stored in Termstead is linked, otherwise the connection uses automatic authentication (agent, password).
+// key already stored in AstraTerm is linked, otherwise the connection uses automatic authentication (agent, password).
 
 const (
 	syncFolderName    = "~/.ssh/config"

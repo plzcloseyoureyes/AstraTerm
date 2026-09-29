@@ -10,13 +10,13 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/termstead/termstead/internal/audit"
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/events"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
-	"github.com/termstead/termstead/internal/vault"
+	"github.com/plzcloseyoureyes/astraterm/internal/audit"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/events"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/vault"
 )
 
 // Deps is the set of core services every module receives in Mount.

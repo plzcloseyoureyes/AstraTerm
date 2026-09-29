@@ -2,9 +2,9 @@ package keys
 
 // Integration tests against the shared Docker lab (scripts/testenv): the real OpenSSH server "ssh1". Run with
 //
-//	TERMSTEAD_TESTENV=1 go test ./internal/keys/ -run TestLab -v
+//	ASTRATERM_TESTENV=1 go test ./internal/keys/ -run TestLab -v
 //
-// TERMSTEAD_TESTENV_SSH1 overrides its address (default 127.0.0.1:22022, user test / password test). The keys the
+// ASTRATERM_TESTENV_SSH1 overrides its address (default 127.0.0.1:22022, user test / password test). The keys the
 // tests install are removed from the server's authorized_keys afterwards.
 
 import (
@@ -26,8 +26,8 @@ import (
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 const (
@@ -35,13 +35,13 @@ const (
 	labPassword = "test"
 )
 
-// labSSH1 returns the address of the lab's ssh1 server, skipping the test unless TERMSTEAD_TESTENV=1.
+// labSSH1 returns the address of the lab's ssh1 server, skipping the test unless ASTRATERM_TESTENV=1.
 func labSSH1(t *testing.T) (string, int) {
 	t.Helper()
-	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
-		t.Skip("set TERMSTEAD_TESTENV=1 to run tests against the Docker test environment")
+	if os.Getenv("ASTRATERM_TESTENV") != "1" {
+		t.Skip("set ASTRATERM_TESTENV=1 to run tests against the Docker test environment")
 	}
-	addr := cmp.Or(os.Getenv("TERMSTEAD_TESTENV_SSH1"), "127.0.0.1:22022")
+	addr := cmp.Or(os.Getenv("ASTRATERM_TESTENV_SSH1"), "127.0.0.1:22022")
 	host, ps, err := net.SplitHostPort(addr)
 	if err != nil {
 		t.Fatal(err)
@@ -58,7 +58,7 @@ func labSSH1(t *testing.T) (string, int) {
 	return host, port
 }
 
-// labAdmin opens a password session on the lab server (test setup and cleanup, outside Termstead).
+// labAdmin opens a password session on the lab server (test setup and cleanup, outside AstraTerm).
 func labAdmin(t *testing.T, host string, port int) *ssh.Client {
 	t.Helper()
 	cfg := &ssh.ClientConfig{User: labUser, Auth: []ssh.AuthMethod{ssh.Password(labPassword)},
@@ -105,7 +105,7 @@ func removeLabKeys(t *testing.T, host string, port int, keys ...ssh.PublicKey) {
 	if removed == 0 {
 		return
 	}
-	tmp := fmt.Sprintf("%s.termstead-keys-%s", path, randomHex(4))
+	tmp := fmt.Sprintf("%s.astraterm-keys-%s", path, randomHex(4))
 	w, err := sc.OpenFile(tmp, os.O_WRONLY|os.O_CREATE|os.O_EXCL)
 	if err == nil {
 		_ = w.Chmod(0o600)
@@ -154,7 +154,7 @@ func run(t *testing.T, c *ssh.Client, cmd string) string {
 }
 
 // TestLabInstallAndAgent installs generated keys on a real OpenSSH server (ssh-copy-id semantics), logs in with them
-// through Termstead's SSH core and through the built-in agent socket (rsa-sha2 signatures, agent forwarding), and
+// through AstraTerm's SSH core and through the built-in agent socket (rsa-sha2 signatures, agent forwarding), and
 // checks the trusted host key round trip through the known hosts export / import.
 func TestLabInstallAndAgent(t *testing.T) {
 	host, port := labSSH1(t)
@@ -163,7 +163,7 @@ func TestLabInstallAndAgent(t *testing.T) {
 	p := e.c.prompter(t)
 	p.set(answer(true, nil, true)) // trust (and save) the lab's host key
 
-	tag := "termstead-keys-lab-" + randomHex(4)
+	tag := "astraterm-keys-lab-" + randomHex(4)
 	var ed, rsaKey keyJSON
 	e.c.must("POST", "/api/keys/generate", map[string]any{"name": "lab ed25519", "comment": tag}, &ed)
 	e.c.must("POST", "/api/keys/generate", map[string]any{"name": "lab rsa", "type": "rsa", "bits": 3072, "comment": tag,
@@ -197,7 +197,7 @@ func TestLabInstallAndAgent(t *testing.T) {
 		t.Fatalf("authorized_keys lines with the tag: %s", n)
 	}
 
-	// The stored keys log in through Termstead's SSH core (public-key authentication, the encrypted key with its
+	// The stored keys log in through AstraTerm's SSH core (public-key authentication, the encrypted key with its
 	// remembered passphrase).
 	for _, k := range []keyJSON{ed, rsaKey} {
 		kc := &model.Connection{OwnerID: e.admin.ID, Name: "lab " + k.Name, Protocol: model.ProtoSSH, Host: host, Port: port,

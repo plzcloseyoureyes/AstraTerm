@@ -18,14 +18,14 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Reserved names on proxied origins.
 const (
-	tokenParam   = "__termstead_proxy_token"
-	cookieName   = "__termstead_proxy"
-	reservedPath = "/__termstead/"
+	tokenParam   = "__astraterm_proxy_token"
+	cookieName   = "__astraterm_proxy"
+	reservedPath = "/__astraterm/"
 	bridgePath   = reservedPath + "bridge.js"
 )
 
@@ -369,7 +369,7 @@ func (p *Proxy) checkPathKey(k string) bool {
 	return key != "" && subtle.ConstantTimeCompare([]byte(k), []byte(key)) == 1
 }
 
-// addUIOrigin records an origin of the Termstead UI allowed to frame the proxy and talk to its bridge.
+// addUIOrigin records an origin of the AstraTerm UI allowed to frame the proxy and talk to its bridge.
 func (p *Proxy) addUIOrigin(o string) {
 	if o == "" {
 		return
@@ -471,7 +471,7 @@ func isLoopbackHost(h string) bool {
 	return false
 }
 
-// uiOrigin returns the origin of the Termstead UI that sent an API request (the Origin header when it is a plausible
+// uiOrigin returns the origin of the AstraTerm UI that sent an API request (the Origin header when it is a plausible
 // web origin, else scheme://Host).
 func uiOrigin(r *http.Request, scheme string) string {
 	if o := r.Header.Get("Origin"); o != "" && o != "null" {

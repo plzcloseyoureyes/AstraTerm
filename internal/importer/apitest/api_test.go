@@ -10,9 +10,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/server/servertest"
-	"github.com/termstead/termstead/internal/vault"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/vault"
 )
 
 const adminPass = "correct horse battery staple"
@@ -28,9 +28,9 @@ func fixture(t *testing.T, name string) []byte {
 	return b
 }
 
-// isEncrypted reports whether data is a Termstead passphrase-encrypted envelope (matches importer/crypto.go).
+// isEncrypted reports whether data is a AstraTerm passphrase-encrypted envelope (matches importer/crypto.go).
 func isEncrypted(data []byte) bool {
-	return bytes.Contains(data, []byte(`"envelope"`)) && bytes.Contains(data, []byte("termstead-encrypted"))
+	return bytes.Contains(data, []byte(`"envelope"`)) && bytes.Contains(data, []byte("astraterm-encrypted"))
 }
 
 type previewCounts struct {

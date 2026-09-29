@@ -1,4 +1,4 @@
-// Package servertest spins up a complete in-process Termstead server (temp data dir, httptest listener) for
+// Package servertest spins up a complete in-process AstraTerm server (temp data dir, httptest listener) for
 // integration tests of any module:
 //
 //	env := servertest.New(t)
@@ -20,11 +20,11 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/termstead/termstead/internal/auth"
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/server"
-	"github.com/termstead/termstead/internal/vault"
+	"github.com/plzcloseyoureyes/astraterm/internal/auth"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/server"
+	"github.com/plzcloseyoureyes/astraterm/internal/vault"
 )
 
 var fastOnce sync.Once
@@ -89,7 +89,7 @@ func (w testWriter) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
-// Client is an HTTP client with its own cookie jar. CSRF controls whether the X-Termstead header is sent; Bearer, when
+// Client is an HTTP client with its own cookie jar. CSRF controls whether the X-AstraTerm header is sent; Bearer, when
 // set, is sent as an Authorization header.
 type Client struct {
 	Env    *Env

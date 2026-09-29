@@ -1,4 +1,4 @@
-// Package ai implements Termstead's optional AI assistant (RESEARCH TOOL-10, TOOL-11, TOOL-12): a provider proxy
+// Package ai implements AstraTerm's optional AI assistant (RESEARCH TOOL-10, TOOL-11, TOOL-12): a provider proxy
 // (Anthropic Messages API, OpenAI-compatible chat/completions) with streamed answers, natural-language → command
 // with a risk rating, explain/fix of terminal errors and a sysadmin chat. The browser never talks to the provider:
 // keys stay in the vault, context is redacted server-side, requests are rate-limited per user and audited without
@@ -26,12 +26,12 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/netguard"
-	"github.com/termstead/termstead/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 type handler struct {
@@ -431,7 +431,7 @@ func (h *handler) test(c *echo.Context) error {
 	start := time.Now()
 	st, err := h.provider(e, key, user).Open(tctx, Request{
 		Model: e.Model, MaxTokens: 256, Effort: "low",
-		Messages: []Message{{Role: "user", Content: "Connection test from Termstead. Reply with the single word: ready"}},
+		Messages: []Message{{Role: "user", Content: "Connection test from AstraTerm. Reply with the single word: ready"}},
 	})
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
@@ -892,7 +892,7 @@ func (s *sseWriter) heartbeat(every time.Duration) func() {
 			close(done)
 			// Serialize with a heartbeat write in progress before the handler returns (the writer is not usable after).
 			s.mu.Lock()
-			s.mu.Unlock() //nolint:staticcheck // barrier
+			s.mu.Unlock() //lint:ignore SA2001 barrier: waits for an in-flight heartbeat write
 		})
 	}
 }

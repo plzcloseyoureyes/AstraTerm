@@ -16,7 +16,7 @@ import (
 
 	"golang.org/x/sync/semaphore"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 type portscanRequest struct {
@@ -58,8 +58,8 @@ func preparePortscan(ctx context.Context, cl *call) (runner, error) {
 	if err := checkProbeBudget(len(hosts), len(ports)); err != nil {
 		return nil, err
 	}
-	timeout := time.Duration(clampInt(orDefault(req.TimeoutMs, 800), 50, 15000)) * time.Millisecond
-	conc := clampInt(orDefault(req.Concurrency, 200), 1, 1024)
+	timeout := time.Duration(min(max(orDefault(req.TimeoutMs, 800), 50), 15000)) * time.Millisecond
+	conc := min(max(orDefault(req.Concurrency, 200), 1), 1024)
 	if req.ViaConnectionID != "" {
 		if req.UDP {
 			return nil, httpx.BadRequest("UDP scanning is not supported through an SSH gateway")
@@ -276,7 +276,7 @@ func scanPort(ctx context.Context, dial dialFunc, host, ip string, port int, tim
 // httpProbePorts are plain-HTTP ports whose servers stay silent until they get a request.
 var httpProbePorts = map[int]bool{80: true, 81: true, 591: true, 8000: true, 8008: true, 8080: true, 8081: true, 8888: true}
 
-const httpProbe = "HEAD / HTTP/1.0\r\nHost: scan\r\nUser-Agent: Termstead\r\n\r\n"
+const httpProbe = "HEAD / HTTP/1.0\r\nHost: scan\r\nUser-Agent: AstraTerm\r\n\r\n"
 
 // tlsPorts speak TLS first; a plain-text probe only produces an alert there.
 var tlsPorts = map[int]bool{443: true, 465: true, 636: true, 853: true, 990: true, 993: true, 995: true, 5061: true,

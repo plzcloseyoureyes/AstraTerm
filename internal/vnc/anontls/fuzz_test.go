@@ -225,11 +225,11 @@ func (r *recordingReadConn) Read(b []byte) (int, error) {
 	return n, err
 }
 
-// TestWriteFuzzCorpus regenerates testdata/fuzz/FuzzServerStream (TERMSTEAD_ANONTLS_CORPUS=1; the OpenSSL and
-// TigerVNC seeds also need TERMSTEAD_TESTENV=1).
+// TestWriteFuzzCorpus regenerates testdata/fuzz/FuzzServerStream (ASTRATERM_ANONTLS_CORPUS=1; the OpenSSL and
+// TigerVNC seeds also need ASTRATERM_TESTENV=1).
 func TestWriteFuzzCorpus(t *testing.T) {
-	if os.Getenv("TERMSTEAD_ANONTLS_CORPUS") != "1" {
-		t.Skip("set TERMSTEAD_ANONTLS_CORPUS=1 to regenerate the fuzz corpus")
+	if os.Getenv("ASTRATERM_ANONTLS_CORPUS") != "1" {
+		t.Skip("set ASTRATERM_ANONTLS_CORPUS=1 to regenerate the fuzz corpus")
 	}
 	dir := filepath.Join("testdata", "fuzz", "FuzzServerStream")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
@@ -270,8 +270,8 @@ func TestWriteFuzzCorpus(t *testing.T) {
 		writeCorpusFile(t, dir, "mirror-rfc5114-2048", stream)
 		writeCorpusFile(t, dir, "truncated", stream[:len(stream)/2])
 	}
-	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
-		t.Log("TERMSTEAD_TESTENV not set: skipping OpenSSL / TigerVNC seeds")
+	if os.Getenv("ASTRATERM_TESTENV") != "1" {
+		t.Log("ASTRATERM_TESTENV not set: skipping OpenSSL / TigerVNC seeds")
 		return
 	}
 	if bin, err := exec.LookPath("openssl"); err == nil {
@@ -298,7 +298,7 @@ func TestWriteFuzzCorpus(t *testing.T) {
 			writeCorpusFile(t, dir, v.name, stream)
 		}
 	}
-	if raw, err := net.DialTimeout("tcp", envOr("TERMSTEAD_TEST_VNC", "127.0.0.1:22059"), 5*time.Second); err == nil {
+	if raw, err := net.DialTimeout("tcp", envOr("ASTRATERM_TEST_VNC", "127.0.0.1:22059"), 5*time.Second); err == nil {
 		// RFB up to the VeNCrypt TLSVnc subtype, then TigerVNC's TLS conversation: handshake, the encrypted VNC
 		// challenge, our (correct) response and the SecurityResult. Authenticating matters: TigerVNC blacklists
 		// clients after repeated security failures, and the test server is shared.
@@ -333,7 +333,7 @@ func TestWriteFuzzCorpus(t *testing.T) {
 		rec := &recordingReadConn{Conn: raw}
 		c := Client(rec, nil)
 		challenge := step(c, nil, 16)
-		if res := step(c, desResponse(envOr("TERMSTEAD_TEST_VNC_PASSWORD", "vncpassword"), challenge), 4); !bytes.Equal(res, []byte{0, 0, 0, 0}) {
+		if res := step(c, desResponse(envOr("ASTRATERM_TEST_VNC_PASSWORD", "vncpassword"), challenge), 4); !bytes.Equal(res, []byte{0, 0, 0, 0}) {
 			t.Fatalf("VNC authentication failed: %x", res)
 		}
 		writeCorpusFile(t, dir, "tigervnc-tlsvnc", rec.buf.Bytes())

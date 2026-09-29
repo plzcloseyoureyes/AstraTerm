@@ -12,10 +12,10 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/events"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/events"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // ---- POST /api/sessions/{id}/rdp-ticket -----------------------------------------------------------------------------
@@ -68,7 +68,7 @@ type ticketResponse struct {
 	AutoReconnect bool `json:"autoReconnect"`
 	// ReadOnly: a shadow ticket (the viewer sends no input).
 	ReadOnly bool `json:"readOnly"`
-	// Recording: the connection asks for session recording (guacd sessions are recorded by Termstead).
+	// Recording: the connection asks for session recording (guacd sessions are recorded by AstraTerm).
 	Recording bool `json:"recording"`
 }
 
@@ -179,7 +179,7 @@ func (h *handler) issueTicket(ctx context.Context, s *term.Session, u *model.Use
 	if opts.Security == secRDP && engine == engineIronRDP {
 		return nil, errStandardSecurity
 	}
-	// Early, DNS-free destination check for restricted users (SEC-7): a literal / localhost destination Termstead or
+	// Early, DNS-free destination check for restricted users (SEC-7): a literal / localhost destination AstraTerm or
 	// guacd would connect to directly is refused with 403 destination_blocked before a ticket exists. Authoritative
 	// checks happen when connecting (guarded dials; guacdDestination for guacd).
 	if gd := h.guard(u); gd != nil {

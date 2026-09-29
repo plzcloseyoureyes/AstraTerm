@@ -1,14 +1,9 @@
 import type { ReactNode } from 'react'
+import { BrandMark as Mark } from '@/components/brand-mark'
 import { cn } from '@/lib/utils'
 
 export function BrandMark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 64 64" className={cn('size-10', className)} aria-hidden>
-      <rect width="64" height="64" rx="14" fill="var(--primary)" />
-      <path d="M16 22l12 10-12 10" stroke="var(--primary-foreground)" strokeWidth="5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M32 44h16" stroke="var(--primary-foreground)" strokeWidth="5" strokeLinecap="round" />
-    </svg>
-  )
+  return <Mark className={cn('size-10', className)} />
 }
 
 /**

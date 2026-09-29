@@ -128,7 +128,7 @@ export default function SyslogView(_props: TabProps) {
       <EmptyState
         icon={ShieldAlert}
         title="Administrators only"
-        description="In server mode the syslog server runs on the Termstead host and only administrators can read its messages."
+        description="In server mode the syslog server runs on the AstraTerm host and only administrators can read its messages."
         className="h-full"
       />
     )

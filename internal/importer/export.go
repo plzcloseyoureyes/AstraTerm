@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // export formats.
@@ -179,9 +179,9 @@ func exportJSONFile(ctx context.Context, d *app.Deps, user *model.User, conns []
 		if err != nil {
 			return exportResult{}, err
 		}
-		return exportResult{Data: enc, Filename: "termstead-sessions-" + ts + ".secret.json", ContentType: "application/json"}, nil
+		return exportResult{Data: enc, Filename: "astraterm-sessions-" + ts + ".secret.json", ContentType: "application/json"}, nil
 	}
-	return exportResult{Data: body, Filename: "termstead-sessions-" + ts + ".json", ContentType: "application/json"}, nil
+	return exportResult{Data: body, Filename: "astraterm-sessions-" + ts + ".json", ContentType: "application/json"}, nil
 }
 
 // exportIdentitiesAndKeys adds the referenced identities (secrets only in an encrypted export) and, for an encrypted
@@ -240,7 +240,7 @@ func exportCSVFile(conns []*model.Connection, folders []*model.Folder) exportRes
 	}
 	w.Flush()
 	ts := time.Now().Format("20060102-150405")
-	return exportResult{Data: buf.Bytes(), Filename: "termstead-sessions-" + ts + ".csv", ContentType: "text/csv"}
+	return exportResult{Data: buf.Bytes(), Filename: "astraterm-sessions-" + ts + ".csv", ContentType: "text/csv"}
 }
 
 // folderPaths maps folder id → "A/B/C" path.
@@ -279,7 +279,7 @@ func folderPaths(folders []*model.Folder) map[string]string {
 
 func exportSSHConfigFile(conns, all []*model.Connection) exportResult {
 	var buf bytes.Buffer
-	buf.WriteString("# Termstead ssh_config export — generated " + time.Now().UTC().Format(time.RFC3339) + "\n")
+	buf.WriteString("# AstraTerm ssh_config export — generated " + time.Now().UTC().Format(time.RFC3339) + "\n")
 	buf.WriteString("# Only ssh/sftp/mosh connections are represented; keys and passwords are not exported.\n\n")
 	byID := map[string]*model.Connection{}
 	for _, c := range all {
@@ -358,7 +358,7 @@ func exportSSHConfigFile(conns, all []*model.Connection) exportResult {
 		buf.WriteString("\n")
 	}
 	ts := time.Now().Format("20060102-150405")
-	return exportResult{Data: buf.Bytes(), Filename: "termstead-ssh-config-" + ts + ".txt", ContentType: "text/plain; charset=utf-8"}
+	return exportResult{Data: buf.Bytes(), Filename: "astraterm-ssh-config-" + ts + ".txt", ContentType: "text/plain; charset=utf-8"}
 }
 
 // exportForwards renders options.forwards as Local/Remote/DynamicForward directives (TCP forwards only).

@@ -223,7 +223,7 @@ export function BasicSection({
       </div>
 
       {profile.auth === 'ssh' && method === 'agent' && (
-        <EditorNote>Uses the keys of the SSH agent on the Termstead host (SSH_AUTH_SOCK or Pageant).</EditorNote>
+        <EditorNote>Uses the keys of the SSH agent on the AstraTerm host (SSH_AUTH_SOCK or Pageant).</EditorNote>
       )}
       {profile.auth === 'ssh' && method === 'keyboard-interactive' && (
         <EditorNote>The server's prompts (password, one-time code…) are shown when you connect.</EditorNote>

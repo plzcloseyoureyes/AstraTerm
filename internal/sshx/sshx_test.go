@@ -25,9 +25,9 @@ import (
 	socks5 "github.com/things-go/go-socks5"
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/sshx"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 func ctx(t *testing.T) context.Context {
@@ -537,8 +537,8 @@ func TestTerminalOverHTTP(t *testing.T) {
 	}
 	waitMsg(func(m map[string]any) bool { return m["type"] == "attach-end" })
 	ws.Write(context.Background(), websocket.MessageText, []byte(`{"type":"resize","cols":120,"rows":40}`))
-	ws.Write(context.Background(), websocket.MessageBinary, []byte("hello-termstead\r"))
-	waitMsg(func(map[string]any) bool { return strings.Contains(out.String(), "out:hello-termstead") })
+	ws.Write(context.Background(), websocket.MessageBinary, []byte("hello-astraterm\r"))
+	waitMsg(func(map[string]any) bool { return strings.Contains(out.String(), "out:hello-astraterm") })
 	if !strings.Contains(out.String(), "Hello from banner") {
 		t.Fatalf("banner missing from %q", out.String())
 	}

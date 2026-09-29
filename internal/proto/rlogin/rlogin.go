@@ -9,6 +9,7 @@
 package rlogin
 
 import (
+	"bytes"
 	"context"
 	"encoding/binary"
 	"errors"
@@ -22,12 +23,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/netguard"
-	"github.com/termstead/termstead/internal/proto/rawtcp/linedisc"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/proto/rawtcp/linedisc"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // RshPort is the rsh (shell) service port.
@@ -560,7 +561,7 @@ func (b *rshBackend) Write(p []byte) (int, error) {
 	}
 	data := p
 	eof := false
-	if i := indexByte(p, 0x04); i >= 0 {
+	if i := bytes.IndexByte(p, 0x04); i >= 0 {
 		data, eof = p[:i], true
 	}
 	if len(data) > 0 {
@@ -666,15 +667,6 @@ func cleanLine(s string) string {
 		return "no reason given"
 	}
 	return s
-}
-
-func indexByte(p []byte, c byte) int {
-	for i, x := range p {
-		if x == c {
-			return i
-		}
-	}
-	return -1
 }
 
 type loginState struct {

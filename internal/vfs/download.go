@@ -17,8 +17,8 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Downloads (FILE-7, FILE-9, FILE-12): single files with Range / If-Range / ETag and RFC 6266 file names, inline

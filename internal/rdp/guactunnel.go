@@ -21,12 +21,12 @@ import (
 	"github.com/coder/websocket"
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/events"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/netguard"
-	"github.com/termstead/termstead/internal/rdp/guac"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/events"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/rdp/guac"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // The guacd engine (RESEARCH §3.11, SPEC §6.3): /ws/guac/{id}?token=…&width=…&height=…&dpi=…&audio=…&image=…
@@ -64,8 +64,9 @@ func (h *handler) handleGuac(c *echo.Context) error {
 		return nil
 	}
 	v := &viewer{sessionID: s.ID, engine: engineGuacd, shadow: shadow, cancel: cancel}
+	v.active.Store(true)
 	h.viewers.add(v)
-	t := &guacTunnel{h: h, ws: ws, s: s, user: u, ctx: ctx, cancel: cancel, query: query, shadow: shadow,
+	t := &guacTunnel{h: h, ws: ws, s: s, user: u, ctx: ctx, cancel: cancel, query: query, shadow: shadow, viewer: v,
 		dropIn: map[string]bool{}, dropOut: map[string]bool{}, unrecorded: map[string]bool{}}
 	endMsg := t.run()
 	h.viewers.remove(v)
@@ -88,7 +89,8 @@ type guacTunnel struct {
 	tk     *ticket
 	opts   rdpOptions
 	gc     atomic.Pointer[guac.Conn]
-	shadow bool          // an administrator's read-only view of the owner's connection
+	shadow bool // an administrator's read-only view of the owner's connection
+	viewer *viewer
 	rec    *guacRecorder // session recording (owner's tunnel, options.recording)
 
 	fmu        sync.Mutex
@@ -207,7 +209,7 @@ func (t *guacTunnel) run() string {
 	return end
 }
 
-// prepare builds the guacd handshake: certificate trust through Termstead's store (guacd only knows "ignore-cert"),
+// prepare builds the guacd handshake: certificate trust through AstraTerm's store (guacd only knows "ignore-cert"),
 // a loopback forwarder for gateway routes, and the connection parameters.
 func (t *guacTunnel) prepare() (guac.Handshake, func(), error) {
 	h, tk, opts := t.h, t.tk, t.opts
@@ -311,7 +313,7 @@ func validTimezone(tz string) bool {
 func (t *guacTunnel) fail(status int, msg string) {
 	t.failed.Store(true)
 	if !t.shadow {
-		t.h.failState(t.s, msg)
+		t.h.failState(t.s, t.viewer, msg)
 	}
 	_ = t.sendBrowser(guac.New("error", msg, strconv.Itoa(status)))
 	_ = t.ws.Close(websocket.StatusNormalClosure, closeReason(strconv.Itoa(status)+" "+msg))
@@ -757,7 +759,7 @@ func (h *handler) requiredValues(ctx context.Context, s *term.Session, u *model.
 	})
 	switch {
 	case errors.Is(err, events.ErrNoInteractiveClient):
-		return nil, errors.New("credentials are required but no Termstead window is connected")
+		return nil, errors.New("credentials are required but no AstraTerm window is connected")
 	case errors.Is(err, events.ErrPromptTimeout):
 		return nil, errors.New("the credential prompt was not answered in time")
 	case err != nil:
@@ -821,7 +823,7 @@ func firstNonEmpty(v ...string) string {
 	return ""
 }
 
-// probeCertificate checks the server's TLS certificate with Termstead's trust store (system roots, pinned rdp-tls
+// probeCertificate checks the server's TLS certificate with AstraTerm's trust store (system roots, pinned rdp-tls
 // certificates, or the user through the prompt broker) before guacd connects. It returns true when the certificate is
 // trusted (guacd then skips its own verification), false when the server does not offer TLS.
 func (h *handler) probeCertificate(ctx context.Context, s *term.Session, u *model.User, tk *ticket) (bool, error) {

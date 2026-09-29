@@ -1,11 +1,10 @@
-// Package model holds the shared domain structs that make up Termstead's JSON contract (docs/SPEC.md §5, §6). It is a
+// Package model holds the shared domain structs that make up AstraTerm's JSON contract (docs/SPEC.md §5, §6). It is a
 // leaf package: it must not import anything from the project. Field names mirror web/src/api/types.ts.
 package model
 
 import (
 	"crypto/rand"
 	"encoding/base32"
-	"strings"
 )
 
 // idEncoding is lowercase RFC 4648 base32 without padding.
@@ -233,6 +232,3 @@ const (
 	ModeDesktop = "desktop"
 	ModeServer  = "server"
 )
-
-// TrimLower is a small helper for case-insensitive keys (usernames).
-func TrimLower(s string) string { return strings.ToLower(strings.TrimSpace(s)) }

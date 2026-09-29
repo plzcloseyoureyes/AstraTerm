@@ -9,12 +9,12 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/server/servertest"
-	"github.com/termstead/termstead/internal/servers"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/servers"
 )
 
-// Full-stack checks through the real Termstead server (cookie auth, CSRF, module wiring in internal/server).
+// Full-stack checks through the real AstraTerm server (cookie auth, CSRF, module wiring in internal/server).
 
 func freeTCPPort(t *testing.T) int {
 	t.Helper()
@@ -26,7 +26,7 @@ func freeTCPPort(t *testing.T) int {
 	return ln.Addr().(*net.TCPAddr).Port
 }
 
-func TestServersThroughTermstead(t *testing.T) {
+func TestServersThroughAstraTerm(t *testing.T) {
 	env := servertest.New(t)
 	admin := env.Setup("admin", "correct horse battery")
 

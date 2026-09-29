@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 func TestTicketPromptsForPasswordAndSavesAfterConnect(t *testing.T) {
@@ -271,17 +271,17 @@ func TestGuacdStatusEndpoint(t *testing.T) {
 	}
 }
 
-// TestSidecar starts, stops and removes a real guacd container through the docker CLI (TERMSTEAD_TESTENV=1).
+// TestSidecar starts, stops and removes a real guacd container through the docker CLI (ASTRATERM_TESTENV=1).
 func TestSidecar(t *testing.T) {
 	if !testEnvEnabled() {
-		t.Skip("TERMSTEAD_TESTENV=1 not set")
+		t.Skip("ASTRATERM_TESTENV=1 not set")
 	}
 	if _, err := exec.LookPath("docker"); err != nil {
 		t.Skip("docker not installed")
 	}
 	env := newTestEnv(t)
 	sc := env.h.guacd.sidecar
-	sc.cfg.Name, sc.cfg.Port = "termstead-rdp-sidecar-test", 23090 // module port slot 9
+	sc.cfg.Name, sc.cfg.Port = "astraterm-rdp-sidecar-test", 23090 // module port slot 9
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 	t.Cleanup(func() {

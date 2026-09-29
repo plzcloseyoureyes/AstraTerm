@@ -139,7 +139,7 @@ export async function request<T = unknown>(
 ): Promise<T> {
   const headers: Record<string, string> = { Accept: 'application/json', ...opts.headers }
   const mutating = method !== 'GET'
-  if (mutating) headers['X-Termstead'] = '1'
+  if (mutating) headers['X-AstraTerm'] = '1'
   let payload: BodyInit | undefined
   if (opts.rawBody !== undefined) {
     payload = opts.rawBody
@@ -160,7 +160,7 @@ export async function request<T = unknown>(
     })
   } catch (err) {
     if (err instanceof DOMException && err.name === 'AbortError') throw err
-    throw new ApiError(0, 'network_error', 'Cannot reach the Termstead server. Check that it is running.')
+    throw new ApiError(0, 'network_error', 'Cannot reach the AstraTerm server. Check that it is running.')
   }
 
   if (!res.ok) {

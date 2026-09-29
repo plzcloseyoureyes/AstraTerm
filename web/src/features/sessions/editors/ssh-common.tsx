@@ -148,13 +148,13 @@ export function SshCommonOptions({ value, onChange, variant }: ProtocolEditorPro
           {...p}
           name="useAgent"
           label="Use local SSH agent"
-          hint="Try keys from ssh-agent / Pageant on the Termstead host (desktop mode, or administrators in server mode)."
+          hint="Try keys from ssh-agent / Pageant on the AstraTerm host (desktop mode, or administrators in server mode)."
           defaultValue={agentDefault}
         />
         {variant !== 'sftp' && (
           <SwitchOption {...p} name="agentForwarding" label="Agent forwarding" hint="Let the remote host use your agent keys (ssh -A). Only for trusted hosts." />
         )}
-        {variant === 'ssh' && <SwitchOption {...p} name="x11Forwarding" label="X11 forwarding" hint="Display remote X11 apps on the Termstead host's X server." />}
+        {variant === 'ssh' && <SwitchOption {...p} name="x11Forwarding" label="X11 forwarding" hint="Display remote X11 apps on the AstraTerm host's X server." />}
         {variant !== 'mosh' && <SwitchOption {...p} name="compression" label="Compression" hint="zlib compression; helps on slow links, costs CPU." />}
       </OptionSection>
 

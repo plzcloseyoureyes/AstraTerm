@@ -11,13 +11,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/vnc/anontls/anontlstest"
-	"github.com/termstead/termstead/internal/vnc/vnctest"
+	"github.com/plzcloseyoureyes/astraterm/internal/vnc/anontls/anontlstest"
+	"github.com/plzcloseyoureyes/astraterm/internal/vnc/vnctest"
 )
 
 // Fuzzing of the parsers that consume data from the VNC server or the browser:
 //
-//	go test -fuzz=FuzzRFBHandshake ./internal/vnc        server → Termstead: version, security types, VeNCrypt,
+//	go test -fuzz=FuzzRFBHandshake ./internal/vnc        server → AstraTerm: version, security types, VeNCrypt,
 //	                                                      ARD parameters, reasons, ServerInit (TLS: see anontls)
 //	go test -fuzz=FuzzForwardClientMessages ./internal/vnc   browser → server filter (read-only / clipboard policy)
 //

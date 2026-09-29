@@ -10,19 +10,19 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/netguard"
-	"github.com/termstead/termstead/internal/rdp/guac"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/rdp/guac"
 )
 
-// SEC-7: guacd connects to its "hostname" itself, so Termstead vets (and pins) the destination of restricted users
+// SEC-7: guacd connects to its "hostname" itself, so AstraTerm vets (and pins) the destination of restricted users
 // before handing it over; the IronRDP relay's dials are guarded.
 
 func serverMode(c *config.Config) { c.Mode = config.ModeServer }
 
-// loopbackRDP is a loopback-only "RDP server" of the Termstead host counting the connections that reach it.
+// loopbackRDP is a loopback-only "RDP server" of the AstraTerm host counting the connections that reach it.
 func loopbackRDP(t *testing.T) (port int, accepted *atomic.Int32) {
 	t.Helper()
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
@@ -139,7 +139,7 @@ func TestNetguardGuacdRefusesUsers(t *testing.T) {
 			t.Fatalf("%s: state %s %q", host, st, msg)
 		}
 	}
-	// An RD Gateway on the Termstead host is refused too (guacd would connect to it directly).
+	// An RD Gateway on the AstraTerm host is refused too (guacd would connect to it directly).
 	conn := env.createConnection(bob.user, "192.0.2.10", 3389, "bob", nil,
 		model.Options{"rdpEngine": "guacd", "ignoreCert": true, "gatewayHost": "127.0.0.1", "gatewayPort": port})
 	rs := bob.openSession(conn.ID)

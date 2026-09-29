@@ -16,8 +16,8 @@ import (
 	"github.com/coder/websocket"
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
 const adminPass = "correct horse battery staple"
@@ -217,30 +217,6 @@ func TestLocalHostEndpoints(t *testing.T) {
 	if st, _ := admin.ErrorCode("POST", "/api/monitor/local/services/bad;name/start", nil); st != 400 {
 		t.Fatalf("bad unit name: %d", st)
 	}
-
-	// Caffeine: status for everyone; toggling in desktop mode.
-	var caf struct {
-		Supported bool `json:"supported"`
-		Allowed   bool `json:"allowed"`
-		Enabled   bool `json:"enabled"`
-	}
-	admin.MustJSON("GET", "/api/system/caffeine", nil, &caf)
-	if !caf.Allowed {
-		t.Fatal("caffeine not allowed in desktop mode")
-	}
-	if caf.Supported && os.Getenv("TERMSTEAD_TEST_CAFFEINE") == "1" {
-		admin.MustJSON("POST", "/api/system/caffeine", map[string]any{"enabled": true, "durationMin": 1}, &caf)
-		if !caf.Enabled {
-			t.Fatal("caffeine not enabled")
-		}
-		admin.MustJSON("POST", "/api/system/caffeine", map[string]any{"enabled": false}, &caf)
-		if caf.Enabled {
-			t.Fatal("caffeine still enabled")
-		}
-	}
-	if st, _ := admin.ErrorCode("POST", "/api/system/caffeine", map[string]any{"enabled": true, "durationMin": -1}); st != 400 {
-		t.Fatalf("bad duration: %d", st)
-	}
 }
 
 func TestServerModeGating(t *testing.T) {
@@ -252,16 +228,6 @@ func TestServerModeGating(t *testing.T) {
 	}
 	if st, _ := user.ErrorCode("GET", "/api/monitor/local/processes", nil); st != 403 {
 		t.Fatalf("user local processes: %d", st)
-	}
-	if st, _ := user.ErrorCode("POST", "/api/system/caffeine", map[string]any{"enabled": true}); st != 403 {
-		t.Fatalf("user caffeine: %d", st)
-	}
-	var caf struct {
-		Allowed bool `json:"allowed"`
-	}
-	user.MustJSON("GET", "/api/system/caffeine", nil, &caf)
-	if caf.Allowed {
-		t.Fatal("caffeine allowed for a user in server mode")
 	}
 	if st := admin.JSON("GET", "/api/monitor/local", nil, nil); st != 200 {
 		t.Fatalf("admin system info: %d", st)
@@ -309,8 +275,8 @@ func TestLocalSessionMonitoring(t *testing.T) {
 // TestSSHSessionMonitoring runs the whole stack against the Docker test environment: a saved SSH connection, the
 // monitor topic over /ws/events, REST endpoints (sudo through the login password), and the log-follow WebSocket.
 func TestSSHSessionMonitoring(t *testing.T) {
-	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
-		t.Skip("set TERMSTEAD_TESTENV=1 to run tests against the Docker test environment")
+	if os.Getenv("ASTRATERM_TESTENV") != "1" {
+		t.Skip("set ASTRATERM_TESTENV=1 to run tests against the Docker test environment")
 	}
 	env := servertest.New(t)
 	admin := env.Setup("admin", adminPass)

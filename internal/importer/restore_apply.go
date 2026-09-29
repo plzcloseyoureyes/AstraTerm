@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/termstead/termstead/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
 )
 
 // Applying a staged restore (IMP-4). A running process cannot swap its own database, so POST /api/admin/restore
@@ -58,7 +58,7 @@ func discardStagedRestore(cfg *config.Config) (bool, error) {
 	dir := restoreDir(cfg)
 	_, pending := readRestoreMarker(cfg)
 	var errs []error
-	for _, name := range []string{restoreMarker, "termstead.db", systemKeyName, "RESTORE-README.txt"} {
+	for _, name := range []string{restoreMarker, "astraterm.db", systemKeyName, "RESTORE-README.txt"} {
 		if err := os.Remove(filepath.Join(dir, name)); err != nil && !errors.Is(err, os.ErrNotExist) {
 			errs = append(errs, err)
 		}
@@ -80,7 +80,7 @@ func ApplyStagedRestore(cfg *config.Config, log *slog.Logger) (applied bool, err
 		return false, nil
 	}
 	dir := restoreDir(cfg)
-	stagedDB := filepath.Join(dir, "termstead.db")
+	stagedDB := filepath.Join(dir, "astraterm.db")
 	if !isSQLiteFile(stagedDB) {
 		log.Error("restore: the staged database is missing or not a SQLite file; the restore request was dropped", "path", stagedDB)
 		_ = os.Remove(filepath.Join(dir, restoreMarker))

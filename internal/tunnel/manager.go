@@ -11,12 +11,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/netguard"
-	"github.com/termstead/termstead/internal/sshx"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // Per-user limits.
@@ -299,7 +299,7 @@ func (m *Manager) specFor(ctx context.Context, owner *model.User, rec *record) (
 	return sp, nil
 }
 
-// finishSpec attaches the host-side context of a checked spec: Termstead's own port and the owner's destination
+// finishSpec attaches the host-side context of a checked spec: AstraTerm's own port and the owner's destination
 // guard.
 func (m *Manager) finishSpec(owner *model.User, sp *spec) {
 	sp.selfPort = m.selfPort()
@@ -307,7 +307,7 @@ func (m *Manager) finishSpec(owner *model.User, sp *spec) {
 	sp.guard = func() *netguard.Guard { return nm.ForUser(owner) }
 }
 
-// selfPort returns Termstead's own listen port (0 when unknown).
+// selfPort returns AstraTerm's own listen port (0 when unknown).
 func (m *Manager) selfPort() int {
 	if m.d.Cfg == nil {
 		return 0
@@ -322,11 +322,11 @@ func (m *Manager) selfPort() int {
 
 // policy applies the run-mode restrictions (SPEC principle 7): in server mode, listeners on the server host and
 // connections made from it are powerful, so non-admins may only open loopback listeners on unprivileged ports and
-// no remote (-R) forwards. Termstead's own port is never available.
+// no remote (-R) forwards. AstraTerm's own port is never available.
 func (m *Manager) policy(user *model.User, sp *spec) error {
 	if sp.bindSocket == "" && sp.kind.listensLocally() && sp.bindPort != 0 && m.d.Cfg != nil {
 		if _, p, err := net.SplitHostPort(m.d.Cfg.Listen); err == nil && p == strconv.Itoa(sp.bindPort) {
-			return httpx.Conflict(fmt.Sprintf("port %d is Termstead's own port", sp.bindPort))
+			return httpx.Conflict(fmt.Sprintf("port %d is AstraTerm's own port", sp.bindPort))
 		}
 	}
 	if m.d.Cfg == nil || m.d.Cfg.IsDesktop() {
@@ -349,7 +349,7 @@ func (m *Manager) policy(user *model.User, sp *spec) error {
 }
 
 // destinationPolicy is the early (advisory) part of the destination guard for forwards whose connections are made
-// from the Termstead host: a remote forward to a refused IP literal / localhost name, or to a Unix socket of the host,
+// from the AstraTerm host: a remote forward to a refused IP literal / localhost name, or to a Unix socket of the host,
 // is rejected when it is saved or started. The authoritative check runs on every connection (forward.hostDial).
 func (m *Manager) destinationPolicy(user *model.User, sp *spec) error {
 	if sp.kind != kindRemote {
@@ -360,7 +360,7 @@ func (m *Manager) destinationPolicy(user *model.User, sp *spec) error {
 		return nil
 	}
 	if sp.destSocket != "" {
-		return httpx.Forbidden("the network policy does not allow connecting to local Unix sockets of the Termstead host")
+		return httpx.Forbidden("the network policy does not allow connecting to local Unix sockets of the AstraTerm host")
 	}
 	return g.CheckLiteral(sp.destHost, sp.destPort)
 }

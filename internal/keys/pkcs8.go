@@ -122,7 +122,7 @@ func decryptPKCS8(der, passphrase []byte) (crypto.PrivateKey, error) {
 		return nil, invalidKey("invalid PBKDF2 parameters")
 	}
 	block, err := newBlock(key)
-	wipe(key)
+	clear(key)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +131,7 @@ func decryptPKCS8(der, passphrase []byte) (crypto.PrivateKey, error) {
 		return nil, invalidKey("invalid encrypted PKCS#8 data")
 	}
 	plain := make([]byte, len(info.EncryptedData))
-	defer wipe(plain) // the parsed key copies what it keeps
+	defer clear(plain) // the parsed key copies what it keeps
 	cipher.NewCBCDecrypter(block, iv).CryptBlocks(plain, info.EncryptedData)
 	plain, ok := pkcs7Unpad(plain, bs)
 	if !ok {

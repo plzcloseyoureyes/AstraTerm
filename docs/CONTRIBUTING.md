@@ -1,4 +1,4 @@
-# Contributing to Termstead
+# Contributing to AstraTerm
 
 This is the practical guide. The binding contracts are [SPEC.md](SPEC.md) (API shapes, WebSocket protocols, package
 DAG, per-module notes in §9) and [UX.md](UX.md) (interaction and loading-state rules). When the two disagree with this
@@ -7,7 +7,7 @@ file, they win.
 ## Project structure
 
 ```text
-cmd/termstead/                 CLI: flags, serve / version / reset-password
+cmd/astraterm/                 CLI: flags, serve / version / reset-password
 internal/
   model config httpx store vault events audit app     core services (SPEC §4); app.Deps wires them
   auth webauthn oidc                                    accounts, sessions, 2FA, passkeys, SSO
@@ -76,7 +76,7 @@ scripts/                                                smoke test, Docker lab (
 Each module ships tests next to its code:
 - Go: unit tests plus API tests on the in-process harness `internal/server/servertest` (`servertest.New(t)`,
   `env.Setup`, `env.Login`, `Client.MustJSON`). Network targets are opt-in through environment variables (e.g.
-  `TERMSTEAD_TEST_DOCKER=1`, `TERMSTEAD_TESTENV=1` with the Docker lab in `scripts/testenv`).
+  `ASTRATERM_TEST_DOCKER=1`, `ASTRATERM_TESTENV=1` with the Docker lab in `scripts/testenv`).
 - Frontend: pure modules are tested with `node --test` (`web/src/<area>/__tests__/*.test.mjs`, registered in
   `web/package.json` → `npm test`).
 - End to end: `make smoke` (built binary, desktop + server mode, Docker SSH target).
@@ -102,5 +102,5 @@ and fails with `--strict`. Run it (also with `--latency 250`, which exposes indi
 changes to loading, boot or layout code; `--keep` keeps the frames of every flash as PNGs, `--nav-only` runs just the
 navigation / SSH scenarios.
 
-Any throwaway Termstead you start for manual testing must run with `HOME` (and `USERPROFILE` on Windows) pointing at a
+Any throwaway AstraTerm you start for manual testing must run with `HOME` (and `USERPROFILE` on Windows) pointing at a
 temporary directory and its own `--data-dir`, so the Local files tab and importers never see a real home folder.

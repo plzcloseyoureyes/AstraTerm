@@ -39,16 +39,6 @@ export interface SocketInfo {
   service?: string
 }
 
-export interface KeygenResult {
-  type: string
-  bits: number
-  publicKey: string
-  privateKey: string
-  fingerprint: string
-  fingerprintMd5: string
-  comment: string
-}
-
 // ---- run history -----------------------------------------------------------------------------------------------------
 
 export interface ToolRun {

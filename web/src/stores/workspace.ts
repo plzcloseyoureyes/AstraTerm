@@ -65,6 +65,8 @@ interface WorkspaceStore {
   tabStates: Record<string, TabState>
   closed: ClosedTab[]
   maximized: boolean
+  /** Tab ids per pane (grid and floating groups, in order; pop-out windows excluded) — drives the title-bar tabs. */
+  panes: string[][]
 }
 
 export const useWorkspaceStore = create<WorkspaceStore>(() => ({
@@ -74,16 +76,19 @@ export const useWorkspaceStore = create<WorkspaceStore>(() => ({
   tabStates: {},
   closed: [],
   maximized: false,
+  panes: [],
 }))
 
 const MAX_CLOSED = 25
 let api: DockviewApi | null = null
 let userKey = 'anonymous'
+/** Grid groups hide their own tab header: their tabs are shown in the title bar instead (see setTitleBarTabs). */
+let titleBarTabs = false
 const pendingOpens: OpenTabOptions[] = []
 const windowListeners = new Set<(win: Window) => void>()
 
-const layoutKey = () => `termstead:layout:v1:${userKey}`
-const closedKey = () => `termstead:closed-tabs:v1:${userKey}`
+const layoutKey = () => `astraterm:layout:v1:${userKey}`
+const closedKey = () => `astraterm:closed-tabs:v1:${userKey}`
 
 // ---------------------------------------------------------------------------------------------------------------------
 // helpers
@@ -139,8 +144,28 @@ function sync(): void {
       delete tabStates[id]
     }
   }
-  if (!changed && activeTabId === prev.activeTabId && maximized === prev.maximized && tabStates === prev.tabStates) return
-  useWorkspaceStore.setState({ tabs: changed ? tabs : prev.tabs, activeTabId, tabStates, maximized })
+  const nextPanes: string[][] = []
+  for (const group of api.groups) {
+    const where = group.api.location.type
+    const hidden = titleBarTabs && where === 'grid'
+    if (group.header.hidden !== hidden) group.header.hidden = hidden
+    if (where !== 'popout' && group.panels.length) nextPanes.push(group.panels.map((p) => p.id))
+  }
+  const panes = samePanes(prev.panes, nextPanes) ? prev.panes : nextPanes
+  if (!changed && activeTabId === prev.activeTabId && maximized === prev.maximized && tabStates === prev.tabStates && panes === prev.panes) return
+  useWorkspaceStore.setState({ tabs: changed ? tabs : prev.tabs, activeTabId, tabStates, maximized, panes })
+}
+
+function samePanes(a: string[][], b: string[][]): boolean {
+  return a.length === b.length && a.every((ids, i) => ids.length === b[i].length && ids.every((id, j) => id === b[i][j]))
+}
+
+/** Show grid tabs in the title bar (true) or in each group's own header (false, e.g. on phones). */
+export function setTitleBarTabs(on: boolean): void {
+  if (titleBarTabs === on) return
+  titleBarTabs = on
+  sync()
+  scheduleOverlayFix()
 }
 
 /**
@@ -266,7 +291,7 @@ export function attachDockview(dv: DockviewApi, opts: { userId: string; restore:
     for (const un of popoutDisposers.values()) un()
     popoutDisposers.clear()
     if (api === dv) api = null
-    useWorkspaceStore.setState({ ready: false, tabs: [], activeTabId: null, tabStates: {}, maximized: false })
+    useWorkspaceStore.setState({ ready: false, tabs: [], activeTabId: null, tabStates: {}, maximized: false, panes: [] })
   }
 }
 
@@ -810,6 +835,7 @@ export const useTabs = () => useWorkspaceStore((s) => s.tabs)
 export const useActiveTabId = () => useWorkspaceStore((s) => s.activeTabId)
 export const useClosedTabs = () => useWorkspaceStore((s) => s.closed)
 export const useWorkspaceReady = () => useWorkspaceStore((s) => s.ready)
+export const usePanes = () => useWorkspaceStore((s) => s.panes)
 
 export function useActiveTab(): TabInfo | undefined {
   return useWorkspaceStore((s) => (s.activeTabId ? s.tabs.find((t) => t.id === s.activeTabId) : undefined))

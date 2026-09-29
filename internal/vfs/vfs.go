@@ -1,4 +1,4 @@
-// Package vfs is Termstead's virtual file system layer (SPEC §6.0 "Files", RESEARCH FILE-*, PROTO-23..27, §3.3, §3.14,
+// Package vfs is AstraTerm's virtual file system layer (SPEC §6.0 "Files", RESEARCH FILE-*, PROTO-23..27, §3.3, §3.14,
 // §3.15): one FS interface implemented by drivers — SFTP over the terminal's pooled SSH transport, an SCP / shell
 // fallback, sudo-SFTP, the local host (jailed with os.Root in server mode), FTP/FTPS, S3, WebDAV and SMB — a per-user
 // handle registry, and the /api/fs REST endpoints (sorted listings, streaming downloads with Range and zip, resumable
@@ -12,7 +12,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Entry is one file of a listing (the JSON contract type of SPEC §6.0). Drivers fill Name, Path, Type, Size, Mode (POSIX
@@ -92,7 +92,7 @@ type ServerSideCopier interface {
 	CopyServerSide(ctx context.Context, src, dst string) error
 }
 
-// Presigner returns a time-limited URL that downloads p without Termstead (S3).
+// Presigner returns a time-limited URL that downloads p without AstraTerm (S3).
 type Presigner interface {
 	Presign(ctx context.Context, p string, expires time.Duration) (string, error)
 }
@@ -115,7 +115,7 @@ type Space struct {
 }
 
 // NativeUploader is implemented by file systems with their own resumable upload mechanism (S3 multipart) instead of
-// the generic "<target>.termstead-part + rename" scheme.
+// the generic "<target>.astraterm-part + rename" scheme.
 type NativeUploader interface {
 	// UploadChunk appends body (length n, -1 = unknown) at offset of the pending upload for target; final completes
 	// it atomically. It returns the number of bytes stored so far.

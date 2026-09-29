@@ -101,9 +101,10 @@ function ActionCard({
       disabled={!cmd.enabled}
       onClick={() => void runCommand(command, args, { source: 'home' })}
       className={cn(
-        'group flex items-center gap-3 rounded-lg border bg-card px-3.5 py-3 text-left shadow-xs outline-none transition-colors duration-150',
-        'hover:border-primary/40 hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring/60',
-        'disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-border disabled:hover:bg-card',
+        // Borderless surface (the transparent border still outlines it in forced-colors / high-contrast mode).
+        'group flex items-center gap-3 rounded-lg border border-transparent bg-card px-3.5 py-3 text-left outline-none transition-colors duration-150',
+        'hover:bg-accent/60 focus-visible:ring-2 focus-visible:ring-ring/60',
+        'disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-card',
       )}
     >
       <span className={cn('flex size-8 shrink-0 items-center justify-center rounded-md', accent)}>
@@ -123,8 +124,8 @@ function ActionCard({
 
 function SectionCard({ title, action, children, className }: { title: ReactNode; action?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={cn('flex min-w-0 flex-col rounded-lg border bg-card shadow-xs', className)}>
-      <header className="flex h-10 shrink-0 items-center justify-between gap-2 border-b px-3.5">
+    <section className={cn('flex min-w-0 flex-col rounded-lg border border-transparent bg-card', className)}>
+      <header className="flex h-10 shrink-0 items-center justify-between gap-2 border-b border-border/50 px-3.5">
         <h2 className="flex items-center gap-2 text-sm font-semibold">{title}</h2>
         {action}
       </header>
@@ -422,7 +423,7 @@ function FolderTile({ folder, count }: { folder: Folder; count: number }) {
     <button
       type="button"
       onClick={() => void runCommand('sessions.revealFolder', { folderId: folder.id }, { source: 'home' })}
-      className="flex min-w-0 items-center gap-2 rounded-md border bg-card px-2.5 py-2 text-left outline-none transition-colors duration-150 hover:border-primary/40 hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring/60"
+      className="flex min-w-0 items-center gap-2 rounded-md border border-transparent bg-card px-2.5 py-2 text-left outline-none transition-colors duration-150 hover:bg-accent/60 focus-visible:ring-2 focus-visible:ring-ring/60"
     >
       <FolderIcon className="size-4 shrink-0 text-muted-foreground" style={folder.color ? { color: folder.color } : undefined} />
       <span className="min-w-0 flex-1 truncate font-medium">{folder.name}</span>
@@ -448,9 +449,9 @@ function FeatureTile({ icon: Icon, title, description, command }: (typeof TILES)
       disabled={!cmd.enabled}
       onClick={() => void cmd.run(undefined, 'home')}
       className={cn(
-        'group flex items-center gap-3 rounded-lg border bg-card px-3.5 py-3 text-left outline-none transition-colors duration-150',
-        'hover:border-primary/40 hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring/60',
-        'disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:border-border disabled:hover:bg-card',
+        'group flex items-center gap-3 rounded-lg border border-transparent bg-card px-3.5 py-3 text-left outline-none transition-colors duration-150',
+        'hover:bg-accent/60 focus-visible:ring-2 focus-visible:ring-ring/60',
+        'disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-card',
       )}
       title={cmd.enabled ? undefined : 'Not available in this build'}
     >
@@ -472,7 +473,7 @@ function Tips() {
     { text: 'Lock the screen when you step away', command: 'app.lock' },
   ]
   return (
-    <section className="rounded-lg border border-dashed bg-muted/30 p-4">
+    <section className="rounded-lg bg-muted/30 p-4">
       <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold">
         <Lightbulb className="size-4 text-warning" /> Tips
       </h2>

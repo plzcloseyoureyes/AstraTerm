@@ -9,7 +9,7 @@ import (
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Agent support (SSH-9/10/12). The host agent (SSH_AUTH_SOCK on Unix; the Windows OpenSSH agent pipe or Pageant on

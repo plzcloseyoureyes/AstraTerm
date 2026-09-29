@@ -15,9 +15,10 @@ import (
 	"github.com/labstack/echo/v5"
 	"golang.org/x/time/rate"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // Triggers (AUTO-7). Rules live in automation_triggers and are cached per owner. When a session of the owner
@@ -690,7 +691,7 @@ func (st *sessionTriggers) enqueue(fn func()) {
 
 func (st *sessionTriggers) logLine(t *Trigger, info model.RuntimeSession, line string) {
 	e := &TriggerLogEntry{TriggerID: t.ID, TriggerName: t.Name, SessionID: st.id, SessionTitle: info.Title,
-		ConnectionID: info.ConnectionID, Line: truncateUTF8(line, 2000), TS: now()}
+		ConnectionID: info.ConnectionID, Line: truncateUTF8(line, 2000), TS: store.Now()}
 	if err := st.e.m.repo.insertTriggerLog(st.e.m.ctx, st.owner.ID, e); err != nil {
 		st.e.m.log.Debug("cannot log trigger hit", "err", err)
 	}

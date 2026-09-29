@@ -49,7 +49,7 @@ const base = (compact: boolean) =>
     'group relative flex shrink-0 items-center justify-center rounded-md text-foreground/80 outline-none transition-colors duration-150',
     'hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/60 disabled:opacity-40 disabled:hover:bg-transparent',
     'data-[state=open]:bg-accent data-[state=open]:text-foreground',
-    compact ? 'size-8' : 'h-[3.25rem] min-w-[3.5rem] flex-col gap-1 px-1.5',
+    compact ? 'size-7' : 'h-[3.25rem] min-w-[3.5rem] flex-col gap-1 px-1.5',
   )
 
 function ButtonBody({ def, compact, menu }: { def: RibbonButtonDef; compact: boolean; menu?: boolean }) {
@@ -148,7 +148,7 @@ function overflowItem(def: RibbonButtonDef): MenuItem {
 }
 
 const SEPARATOR_W = 9 // mx-1 + 1 px rule
-const MORE_W = { compact: 32, large: 56 }
+const MORE_W = { compact: 28, large: 56 }
 
 /**
  * Which buttons fit: every button keeps its natural width (measured while shown; a new set of buttons or a mode change
@@ -197,12 +197,9 @@ function useOverflow(items: { id: string; group: string }[], compact: boolean) {
   return { rowRef, visible }
 }
 
-/** Large-button toolbar (ribbon) + quick connect: grouped, with an overflow menu instead of hidden buttons. */
-export function Ribbon() {
+/** The toolbar buttons, grouped, with an overflow menu instead of hidden buttons. Fills the space it is given. */
+function ToolbarButtons({ compact }: { compact: boolean }) {
   const registered = ribbonButtons.useList()
-  const compactSetting = appearanceSettings.useValue('ribbonCompact')
-  const mobile = useIsMobile()
-  const compact = compactSetting || mobile
   const buttons = useMemo(() => arrange(registered), [registered])
   const items = useMemo(() => buttons.map((b) => ({ id: b.id, group: groupOf(b) })), [buttons])
   const { rowRef, visible } = useOverflow(items, compact)
@@ -210,44 +207,59 @@ export function Ribbon() {
   const hidden = buttons.slice(visible)
 
   return (
-    <div
-      role="toolbar"
-      aria-label="Main toolbar"
-      className={cn('flex shrink-0 items-center gap-0.5 border-b bg-toolbar px-1.5', compact ? 'h-10' : 'h-[3.75rem]')}
-    >
-      <div ref={rowRef} className="flex min-w-0 flex-1 items-center gap-0.5 overflow-hidden">
-        {shown.map((b, i) => {
-          const g = groupOf(b)
-          const sep = i > 0 && groupOf(shown[i - 1]) !== g
-          return (
-            <div key={b.id} className="flex shrink-0 items-center" data-ribbon-id={b.id} data-group={g}>
-              {sep && <span className={cn('mx-1 w-px bg-border', compact ? 'h-5' : 'h-9')} aria-hidden />}
-              <RibbonButton def={b} compact={compact} />
-            </div>
-          )
-        })}
-        {hidden.length > 0 && (
-          <DynamicDropdown items={() => hidden.map(overflowItem)} source="ribbon">
-            <button type="button" className={base(compact)} aria-label={`More (${hidden.length})`} title={compact ? 'More' : undefined}>
-              <Ellipsis className={compact ? 'size-4' : 'size-5'} strokeWidth={compact ? 2 : 1.6} />
-              {!compact && <span className="text-2xs leading-tight font-medium">More</span>}
-            </button>
-          </DynamicDropdown>
-        )}
-      </div>
-      {!mobile && <QuickConnect primary className="w-[min(22rem,30vw)] shrink-0" />}
-      {!mobile && (
-        <Tooltip content={compactSetting ? 'Large toolbar' : 'Compact toolbar'}>
-          <button
-            type="button"
-            aria-label={compactSetting ? 'Large toolbar' : 'Compact toolbar'}
-            onClick={() => appearanceSettings.set({ ribbonCompact: !compactSetting })}
-            className="ml-1 flex size-6 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/60"
-          >
-            {compactSetting ? <ChevronsUpDown className="size-3.5" /> : <ChevronsDownUp className="size-3.5" />}
+    <div ref={rowRef} role="toolbar" aria-label="Main toolbar" className="flex min-w-0 flex-1 items-center gap-0.5 overflow-hidden">
+      {shown.map((b, i) => {
+        const g = groupOf(b)
+        const sep = i > 0 && groupOf(shown[i - 1]) !== g
+        return (
+          <div key={b.id} className="flex shrink-0 items-center" data-ribbon-id={b.id} data-group={g}>
+            {sep && <span className={cn('mx-1 w-px bg-border', compact ? 'h-4' : 'h-9')} aria-hidden />}
+            <RibbonButton def={b} compact={compact} />
+          </div>
+        )
+      })}
+      {hidden.length > 0 && (
+        <DynamicDropdown items={() => hidden.map(overflowItem)} source="ribbon">
+          <button type="button" className={base(compact)} aria-label={`More (${hidden.length})`} title={compact ? 'More' : undefined}>
+            <Ellipsis className={compact ? 'size-4' : 'size-5'} strokeWidth={compact ? 2 : 1.6} />
+            {!compact && <span className="text-2xs leading-tight font-medium">More</span>}
           </button>
-        </Tooltip>
+        </DynamicDropdown>
       )}
+    </div>
+  )
+}
+
+/** Switches the toolbar row between large buttons and icons only. */
+function ToolbarSizeToggle() {
+  const compact = appearanceSettings.useValue('ribbonCompact')
+  const label = compact ? 'Large toolbar' : 'Compact toolbar'
+  return (
+    <Tooltip content={label}>
+      <button
+        type="button"
+        aria-label={label}
+        onClick={() => appearanceSettings.set({ ribbonCompact: !compact })}
+        className="flex size-6 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/60"
+      >
+        {compact ? <ChevronsUpDown className="size-3.5" /> : <ChevronsDownUp className="size-3.5" />}
+      </button>
+    </Tooltip>
+  )
+}
+
+/** Optional toolbar row (View → Toolbar): the large ribbon, or icons only. Quick connect joins it when the title bar
+ *  (which normally has it) is hidden. */
+export function Ribbon() {
+  const compactSetting = appearanceSettings.useValue('ribbonCompact')
+  const titleBar = appearanceSettings.useValue('showMenuBar')
+  const mobile = useIsMobile()
+  const compact = compactSetting || mobile
+  return (
+    <div className={cn('flex shrink-0 items-center gap-1 px-1.5', compact ? 'h-9' : 'h-[3.75rem]')}>
+      <ToolbarButtons compact={compact} />
+      {!mobile && !titleBar && <QuickConnect primary className="w-[min(22rem,30vw)] shrink-0" />}
+      {!mobile && <ToolbarSizeToggle />}
     </div>
   )
 }

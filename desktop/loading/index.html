@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AstraTerm</title>
+    <!-- Shown by the desktop app while the AstraTerm server starts (usually a fraction of a second). Matches the web
+         UI's boot splash so the hand-over is seamless. -->
+    <style>
+      html, body { height: 100%; margin: 0; }
+      body {
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;
+        background: #15181d; color: #9aa3b2; font: 12px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      @media (prefers-color-scheme: light) { body { background: #fbfbfc; color: #5b6472; } }
+      svg.mark { width: 2.25rem; height: 2.25rem; }
+      .status { display: flex; align-items: center; gap: .5rem; height: 1.25rem; opacity: 0; animation: show 0s .3s forwards; }
+      .ring { width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: spin 1.2s linear infinite; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @keyframes show { to { opacity: 1; } }
+      @media (prefers-reduced-motion: reduce) { .ring { animation-duration: 2s; } }
+    </style>
+  </head>
+  <body>
+    <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset="1" stop-color="#2459e0"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#g)"/><path d="M14.6 18.1L26.6 30.1L14.6 42.1" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M41.6 27.6Q43.6 36.1 52.1 38.1Q43.6 40.1 41.6 48.6Q39.6 40.1 31.1 38.1Q39.6 36.1 41.6 27.6Z" fill="#fff"/></svg>
+    <div class="status" role="status"><span class="ring" aria-hidden="true"></span>Starting AstraTerm…</div>
+  </body>
+</html>

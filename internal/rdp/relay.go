@@ -17,10 +17,10 @@ import (
 	"github.com/coder/websocket"
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/netguard"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // Timeouts of the RDCleanPath relay.
@@ -54,7 +54,7 @@ func (h *handler) handleRelay(c *echo.Context) error {
 	}
 	v := &viewer{sessionID: s.ID, engine: engineIronRDP, cancel: cancel}
 	h.viewers.add(v)
-	r := &relay{h: h, ws: ws, s: s, user: u, ctx: ctx}
+	r := &relay{h: h, ws: ws, s: s, user: u, ctx: ctx, viewer: v}
 	endMsg := r.run()
 	h.viewers.remove(v)
 	release()
@@ -65,11 +65,12 @@ func (h *handler) handleRelay(c *echo.Context) error {
 }
 
 type relay struct {
-	h    *handler
-	ws   *websocket.Conn
-	s    *term.Session
-	user *model.User
-	ctx  context.Context
+	h      *handler
+	ws     *websocket.Conn
+	s      *term.Session
+	user   *model.User
+	ctx    context.Context
+	viewer *viewer
 }
 
 // serverConn is an established, TLS-secured connection to the RDP server.
@@ -152,6 +153,7 @@ func (r *relay) run() string {
 	h.auditUser(r.ctx, r.user, "rdp.connect", s.ID, map[string]any{"engine": engineIronRDP, "host": t.host,
 		"port": t.port, "security": protocolName(sc.selected), "requested": xreq.requested,
 		"connectionId": t.conn.ID, "via": routeDescription(t.conn)})
+	r.viewer.active.Store(true) // relaying from now on: this viewer keeps the session alive
 	return r.pump(sc.tls, sc.selected, t.autologon, channelPolicy(parseOptions(t.conn.Options)))
 }
 
@@ -187,7 +189,7 @@ func (r *relay) readRequest() ([]byte, error) {
 
 // fail reports err to the session state and the client, then closes the socket.
 func (r *relay) fail(e *relayError) {
-	r.h.failState(r.s, e.msg)
+	r.h.failState(r.s, r.viewer, e.msg)
 	if b, err := e.fail.encode(); err == nil {
 		ctx, cancel := context.WithTimeout(r.ctx, 5*time.Second)
 		_ = r.ws.Write(ctx, websocket.MessageBinary, b)

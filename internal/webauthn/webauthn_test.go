@@ -13,8 +13,8 @@ import (
 
 	"github.com/go-webauthn/webauthn/protocol/webauthncbor"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
 const adminPass = "correct horse battery"
@@ -311,7 +311,7 @@ func TestPasskeysNeedHostName(t *testing.T) {
 func TestPinnedRelyingParty(t *testing.T) {
 	env, origin := newEnv(t)
 	admin := env.Setup("admin", adminPass)
-	if code, ec := admin.ErrorCode("PUT", "/api/admin/webauthn/config", map[string]any{"rpId": "example.com", "origins": []string{"https://termstead.example.com"}}); code != 409 || ec != "self_lockout" {
+	if code, ec := admin.ErrorCode("PUT", "/api/admin/webauthn/config", map[string]any{"rpId": "example.com", "origins": []string{"https://astraterm.example.com"}}); code != 409 || ec != "self_lockout" {
 		t.Fatalf("pin excluding own origin: %d %s", code, ec)
 	}
 	if code, _ := admin.ErrorCode("PUT", "/api/admin/webauthn/config", map[string]any{"rpId": "localhost", "origins": []string{"https://evil.test"}}); code != 400 {

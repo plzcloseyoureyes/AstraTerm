@@ -12,8 +12,9 @@ import (
 	"github.com/dop251/goja"
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 // Scripts (AUTO-10): JavaScript (goja, ES5.1+ with most of ES2015+) executed inside the backend, sandboxed — no file
@@ -361,7 +362,7 @@ func (m *Module) startScript(user *model.User, st scriptStart) (string, string, 
 		timeout = defaultScriptTimeout
 	}
 	run := &Run{ID: model.NewID(), OwnerID: user.ID, Kind: RunScript, Name: st.name, Origin: st.origin, Status: StatusRunning,
-		StartedAt: now()}
+		StartedAt: store.Now()}
 	if st.script != nil {
 		run.RefID = st.script.ID
 	}
@@ -398,7 +399,7 @@ func (m *Module) startScript(user *model.User, st scriptStart) (string, string, 
 		}
 		runErr := m.execScript(ctx, user, scriptParams{name: st.name, program: prg, vars: st.variables,
 			sessionID: st.sessionID, connectionID: st.connectionID, timeout: timeout, logf: logf})
-		fin := now()
+		fin := store.Now()
 		run.FinishedAt = &fin
 		run.Log = log.String()
 		switch {

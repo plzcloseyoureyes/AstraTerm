@@ -14,7 +14,7 @@ import (
 
 	"golang.org/x/text/encoding"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Session is one runtime session (terminal or graphical). All mutable state is guarded by mu; outMu serializes the

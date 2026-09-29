@@ -6,6 +6,8 @@
 *.db
 *.db-wal
 *.db-shm
-/.termstead-data/
+/.astraterm-data/
 .DS_Store
 /web/tsconfig.tsbuildinfo
+cmd/*/rsrc_windows_*.syso
+/desktop/node_modules/

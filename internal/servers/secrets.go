@@ -24,7 +24,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
 )
 
 // Persistent server secrets live in the settings table under a module-private scope (never merged into anyone's
@@ -116,7 +116,7 @@ func (s *secretStore) hostKeys(ctx context.Context) ([]ssh.Signer, error) {
 			if err != nil {
 				return nil, fmt.Errorf("generate %s host key: %w", alg, err)
 			}
-			block, err := ssh.MarshalPrivateKey(key, "termstead-embedded-server")
+			block, err := ssh.MarshalPrivateKey(key, "astraterm-embedded-server")
 			if err != nil {
 				return nil, err
 			}
@@ -223,7 +223,7 @@ func selfSigned() (certPEM, keyPEM []byte, err error) {
 	now := time.Now()
 	tmpl := &x509.Certificate{
 		SerialNumber:          serial,
-		Subject:               pkix.Name{CommonName: "Termstead embedded server", Organization: []string{"Termstead"}},
+		Subject:               pkix.Name{CommonName: "AstraTerm embedded server", Organization: []string{"AstraTerm"}},
 		NotBefore:             now.Add(-time.Hour),
 		NotAfter:              now.AddDate(10, 0, 0),
 		KeyUsage:              x509.KeyUsageDigitalSignature,

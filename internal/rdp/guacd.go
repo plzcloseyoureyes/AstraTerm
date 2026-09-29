@@ -12,8 +12,8 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/rdp/guac"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/rdp/guac"
 )
 
 // guacdManager resolves the guacd address (admin setting rdp.guacdAddress, else --guacd), reports its status and
@@ -225,7 +225,7 @@ func (h *handler) handleSidecar(c *echo.Context) error {
 		return httpx.BadRequest(`action must be "start" or "stop"`)
 	}
 	if !h.guacd.sidecar.dockerInstalled() {
-		return httpx.NewError(http.StatusConflict, "docker_unavailable", "the docker command is not installed on the Termstead host")
+		return httpx.NewError(http.StatusConflict, "docker_unavailable", "the docker command is not installed on the AstraTerm host")
 	}
 	u := httpx.UserFrom(c)
 	if h.d.Jobs == nil {

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -12,9 +11,9 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // CC-15: .rdp connection files for native clients (mstsc, Windows App / Microsoft Remote Desktop, FreeRDP, Remmina).
@@ -253,6 +252,3 @@ func fileParams(conn *model.Connection) rdpFileParams {
 	}
 	return rdpFileParams{Host: conn.Host, Port: port, Username: user, Domain: domain, Opts: opts}
 }
-
-// hostPort formats host:port for messages.
-func hostPort(host string, port int) string { return net.JoinHostPort(host, strconv.Itoa(port)) }

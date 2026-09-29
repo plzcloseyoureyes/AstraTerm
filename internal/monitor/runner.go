@@ -15,7 +15,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/termstead/termstead/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
 )
 
 // command is one piece of work for a monitored host. Exactly one of sh, ps and argv is set.
@@ -65,7 +65,7 @@ func (s *stream) close() {
 	_, _ = s.wait()
 }
 
-// runner executes commands on a monitored host: an SSH transport or the Termstead host itself.
+// runner executes commands on a monitored host: an SSH transport or the AstraTerm host itself.
 type runner interface {
 	run(ctx context.Context, c command) (*result, error)
 	start(ctx context.Context, c command) (*stream, error)
@@ -270,7 +270,7 @@ func sshResult(stdout, stderr []byte, err error) (*result, error) {
 
 // ---- local host -----------------------------------------------------------------------------------------------------
 
-// localRunner runs commands on the Termstead host (local sessions and the System info view). Callers gate it to desktop
+// localRunner runs commands on the AstraTerm host (local sessions and the System info view). Callers gate it to desktop
 // mode or administrators.
 type localRunner struct{}
 

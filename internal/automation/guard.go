@@ -11,7 +11,7 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 // Dangerous-command guard (SEC-21). Every API that types user-provided text into sessions (snippet runs, macro

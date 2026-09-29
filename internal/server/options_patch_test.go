@@ -3,8 +3,8 @@ package server_test
 import (
 	"testing"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
 // PATCH replaces the whole options object (SPEC §9): keys missing from the patch are removed, so editors can reset an

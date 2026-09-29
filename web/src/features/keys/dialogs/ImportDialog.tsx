@@ -169,7 +169,7 @@ export default function ImportDialog({ mode: initialMode, initialText, onClose }
             {mode === 'import' ? 'Import private key' : 'Convert key file'}
           </DialogTitle>
           <DialogDescription>
-            OpenSSH, PEM (PKCS#1, PKCS#8, EC) and PuTTY (.ppk v2 / v3) keys are supported. The key never leaves Termstead.
+            OpenSSH, PEM (PKCS#1, PKCS#8, EC) and PuTTY (.ppk v2 / v3) keys are supported. The key never leaves AstraTerm.
           </DialogDescription>
         </DialogHeader>
         <DialogBody className="@container grid gap-4">
@@ -195,14 +195,14 @@ export default function ImportDialog({ mode: initialMode, initialText, onClose }
                   checked={remember}
                   onCheckedChange={(v) => setRemember(v === true)}
                   label="Remember the passphrase in the vault"
-                  description="Otherwise Termstead asks for it whenever the key is used."
+                  description="Otherwise AstraTerm asks for it whenever the key is used."
                 />
               )}
             </div>
           )}
           {mode === 'import' ? (
             <>
-              <Field label="Name" hint="How the key is listed in Termstead.">
+              <Field label="Name" hint="How the key is listed in AstraTerm.">
                 <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={defaultName || 'My key'} maxLength={200} />
               </Field>
               {!showCert ? (

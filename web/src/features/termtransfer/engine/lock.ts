@@ -85,7 +85,7 @@ export class TransferArbiter {
     if (opts.channel !== undefined) ch = opts.channel
     else if (typeof BroadcastChannel !== 'undefined') {
       try {
-        ch = new BroadcastChannel(opts.channelName ?? 'termstead:termtransfer') as unknown as BroadcastChannelLike
+        ch = new BroadcastChannel(opts.channelName ?? 'astraterm:termtransfer') as unknown as BroadcastChannelLike
       } catch {
         ch = null
       }

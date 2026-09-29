@@ -2,7 +2,7 @@
  * Editor-scoped shortcuts. The editor is a keyboard owner (`.monaco-editor`, and the editor roots marked
  * `data-keyboard-owner="editor"`): inside it the global dispatcher (src/app/keybindings.ts) only fires `essential`
  * commands — close / next / previous / n-th tab, lock, the ⇧⌘P palette — and leaves every other key to Monaco. The
- * editor's own Termstead commands (save, find, go to line, zoom, wrap, diff navigation, ...) are matched here instead, in
+ * editor's own AstraTerm commands (save, find, go to line, zoom, wrap, diff navigation, ...) are matched here instead, in
  * the capture phase on the editor's container, with the same (user-overridable) bindings; they win over Monaco's
  * keybindings for the same keys. Every other key (F1 command palette, ⌘K chords, multi-cursor, folding, ...) is
  * Monaco's.

@@ -12,7 +12,7 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 // Paced sending (TERM-17, AUTO-6, CC-8): text is typed line by line into one or more sessions with an optional
@@ -72,10 +72,10 @@ func (m *Module) pacedSend(c *echo.Context) error {
 		}
 	}
 	p := pacing{
-		lineDelay:     time.Duration(clampInt(req.LineDelayMs, 0, 60000)) * time.Millisecond,
-		charDelay:     time.Duration(clampInt(req.CharDelayMs, 0, 5000)) * time.Millisecond,
+		lineDelay:     time.Duration(min(max(req.LineDelayMs, 0), 60000)) * time.Millisecond,
+		charDelay:     time.Duration(min(max(req.CharDelayMs, 0), 5000)) * time.Millisecond,
 		waitPrompt:    req.WaitPrompt,
-		promptTimeout: time.Duration(clampInt(req.PromptTimeoutMs, 0, 600000)) * time.Millisecond,
+		promptTimeout: time.Duration(min(max(req.PromptTimeoutMs, 0), 600000)) * time.Millisecond,
 		enter:         req.Enter == nil || *req.Enter,
 	}
 	if p.promptTimeout == 0 {

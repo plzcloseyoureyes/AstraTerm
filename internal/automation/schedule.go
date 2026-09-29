@@ -12,14 +12,15 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/robfig/cron/v3"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 // Scheduled tasks (AUTO-12): a standard 5-field cron expression (minute hour day-of-month month day-of-week, names
 // allowed) or a descriptor (@hourly, @daily, @weekly, @monthly, @yearly, @every 15m), optionally prefixed with
 // CRON_TZ=<zone>, runs a command / snippet / script on connections as a batch run owned by the schedule's owner.
-// Tasks run only while Termstead runs; a run still in progress when the next one is due is skipped. Secrets need an
+// Tasks run only while AstraTerm runs; a run still in progress when the next one is due is skipped. Secrets need an
 // unlocked vault and interactive prompts (host keys, 2FA) fail the host because nobody may be watching.
 
 const minScheduleInterval = time.Minute
@@ -195,7 +196,7 @@ func (m *Module) runSchedule(ctx context.Context, id, origin string, started fun
 		}
 		// Keyed by the schedule (not the script) so the task's history ("show runs") lists it.
 		run = &Run{ID: model.NewID(), OwnerID: user.ID, Kind: RunScript, RefID: sch.ID, Name: name, Origin: origin,
-			Status: StatusRunning, StartedAt: now()}
+			Status: StatusRunning, StartedAt: store.Now()}
 		if err := m.repo.insertRun(ctx, run); err != nil {
 			m.scripts.release(user.ID)
 			return "", err
@@ -222,7 +223,7 @@ func (m *Module) runSchedule(ctx context.Context, id, origin string, started fun
 						emit(scriptLogEvent{Kind: "log", Level: "warn", Text: notice, TS: ts})
 					}
 				}})
-			fin := now()
+			fin := store.Now()
 			run.FinishedAt, run.Log = &fin, log.String()
 			switch {
 			case runErr == nil:
@@ -251,7 +252,7 @@ func (m *Module) runSchedule(ctx context.Context, id, origin string, started fun
 			return "", errTooManyBatches
 		}
 		run = &Run{ID: model.NewID(), OwnerID: user.ID, Kind: RunBatch, RefID: sch.ID, Name: name, Origin: origin,
-			Status: StatusRunning, Target: countOf(len(ids), "connection"), StartedAt: now()}
+			Status: StatusRunning, Target: countOf(len(ids), "connection"), StartedAt: store.Now()}
 		if err := m.repo.insertRun(ctx, run); err != nil {
 			m.batches.release(user.ID)
 			return "", err
@@ -278,7 +279,7 @@ func (m *Module) runSchedule(ctx context.Context, id, origin string, started fun
 		return run.ID, ctx.Err()
 	}
 	status := run.Status
-	if err := m.repo.setScheduleResult(context.WithoutCancel(ctx), sch.ID, now(), status, run.ID); err != nil {
+	if err := m.repo.setScheduleResult(context.WithoutCancel(ctx), sch.ID, store.Now(), status, run.ID); err != nil {
 		m.log.Debug("cannot record schedule result", "err", err)
 	}
 	m.notifySchedule(sch, run)
@@ -286,7 +287,7 @@ func (m *Module) runSchedule(ctx context.Context, id, origin string, started fun
 }
 
 func (m *Module) finishScheduleWithoutRun(ctx context.Context, sch *Schedule, user *model.User, msg string) {
-	_ = m.repo.setScheduleResult(context.WithoutCancel(ctx), sch.ID, now(), StatusError, "")
+	_ = m.repo.setScheduleResult(context.WithoutCancel(ctx), sch.ID, store.Now(), StatusError, "")
 	if sch.Notify != NotifyNever {
 		m.notify(user.ID, "error", "Scheduled task failed: "+sch.Name, msg)
 	}
@@ -526,7 +527,7 @@ type previewResponse struct {
 // previewSchedule validates a cron spec and lists its next activations (the UI's cron helper).
 func (m *Module) previewSchedule(c *echo.Context) error {
 	count, _ := strconv.Atoi(c.QueryParam("count"))
-	count = clampInt(count, 1, 20)
+	count = min(max(count, 1), 20)
 	if c.QueryParam("count") == "" {
 		count = 5
 	}

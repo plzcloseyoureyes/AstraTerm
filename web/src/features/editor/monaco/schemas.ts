@@ -79,6 +79,6 @@ const tsconfig = {
 }
 
 export const JSON_SCHEMAS: SchemaEntry[] = [
-  { uri: 'termstead://schemas/package.json', fileMatch: ['**/package.json'], schema: packageJson },
-  { uri: 'termstead://schemas/tsconfig.json', fileMatch: ['**/tsconfig.json', '**/tsconfig.*.json', '**/jsconfig.json'], schema: tsconfig },
+  { uri: 'astraterm://schemas/package.json', fileMatch: ['**/package.json'], schema: packageJson },
+  { uri: 'astraterm://schemas/tsconfig.json', fileMatch: ['**/tsconfig.json', '**/tsconfig.*.json', '**/jsconfig.json'], schema: tsconfig },
 ]

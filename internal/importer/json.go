@@ -7,19 +7,19 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
-// Termstead native JSON export/import (IMP-2/IMP-3). The document carries folders, connections, identities, keys and
+// AstraTerm native JSON export/import (IMP-2/IMP-3). The document carries folders, connections, identities, keys and
 // snippets. Secrets (connection/identity secret maps, private-key material and passphrases) are present only when the
 // export was passphrase-encrypted (see crypto.go); a plaintext export omits them, keeping only secretKeys as hints.
 
 const (
-	jsonFormatMarker    = "termstead-export"
-	jsonFormatEncrypted = "termstead-encrypted" // the crypto envelope's Envelope value
+	jsonFormatMarker    = "astraterm-export"
+	jsonFormatEncrypted = "astraterm-encrypted" // the crypto envelope's Envelope value
 	jsonExportVersion   = 1
-	payloadExport       = "termstead-export"
+	payloadExport       = "astraterm-export"
 )
 
 // exportDoc is the plaintext export document.
@@ -98,7 +98,7 @@ type exportSnippet struct {
 	Shortcut    string   `json:"shortcut,omitempty"`
 }
 
-func parseTermsteadJSON(content []byte, opts previewOptions) (*parsed, error) {
+func parseAstraTermJSON(content []byte, opts previewOptions) (*parsed, error) {
 	decrypted := false
 	if isEncryptedEnvelope(content) {
 		if opts.Passphrase == "" {
@@ -109,14 +109,14 @@ func parseTermsteadJSON(content []byte, opts previewOptions) (*parsed, error) {
 			return nil, err
 		}
 		if payload != payloadExport {
-			return nil, badRequest("this encrypted file is not a Termstead sessions export")
+			return nil, badRequest("this encrypted file is not a AstraTerm sessions export")
 		}
 		content, decrypted = pt, true
 	}
 	var doc exportDoc
 	dec := json.NewDecoder(strings.NewReader(string(content)))
 	if err := dec.Decode(&doc); err != nil {
-		return nil, badRequest("invalid Termstead JSON export: " + truncate(err.Error(), 200))
+		return nil, badRequest("invalid AstraTerm JSON export: " + truncate(err.Error(), 200))
 	}
 	if doc.Format != "" && doc.Format != jsonFormatMarker {
 		return nil, badRequest("unrecognised export format " + truncate(doc.Format, 40))
@@ -304,14 +304,14 @@ func parseTermsteadJSON(content []byte, opts previewOptions) (*parsed, error) {
 		return nil, badRequest("the export contains no connections")
 	}
 	if droppedPlainSecrets {
-		b.warn("Secrets and private keys found in this unencrypted file were ignored — only passphrase-encrypted Termstead exports carry secrets.")
+		b.warn("Secrets and private keys found in this unencrypted file were ignored — only passphrase-encrypted AstraTerm exports carry secrets.")
 	} else if droppedSecretHint {
 		b.warn("This export was not encrypted, so stored passwords/keys were not included. Re-export with a passphrase to carry secrets.")
 	}
 	return b.finish()
 }
 
-// reConnID matches a Termstead id (model.NewID: 20 lowercase base32 characters).
+// reConnID matches a AstraTerm id (model.NewID: 20 lowercase base32 characters).
 var reConnID = regexp.MustCompile(`^[a-z2-7]{20}$`)
 
 func resolveFolderTemp(m map[string]string, id string) string {

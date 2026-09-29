@@ -10,20 +10,19 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
-	"runtime"
 	"strconv"
 	"strings"
 	"syscall"
 	"testing"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
 // Regression tests of the files-backend review (security).
 
-// Server mode: an ordinary user's WebDAV / FTP / S3 / SMB connections must not reach the Termstead host's loopback
+// Server mode: an ordinary user's WebDAV / FTP / S3 / SMB connections must not reach the AstraTerm host's loopback
 // (or link-local / metadata addresses) — SSRF through a file browser.
 func TestFilesSSRFGuard(t *testing.T) {
 	env := servertest.New(t, func(c *config.Config) { c.Mode = config.ModeServer })
@@ -50,9 +49,6 @@ func TestFilesSSRFGuard(t *testing.T) {
 }
 
 func TestFilesReadRefusesSpecialFiles(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("FIFOs")
-	}
 	env := servertest.New(t)
 	admin := env.Setup("admin", pw)
 	f := openLocal(t, admin)
@@ -73,9 +69,6 @@ func TestFilesReadRefusesSpecialFiles(t *testing.T) {
 }
 
 func TestFilesDownloadHeaders(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("POSIX names")
-	}
 	env := servertest.New(t)
 	admin := env.Setup("admin", pw)
 	f := openLocal(t, admin)
@@ -103,9 +96,6 @@ func TestFilesDownloadHeaders(t *testing.T) {
 
 // Extraction must not write through a symlink that already exists in the destination, nor expand a zip bomb.
 func TestFilesExtractHardening(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("symlinks")
-	}
 	env := servertest.New(t)
 	admin := env.Setup("admin", pw)
 	f := openLocal(t, admin)

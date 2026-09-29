@@ -113,7 +113,7 @@ jobs:
         run: make dist
       - name: Smoke test (linux/amd64)
         run: |
-          bin=dist/build/linux_amd64/termstead
+          bin=dist/build/linux_amd64/astraterm
           "$bin" version
           export HOME="$RUNNER_TEMP/home" && mkdir -p "$HOME"
           "$bin" --listen 127.0.0.1:47822 --no-open --data-dir "$RUNNER_TEMP/data" &

@@ -16,11 +16,11 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 type handler struct {
@@ -29,14 +29,8 @@ type handler struct {
 	reg *Registry
 }
 
-// Mount registers the files API (SPEC §6.0 "Files" + §9 files-backend) and the FILE-2 shell integration, and
-// returns the registry (the transfer manager works on its handles).
-func Mount(d *app.Deps, c *core.Core) error {
-	_, err := MountRegistry(d, c)
-	return err
-}
-
-// MountRegistry is Mount returning the handle registry.
+// MountRegistry registers the files API (SPEC §6.0 "Files" + §9 files-backend) and the FILE-2 shell integration, and
+// returns the handle registry (the transfer manager works on its handles).
 func MountRegistry(d *app.Deps, c *core.Core) (*Registry, error) {
 	reg := NewRegistry(d, c)
 	h := &handler{d: d, c: c, reg: reg}

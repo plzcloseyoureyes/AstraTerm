@@ -20,7 +20,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 type tlsCertRequest struct {
@@ -78,7 +78,7 @@ func prepareTLSCert(_ context.Context, cl *call) (runner, error) {
 		}
 	}
 	req.Host = host
-	req.TimeoutMs = clampInt(orDefault(req.TimeoutMs, 10000), 500, 60000)
+	req.TimeoutMs = min(max(orDefault(req.TimeoutMs, 10000), 500), 60000)
 	cl.target = net.JoinHostPort(host, strconv.Itoa(req.Port))
 	guard := cl.guard
 	return func(ctx context.Context, out *sink) error { return runTLSCert(ctx, guard, &req, out) }, nil
@@ -343,7 +343,7 @@ func doStartTLS(conn net.Conn, proto, sni string) error {
 		if err := expect(code, 220, lines, err); err != nil {
 			return err
 		}
-		helo := orString(sni, "termstead.localdomain")
+		helo := orString(sni, "astraterm.localdomain")
 		if err := write("EHLO " + helo + "\r\n"); err != nil {
 			return err
 		}

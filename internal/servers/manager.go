@@ -17,10 +17,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	cfgpkg "github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	cfgpkg "github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // Server states.
@@ -73,7 +73,7 @@ type clientLister interface {
 	clientList() []ClientInfo
 }
 
-// Manager owns the embedded servers of this Termstead instance.
+// Manager owns the embedded servers of this AstraTerm instance.
 type Manager struct {
 	d       *app.Deps
 	log     *slog.Logger
@@ -125,7 +125,7 @@ func buildEnv(cfg *cfgpkg.Config) *env {
 		base, _ = os.Getwd()
 	}
 	if base != "" {
-		e.defaultRoot = filepath.Join(base, "TermsteadShare")
+		e.defaultRoot = filepath.Join(base, "AstraTermShare")
 	}
 	return e
 }
@@ -234,7 +234,7 @@ func (m *Manager) run() {
 	}
 }
 
-// shutdown stops every server (Termstead is exiting; nothing is written to the store).
+// shutdown stops every server (AstraTerm is exiting; nothing is written to the store).
 func (m *Manager) shutdown() {
 	m.closing.Store(true)
 	var wg sync.WaitGroup
@@ -243,7 +243,7 @@ func (m *Manager) shutdown() {
 		go func(s *slot) {
 			defer wg.Done()
 			s.op.Lock()
-			s.stopLocked(" (Termstead is shutting down)")
+			s.stopLocked(" (AstraTerm is shutting down)")
 			s.op.Unlock()
 		}(s)
 	}
@@ -377,7 +377,7 @@ func (e *startError) Error() string { return e.msg }
 // httpError renders the failure for the REST API.
 func (e *startError) httpError() error { return httpx.NewError(e.status, e.code, e.msg) }
 
-var errShuttingDown = &startError{status: http.StatusServiceUnavailable, code: "shutting_down", msg: "Termstead is shutting down"}
+var errShuttingDown = &startError{status: http.StatusServiceUnavailable, code: "shutting_down", msg: "AstraTerm is shutting down"}
 
 // start starts the server with its saved configuration (no-op when running).
 func (s *slot) start(ctx context.Context) (Status, error) {
@@ -796,7 +796,7 @@ func privilegeHint(port int) string {
 	if wildcardPrivilegedOK() {
 		return fmt.Sprintf("on macOS port %d can only be used without administrator rights when listening on every interface (0.0.0.0 or ::); or choose a port ≥ 1024", port)
 	}
-	return fmt.Sprintf("port %d is below 1024: run Termstead with administrator rights (or CAP_NET_BIND_SERVICE) or choose a port ≥ 1024", port)
+	return fmt.Sprintf("port %d is below 1024: run AstraTerm with administrator rights (or CAP_NET_BIND_SERVICE) or choose a port ≥ 1024", port)
 }
 
 // warnings lists security / usability caveats of a configuration (shown on the server card).
@@ -873,7 +873,7 @@ func (m *Manager) warnings(cfg config) []string {
 
 func (m *Manager) osUserName() string {
 	if m.osUser == "" {
-		return "the Termstead user"
+		return "the AstraTerm user"
 	}
 	return m.osUser
 }
@@ -888,7 +888,7 @@ type HostInfo struct {
 	PrivilegedPorts bool   `json:"privilegedPorts"`
 	// PrivilegedWildcardOK: ports below 1024 work without privileges on the wildcard address (macOS).
 	PrivilegedWildcardOK bool            `json:"privilegedWildcardOk"`
-	TermsteadPort        int             `json:"termsteadPort"`
+	AstraTermPort        int             `json:"astratermPort"`
 	Interfaces           []HostInterface `json:"interfaces"`
 }
 
@@ -903,7 +903,7 @@ type HostInterface struct {
 func (m *Manager) hostInfo() HostInfo {
 	h, _ := os.Hostname()
 	hi := HostInfo{Hostname: h, Platform: runtime.GOOS, OSUser: m.osUser, Home: m.env.home, DefaultRoot: m.env.defaultRoot,
-		PrivilegedPorts: privilegedPorts(), PrivilegedWildcardOK: wildcardPrivilegedOK(), TermsteadPort: m.env.nexPort,
+		PrivilegedPorts: privilegedPorts(), PrivilegedWildcardOK: wildcardPrivilegedOK(), AstraTermPort: m.env.nexPort,
 		Interfaces: []HostInterface{}}
 	ifs, _ := net.Interfaces()
 	for _, ifc := range ifs {

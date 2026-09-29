@@ -13,7 +13,7 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 // Log following (MON-5) over WS /ws/monitor/{id}/tail?path=…[&path=…]|journal=1[&unit=…]&lines=N[&sudo=1].

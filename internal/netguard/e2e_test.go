@@ -10,17 +10,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/netguard"
-	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/server/servertest"
 )
 
 const pw = "correct horse battery staple"
 
 func serverMode(c *config.Config) { c.Mode = config.ModeServer }
 
-// secretService is a loopback-only TCP service of the Termstead host (like another user's tunnel listener): it greets
+// secretService is a loopback-only TCP service of the AstraTerm host (like another user's tunnel listener): it greets
 // every client with a secret and counts connections.
 func secretService(t *testing.T) (port int, accepted *atomic.Int32) {
 	t.Helper()
@@ -85,7 +85,7 @@ func scrollback(t *testing.T, c *servertest.Client, id string) string {
 }
 
 // TestExploitRawTCPToLoopback reproduces the reported exploit: in server mode an ordinary user opened a raw TCP
-// session to 127.0.0.1:<port> on the Termstead host (another user's tunnel listener). It must now be refused with a
+// session to 127.0.0.1:<port> on the AstraTerm host (another user's tunnel listener). It must now be refused with a
 // clear error before any connection is made, while an administrator is unaffected.
 func TestExploitRawTCPToLoopback(t *testing.T) {
 	env := servertest.New(t, serverMode)

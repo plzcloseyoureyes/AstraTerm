@@ -35,7 +35,7 @@ export function loadIronRdp(): Promise<RdpModule> {
 }
 
 /**
- * The backend embeds its WebAssembly as a data: URL and fetch()es it, which Termstead's Content-Security-Policy
+ * The backend embeds its WebAssembly as a data: URL and fetch()es it, which AstraTerm's Content-Security-Policy
  * (connect-src 'self') forbids. While it initializes, fetch() answers that one URL from memory instead.
  */
 async function initWasm(init: (level: string) => Promise<void>): Promise<void> {
@@ -106,7 +106,7 @@ export function describeIronError(e: unknown): EngineError {
       })
     }
     case IronKind.ProxyConnect:
-      return new EngineError('Cannot reach the Termstead connection relay.', { preferServerMessage: true, code: 'network' })
+      return new EngineError('Cannot reach the AstraTerm connection relay.', { preferServerMessage: true, code: 'network' })
     case IronKind.NegotiationFailure:
       return new EngineError('Security negotiation failed' + (detail ? `: ${detail}` : '.'), { preferServerMessage: true })
   }
@@ -219,14 +219,14 @@ export class IronRdpAdapter implements EngineAdapter {
   }
 
   /**
-   * Printer redirection (GFX-9): the remote prints to "Termstead PDF" with the Microsoft Print to PDF driver; finished
+   * Printer redirection (GFX-9): the remote prints to "AstraTerm PDF" with the Microsoft Print to PDF driver; finished
    * jobs are saved by the browser.
    */
   private printing(rdp: RdpModule): unknown[] {
     const jobs = new Map<number, { parts: Uint8Array[]; size: number }>()
     const MAX_JOB = 256 << 20
     return [
-      rdp.printerName('Termstead PDF'),
+      rdp.printerName('AstraTerm PDF'),
       rdp.printerDriverName(rdp.PrinterDriverName.MicrosoftPrintToPdf),
       rdp.printJobStreamCallbacks({
         onJobStart: (id) => jobs.set(id, { parts: [], size: 0 }),
@@ -295,7 +295,7 @@ export class IronRdpAdapter implements EngineAdapter {
     if (!canvas) return
     this.canvas = canvas
     // Click-to-focus: the component focuses the canvas on mouseenter; only allow that when the viewer already has
-    // the keyboard or Termstead focuses it on purpose (mouse clicks focus the canvas natively).
+    // the keyboard or AstraTerm focuses it on purpose (mouse clicks focus the canvas natively).
     const nativeFocus = HTMLElement.prototype.focus
     const viewport = this.ctx.viewport
     canvas.focus = (opts?: FocusOptions) => {

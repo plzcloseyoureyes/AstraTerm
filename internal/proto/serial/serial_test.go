@@ -9,8 +9,8 @@ import (
 
 	goserial "go.bug.st/serial"
 
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 func TestBuildMode(t *testing.T) {
@@ -49,7 +49,7 @@ func TestBuildMode(t *testing.T) {
 }
 
 func TestClassifyOpenError(t *testing.T) {
-	_, err := goserial.Open("/nonexistent-termstead-serial-test", &goserial.Mode{BaudRate: 9600})
+	_, err := goserial.Open("/nonexistent-astraterm-serial-test", &goserial.Mode{BaudRate: 9600})
 	if err == nil {
 		t.Skip("unexpected success opening a bogus device")
 	}
@@ -116,7 +116,7 @@ func TestValidateDevicePaths(t *testing.T) {
 			t.Errorf("%q accepted", bad)
 		}
 	}
-	if err := validateDevice("/dev/ttyTERMSTEAD-not-plugged-in"); err != nil {
+	if err := validateDevice("/dev/ttyASTRATERM-not-plugged-in"); err != nil {
 		t.Errorf("a not (yet) present device under /dev must be accepted (replug): %v", err)
 	}
 	if err := validateDevice("/dev/null"); err != nil {

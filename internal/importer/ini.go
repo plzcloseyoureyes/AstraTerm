@@ -37,16 +37,6 @@ func (s *iniSection) get(key string) string {
 	return ""
 }
 
-// section returns the first section whose name matches (case-insensitive), or nil.
-func (f *iniFile) section(name string) *iniSection {
-	for _, s := range f.Sections {
-		if strings.EqualFold(s.Name, name) {
-			return s
-		}
-	}
-	return nil
-}
-
 // parseINI parses INI text into ordered sections. The first '=' splits key/value (values keep '#', '%', ';', '"' as
 // data); a line without '=' (comment, garbage) is ignored. Section headers are "[name]".
 func parseINI(content []byte) *iniFile {

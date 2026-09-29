@@ -6,7 +6,7 @@ import { useIsMobile } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 import { appearanceSettings } from '@/stores/settings'
 import { useUIStore } from '@/stores/ui'
-import { getPopoutWindows, onWorkspaceWindow, useActiveTab } from '@/stores/workspace'
+import { getPopoutWindows, onWorkspaceWindow, setTitleBarTabs, useActiveTab } from '@/stores/workspace'
 import { AboutDialog } from './AboutDialog'
 import { CommandPalette } from './CommandPalette'
 import { LockScreen, useAutoLock } from './LockScreen'
@@ -41,6 +41,10 @@ export function AppShell() {
   const a = appearanceSettings.use()
   const locked = useUIStore((s) => s.locked)
   const mobile = useIsMobile()
+  // Desktop: tabs live in the title bar (groups hide their own headers); with the title bar hidden, or on phones, each
+  // group shows its tabs itself.
+  const titleBarTabs = a.showMenuBar && !mobile
+  useEffect(() => setTitleBarTabs(titleBarTabs), [titleBarTabs])
   useAutoLock()
 
   useEffect(() => {
@@ -60,9 +64,9 @@ export function AppShell() {
   // Browser tab title follows the active dock tab.
   const activeTitle = useActiveTab()?.title
   useEffect(() => {
-    document.title = activeTitle ? `${activeTitle} — Termstead` : 'Termstead'
+    document.title = activeTitle ? `${activeTitle} — AstraTerm` : 'AstraTerm'
   }, [activeTitle])
-  useEffect(() => () => void (document.title = 'Termstead'), [])
+  useEffect(() => () => void (document.title = 'AstraTerm'), [])
 
   // Pop-out windows are outside this document: hide their content while the screen is locked (SEC-5).
   useEffect(() => {
@@ -81,15 +85,25 @@ export function AppShell() {
   return (
     <>
       <div
-        className={cn('flex h-full w-full flex-col bg-background transition-[filter] duration-200', locked && 'pointer-events-none blur-xl select-none')}
+        className={cn('flex h-full w-full flex-col bg-sidebar transition-[filter] duration-200', locked && 'pointer-events-none blur-xl select-none')}
         inert={locked}
         aria-hidden={locked || undefined}
       >
-        {(a.showMenuBar || mobile) && <MenuBar />}
+        {(a.showMenuBar || mobile) && <MenuBar tabs={titleBarTabs} />}
         {a.showRibbon && <Ribbon />}
         <div className="flex min-h-0 flex-1">
           {(a.showSidebar || mobile) && <Sidebar />}
-          <main className="relative min-w-0 flex-1 overflow-clip" aria-label="Workspace">
+          {/* Desktop: the workspace floats as one rounded card on the chrome surface — the only edge in the shell. */}
+          <main
+            className={cn(
+              'relative min-w-0 flex-1 overflow-clip bg-panel',
+              !mobile && 'mr-1.5 rounded-lg shadow-xs ring-1 ring-border/60',
+              !mobile && !a.showSidebar && 'ml-1.5',
+              !mobile && !a.showStatusBar && 'mb-1.5',
+              !mobile && !(a.showMenuBar || a.showRibbon) && 'mt-1.5',
+            )}
+            aria-label="Workspace"
+          >
             <Workspace />
           </main>
         </div>

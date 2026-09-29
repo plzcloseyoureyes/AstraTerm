@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-// telnetService is the Telnet server (SRV-6): password login, then a shell on a PTY (as the Termstead OS user).
+// telnetService is the Telnet server (SRV-6): password login, then a shell on a PTY (as the AstraTerm OS user).
 type telnetService struct {
 	m   *Manager
 	in  *instance
@@ -180,7 +180,7 @@ func (s *telnetService) login(tc *telnetConn, conn net.Conn, addr string) (strin
 	deadline := time.Now().Add(telnetLoginTimeout)
 	_ = conn.SetDeadline(deadline)
 	defer conn.SetDeadline(time.Time{})
-	_ = tc.writeString("\r\nTermstead telnet server\r\n\r\n")
+	_ = tc.writeString("\r\nAstraTerm telnet server\r\n\r\n")
 	for attempt, empty := 0, 0; attempt < telnetMaxAttempts; {
 		_ = tc.writeString("login: ")
 		name, err := tc.readLine(true)

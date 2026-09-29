@@ -59,8 +59,8 @@ representative at an online or offline event.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders responsible for enforcement at
-**conduct@TBD.example** <!-- TODO(owner): replace with the real address before publishing -->.
+reported privately to the community leaders responsible for enforcement through GitHub: use *Security → Report a
+vulnerability* on the repository and start the title with "Conduct:" (only the maintainers can see these reports).
 All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the

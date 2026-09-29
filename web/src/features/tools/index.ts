@@ -1,5 +1,5 @@
 /*
- * Tools feature: the 'tools' tab (network diagnostics, scanners, SNMP, SSH audit, throughput + offline utilities),
+ * Tools feature: the 'tools' tab (network diagnostics, scanners, SNMP, SSH audit, throughput),
  * the `tools.open {tool?, params?}` command (cross-module contract; `params` optionally prefills the tool's form) and
  * one palette command per tool, the "Tools" toolbar dropdown, and "Network tools" context submenus on
  * saved sessions and terminals (ping / trace / scan / audit the host).
@@ -42,7 +42,7 @@ registerCommand<{ tool?: string; params?: Record<string, unknown> } | string | u
   title: 'Tools',
   category: 'Tools',
   icon: Wrench,
-  keywords: ['network', 'ping', 'scan', 'dns', 'utilities'],
+  keywords: ['network', 'ping', 'scan', 'dns'],
   run: ({ args }) => {
     if (typeof args === 'string') return openTool(getTool(args) ? args : undefined)
     const tool = args && typeof args === 'object' && getTool(args.tool) ? args.tool : undefined
@@ -83,7 +83,7 @@ const toolsRibbon: RibbonButtonDef = {
   label: 'Tools',
   icon: Wrench,
   order: 30,
-  tooltip: 'Network tools & utilities',
+  tooltip: 'Network tools',
   command: 'tools.open',
   menu: ribbonToolsMenu,
 }

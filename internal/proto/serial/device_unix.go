@@ -16,7 +16,7 @@ const stopBits15Supported = false
 
 // validateDevice accepts only character devices under /dev (symlinks such as /dev/serial/by-id/... are resolved).
 // A device that does not exist (yet) is accepted: opening it reports "not found", and a replug is awaited on
-// reconnect. This keeps the serial endpoints from opening arbitrary files of the Termstead host.
+// reconnect. This keeps the serial endpoints from opening arbitrary files of the AstraTerm host.
 func validateDevice(dev string) error {
 	if dev == "" || !filepath.IsAbs(dev) || strings.ContainsRune(dev, 0) {
 		return fmt.Errorf("serial: %q is not a device path (e.g. /dev/ttyUSB0)", dev)

@@ -17,20 +17,20 @@ const SORT = { sortBy: 'name', sortDesc: false, foldersFirst: true }
 const SHOW = { showHidden: false, showPartial: false, filter: '' }
 
 test('partial uploads: recognised by suffix, files only', () => {
-  assert.equal(PART_SUFFIX, '.termstead-part')
-  assert.equal(isPartialUpload(file('big.iso.termstead-part')), true)
-  assert.equal(isPartialUpload(file('.bashrc.termstead-part')), true)
-  assert.equal(isPartialUpload(file('.termstead-part')), false) // no target name: a regular (hidden) file
-  assert.equal(isPartialUpload(file('termstead-part')), false)
-  assert.equal(isPartialUpload(dir('odd.termstead-part')), false)
+  assert.equal(PART_SUFFIX, '.astraterm-part')
+  assert.equal(isPartialUpload(file('big.iso.astraterm-part')), true)
+  assert.equal(isPartialUpload(file('.bashrc.astraterm-part')), true)
+  assert.equal(isPartialUpload(file('.astraterm-part')), false) // no target name: a regular (hidden) file
+  assert.equal(isPartialUpload(file('astraterm-part')), false)
+  assert.equal(isPartialUpload(dir('odd.astraterm-part')), false)
 })
 
-test('visibleRows hides .termstead-part files unless shown, and hidden files unless shown', () => {
-  const sorted = sortEntries([file('a.txt'), file('a.txt.termstead-part'), file('.env'), dir('sub'), file('.x.termstead-part')], SORT)
+test('visibleRows hides .astraterm-part files unless shown, and hidden files unless shown', () => {
+  const sorted = sortEntries([file('a.txt'), file('a.txt.astraterm-part'), file('.env'), dir('sub'), file('.x.astraterm-part')], SORT)
   assert.deepEqual(names(visibleRows(sorted, '/d', SHOW)), ['..', 'sub', 'a.txt'])
-  assert.deepEqual(names(visibleRows(sorted, '/d', { ...SHOW, showPartial: true })), ['..', 'sub', 'a.txt', 'a.txt.termstead-part'])
+  assert.deepEqual(names(visibleRows(sorted, '/d', { ...SHOW, showPartial: true })), ['..', 'sub', 'a.txt', 'a.txt.astraterm-part'])
   assert.deepEqual(names(visibleRows(sorted, '/d', { ...SHOW, showHidden: true })), ['..', 'sub', '.env', 'a.txt'])
-  assert.deepEqual(names(visibleRows(sorted, '/d', { ...SHOW, showHidden: true, showPartial: true })), ['..', 'sub', '.env', '.x.termstead-part', 'a.txt', 'a.txt.termstead-part'])
+  assert.deepEqual(names(visibleRows(sorted, '/d', { ...SHOW, showHidden: true, showPartial: true })), ['..', 'sub', '.env', '.x.astraterm-part', 'a.txt', 'a.txt.astraterm-part'])
   // What an "empty" view explains: partial uploads are counted apart from dot files.
   assert.deepEqual(hiddenCounts(sorted, SHOW), { hidden: 1, partial: 2 })
   assert.deepEqual(hiddenCounts(sorted, { showHidden: true, showPartial: false }), { hidden: 0, partial: 2 })

@@ -11,12 +11,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/netguard"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // SEC-7: direct (non-routed) rlogin / rsh dials of a restricted user are vetted by netguard.
@@ -30,7 +30,7 @@ var (
 	root  = &model.User{ID: "u-admin", Username: "admin", Role: model.RoleAdmin}
 )
 
-// loopbackService is a loopback-only listener of the Termstead host that counts the connections reaching it.
+// loopbackService is a loopback-only listener of the AstraTerm host that counts the connections reaching it.
 func loopbackService(t *testing.T) (port int, accepted *atomic.Int32) {
 	t.Helper()
 	ln, err := net.Listen("tcp", "127.0.0.1:0")

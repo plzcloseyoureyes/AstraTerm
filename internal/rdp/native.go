@@ -19,13 +19,13 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
-// CC-15 native client launch (desktop mode only: the client opens on the machine running Termstead). Connections that
-// need Termstead's gateway routing (SSH gateway, jump hosts, proxy) are launched against a loopback forwarder. The
+// CC-15 native client launch (desktop mode only: the client opens on the machine running AstraTerm). Connections that
+// need AstraTerm's gateway routing (SSH gateway, jump hosts, proxy) are launched against a loopback forwarder. The
 // password is injected where the client allows it without writing it to disk: Windows Credential Manager (cmdkey,
 // removed again after the client started) and FreeRDP's stdin.
 
@@ -72,7 +72,7 @@ type launchResult struct {
 }
 
 var errDesktopOnly = httpx.NewError(http.StatusForbidden, "desktop_only",
-	"native clients can only be launched in desktop mode (Termstead runs on this computer)")
+	"native clients can only be launched in desktop mode (AstraTerm runs on this computer)")
 
 // handleLaunchConnection serves POST /api/connections/{id}/launch-native.
 func (h *handler) handleLaunchConnection(c *echo.Context) error {
@@ -269,7 +269,7 @@ func (n *nativeLauncher) writeTempFile(data []byte) (string, error) {
 	}
 	var rnd [8]byte
 	_, _ = rand.Read(rnd[:])
-	path := filepath.Join(dir, "termstead-"+hex.EncodeToString(rnd[:])+".rdp")
+	path := filepath.Join(dir, "astraterm-"+hex.EncodeToString(rnd[:])+".rdp")
 	if err := os.WriteFile(path, data, 0o600); err != nil {
 		return "", err
 	}

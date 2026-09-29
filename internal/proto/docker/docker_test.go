@@ -14,9 +14,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 func TestShellCommand(t *testing.T) {
@@ -69,8 +69,8 @@ func TestDemuxReader(t *testing.T) {
 
 // TestDockerExecAgainstTestEnv execs a command in the shared test container over the local Docker socket.
 func TestDockerExecAgainstTestEnv(t *testing.T) {
-	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
-		t.Skip("set TERMSTEAD_TESTENV=1 to run against the docker test environment")
+	if os.Getenv("ASTRATERM_TESTENV") != "1" {
+		t.Skip("set ASTRATERM_TESTENV=1 to run against the docker test environment")
 	}
 	dial, _, err := newEngineDialer("")
 	if err != nil {
@@ -87,16 +87,16 @@ func TestDockerExecAgainstTestEnv(t *testing.T) {
 	}
 	target := ""
 	for _, c := range list {
-		if c.Name == "termstead-testenv-web-1" {
+		if c.Name == "astraterm-testenv-web-1" {
 			target = c.ID
 		}
 	}
 	if target == "" {
-		t.Skip("termstead-testenv-web-1 not found")
+		t.Skip("astraterm-testenv-web-1 not found")
 	}
 	execID, err := eng.execCreate(ctx, target, execConfig{
 		AttachStdout: true, AttachStderr: true, Tty: true,
-		Cmd: []string{"/bin/sh", "-c", "echo TERMSTEAD_DOCKER_OK"},
+		Cmd: []string{"/bin/sh", "-c", "echo ASTRATERM_DOCKER_OK"},
 	})
 	if err != nil {
 		t.Fatalf("execCreate: %v", err)
@@ -108,7 +108,7 @@ func TestDockerExecAgainstTestEnv(t *testing.T) {
 	defer conn.Close()
 	_ = conn.SetReadDeadline(time.Now().Add(8 * time.Second))
 	out, _ := io.ReadAll(br)
-	if !bytes.Contains(out, []byte("TERMSTEAD_DOCKER_OK")) {
+	if !bytes.Contains(out, []byte("ASTRATERM_DOCKER_OK")) {
 		t.Fatalf("exec output missing marker: %q", out)
 	}
 }
@@ -116,15 +116,15 @@ func TestDockerExecAgainstTestEnv(t *testing.T) {
 // TestDockerSessionBackendsAgainstTestEnv drives the real opener (exec and logs modes) against the shared test
 // container: TERM, the initial size, resize, the exit status and a clean end.
 func TestDockerSessionBackendsAgainstTestEnv(t *testing.T) {
-	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
-		t.Skip("set TERMSTEAD_TESTENV=1 to run against the docker test environment")
+	if os.Getenv("ASTRATERM_TESTENV") != "1" {
+		t.Skip("set ASTRATERM_TESTENV=1 to run against the docker test environment")
 	}
 	if _, _, err := newEngineDialer(""); err != nil {
 		t.Skipf("no docker engine: %v", err)
 	}
 	m := &module{d: &app.Deps{}}
 	user := &model.User{ID: "u1", Role: model.RoleAdmin}
-	conn := &model.Connection{Protocol: model.ProtoDocker, Options: model.Options{"container": "termstead-testenv-web-1"}}
+	conn := &model.Connection{Protocol: model.ProtoDocker, Options: model.Options{"container": "astraterm-testenv-web-1"}}
 	be, err := m.open(context.Background(), term.OpenRequest{Connection: conn, User: user})
 	if err != nil {
 		t.Fatalf("open exec: %v", err)
@@ -155,7 +155,7 @@ func TestDockerSessionBackendsAgainstTestEnv(t *testing.T) {
 	}
 	be.Close()
 
-	logsConn := &model.Connection{Protocol: model.ProtoDocker, Options: model.Options{"container": "termstead-testenv-web-1", "dockerMode": "logs", "logTail": 5}}
+	logsConn := &model.Connection{Protocol: model.ProtoDocker, Options: model.Options{"container": "astraterm-testenv-web-1", "dockerMode": "logs", "logTail": 5}}
 	lb, err := m.open(context.Background(), term.OpenRequest{Connection: logsConn, User: user})
 	if err != nil {
 		t.Fatalf("open logs: %v", err)
@@ -169,7 +169,7 @@ func TestDockerSessionBackendsAgainstTestEnv(t *testing.T) {
 	}
 
 	// Unknown containers fail permanently with the engine's message.
-	bad := &model.Connection{Protocol: model.ProtoDocker, Options: model.Options{"container": "termstead-no-such-container"}}
+	bad := &model.Connection{Protocol: model.ProtoDocker, Options: model.Options{"container": "astraterm-no-such-container"}}
 	if _, err := m.open(context.Background(), term.OpenRequest{Connection: bad, User: user}); err == nil || !term.IsPermanent(err) || !strings.Contains(err.Error(), "No such container") {
 		t.Fatalf("missing container: %v", err)
 	}

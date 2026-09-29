@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 // Password-based key derivations of imported key files (bcrypt_pbkdf of OpenSSH keys, Argon2 of PPK v3 files,

@@ -114,7 +114,7 @@ function ScheduleEditor({ schedule, onClose }: { schedule?: Schedule; onClose: (
           <DialogTitle>
             <CalendarClock className="size-4 text-primary" /> {schedule ? 'Edit scheduled task' : 'New scheduled task'}
           </DialogTitle>
-          <DialogDescription>Runs while Termstead is running. Stored passwords need an unlocked vault; prompts (host keys, 2FA) make a host fail.</DialogDescription>
+          <DialogDescription>Runs while AstraTerm is running. Stored passwords need an unlocked vault; prompts (host keys, 2FA) make a host fail.</DialogDescription>
         </DialogHeader>
         <DialogBody className="flex flex-col gap-3">
           <Field label="Name" required>

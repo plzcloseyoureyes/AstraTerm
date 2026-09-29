@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -14,9 +15,9 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 type handler struct {
@@ -152,7 +153,7 @@ func (h *handler) validate(ctx context.Context, u *model.User, rec *record) erro
 	if _, err := h.sshConnection(ctx, u, rec.ConnectionID); err != nil {
 		return err
 	}
-	if rec.Options.SocksUsername != "" && !hasKey(rec.SecretKeys, secretSocksPassword) {
+	if rec.Options.SocksUsername != "" && !slices.Contains(rec.SecretKeys, secretSocksPassword) {
 		return httpx.BadRequest("a SOCKS password is required with a SOCKS username")
 	}
 	// Policy / proxy exposure checks on the would-be runtime spec (the password value does not matter here).
@@ -165,15 +166,6 @@ func (h *handler) validate(ctx context.Context, u *model.User, rec *record) erro
 		return err
 	}
 	return h.m.policy(u, sp)
-}
-
-func hasKey(keys []string, k string) bool {
-	for _, x := range keys {
-		if x == k {
-			return true
-		}
-	}
-	return false
 }
 
 // applySecrets merges a write-only secrets patch (omitted = unchanged, "" = delete) into the sealed secrets.
@@ -638,7 +630,7 @@ func (h *handler) reorder(c *echo.Context) error {
 	return httpx.OK(c)
 }
 
-// checkBind reports whether a listen address on the Termstead host is usable (editor pre-flight check, TUN-1/TUN-2).
+// checkBind reports whether a listen address on the AstraTerm host is usable (editor pre-flight check, TUN-1/TUN-2).
 func (h *handler) checkBind(c *echo.Context) error {
 	var req struct {
 		BindHost   string `json:"bindHost"`
@@ -749,7 +741,7 @@ func (h *handler) export(c *echo.Context) error {
 		}
 		file.Tunnels = append(file.Tunnels, et)
 	}
-	name := "termstead-tunnels-" + time.Now().Format("20060102") + ".json"
+	name := "astraterm-tunnels-" + time.Now().Format("20060102") + ".json"
 	c.Response().Header().Set("Content-Disposition", `attachment; filename="`+name+`"`)
 	return c.JSON(http.StatusOK, file)
 }
@@ -796,7 +788,7 @@ func (h *handler) importTunnels(c *echo.Context) error {
 		return err
 	}
 	if req.File.Format != exportFormat {
-		return httpx.BadRequest("not a Termstead tunnels export file")
+		return httpx.BadRequest("not a AstraTerm tunnels export file")
 	}
 	if len(req.File.Tunnels) > maxTunnelsPerUser {
 		return httpx.BadRequest(fmt.Sprintf("at most %d tunnels per import", maxTunnelsPerUser))

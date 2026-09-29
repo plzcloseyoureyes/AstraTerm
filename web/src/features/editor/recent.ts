@@ -3,7 +3,7 @@ import { storage } from '@/lib/utils'
 import { currentUserId } from './docstore'
 import type { RecentFile } from './types'
 
-const LEGACY_KEY = 'termstead:editor:recent:v1'
+const LEGACY_KEY = 'astraterm:editor:recent:v1'
 const MAX = 15
 
 const keyOf = () => `${LEGACY_KEY}:${currentUserId()}`

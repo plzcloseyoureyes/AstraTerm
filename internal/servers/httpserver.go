@@ -146,7 +146,7 @@ func (s *httpService) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r.Body = &stallReader{ReadCloser: r.Body, rc: rc}
 	}
 	h := w.Header()
-	h.Set("Server", "Termstead")
+	h.Set("Server", "AstraTerm")
 	h.Set("X-Content-Type-Options", "nosniff")
 	h.Set("Referrer-Policy", "no-referrer")
 	h.Set("X-Frame-Options", "SAMEORIGIN")
@@ -249,7 +249,7 @@ func allowedMethods(readOnly bool) string {
 }
 
 func (s *httpService) challenge(w http.ResponseWriter) {
-	w.Header().Set("WWW-Authenticate", `Basic realm="Termstead file server", charset="UTF-8"`)
+	w.Header().Set("WWW-Authenticate", `Basic realm="AstraTerm file server", charset="UTF-8"`)
 	http.Error(w, "Authentication required", http.StatusUnauthorized)
 }
 
@@ -322,7 +322,7 @@ func (s *httpService) serveFile(w *statusWriter, r *http.Request, p string, fi o
 	tf := &transferFile{File: f, name: p}
 	defer tf.Close()
 	h := w.Header()
-	// User content runs in an opaque origin: scripts in shared HTML files cannot reach Termstead (same site, other port).
+	// User content runs in an opaque origin: scripts in shared HTML files cannot reach AstraTerm (same site, other port).
 	h.Set("Content-Security-Policy", "sandbox allow-scripts allow-forms allow-popups allow-modals allow-downloads")
 	if _, dl := r.URL.Query()["download"]; dl {
 		h.Set("Content-Disposition", contentDisposition(fi.Name()))
@@ -412,7 +412,7 @@ button{padding:4px 12px;border:1px solid var(--line);border-radius:6px;backgroun
 {{range .Entries}}<tr><td class="name"><span class="icon">{{if .Dir}}📁{{else if .Link}}🔗{{else}}📄{{end}}</span><a href="{{.Href}}">{{.Name}}{{if .Dir}}/{{end}}</a>{{if not .Dir}}<a class="dl" href="{{.Href}}?download" title="Download">⤓</a>{{end}}</td><td class="num">{{.Size}}</td><td>{{.Modified}}</td></tr>
 {{else}}<tr><td class="name" colspan="3" style="color:var(--muted)">This folder is empty.</td></tr>{{end}}
 </tbody></table>
-<footer>{{.Count}} item(s) · Termstead HTTP file server</footer>
+<footer>{{.Count}} item(s) · AstraTerm HTTP file server</footer>
 </main></body></html>`))
 
 func (s *httpService) serveListing(rq *httpRequest, p string) {
@@ -555,9 +555,9 @@ func (s *httpService) writeAtomic(dir, name string, src io.Reader, limit int64) 
 		}
 		existed = true
 	}
-	tmp := path.Join(dir, "."+name+".termstead-part-"+randomSuffix())
+	tmp := path.Join(dir, "."+name+".astraterm-part-"+randomSuffix())
 	if len(path.Base(tmp)) > 255 {
-		tmp = path.Join(dir, ".termstead-part-"+randomSuffix())
+		tmp = path.Join(dir, ".astraterm-part-"+randomSuffix())
 	}
 	f, err := s.fs.OpenFile(tmp, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
 	if err != nil {

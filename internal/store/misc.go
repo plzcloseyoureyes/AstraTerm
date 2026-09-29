@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/termstead/termstead/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
 )
 
 // ---- settings -----------------------------------------------------------------------------------------------------
@@ -220,7 +220,7 @@ func (r *Audit) List(ctx context.Context, f AuditFilter) ([]model.AuditEntry, er
 		if err := rows.Scan(&e.ID, &ts, &e.UserID, &e.Username, &e.Action, &e.Target, &details, &e.IP); err != nil {
 			return nil, err
 		}
-		e.TS = fromMs(ts)
+		e.TS = FromMs(ts)
 		if details.Valid && details.String != "" {
 			e.Details = json.RawMessage(details.String)
 		}
@@ -255,7 +255,7 @@ func scanRecording(sc scanner) (*model.Recording, error) {
 		&rec.Cols, &rec.Rows, &started, &ended); err != nil {
 		return nil, mapErr(err)
 	}
-	rec.StartedAt, rec.EndedAt = fromMs(started), fromNullMs(ended)
+	rec.StartedAt, rec.EndedAt = FromMs(started), FromNullMs(ended)
 	return &rec, nil
 }
 
@@ -285,7 +285,7 @@ func (r *Recordings) Create(ctx context.Context, rec *model.Recording) error {
 	}
 	_, err := r.db.ExecContext(ctx, `INSERT INTO recordings (`+recordingCols+`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		rec.ID, rec.OwnerID, rec.SessionID, rec.ConnectionID, rec.Title, rec.Kind, rec.Path, rec.Size, rec.Cols, rec.Rows,
-		ms(rec.StartedAt), nullMs(rec.EndedAt))
+		ms(rec.StartedAt), NullMs(rec.EndedAt))
 	return mapErr(err)
 }
 
@@ -310,7 +310,7 @@ func (r *Recordings) ListBySession(ctx context.Context, sessionID string) ([]*mo
 // Update saves title, size, geometry and end time.
 func (r *Recordings) Update(ctx context.Context, rec *model.Recording) error {
 	return expectOne(r.db.ExecContext(ctx, `UPDATE recordings SET title = ?, size = ?, cols = ?, rows = ?, ended_at = ? WHERE id = ?`,
-		rec.Title, rec.Size, rec.Cols, rec.Rows, nullMs(rec.EndedAt), rec.ID))
+		rec.Title, rec.Size, rec.Cols, rec.Rows, NullMs(rec.EndedAt), rec.ID))
 }
 
 // Delete removes the metadata row (the caller deletes the file).
@@ -333,7 +333,7 @@ func scanShare(sc scanner) (*model.ShareLink, error) {
 	if err := sc.Scan(&s.ID, &s.TokenHash, &s.SessionID, &s.OwnerID, &s.Mode, &created, &expires); err != nil {
 		return nil, mapErr(err)
 	}
-	s.CreatedAt, s.ExpiresAt = fromMs(created), fromMs(expires)
+	s.CreatedAt, s.ExpiresAt = FromMs(created), FromMs(expires)
 	return &s, nil
 }
 

@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/termstead/termstead/internal/auth"
+	"github.com/plzcloseyoureyes/astraterm/internal/auth"
 )
 
 // Read-only users of the HTTP server cannot upload (the per-user flag used to be ignored), and non-canonical paths

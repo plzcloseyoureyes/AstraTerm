@@ -8,7 +8,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"syscall"
 	"testing"
@@ -130,9 +129,6 @@ func unrestricted(t *testing.T) *localFS {
 }
 
 func TestSafeWriteAtomicKeepsModeAndReplacesInode(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("POSIX")
-	}
 	l := unrestricted(t)
 	dir := t.TempDir()
 	p := filepath.Join(dir, "conf.txt")
@@ -166,9 +162,6 @@ func TestSafeWriteAtomicKeepsModeAndReplacesInode(t *testing.T) {
 }
 
 func TestSafeWriteHardLinkStaysInPlace(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("POSIX")
-	}
 	l := unrestricted(t)
 	dir := t.TempDir()
 	p, other := filepath.Join(dir, "a.txt"), filepath.Join(dir, "b.txt")
@@ -191,9 +184,6 @@ func TestSafeWriteHardLinkStaysInPlace(t *testing.T) {
 }
 
 func TestSafeWriteFollowsSymlink(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("POSIX")
-	}
 	l := unrestricted(t)
 	dir := t.TempDir()
 	real := filepath.Join(dir, "real")
@@ -223,9 +213,6 @@ func TestSafeWriteFollowsSymlink(t *testing.T) {
 
 // A connection drop at any step of the save must leave the original file untouched and no temporary file behind.
 func TestSafeWriteDropKeepsOriginal(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("POSIX")
-	}
 	for _, tc := range []struct {
 		name string
 		fs   func(FS) *flakyFS
@@ -256,9 +243,6 @@ func TestSafeWriteDropKeepsOriginal(t *testing.T) {
 }
 
 func TestSafeWriteOwnerNotKeptFallsBackInPlace(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("POSIX")
-	}
 	dir := t.TempDir()
 	p := filepath.Join(dir, "theirs.txt")
 	os.WriteFile(p, []byte("owned by someone else"), 0o666)
@@ -279,7 +263,7 @@ func TestSafeWriteOwnerNotKeptFallsBackInPlace(t *testing.T) {
 }
 
 func TestSafeWriteReadOnlyFolderFallsBackInPlace(t *testing.T) {
-	if runtime.GOOS == "windows" || os.Geteuid() == 0 {
+	if os.Geteuid() == 0 {
 		t.Skip("needs POSIX permissions as a normal user")
 	}
 	dir := t.TempDir()
@@ -297,9 +281,6 @@ func TestSafeWriteReadOnlyFolderFallsBackInPlace(t *testing.T) {
 }
 
 func TestSafeWriteJailAndProtocols(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("POSIX")
-	}
 	l, dir := newJail(t)
 	mustWrite(t, l, "/doc.txt", "one")
 	if s, err := writeFileSafe(bg, l, "/doc.txt", []byte("two")); err != nil || s != writeAtomic {

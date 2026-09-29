@@ -12,7 +12,7 @@ import (
 
 func TestRun(t *testing.T) {
 	dir := t.TempDir()
-	big := strings.Repeat("export const termstead = 'workspace';\n", 200)
+	big := strings.Repeat("export const astraterm = 'workspace';\n", 200)
 	files := map[string]string{
 		"index.html":          "<!doctype html>" + strings.Repeat(" ", 4096), // top level: never touched
 		"assets/app-1.js":     big,

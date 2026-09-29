@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 type wolRequest struct {
@@ -76,7 +76,7 @@ func prepareWOL(ctx context.Context, cl *call) (runner, error) {
 	if req.Port < 1 || req.Port > 65535 {
 		return nil, httpx.BadRequest("invalid port")
 	}
-	req.Count = clampInt(orDefault(req.Count, 1), 1, 20)
+	req.Count = min(max(orDefault(req.Count, 1), 1), 20)
 	bcast := strings.TrimSpace(req.Broadcast)
 	if bcast == "" {
 		bcast = "255.255.255.255"

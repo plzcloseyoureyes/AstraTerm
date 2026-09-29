@@ -13,7 +13,7 @@ import { cn, storage } from '@/lib/utils'
 import { appearanceSettings } from '@/stores/settings'
 import { useUIStore } from '@/stores/ui'
 
-const HISTORY_KEY = 'termstead:quickconnect-history'
+const HISTORY_KEY = 'astraterm:quickconnect-history'
 const MAX_HISTORY = 20
 
 export function getQuickConnectHistory(): string[] {
@@ -36,12 +36,13 @@ function removeHistory(text: string) {
   )
 }
 
-/** The toolbar (ribbon) shows its quick-connect field: shown with the toolbar, except on phones. Other places (Home)
- *  render their own field only when this is false, so there is never a second field on screen. */
+/** A bar shows the quick-connect *field*: only the toolbar row when the title bar is hidden (the title bar has a button
+ *  that opens it in a popover) — never on phones. Home renders its own large field when this is false, so there is
+ *  never a second field on screen. */
 export function useToolbarQuickConnect(): boolean {
-  const showRibbon = appearanceSettings.useValue('showRibbon')
+  const a = appearanceSettings.use()
   const mobile = useIsMobile()
-  return showRibbon && !mobile
+  return a.showRibbon && !a.showMenuBar && !mobile
 }
 
 /** Run quick connect for a spec ("ssh user@host:22", "telnet://10.0.0.1", ...) and remember it. */
@@ -116,6 +117,8 @@ export function QuickConnect({
   autoFocus,
   primary = false,
   size = 'md',
+  inline = false,
+  onDone,
 }: {
   className?: string
   autoFocus?: boolean
@@ -123,6 +126,10 @@ export function QuickConnect({
   primary?: boolean
   /** 'lg': the Home launcher. */
   size?: 'md' | 'lg'
+  /** Suggestions always listed below the field, in the flow (inside the title bar's quick-connect popover). */
+  inline?: boolean
+  /** Called after a connection was opened (the popover closes). */
+  onDone?: () => void
 }) {
   const [value, setValue] = useState('')
   const [open, setOpen] = useState(false)
@@ -153,6 +160,7 @@ export function QuickConnect({
     setValue('')
     setHistory(getQuickConnectHistory())
     inputRef.current?.blur()
+    onDone?.()
   }
 
   const choose = async (s: Suggestion | undefined) => {
@@ -171,15 +179,17 @@ export function QuickConnect({
     if (await submitQuickConnect(s.text)) done()
   }
 
-  const showList = open && suggestions.length > 0
+  const showList = (open || inline) && suggestions.length > 0
   let lastKind: Suggestion['kind'] | null = null
 
   return (
     <div className={cn('relative', className)}>
       <div
         className={cn(
-          'flex items-center gap-1.5 rounded-md border border-input bg-background/70 pr-1 pl-2 shadow-xs dark:bg-input/25',
+          'flex items-center gap-1.5 rounded-md border pr-1 pl-2',
           'focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/25',
+          // In a bar: a soft filled field; the Home launcher keeps its outlined, raised look.
+          lg ? 'border-input bg-background/70 shadow-xs dark:bg-input/25' : 'border-transparent bg-foreground/6 hover:bg-foreground/8 focus-within:bg-transparent',
           lg ? 'h-9 pl-3' : 'h-7',
           !available && 'opacity-60',
         )}
@@ -252,7 +262,7 @@ export function QuickConnect({
           id={listId}
           role="listbox"
           aria-label="Suggestions"
-          className="absolute top-full right-0 left-0 z-50 mt-1 max-h-80 overflow-auto rounded-md border bg-popover p-1 shadow-popover"
+          className={cn('max-h-80 overflow-auto', inline ? 'mt-1.5' : 'absolute top-full right-0 left-0 z-50 mt-1 rounded-md border bg-popover p-1 shadow-popover')}
         >
           {suggestions.map((s, i) => {
             const header = s.kind !== lastKind

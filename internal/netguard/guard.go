@@ -15,10 +15,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
 )
 
 // CodeBlocked is the API error code of a refused destination (HTTP 403).
@@ -47,12 +47,12 @@ func newBlocked(d Decision, addr string) *BlockedError {
 	if target == "" {
 		target = d.IP
 	}
-	msg := fmt.Sprintf("connection to %s is not allowed in server mode (Termstead network policy): %s", target, d.Reason)
+	msg := fmt.Sprintf("connection to %s is not allowed in server mode (AstraTerm network policy): %s", target, d.Reason)
 	switch d.Class {
 	case ClassPort, ClassLocalSocket, ClassInvalid:
 	default:
 		if d.IP != "" {
-			msg = fmt.Sprintf("connection to %s is not allowed in server mode (Termstead network policy): %s is %s", target, d.IP, d.Reason)
+			msg = fmt.Sprintf("connection to %s is not allowed in server mode (AstraTerm network policy): %s is %s", target, d.IP, d.Reason)
 		}
 	}
 	return &BlockedError{Decision: d, Addr: addr, http: httpx.NewError(http.StatusForbidden, CodeBlocked, msg)}
@@ -72,7 +72,7 @@ func IsBlocked(err error) (*BlockedError, bool) {
 
 // ---- manager ------------------------------------------------------------------------------------------------------
 
-// Manager holds the live policy of one Termstead instance (per *app.Deps).
+// Manager holds the live policy of one AstraTerm instance (per *app.Deps).
 type Manager struct {
 	d   *app.Deps
 	log *slog.Logger
@@ -220,7 +220,7 @@ func clonePolicy(p Policy) Policy {
 	return p
 }
 
-// newEnv describes Termstead's own listener (Cfg.Listen) and host addresses.
+// newEnv describes AstraTerm's own listener (Cfg.Listen) and host addresses.
 func newEnv(d *app.Deps) *env {
 	e := &env{hostAddrs: hostAddrs}
 	if d.Cfg == nil {
@@ -294,13 +294,13 @@ func hostAddrs() map[netip.Addr]bool {
 // ---- guard --------------------------------------------------------------------------------------------------------
 
 // Guard vets the destinations of one restricted user. A nil *Guard allows everything. The zero Guard (no manager)
-// applies DefaultPolicy without knowledge of Termstead's listener or host addresses (tests, stand-alone use).
+// applies DefaultPolicy without knowledge of AstraTerm's listener or host addresses (tests, stand-alone use).
 type Guard struct {
 	m   *Manager
 	pol *compiled // fixed policy (NewGuard); nil = the manager's live policy
 }
 
-// NewGuard returns a guard with a fixed policy (no knowledge of Termstead's listener or host addresses).
+// NewGuard returns a guard with a fixed policy (no knowledge of AstraTerm's listener or host addresses).
 func NewGuard(p Policy) (*Guard, error) {
 	c, err := compile(p)
 	if err != nil {
@@ -369,14 +369,14 @@ func (g *Guard) CheckIP(ip net.IP, port int) error {
 }
 
 // Control is a net.Dialer.Control / net.ListenConfig-style hook vetting the concrete address a socket connects to.
-// Unix sockets are refused (they are local endpoints of the Termstead host).
+// Unix sockets are refused (they are local endpoints of the AstraTerm host).
 func (g *Guard) Control(network, address string, _ syscall.RawConn) error {
 	if g == nil {
 		return nil
 	}
 	switch network {
 	case "unix", "unixgram", "unixpacket":
-		return newBlocked(Decision{Class: ClassLocalSocket, Reason: "a local socket of the Termstead host"}, address)
+		return newBlocked(Decision{Class: ClassLocalSocket, Reason: "a local socket of the AstraTerm host"}, address)
 	}
 	host, portStr, err := net.SplitHostPort(address)
 	if err != nil {

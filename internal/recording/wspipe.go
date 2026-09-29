@@ -12,7 +12,7 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 // wsPair returns two WebSocket endpoints connected in memory (net.Pipe + a real handshake): srv is the accepted side,

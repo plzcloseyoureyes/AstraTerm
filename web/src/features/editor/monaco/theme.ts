@@ -9,7 +9,7 @@ import { isDarkTheme, onThemeChange } from '@/lib/theme'
 import { luminance, mix, parseColor, toHex, type Rgba } from './color'
 import { BRACKET_COLORS, PALETTE, SYNTAX_RULES } from './palette'
 
-export const THEME_NAME = 'termstead'
+export const THEME_NAME = 'astraterm'
 
 const TOKENS = [
   'background',
@@ -335,7 +335,7 @@ export function currentTheme(): { data: Monaco.editor.IStandaloneThemeData; key:
 
 let appliedKey = ''
 
-/** (Re)define and select the Termstead theme; no-op when nothing changed. */
+/** (Re)define and select the AstraTerm theme; no-op when nothing changed. */
 export function applyTheme(monaco: typeof Monaco): void {
   const t = currentTheme()
   if (t.key === appliedKey) return

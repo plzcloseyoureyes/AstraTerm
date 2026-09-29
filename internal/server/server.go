@@ -1,4 +1,4 @@
-// Package server assembles Termstead: it builds the core services (store, vault, events, audit), installs the HTTP
+// Package server assembles AstraTerm: it builds the core services (store, vault, events, audit), installs the HTTP
 // middleware and authentication, mounts every module, serves the embedded SPA and runs the HTTP(S) server with
 // graceful shutdown.
 package server
@@ -21,25 +21,25 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/pkg/browser"
 
-	"github.com/termstead/termstead/internal/app"
-	"github.com/termstead/termstead/internal/audit"
-	"github.com/termstead/termstead/internal/auth"
-	"github.com/termstead/termstead/internal/config"
-	"github.com/termstead/termstead/internal/core"
-	"github.com/termstead/termstead/internal/events"
-	"github.com/termstead/termstead/internal/httpx"
-	"github.com/termstead/termstead/internal/importer"
-	"github.com/termstead/termstead/internal/model"
-	"github.com/termstead/termstead/internal/recording"
-	"github.com/termstead/termstead/internal/servers"
-	"github.com/termstead/termstead/internal/sshx"
-	"github.com/termstead/termstead/internal/store"
-	"github.com/termstead/termstead/internal/term"
-	"github.com/termstead/termstead/internal/vault"
-	"github.com/termstead/termstead/internal/webui"
+	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/audit"
+	"github.com/plzcloseyoureyes/astraterm/internal/auth"
+	"github.com/plzcloseyoureyes/astraterm/internal/config"
+	"github.com/plzcloseyoureyes/astraterm/internal/core"
+	"github.com/plzcloseyoureyes/astraterm/internal/events"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/importer"
+	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/recording"
+	"github.com/plzcloseyoureyes/astraterm/internal/servers"
+	"github.com/plzcloseyoureyes/astraterm/internal/sshx"
+	"github.com/plzcloseyoureyes/astraterm/internal/store"
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
+	"github.com/plzcloseyoureyes/astraterm/internal/vault"
+	"github.com/plzcloseyoureyes/astraterm/internal/webui"
 )
 
-// Server is a fully wired Termstead instance.
+// Server is a fully wired AstraTerm instance.
 type Server struct {
 	Cfg  *config.Config
 	Deps *app.Deps
@@ -188,9 +188,23 @@ func (s *Server) Close() error {
 // shutdownSweepTimeout bounds how long Close waits for sessions to finish closing.
 const shutdownSweepTimeout = 10 * time.Second
 
-// Run starts Termstead and blocks until ctx is cancelled (graceful shutdown) or the listener fails. The startup banner
-// goes to out.
+// Opener shows the UI at url (with its one-time setup / launch token) once AstraTerm listens and cfg.Open is set.
+type Opener func(url string) error
+
+// OpenBrowser is the default Opener: the system's default browser.
+func OpenBrowser(url string) error {
+	browser.Stdout, browser.Stderr = io.Discard, io.Discard
+	return browser.OpenURL(url)
+}
+
+// Run starts AstraTerm and blocks until ctx is cancelled (graceful shutdown) or the listener fails. The startup banner
+// goes to out; with cfg.Open the UI opens in the default browser.
 func Run(ctx context.Context, cfg *config.Config, log *slog.Logger, out io.Writer) error {
+	return RunWith(ctx, cfg, log, out, OpenBrowser)
+}
+
+// RunWith is Run with a custom Opener (the desktop edition shows the UI in its own window).
+func RunWith(ctx context.Context, cfg *config.Config, log *slog.Logger, out io.Writer, open Opener) error {
 	slog.SetDefault(log)
 	s, err := New(ctx, cfg, log)
 	if err != nil {
@@ -201,7 +215,7 @@ func Run(ctx context.Context, cfg *config.Config, log *slog.Logger, out io.Write
 	ln, err := net.Listen("tcp", cfg.Listen)
 	if err != nil {
 		if errors.Is(err, syscall.EADDRINUSE) {
-			return fmt.Errorf("cannot listen on %s: address already in use (is Termstead already running? use --listen to pick another port)", cfg.Listen)
+			return fmt.Errorf("cannot listen on %s: address already in use (is AstraTerm already running? use --listen to pick another port)", cfg.Listen)
 		}
 		return fmt.Errorf("listen %s: %w", cfg.Listen, err)
 	}
@@ -234,7 +248,7 @@ func Run(ctx context.Context, cfg *config.Config, log *slog.Logger, out io.Write
 	} else if tok := s.Auth.LaunchToken(); tok != "" {
 		openURL = u + "?launch=" + url.QueryEscape(tok)
 	}
-	fmt.Fprintf(out, "Termstead %s (%s mode)\n  URL:      %s\n", cfg.Version, cfg.Mode, openURL)
+	fmt.Fprintf(out, "AstraTerm %s (%s mode)\n  URL:      %s\n", cfg.Version, cfg.Mode, openURL)
 	for i, a := range alsoAt {
 		label := "          "
 		if i == 0 {
@@ -250,10 +264,9 @@ func Run(ctx context.Context, cfg *config.Config, log *slog.Logger, out io.Write
 		fmt.Fprintf(out, "  Dev mode: Vite origins %s allowed\n", strings.Join(httpx.DevOrigins, ", "))
 	}
 	log.Info("listening", "addr", ln.Addr().String(), "tls", cfg.TLSEnabled(), "mode", cfg.Mode)
-	if cfg.Open {
-		browser.Stdout, browser.Stderr = io.Discard, io.Discard
-		if err := browser.OpenURL(openURL); err != nil {
-			log.Warn("could not open the browser", "err", err)
+	if cfg.Open && open != nil {
+		if err := open(openURL); err != nil {
+			log.Warn("could not open the UI", "err", err)
 		}
 	}
 

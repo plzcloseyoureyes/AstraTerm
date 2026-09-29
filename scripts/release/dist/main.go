@@ -1,5 +1,5 @@
-// Command dist cross-compiles termstead for every release platform and packages reproducible archives plus a
-// SHA256SUMS file — the local equivalent of the GoReleaser pipeline (.goreleaser.yaml), with the same file names.
+// Command dist cross-compiles AstraTerm for every release platform and packages reproducible archives plus a
+// SHA256SUMS file. The release workflow (.github/workflows/release.yml) publishes exactly what it builds.
 // It embeds whatever frontend is in internal/webui/dist, so build that first (`make release` does).
 //
 //	go run ./scripts/release/dist [-version v1.2.3] [-out dist] [-platforms linux/amd64,windows/arm64]
@@ -29,11 +29,11 @@ import (
 	"time"
 )
 
-// defaultPlatforms is the release matrix (keep in sync with Makefile PLATFORMS, .goreleaser.yaml and
+// defaultPlatforms is the release matrix (keep in sync with Makefile PLATFORMS and
 // scripts/release/notices). An optional third element is the ARM version (GOARM) for 32-bit ARM, e.g. linux/arm/7.
-const defaultPlatforms = "darwin/amd64,darwin/arm64,linux/amd64,linux/arm64,windows/amd64,windows/arm64,freebsd/amd64"
+const defaultPlatforms = "darwin/amd64,darwin/arm64,linux/amd64,linux/arm64,linux/arm/7,windows/amd64,windows/arm64,freebsd/amd64"
 
-// Files shipped next to the binary in every archive (missing ones are skipped with a warning).
+// Files shipped next to the binaries in every archive (missing ones are skipped with a warning).
 var extraFiles = []string{"README.md", "LICENSE", "CHANGELOG.md", "THIRD_PARTY_NOTICES.md"}
 
 func main() {
@@ -69,6 +69,7 @@ func main() {
 		}
 		docs = append(docs, entry{src: f, name: f, mode: 0o644})
 	}
+	appVersion := numericVersion(*version)
 	ldflags := fmt.Sprintf("-s -w -X main.version=%s -X main.commit=%s -X main.date=%s",
 		*version, commit, date.Format(time.RFC3339))
 	var archives []string
@@ -83,17 +84,15 @@ func main() {
 			goarm = parts[2]
 			archName += "v" + goarm
 		}
-		name := fmt.Sprintf("termstead_%s_%s_%s", strings.TrimPrefix(*version, "v"), goos, archName)
-		exe := "termstead"
+		name := fmt.Sprintf("astraterm_%s_%s_%s", strings.TrimPrefix(*version, "v"), goos, archName)
+		fmt.Printf("==> %s\n", p)
+		dir := filepath.Join(*out, "build", goos+"_"+archName)
+		exe := "astraterm"
 		if goos == "windows" {
 			exe += ".exe"
 		}
-		bin := filepath.Join(*out, "build", goos+"_"+archName, exe)
-		fmt.Printf("==> %s\n", p)
-		cmd := exec.Command("go", "build", "-trimpath", "-buildvcs=false", "-ldflags", ldflags, "-o", bin, "./cmd/termstead")
-		cmd.Env = append(os.Environ(), "CGO_ENABLED=0", "GOOS="+goos, "GOARCH="+goarch, "GOARM="+goarm, "GOFLAGS=-mod=readonly")
-		cmd.Stdout, cmd.Stderr = os.Stdout, os.Stderr
-		if err := cmd.Run(); err != nil {
+		bin := filepath.Join(dir, exe)
+		if err := build("./cmd/astraterm", bin, ldflags, goos, goarch, goarm, appVersion); err != nil {
 			fail(fmt.Errorf("build %s: %w", p, err))
 		}
 		files := append([]entry{{src: bin, name: exe, mode: 0o755}}, docs...)
@@ -114,6 +113,45 @@ func main() {
 	}
 	fmt.Printf("dist: %d archives and SHA256SUMS in %s (version %s, commit %s, date %s, %s)\n",
 		len(archives), *out, *version, orUnknown(commit), date.Format(time.RFC3339), runtime.Version())
+}
+
+// build compiles one package; Windows executables get their icon, version information and manifest from
+// packaging/windows/winres.json (a temporary .syso resource file next to the package's sources). The desktop app is
+// built separately (desktop/, Tauri) on each platform by the release workflow.
+func build(pkg, out, ldflags, goos, goarch, goarm, appVersion string) error {
+	if goos == "windows" {
+		prefix := filepath.Join(pkg, "rsrc")
+		res := exec.Command("go", "tool", "go-winres", "make", "--in", "packaging/windows/winres.json", "--out", prefix,
+			"--arch", goarch, "--product-version", appVersion, "--file-version", appVersion)
+		res.Stdout, res.Stderr = os.Stdout, os.Stderr
+		if err := res.Run(); err != nil {
+			return fmt.Errorf("windows resources: %w", err)
+		}
+		defer os.Remove(prefix + "_windows_" + goarch + ".syso")
+	}
+	cmd := exec.Command("go", "build", "-trimpath", "-buildvcs=false", "-ldflags", ldflags, "-o", out, pkg)
+	cmd.Env = append(os.Environ(), "CGO_ENABLED=0", "GOOS="+goos, "GOARCH="+goarch, "GOARM="+goarm, "GOFLAGS=-mod=readonly")
+	cmd.Stdout, cmd.Stderr = os.Stdout, os.Stderr
+	return cmd.Run()
+}
+
+// numericVersion is the X.Y.Z part of a release version (v1.2.3-rc.1 → 1.2.3), as Windows version resources
+// require; "0.0.0" for development builds.
+func numericVersion(v string) string {
+	v = strings.TrimPrefix(v, "v")
+	if i := strings.IndexAny(v, "-+"); i >= 0 {
+		v = v[:i]
+	}
+	parts := strings.Split(v, ".")
+	if len(parts) != 3 {
+		return "0.0.0"
+	}
+	for _, p := range parts {
+		if _, err := strconv.Atoi(p); err != nil {
+			return "0.0.0"
+		}
+	}
+	return v
 }
 
 type entry struct {

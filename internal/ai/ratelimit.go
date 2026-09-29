@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/termstead/termstead/internal/httpx"
+	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 )
 
 // limiter enforces per-user request limits: a sliding one-minute window and a calendar-day (UTC) counter. Limits
