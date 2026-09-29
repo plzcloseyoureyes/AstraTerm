@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState, type HTMLAttributes } from 'react'
+import { useEffect, useRef, useState, type HTMLAttributes, type ReactNode } from 'react'
 import type { IDockviewPanelHeaderProps } from 'dockview-react'
 import { FileQuestion, X } from 'lucide-react'
-import { tabKinds, type IconType } from '@/app/registry'
+import { tabKinds, type IconType, type MenuItem } from '@/app/registry'
 import { protocolIcon } from '@/app/protocols'
 import { DynamicContextMenu } from '@/components/menu-items'
 import { ProgressBar } from '@/components/ui/progress'
@@ -77,6 +77,9 @@ export function TabChip({
   params,
   variant,
   active = false,
+  badge,
+  menu,
+  onClose,
   className,
   ...rest
 }: {
@@ -87,6 +90,12 @@ export function TabChip({
   /** 'dock': inside a group header; 'overflow': dockview's overflow list; 'bar': the title bar. */
   variant: 'dock' | 'overflow' | 'bar'
   active?: boolean
+  /** Extra content after the title (the title bar's split badge). */
+  badge?: ReactNode
+  /** Context menu (default: the tab's menu). */
+  menu?: () => MenuItem[]
+  /** Close action of ×, middle-click and Delete (default: close this tab). */
+  onClose?: () => void
 } & Omit<HTMLAttributes<HTMLDivElement>, 'title'>) {
   tabKinds.useItem(kind) // re-render when the kind registers (icon)
   const { status, activity, showProgress, barValue, runId } = useTabIndicators(tabId)
@@ -95,9 +104,10 @@ export function TabChip({
   const overflow = variant === 'overflow'
   const bar = variant === 'bar'
   const tooltip = [title, status ? STATUS_LABEL[status] : null].filter(Boolean).join(' — ')
+  const close = onClose ?? (() => void closeTab(tabId))
 
   return (
-    <DynamicContextMenu items={() => buildTabMenu(tabId, () => setEditing(true))} disabled={editing}>
+    <DynamicContextMenu items={menu ?? (() => buildTabMenu(tabId, () => setEditing(true)))} disabled={editing}>
       <div
         {...rest}
         className={cn(
@@ -121,7 +131,7 @@ export function TabChip({
           if (e.button === 1) {
             e.preventDefault()
             e.stopPropagation()
-            void closeTab(tabId)
+            close()
           }
         }}
         onDoubleClick={(e) => {
@@ -154,6 +164,7 @@ export function TabChip({
         ) : (
           <span className="min-w-0 flex-1 truncate">{title}</span>
         )}
+        {badge}
         {activity && <span className="size-1.5 shrink-0 rounded-full bg-primary" aria-label="New activity" />}
         {!editing && (
           <button
@@ -171,7 +182,7 @@ export function TabChip({
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation()
-              void closeTab(tabId)
+              close()
             }}
           >
             <X className="size-3.5" />

@@ -166,8 +166,9 @@ How it works, how it is built and what comes next (signing, auto-update): [docs/
 - Terminal: xterm.js with WebGL, search, links, inline images, OSC 52 clipboard, shell integration (prompt marks and
   command status), paste safety, 37 colour schemes and a scheme editor, MultiExec across sessions with a
   dangerous-command guard, activity/silence monitors, instant replay, ZMODEM and trzsz transfers.
-- Workspace: tabs in the title bar, splits, 1/2/4 layouts, floating groups, pop-out windows, restored layout per user,
-  command palette with rebindable shortcuts, dark/light/system themes, lock screen.
+- Workspace: tabs in the title bar, each with its own split layout (split right or down, move panes between tabs),
+  floating panes, pop-out windows, restored layout per user, command palette with rebindable shortcuts,
+  dark/light/system themes, lock screen.
 - Import from MobaXterm, PuTTY, `~/.ssh/config` (live sync), Termius, mRemoteNG, Remmina, FileZilla, WinSCP, SecureCRT,
   CSV and JSON; encrypted exports.
 

@@ -22,7 +22,7 @@ import type { Connection, LocalShell, Protocol, RuntimeSession } from '@/api/typ
 import { protocolLabel } from '@/app/protocols'
 import { protocolOpeners, type ClosedTab, type TabPlacement, type TabPosition } from '@/app/registry'
 import { errorMessage } from '@/lib/utils'
-import { findTabs, focusTab, getDockviewApi, getTabParams, openTab, updateTabParams } from '@/stores/workspace'
+import { activeSpaceApi, findTabs, focusTab, getTabParams, openTab, updateTabParams } from '@/stores/workspace'
 import { estimateCell } from './fonts'
 import { effectiveTerminalSettings, terminalSettings } from './settings'
 import type { QuickSpec, TerminalTabParams } from './types'
@@ -64,7 +64,7 @@ export function estimateTerminalSize(position: TabPosition = 'tab', overrides?: 
   const s = effectiveTerminalSettings(terminalSettings.get(), overrides)
   let width = 0
   let height = 0
-  const dv = getDockviewApi()
+  const dv = activeSpaceApi()
   const group = dv?.activeGroup
   if (group && group.api.location.type !== 'popout') {
     width = group.api.width

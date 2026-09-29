@@ -7,7 +7,7 @@
 import { create } from 'zustand'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth'
-import { getDockviewApi } from '@/stores/workspace'
+import { isTabVisible as isWorkspaceTabVisible } from '@/stores/workspace'
 import { listTerminals } from './bus'
 import type { TerminalHandle } from './types'
 
@@ -24,11 +24,8 @@ interface MultiExecState {
 
 export const useMultiExecStore = create<MultiExecState>(() => ({ active: false, scope: 'visible', selected: [], excluded: [] }))
 
-/** Is the tab currently displayed (the visible panel of its group, docked, floating or popped out)? */
-export function isTabVisible(tabId: string): boolean {
-  const panel = getDockviewApi()?.getPanel(tabId)
-  return !!panel?.api.isVisible
-}
+/** Is the tab currently on screen (a pane of the active tab, floating or popped out)? */
+export const isTabVisible = isWorkspaceTabVisible
 
 /** Participation of one terminal tab under the current MultiExec settings (false while MultiExec is off). */
 export function isParticipant(tabId: string, state: MultiExecState = useMultiExecStore.getState()): boolean {

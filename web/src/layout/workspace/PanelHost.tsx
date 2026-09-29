@@ -39,16 +39,11 @@ export function PanelHost(props: IDockviewPanelProps<PanelParams>) {
   )
 }
 
-/** With several panes and tabs in the title bar (no group headers), the focused pane gets a thin accent line on top. */
+/** In a split tab (panes without headers), the focused pane gets a thin accent line on top. */
 function useFocusedPane(api: IDockviewPanelProps['api']): boolean {
-  const split = useWorkspaceStore((s) => s.panes.length > 1)
-  const [active, setActive] = useState(api.isGroupActive)
-  useEffect(() => {
-    setActive(api.isGroupActive)
-    const d = api.onDidActiveGroupChange((e) => setActive(e.isActive))
-    return () => d.dispose()
-  }, [api])
-  return split && active && api.group.header.hidden
+  const tabId = api.id
+  const split = useWorkspaceStore((s) => s.spaces.some((x) => x.panes.length > 1 && x.activeTabId === tabId))
+  return split && api.group.header.hidden
 }
 
 function MissingKind({ kind, tabId }: { kind: string; tabId: string }) {

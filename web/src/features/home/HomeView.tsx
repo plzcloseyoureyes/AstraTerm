@@ -489,8 +489,9 @@ function Tips() {
           )
         })}
         <li className="text-sm text-muted-foreground @2xl:col-span-2">
-          Closing a session&apos;s tab can be undone for a few seconds. Middle-click a tab to close it, double-click to rename it, drag
-          tabs to split or float them, and save arrangements you reuse as workspaces.
+          Closing a session&apos;s tab can be undone for a few seconds. Every tab has its own split layout: split it from the
+          title bar, drag tabs to reorder them, right-click one to move panes between tabs, and save arrangements you reuse as
+          workspaces.
         </li>
       </ul>
     </section>

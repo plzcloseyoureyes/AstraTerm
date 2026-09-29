@@ -13,8 +13,8 @@ First public release candidate: an organized, self-hosted remote-management work
 ### Added
 
 - **Workspace and organization.** Session manager with folders, tags, favorites, recents, fuzzy search and drag &
-  drop; reusable identities; shared (admin-managed) connections; tabbed workspace with splits, 1/2/4 layouts,
-  floating groups, pop-out windows and a restored layout per user; command palette with rebindable shortcuts; quick
+  drop; reusable identities; shared (admin-managed) connections; tabs in the title bar, each with its own split
+  layout (panes can move between tabs), floating panes, pop-out windows and a restored layout per user; command palette with rebindable shortcuts; quick
   connect (`ssh -p 2222 -J bastion user@host`, `telnet host 23`, URLs); dark, light and system themes.
 - **Connections and sessions.** SSH (pooled transports, jump-host chains, SOCKS/HTTP proxies, ProxyCommand, port
   knocking, keys and certificates, keyboard-interactive and 2FA prompts, known hosts with CA/revocation markers, agent

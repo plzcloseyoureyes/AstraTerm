@@ -13,7 +13,7 @@ import type { TabProps } from '@/app/registry'
 import { useLatest } from '@/lib/hooks'
 import { isDarkTheme, onThemeChange } from '@/lib/theme'
 import { useUIStore } from '@/stores/ui'
-import { getDockviewApi, useIsTabVisible } from '@/stores/workspace'
+import { getPanel, useIsTabVisible } from '@/stores/workspace'
 import { TerminalController } from './controller'
 import { TerminalDialogs } from './Dialogs'
 import { isParticipant, useMultiExecStore } from './multiexec'
@@ -101,7 +101,7 @@ export default function TerminalView({ tabId, params }: TabProps<TerminalTabPara
   // Dockview panel events: activation focuses the terminal; moving to another window re-opens xterm there.
   useEffect(() => {
     if (!ctrl) return
-    const panel = getDockviewApi()?.getPanel(tabId)
+    const panel = getPanel(tabId)
     if (!panel) return
     const subs = [
       panel.api.onDidActiveChange((e) => {
