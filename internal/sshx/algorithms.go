@@ -6,7 +6,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Algorithm selection (SSH-23/24). options.kex / ciphers / macs / hostKeyAlgorithms are ordered lists; entries may be

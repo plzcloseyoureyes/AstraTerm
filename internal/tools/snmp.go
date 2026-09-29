@@ -11,7 +11,7 @@ import (
 
 	g "github.com/gosnmp/gosnmp"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 type snmpRequest struct {

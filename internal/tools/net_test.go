@@ -220,8 +220,8 @@ func testCert(t *testing.T) tls.Certificate {
 	}
 	tmpl := &x509.Certificate{
 		SerialNumber: big.NewInt(1),
-		Subject:      pkix.Name{CommonName: "nexterm-test"},
-		DNSNames:     []string{"localhost", "nexterm-test"},
+		Subject:      pkix.Name{CommonName: "termstead-test"},
+		DNSNames:     []string{"localhost", "termstead-test"},
 		NotBefore:    time.Now().Add(-time.Hour),
 		NotAfter:     time.Now().Add(24 * time.Hour),
 	}
@@ -268,7 +268,7 @@ func TestTLSCertLoopback(t *testing.T) {
 	port := startServer(t, func(c net.Conn) { serveTLS(c, cert, tls.VersionTLS12) })
 	c := runJob(t, prepareTLSCert, fmt.Sprintf(`{"host":"127.0.0.1","port":%d,"serverName":"localhost","timeoutMs":3000}`, port))
 	certs := c.byKind("cert")
-	if len(certs) == 0 || certs[0]["commonName"] != "nexterm-test" || certs[0]["keyAlg"] != "ECDSA" || certs[0]["keyBits"] != 256 {
+	if len(certs) == 0 || certs[0]["commonName"] != "termstead-test" || certs[0]["keyAlg"] != "ECDSA" || certs[0]["keyBits"] != 256 {
 		t.Fatalf("certificate rows = %v", certs)
 	}
 	conn := c.byKind("connection")
@@ -354,7 +354,7 @@ func TestTLSCertStartTLS(t *testing.T) {
 			t.Errorf("%s: %v", name, err)
 			continue
 		}
-		if certs := c.byKind("cert"); len(certs) != 1 || certs[0]["commonName"] != "nexterm-test" {
+		if certs := c.byKind("cert"); len(certs) != 1 || certs[0]["commonName"] != "termstead-test" {
 			t.Errorf("%s: certs = %v", name, certs)
 		}
 	}

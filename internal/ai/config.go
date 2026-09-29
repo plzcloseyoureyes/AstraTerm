@@ -10,9 +10,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/store"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/store"
 )
 
 // settingsKey is the settings key (global scope = organisation default, user scope = personal override) holding the

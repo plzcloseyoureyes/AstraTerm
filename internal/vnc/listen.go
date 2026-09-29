@@ -16,17 +16,17 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
-// Listening ("reverse") mode, GFX-17: NexTerm accepts incoming RFB connections from VNC servers started with a
+// Listening ("reverse") mode, GFX-17: Termstead accepts incoming RFB connections from VNC servers started with a
 // "connect to viewer" option (x11vnc -connect, UltraVNC SC, TightVNC "attach listening viewer", …). Each accepted
 // connection becomes a new VNC runtime session of the listener's owner (options.reverse = true) whose TCP stream is
 // parked until a viewer attaches (the owner's UI opens a tab on the {type:'vnc.incoming'} event); it serves exactly
 // one viewer. Listeners live in memory (not persisted); in server mode only administrators may open them, since they
-// accept connections on the NexTerm host.
+// accept connections on the Termstead host.
 
 const (
 	defaultListenPort   = 5500
@@ -143,7 +143,7 @@ func (m *Module) takeReverse(sessionID string) (net.Conn, error) {
 	return p.conn, nil
 }
 
-// listenAllowed: listening opens a port on the NexTerm host.
+// listenAllowed: listening opens a port on the Termstead host.
 func (m *Module) listenAllowed(user *model.User) bool {
 	return user != nil && (user.IsAdmin() || (m.d.Cfg != nil && m.d.Cfg.IsDesktop()))
 }

@@ -10,8 +10,8 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/model"
 )
 
 type keyJSON struct {

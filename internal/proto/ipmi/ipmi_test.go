@@ -7,7 +7,7 @@ import (
 	"github.com/bougou/go-ipmi/pkg/command/chassis"
 	"github.com/bougou/go-ipmi/pkg/types"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 func TestMapPowerAction(t *testing.T) {

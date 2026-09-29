@@ -14,7 +14,7 @@ import (
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Client is a pooled, authenticated SSH connection. It embeds *ssh.Client; Conn is the (secret-free) connection it

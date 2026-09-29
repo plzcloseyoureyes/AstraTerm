@@ -254,7 +254,7 @@ export function LogsPanel({ target, platform, journal: hasJournal, unit: presetU
     const blob = new Blob([text + '\n'], { type: 'text/plain' })
     const a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
-    a.download = `nexterm-logs-${new Date().toISOString().replace(/[:.]/g, '-')}.log`
+    a.download = `termstead-logs-${new Date().toISOString().replace(/[:.]/g, '-')}.log`
     a.click()
     setTimeout(() => URL.revokeObjectURL(a.href), 5_000)
   }

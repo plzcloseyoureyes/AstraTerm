@@ -18,11 +18,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/proto/rawtcp/linedisc"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/proto/rawtcp/linedisc"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Telnet command bytes (RFC 854).

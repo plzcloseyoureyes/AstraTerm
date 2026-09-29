@@ -80,7 +80,7 @@ export interface WebTabParams {
   url?: string
   kind?: 'web' | 'xpra'
   title?: string
-  /** How to recreate the proxy after it expired / NexTerm restarted. */
+  /** How to recreate the proxy after it expired / Termstead restarted. */
   spec?: ProxySpec
   /** Xpra app to start again after it ended. */
   xpra?: XpraStartRequest
@@ -106,7 +106,7 @@ export interface OpenArgs extends ProxySpec {
 
 /** Messages exchanged with the in-page bridge (internal/webproxy/pages.go). */
 export interface BridgeMessage {
-  source: 'nexterm-webproxy'
+  source: 'termstead-webproxy'
   proxyId?: string
   type: 'hello' | 'location' | 'unload' | 'error'
   path?: string

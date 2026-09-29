@@ -1,9 +1,9 @@
-# Releasing NexTerm
+# Releasing Termstead
 
 Releases are cut by pushing a version tag. `.github/workflows/release.yml` then builds the web UI once, cross-compiles
 every platform with GoReleaser (`.goreleaser.yaml`), and creates a **draft** GitHub release with:
 
-- `nexterm_<version>_<os>_<arch>.tar.gz` (macOS, Linux, FreeBSD) and `.zip` (Windows), each with the executable,
+- `termstead_<version>_<os>_<arch>.tar.gz` (macOS, Linux, FreeBSD) and `.zip` (Windows), each with the executable,
   README, LICENSE, CHANGELOG and third-party notices;
 - `SHA256SUMS`, an SPDX SBOM per archive (`*.sbom.json`), and a signed build-provenance attestation;
 - release notes taken from the version's section in `CHANGELOG.md`.
@@ -26,7 +26,7 @@ Versions follow [Semantic Versioning](https://semver.org/): tags look like `v0.3
    ```sh
    git add -A && git status          # review: no data dirs, binaries, node_modules or secrets
    git commit -m "Initial import"
-   git remote add origin git@github.com:OWNER/nexterm.git
+   git remote add origin git@github.com:OWNER/termstead.git
    git push -u origin main
    ```
 4. **Repository settings** (Settings on GitHub):
@@ -44,8 +44,8 @@ Versions follow [Semantic Versioning](https://semver.org/): tags look like `v0.3
 1. **Update the changelog.** In `CHANGELOG.md`, rename `## [Unreleased]` to `## [X.Y.Z] - YYYY-MM-DD`, add a fresh
    empty `## [Unreleased]` above it, and update the link references at the bottom:
    ```markdown
-   [Unreleased]: https://github.com/OWNER/nexterm/compare/vX.Y.Z...HEAD
-   [X.Y.Z]: https://github.com/OWNER/nexterm/releases/tag/vX.Y.Z
+   [Unreleased]: https://github.com/OWNER/termstead/compare/vX.Y.Z...HEAD
+   [X.Y.Z]: https://github.com/OWNER/termstead/releases/tag/vX.Y.Z
    ```
    `scripts/release/changelog-notes.sh vX.Y.Z` prints what will become the release notes.
 2. **Refresh the notices and run the checks** (with `web/node_modules` installed):
@@ -62,7 +62,7 @@ Versions follow [Semantic Versioning](https://semver.org/): tags look like `v0.3
 4. **Tag** the merge commit and push the tag (a signed tag if you have signing set up):
    ```sh
    git switch main && git pull
-   git tag -s vX.Y.Z -m "NexTerm vX.Y.Z"      # or: git tag -a vX.Y.Z -m "NexTerm vX.Y.Z"
+   git tag -s vX.Y.Z -m "Termstead vX.Y.Z"      # or: git tag -a vX.Y.Z -m "Termstead vX.Y.Z"
    git push origin vX.Y.Z
    ```
 5. **Watch the Release workflow** (Actions tab). It stops early when `LICENSE` is missing, the changelog has no
@@ -71,10 +71,10 @@ Versions follow [Semantic Versioning](https://semver.org/): tags look like `v0.3
    verify them:
    ```sh
    sha256sum --ignore-missing -c SHA256SUMS          # macOS: shasum -a 256 --ignore-missing -c SHA256SUMS
-   gh attestation verify nexterm_X.Y.Z_linux_amd64.tar.gz --repo OWNER/nexterm
-   tar -xzf nexterm_X.Y.Z_linux_amd64.tar.gz && ./nexterm_X.Y.Z_linux_amd64/nexterm version
+   gh attestation verify termstead_X.Y.Z_linux_amd64.tar.gz --repo OWNER/termstead
+   tar -xzf termstead_X.Y.Z_linux_amd64.tar.gz && ./termstead_X.Y.Z_linux_amd64/termstead version
    ```
-   `nexterm version` must show `vX.Y.Z`, the tagged commit and its date.
+   `termstead version` must show `vX.Y.Z`, the tagged commit and its date.
 7. **Publish** the draft (Edit → Publish release). Pre-release tags are published as pre-releases.
 
 ## Fixing a bad release

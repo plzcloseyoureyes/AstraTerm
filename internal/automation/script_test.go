@@ -11,8 +11,8 @@ import (
 
 	"github.com/dop251/goja"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/model"
 )
 
 type logCollector struct {

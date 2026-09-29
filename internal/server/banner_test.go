@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/config"
+	"github.com/termstead/termstead/internal/config"
 )
 
 func TestListenURLs(t *testing.T) {

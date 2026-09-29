@@ -16,7 +16,7 @@ export function AboutDialog() {
             <path d="M16 22l12 10-12 10" stroke="var(--primary-foreground)" strokeWidth="5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
             <path d="M32 44h16" stroke="var(--primary-foreground)" strokeWidth="5" strokeLinecap="round" />
           </svg>
-          <DialogTitle className="text-lg">NexTerm</DialogTitle>
+          <DialogTitle className="text-lg">Termstead</DialogTitle>
           <DialogDescription>Remote access workstation — SSH, SFTP, RDP, VNC and more in one binary.</DialogDescription>
         </DialogHeader>
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-base">

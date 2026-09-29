@@ -28,7 +28,7 @@ func TestRedactorAdversarial(t *testing.T) {
 		{"<password>xml-pw-1</password>", "xml-pw-1"},
 		{"Bearer tok.en-0123456789abcdef", "tok.en-0123456789abcdef"},
 		{"authorization: bearer abcdefghijklmnop", "abcdefghijklmnop"},
-		{"nexterm token nxt_AbCdEfGhIjKlMnOpQrStUvWxYz0123456789", "nxt_AbCdEfGhIjKlMnOpQrStUvWxYz0123456789"},
+		{"termstead token nxt_AbCdEfGhIjKlMnOpQrStUvWxYz0123456789", "nxt_AbCdEfGhIjKlMnOpQrStUvWxYz0123456789"},
 		{"AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY", "wJalrXUtnFEMI/K7MDENG"},
 		{"aws_secret_access_key = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY", "wJalrXUtnFEMI/K7MDENG"},
 		{"postgres://app:PgPw%40x@db:5432/app", "PgPw%40x"},

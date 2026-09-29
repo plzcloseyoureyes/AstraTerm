@@ -54,7 +54,7 @@ function Logo() {
         <path d="M16 22l12 10-12 10" stroke="var(--primary-foreground)" strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M32 44h16" stroke="var(--primary-foreground)" strokeWidth="6" strokeLinecap="round" />
       </svg>
-      <span className="text-sm font-semibold tracking-tight">NexTerm</span>
+      <span className="text-sm font-semibold tracking-tight">Termstead</span>
     </div>
   )
 }

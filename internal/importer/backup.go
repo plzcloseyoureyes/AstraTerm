@@ -16,8 +16,8 @@ import (
 
 	_ "modernc.org/sqlite" // ensure the pure-Go sqlite driver is registered for backup validation
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 // Backup / restore (IMP-4, admin-only).
@@ -30,12 +30,12 @@ import (
 //
 // Restore is staged, not applied live: a running process cannot safely swap its own database. The uploaded backup is
 // validated (strict archive layout with size limits, read-only SQLite open, integrity check) and written under
-// <data>/restore/ together with a request marker; the next start of NexTerm applies it before opening the database
+// <data>/restore/ together with a request marker; the next start of Termstead applies it before opening the database
 // (ApplyStagedRestore, restore_apply.go). DELETE /api/admin/restore discards a staged restore.
 
 const (
 	backupMagicSQLite = "SQLite format 3\x00"
-	payloadBackup     = "nexterm-backup"
+	payloadBackup     = "termstead-backup"
 	maxRestoreBytes   = 512 << 20
 	maxSystemKeyBytes = 4 << 10
 )
@@ -52,7 +52,7 @@ func vacuumInto(ctx context.Context, d *app.Deps) (path string, cleanup func(), 
 		return "", nil, err
 	}
 	cleanup = func() { _ = os.RemoveAll(dir) }
-	path = filepath.Join(dir, "nexterm.db") // VACUUM INTO requires the target not to exist
+	path = filepath.Join(dir, "termstead.db") // VACUUM INTO requires the target not to exist
 	if _, err := d.Store.DB.ExecContext(ctx, "VACUUM INTO ?", path); err != nil {
 		cleanup()
 		return "", nil, fmt.Errorf("snapshot database: %w", err)
@@ -83,13 +83,13 @@ func buildBackup(ctx context.Context, d *app.Deps, includeSystemKey bool, passph
 		if err != nil {
 			return exportResult{}, err
 		}
-		return exportResult{Data: data, Filename: "nexterm-backup-" + ts + ".db", ContentType: "application/x-sqlite3"}, nil
+		return exportResult{Data: data, Filename: "termstead-backup-" + ts + ".db", ContentType: "application/x-sqlite3"}, nil
 	}
 
-	// Encrypted archive: zip {nexterm.db [, system.key]} then seal with the passphrase.
+	// Encrypted archive: zip {termstead.db [, system.key]} then seal with the passphrase.
 	var zbuf bytes.Buffer
 	zw := zip.NewWriter(&zbuf)
-	if err := zipAddFile(zw, "nexterm.db", dbPath); err != nil {
+	if err := zipAddFile(zw, "termstead.db", dbPath); err != nil {
 		return exportResult{}, err
 	}
 	if includeSystemKey {
@@ -105,7 +105,7 @@ func buildBackup(ctx context.Context, d *app.Deps, includeSystemKey bool, passph
 	if err != nil {
 		return exportResult{}, err
 	}
-	return exportResult{Data: sealed, Filename: "nexterm-backup-" + ts + ".ntbak", ContentType: "application/octet-stream"}, nil
+	return exportResult{Data: sealed, Filename: "termstead-backup-" + ts + ".ntbak", ContentType: "application/octet-stream"}, nil
 }
 
 func zipAddFile(zw *zip.Writer, name, path string) error {
@@ -126,7 +126,7 @@ func zipAddFile(zw *zip.Writer, name, path string) error {
 type restoreResult struct {
 	Staged       bool   `json:"staged"`
 	StagedDBPath string `json:"stagedDbPath"`
-	// ApplyOnRestart: the next start of NexTerm applies the staged restore (always true for a new staging).
+	// ApplyOnRestart: the next start of Termstead applies the staged restore (always true for a new staging).
 	ApplyOnRestart bool     `json:"applyOnRestart"`
 	Instructions   []string `json:"instructions"`
 	Warnings       []string `json:"warnings,omitempty"`
@@ -152,7 +152,7 @@ func stageRestore(ctx context.Context, d *app.Deps, content []byte, passphrase, 
 	if err != nil {
 		return restoreResult{}, err
 	}
-	dbStaged := filepath.Join(restoreDir, "nexterm.db")
+	dbStaged := filepath.Join(restoreDir, "termstead.db")
 	if err := writeFileAtomic0600(dbStaged, dbBytes); err != nil {
 		return restoreResult{}, err
 	}
@@ -174,7 +174,7 @@ func stageRestore(ctx context.Context, d *app.Deps, content []byte, passphrase, 
 		replaced = "database and system key"
 	}
 	res.Instructions = append(res.Instructions,
-		"Restart NexTerm to apply the restore. Everyone is signed out and running sessions end with the restart.",
+		"Restart Termstead to apply the restore. Everyone is signed out and running sessions end with the restart.",
 		fmt.Sprintf("On start, the current %s are moved to %s/previous-<date>/ and replaced by the backup's.", replaced, restoreDir),
 		"Changed your mind? Discard the staged restore before restarting.",
 	)
@@ -195,7 +195,7 @@ func extractBackup(content []byte, passphrase string) (db, key []byte, err error
 			return nil, nil, derr
 		}
 		if payload != payloadBackup {
-			return nil, nil, httpx.BadRequest("this encrypted file is not a NexTerm backup")
+			return nil, nil, httpx.BadRequest("this encrypted file is not a Termstead backup")
 		}
 		content = pt
 	}
@@ -205,11 +205,11 @@ func extractBackup(content []byte, passphrase string) (db, key []byte, err error
 	case bytes.HasPrefix(content, []byte("PK\x03\x04")):
 		return unzipBackup(content)
 	default:
-		return nil, nil, httpx.BadRequest("unrecognised backup (expected a SQLite snapshot or a NexTerm archive)")
+		return nil, nil, httpx.BadRequest("unrecognised backup (expected a SQLite snapshot or a Termstead archive)")
 	}
 }
 
-// unzipBackup reads a NexTerm backup archive: exactly "nexterm.db" and optionally "system.key" at the top level,
+// unzipBackup reads a Termstead backup archive: exactly "termstead.db" and optionally "system.key" at the top level,
 // each at most once and within its size limit (declared and actual — a zip bomb or a lying header is refused, never
 // silently truncated).
 func unzipBackup(content []byte) (db, key []byte, err error) {
@@ -224,7 +224,7 @@ func unzipBackup(content []byte) (db, key []byte, err error) {
 		var limit int64
 		var dst *[]byte
 		switch f.Name {
-		case "nexterm.db":
+		case "termstead.db":
 			limit, dst = maxRestoreBytes, &db
 		case "system.key":
 			limit, dst = maxSystemKeyBytes, &key
@@ -244,7 +244,7 @@ func unzipBackup(content []byte) (db, key []byte, err error) {
 		*dst = b
 	}
 	if len(db) == 0 {
-		return nil, nil, httpx.BadRequest("the archive does not contain nexterm.db")
+		return nil, nil, httpx.BadRequest("the archive does not contain termstead.db")
 	}
 	return db, key, nil
 }
@@ -265,8 +265,8 @@ func readZipEntry(f *zip.File, limit int64) ([]byte, error) {
 	return b, nil
 }
 
-// validateSQLite writes dbBytes to a private temp file, opens it read-only and checks it is an intact NexTerm
-// database. It returns warnings (e.g. a backup from a newer NexTerm).
+// validateSQLite writes dbBytes to a private temp file, opens it read-only and checks it is an intact Termstead
+// database. It returns warnings (e.g. a backup from a newer Termstead).
 func validateSQLite(ctx context.Context, d *app.Deps, dbBytes []byte, dir string) ([]string, error) {
 	if !bytes.HasPrefix(dbBytes, []byte(backupMagicSQLite)) {
 		return nil, httpx.BadRequest("the restore payload is not a SQLite database")
@@ -287,10 +287,10 @@ func validateSQLite(ctx context.Context, d *app.Deps, dbBytes []byte, dir string
 	defer dbh.Close()
 	var n int
 	if err := dbh.QueryRowContext(ctx, `SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name IN ('users','schema_migrations','connections')`).Scan(&n); err != nil {
-		return nil, httpx.BadRequest("the backup is not a valid NexTerm database")
+		return nil, httpx.BadRequest("the backup is not a valid Termstead database")
 	}
 	if n < 3 {
-		return nil, httpx.BadRequest("the backup does not look like a NexTerm database (missing core tables)")
+		return nil, httpx.BadRequest("the backup does not look like a Termstead database (missing core tables)")
 	}
 	var check string
 	if err := dbh.QueryRowContext(ctx, `PRAGMA quick_check`).Scan(&check); err != nil || !strings.EqualFold(check, "ok") {
@@ -329,7 +329,7 @@ func newerSchemaWarnings(ctx context.Context, d *app.Deps, backup *sql.DB) []str
 	if len(newer) == 0 {
 		return nil
 	}
-	return []string{"The backup was made by a newer or differently equipped NexTerm (schema of: " + strings.Join(newer, ", ") + "). Restore it with a matching version."}
+	return []string{"The backup was made by a newer or differently equipped Termstead (schema of: " + strings.Join(newer, ", ") + "). Restore it with a matching version."}
 }
 
 func writeFile0600(path string, data []byte) error {
@@ -359,15 +359,15 @@ func writeFileAtomic0600(path string, data []byte) error {
 
 func restoreReadme(dataDir string, withKey bool) string {
 	var b strings.Builder
-	b.WriteString("NexTerm staged restore\n======================\n\n")
-	b.WriteString("A restore was staged from the admin UI. NexTerm applies it automatically at its next start (as long as\n")
+	b.WriteString("Termstead staged restore\n======================\n\n")
+	b.WriteString("A restore was staged from the admin UI. Termstead applies it automatically at its next start (as long as\n")
 	b.WriteString("the file APPLY-ON-RESTART is present here). To apply it by hand instead, delete APPLY-ON-RESTART and:\n\n")
-	b.WriteString("1. Stop NexTerm.\n")
+	b.WriteString("1. Stop Termstead.\n")
 	b.WriteString(fmt.Sprintf("2. Back up your current data directory (%s).\n", dataDir))
-	b.WriteString(fmt.Sprintf("3. Replace %s with restore/nexterm.db and remove nexterm.db-wal / nexterm.db-shm.\n", filepath.Join(dataDir, "nexterm.db")))
+	b.WriteString(fmt.Sprintf("3. Replace %s with restore/termstead.db and remove termstead.db-wal / termstead.db-shm.\n", filepath.Join(dataDir, "termstead.db")))
 	if withKey {
 		b.WriteString(fmt.Sprintf("4. Replace %s with restore/system.key.\n", filepath.Join(dataDir, "system.key")))
 	}
-	b.WriteString("Then start NexTerm again.\n")
+	b.WriteString("Then start Termstead again.\n")
 	return b.String()
 }

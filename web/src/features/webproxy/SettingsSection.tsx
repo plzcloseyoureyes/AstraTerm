@@ -38,7 +38,7 @@ function AdminGroup() {
   return (
     <SettingsGroup
       title="Server (all users)"
-      description="How proxied pages are served when NexTerm is opened from another machine. On localhost every page gets its own origin p-<id>.localhost automatically."
+      description="How proxied pages are served when Termstead is opened from another machine. On localhost every page gets its own origin p-<id>.localhost automatically."
     >
       {/* Controls appear with the saved values (no default → saved flip while the settings load). */}
       <QueryState query={q} skeleton={<SkeletonRows rows={3} rowHeight={56} icon={false} />} errorTitle="Could not load the server settings">
@@ -46,7 +46,7 @@ function AdminGroup() {
           <>
             <SettingRow
               label="Wildcard domain"
-              description="Serve each page as p-<id>.<domain> (own origin, full fidelity). Needs a wildcard DNS record — and with HTTPS a wildcard certificate — pointing at NexTerm."
+              description="Serve each page as p-<id>.<domain> (own origin, full fidelity). Needs a wildcard DNS record — and with HTTPS a wildcard certificate — pointing at Termstead."
               htmlFor="webproxy-suffix"
               stacked
             >
@@ -54,7 +54,7 @@ function AdminGroup() {
                 id="webproxy-suffix"
                 inputSize="sm"
                 className="max-w-80 font-mono"
-                placeholder="apps.nexterm.example.com"
+                placeholder="apps.termstead.example.com"
                 value={suffix}
                 onChange={(e) => setSuffix(e.target.value)}
                 onBlur={() => suffix.trim() !== (cfg?.hostSuffix ?? '') && void save({ hostSuffix: suffix.trim() })}
@@ -63,7 +63,7 @@ function AdminGroup() {
             </SettingRow>
             <SettingRow
               label="Compatibility (path) mode"
-              description="Without a wildcard domain, pages are served under /proxy/… on NexTerm's own origin in a sandbox. Scripts that build absolute URLs or need cookies may not work there."
+              description="Without a wildcard domain, pages are served under /proxy/… on Termstead's own origin in a sandbox. Scripts that build absolute URLs or need cookies may not work there."
               htmlFor="webproxy-path"
             >
               <Switch id="webproxy-path" checked={cfg?.pathMode !== false} onCheckedChange={(v) => void save({ pathMode: v })} />
@@ -90,7 +90,7 @@ export default function WebproxySettingsSection() {
   const s = webViewSettings.use()
   const admin = useIsAdmin()
   return (
-    <SettingsPage title="Web pages & Xpra" description="Browser tabs that show web services reached from NexTerm or through SSH, and X11 applications run with Xpra.">
+    <SettingsPage title="Web pages & Xpra" description="Browser tabs that show web services reached from Termstead or through SSH, and X11 applications run with Xpra.">
       <SettingsGroup title="Tabs">
         <SettingRow label="Default zoom" htmlFor="webview-zoom">
           <SimpleSelect

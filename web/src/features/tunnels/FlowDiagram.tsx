@@ -38,7 +38,7 @@ export function FlowDiagram({ kind, listen, dest, server, via, focus, exposed, c
   const onServer = KINDS[kind].listenOn === 'server'
   const proxy = kind === 'dynamic' || kind === 'rdynamic'
   const hostTitle = 'This machine'
-  const hostSub = 'NexTerm host'
+  const hostSub = 'Termstead host'
   const serverTitle = 'SSH server'
   const entry = onServer ? { title: serverTitle, sub: server } : { title: hostTitle, sub: hostSub }
   const exit = onServer ? { title: hostTitle, sub: hostSub } : { title: serverTitle, sub: server }

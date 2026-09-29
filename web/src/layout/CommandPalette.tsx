@@ -13,7 +13,7 @@ import { cn, formatRelativeTime, storage } from '@/lib/utils'
 import { focusTab, useTabs } from '@/stores/workspace'
 import { closePalette, useUIStore, type PaletteMode } from '@/stores/ui'
 
-const RECENT_KEY = 'nexterm:palette-recent'
+const RECENT_KEY = 'termstead:palette-recent'
 
 function recentCommandIds(): string[] {
   const v = storage.get<unknown>(RECENT_KEY, [])

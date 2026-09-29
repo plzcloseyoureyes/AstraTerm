@@ -14,9 +14,9 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
 )
 
 type handler struct {
@@ -638,7 +638,7 @@ func (h *handler) reorder(c *echo.Context) error {
 	return httpx.OK(c)
 }
 
-// checkBind reports whether a listen address on the NexTerm host is usable (editor pre-flight check, TUN-1/TUN-2).
+// checkBind reports whether a listen address on the Termstead host is usable (editor pre-flight check, TUN-1/TUN-2).
 func (h *handler) checkBind(c *echo.Context) error {
 	var req struct {
 		BindHost   string `json:"bindHost"`
@@ -749,7 +749,7 @@ func (h *handler) export(c *echo.Context) error {
 		}
 		file.Tunnels = append(file.Tunnels, et)
 	}
-	name := "nexterm-tunnels-" + time.Now().Format("20060102") + ".json"
+	name := "termstead-tunnels-" + time.Now().Format("20060102") + ".json"
 	c.Response().Header().Set("Content-Disposition", `attachment; filename="`+name+`"`)
 	return c.JSON(http.StatusOK, file)
 }
@@ -796,7 +796,7 @@ func (h *handler) importTunnels(c *echo.Context) error {
 		return err
 	}
 	if req.File.Format != exportFormat {
-		return httpx.BadRequest("not a NexTerm tunnels export file")
+		return httpx.BadRequest("not a Termstead tunnels export file")
 	}
 	if len(req.File.Tunnels) > maxTunnelsPerUser {
 		return httpx.BadRequest(fmt.Sprintf("at most %d tunnels per import", maxTunnelsPerUser))

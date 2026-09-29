@@ -13,12 +13,12 @@ import (
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/store"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/store"
 )
 
 const (
-	totpIssuer        = "NexTerm"
+	totpIssuer        = "Termstead"
 	totpPeriod        = 30
 	recoveryCodeCount = 10
 	recoveryAlphabet  = "abcdefghjkmnpqrstuvwxyz23456789" // no 0/o/1/l/i
@@ -49,7 +49,7 @@ func normalizeCode(code string) string {
 }
 
 func hashRecoveryCode(normalized string) string {
-	h := sha256.Sum256([]byte("nexterm-recovery:" + normalized))
+	h := sha256.Sum256([]byte("termstead-recovery:" + normalized))
 	return hex.EncodeToString(h[:])
 }
 

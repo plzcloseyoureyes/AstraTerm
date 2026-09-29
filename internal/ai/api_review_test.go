@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/ai"
-	"github.com/nexterm/nexterm/internal/server/servertest"
+	"github.com/termstead/termstead/internal/ai"
+	"github.com/termstead/termstead/internal/server/servertest"
 )
 
 func userMsg(text string) map[string]any {
@@ -131,7 +131,7 @@ func TestReviewConcurrentStreams(t *testing.T) {
 	start := func() int {
 		req, _ := http.NewRequest("POST", env.URL("/api/ai/chat"), strings.NewReader(`{"messages":[{"role":"user","content":"hi"}]}`))
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("X-NexTerm", "1")
+		req.Header.Set("X-Termstead", "1")
 		for k, v := range admin.Header {
 			req.Header[k] = v
 		}

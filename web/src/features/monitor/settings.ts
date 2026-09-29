@@ -30,7 +30,7 @@ export const BAR_ITEMS: { id: BarItem; label: string }[] = [
 export interface MonitorSettings {
   /** Remote monitoring bar in the status bar (the bottom bar of SSH tabs). */
   showBar: boolean
-  /** Also monitor local shell tabs (the NexTerm host). */
+  /** Also monitor local shell tabs (the Termstead host). */
   barForLocal: boolean
   /** Items shown by the bar. */
   barItems: BarItem[]
@@ -89,7 +89,7 @@ export function setMonitorBarEnabled(enabled: boolean): void {
  * reloads (the backend owns them), so the choice is kept in localStorage too — pruned when the session closes, after
  * 30 days, and beyond 200 entries.
  */
-const OVERRIDES_KEY = 'nexterm:monitor:bar-sessions:v1'
+const OVERRIDES_KEY = 'termstead:monitor:bar-sessions:v1'
 const OVERRIDE_TTL_MS = 30 * 24 * 3_600_000
 const MAX_OVERRIDES = 200
 

@@ -28,8 +28,8 @@ import (
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
 
-	cfgpkg "github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/model"
+	cfgpkg "github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/model"
 )
 
 func TestAPIListAndGating(t *testing.T) {
@@ -47,7 +47,7 @@ func TestAPIListAndGating(t *testing.T) {
 	}
 	var host HostInfo
 	h.must(admin, http.MethodGet, "/api/servers/host", nil, &host, http.StatusOK)
-	if host.Platform != runtime.GOOS || host.NexTermPort != 7822 || host.DefaultRoot == "" {
+	if host.Platform != runtime.GOOS || host.TermsteadPort != 7822 || host.DefaultRoot == "" {
 		t.Fatalf("host: %+v", host)
 	}
 	if code, _ := h.call(admin, http.MethodGet, "/api/servers/nfs", nil, nil); code != http.StatusNotFound {

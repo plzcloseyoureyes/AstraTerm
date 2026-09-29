@@ -18,8 +18,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
 func TestLineEditor(t *testing.T) {
@@ -356,12 +356,12 @@ func TestWinRMWrongPasswordIsPermanent(t *testing.T) {
 	}
 }
 
-// TestServeMockWSMan is a manual end-to-end harness: with NEXTERM_SERVE_WSMAN=host:port it serves the mock WinRM
+// TestServeMockWSMan is a manual end-to-end harness: with TERMSTEAD_SERVE_WSMAN=host:port it serves the mock WinRM
 // endpoint (Basic auth admin / p4ss, path /wsman) until the process is killed.
 func TestServeMockWSMan(t *testing.T) {
-	addr := os.Getenv("NEXTERM_SERVE_WSMAN")
+	addr := os.Getenv("TERMSTEAD_SERVE_WSMAN")
 	if addr == "" {
-		t.Skip("set NEXTERM_SERVE_WSMAN=host:port to serve a mock WinRM endpoint for manual end-to-end tests")
+		t.Skip("set TERMSTEAD_SERVE_WSMAN=host:port to serve a mock WinRM endpoint for manual end-to-end tests")
 	}
 	ln, err := net.Listen("tcp", addr)
 	if err != nil {

@@ -16,7 +16,7 @@ import (
 )
 
 // sshService is the SSH / SFTP server (SRV-5): SFTP jailed to the root folder for every user; interactive shells
-// and remote commands only when enabled (they run as the NexTerm OS user). Port forwarding, agent and X11
+// and remote commands only when enabled (they run as the Termstead OS user). Port forwarding, agent and X11
 // forwarding are refused.
 type sshService struct {
 	m       *Manager
@@ -33,9 +33,9 @@ type sshService struct {
 type sshCtxKey string
 
 const (
-	ctxClient  sshCtxKey = "nexterm.client"
-	ctxMethod  sshCtxKey = "nexterm.authmethod"
-	ctxAnnounc sshCtxKey = "nexterm.announced"
+	ctxClient  sshCtxKey = "termstead.client"
+	ctxMethod  sshCtxKey = "termstead.authmethod"
+	ctxAnnounc sshCtxKey = "termstead.announced"
 )
 
 func newSSHService(ctx context.Context, m *Manager, in *instance, cfg *SFTPConfig) (service, error) {
@@ -64,7 +64,7 @@ func (s *sshService) start() error {
 	}
 	s.srv = &charmssh.Server{
 		HostSigners:                hostSigners,
-		Version:                    "NexTerm",
+		Version:                    "Termstead",
 		PasswordHandler:            s.password,
 		PublicKeyHandler:           s.publicKey,
 		KeyboardInteractiveHandler: s.keyboardInteractive,

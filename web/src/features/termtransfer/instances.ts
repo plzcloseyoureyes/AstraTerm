@@ -28,7 +28,7 @@ export function activeController(): TransferController | undefined {
   return getController(useWorkspaceStore.getState().activeTabId)
 }
 
-/** Local files (the NexTerm host) are reachable in desktop mode and, in server mode, for admins (SPEC principle 7). */
+/** Local files (the Termstead host) are reachable in desktop mode and, in server mode, for admins (SPEC principle 7). */
 export function localFilesAllowed(): boolean {
   const st = useAuthStore.getState()
   return st.state?.mode !== 'server' || st.user?.role === 'admin'

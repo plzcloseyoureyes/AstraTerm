@@ -13,7 +13,7 @@ import (
 	"time"
 	"unicode/utf16"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 func fixture(t *testing.T, name string) []byte {

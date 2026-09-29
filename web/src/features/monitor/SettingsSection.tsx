@@ -43,7 +43,7 @@ export default function MonitoringSettingsSection() {
     >
       <SettingsGroup title="Remote monitoring bar" description="Live host statistics of the active SSH tab in the status bar.">
         <Toggle k="showBar" label="Show the remote monitoring bar" description="Samples CPU, memory, disk, network, users and uptime every 2 seconds over the tab's SSH connection." />
-        <Toggle k="barForLocal" label="Also for local terminals" description="Show the NexTerm computer's statistics when a local shell tab is active." />
+        <Toggle k="barForLocal" label="Also for local terminals" description="Show the Termstead computer's statistics when a local shell tab is active." />
         <SettingRow label="Items" description="What the bar shows (hover an item for details, click for the monitor tab)." stacked>
           <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 @xl:grid-cols-3">
             {BAR_ITEMS.map((i) => (
@@ -63,8 +63,8 @@ export default function MonitoringSettingsSection() {
         </SettingRow>
         <Toggle
           k="pauseHidden"
-          label="Pause while NexTerm is hidden"
-          description="Stops sampling when no NexTerm window is visible; the sampler uses one SSH channel, which counts toward the server's MaxSessions."
+          label="Pause while Termstead is hidden"
+          description="Stops sampling when no Termstead window is visible; the sampler uses one SSH channel, which counts toward the server's MaxSessions."
         />
       </SettingsGroup>
       <SettingsGroup title="Host monitor">
@@ -101,7 +101,7 @@ export default function MonitoringSettingsSection() {
           />
         </SettingRow>
       </SettingsGroup>
-      <SettingsGroup title="Caffeine" description="Keep this computer (the NexTerm host) and the screen awake during long jobs.">
+      <SettingsGroup title="Caffeine" description="Keep this computer (the Termstead host) and the screen awake during long jobs.">
         <Toggle k="caffeineStatusItem" label="Caffeine toggle in the status bar" />
       </SettingsGroup>
       <p className="text-xs text-muted-foreground">

@@ -60,9 +60,9 @@ export function AppShell() {
   // Browser tab title follows the active dock tab.
   const activeTitle = useActiveTab()?.title
   useEffect(() => {
-    document.title = activeTitle ? `${activeTitle} — NexTerm` : 'NexTerm'
+    document.title = activeTitle ? `${activeTitle} — Termstead` : 'Termstead'
   }, [activeTitle])
-  useEffect(() => () => void (document.title = 'NexTerm'), [])
+  useEffect(() => () => void (document.title = 'Termstead'), [])
 
   // Pop-out windows are outside this document: hide their content while the screen is locked (SEC-5).
   useEffect(() => {

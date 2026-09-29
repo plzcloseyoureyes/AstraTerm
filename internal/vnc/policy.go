@@ -5,14 +5,14 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/store"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/store"
 )
 
 // ---- encryption policy ----------------------------------------------------------------------------------------------
 //
 // VNC servers negotiate security types in the clear, so neither a failed TLS negotiation nor a server offering no
-// encryption can be told apart from an attacker stripping or breaking the encrypted options. NexTerm therefore never
+// encryption can be told apart from an attacker stripping or breaking the encrypted options. Termstead therefore never
 // silently connects with less protection than the server offered: connection option `encryption` (and the viewer's
 // explicit confirmation, remembered for the runtime session) decides.
 //
@@ -36,7 +36,7 @@ const (
 	encAllowUnencrypted
 )
 
-// weakDHFloor is the smallest Diffie-Hellman group NexTerm accepts even with the user's consent.
+// weakDHFloor is the smallest Diffie-Hellman group Termstead accepts even with the user's consent.
 const weakDHFloor = 1024
 
 func (p encryptionPolicy) String() string {
@@ -133,7 +133,7 @@ func (e *encryptionRequiredError) Error() string {
 //
 // RESEARCH GFX-2 / SEC-15: the clipboard can be limited to one direction or turned off, per connection
 // (options.clipboardDirection) and server-wide by an administrator (global settings section "vncPolicy",
-// clipboardDirection); the stricter one wins. NexTerm enforces local→remote itself (ClientCutText is dropped and the
+// clipboardDirection); the stricter one wins. Termstead enforces local→remote itself (ClientCutText is dropped and the
 // Extended Clipboard pseudo-encoding removed from SetEncodings, so the server cannot request the viewer's clipboard);
 // remote→local cannot be filtered without decoding every framebuffer update, so the viewer enforces it (it ignores
 // the server's clipboard when vnc-info reports `clipboard` without that direction).

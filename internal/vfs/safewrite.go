@@ -11,12 +11,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Safe editor saves (PUT /api/fs/{id}/write). Rewriting a file in place (truncate, then write) leaves a truncated
 // file behind when the connection drops mid-write. Where the protocol allows it, the new content is written to a
-// hidden temporary file in the same folder (".<name>.nexterm-tmp-<random>"), flushed (fsync when the server
+// hidden temporary file in the same folder (".<name>.termstead-tmp-<random>"), flushed (fsync when the server
 // offers it), its size verified, the original's permission bits and owner / group applied, and it then atomically
 // replaces the file with a rename — a drop at any point leaves the original untouched (plus, at worst, the
 // temporary file). A symlink is followed: the file it points to is replaced, the link stays.
@@ -151,7 +151,7 @@ func checkSize(ctx context.Context, fsys FS, p string, want int64) error {
 }
 
 // tmpSuffix marks the temporary files of safe writes.
-const tmpSuffix = ".nexterm-tmp-"
+const tmpSuffix = ".termstead-tmp-"
 
 // tempName returns a hidden temporary name next to target (the name is shortened to stay below NAME_MAX).
 func tempName(target string) string {

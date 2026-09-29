@@ -267,7 +267,7 @@ func TestSecretPrompt(t *testing.T) {
 func TestRedaction(t *testing.T) {
 	cases := map[string]string{
 		"/proxy/abcdefghijklmnopqrst-Zk3_9-xYz/app/":            "/proxy/abcdefghijklmnopqrst-[redacted]/app/",
-		"/?__nexterm_proxy_token=abcDEF123&x=1":                 "/?__nexterm_proxy_token=[redacted]&x=1",
+		"/?__termstead_proxy_token=abcDEF123&x=1":               "/?__termstead_proxy_token=[redacted]&x=1",
 		"https://bob:hunter2@example.com/x":                     "https://bob:[redacted]@example.com/x",
 		"Authorization: Basic Ym9iOmh1bnRlcjI=":                 "Authorization: Basic [redacted]",
 		"/ws/share/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA": "/ws/share/[redacted]",

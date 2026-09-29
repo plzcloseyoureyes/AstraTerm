@@ -54,7 +54,7 @@ export default function PasskeysSection() {
               <EmptyState
                 icon={Fingerprint}
                 title="No passkeys yet"
-                description="Add one to sign in without typing a password, to unlock NexTerm with Touch ID or Windows Hello, and as a second factor."
+                description="Add one to sign in without typing a password, to unlock Termstead with Touch ID or Windows Hello, and as a second factor."
                 action={
                   <Button onClick={openAddPasskey} disabled={!!problem}>
                     <Plus /> Add your first passkey
@@ -73,7 +73,7 @@ export default function PasskeysSection() {
           )}
         </QueryState>
         <p className="text-sm text-muted-foreground">
-          Passkeys are bound to the address you use NexTerm at{here ? ` (currently ${here})` : ''}. Synced passkeys follow you to your other
+          Passkeys are bound to the address you use Termstead at{here ? ` (currently ${here})` : ''}. Synced passkeys follow you to your other
           devices through your platform account or password manager.
         </p>
       </div>
@@ -177,7 +177,7 @@ function PasskeyRow({ passkey: p, elsewhere }: { passkey: Passkey; elsewhere: bo
               </Badge>
             )}
             {elsewhere && (
-              <Tooltip content={`Registered for ${p.rpId}; it only works when NexTerm is opened at that address`}>
+              <Tooltip content={`Registered for ${p.rpId}; it only works when Termstead is opened at that address`}>
                 <Badge variant="warning">{p.rpId}</Badge>
               </Tooltip>
             )}

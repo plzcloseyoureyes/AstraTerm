@@ -1,6 +1,6 @@
-# NexTerm UX principles (binding for every UI change)
+# Termstead UX principles (binding for every UI change)
 
-NexTerm is an **organized remote-management workspace**: every server, session, file system, tunnel and remote desktop
+Termstead is an **organized remote-management workspace**: every server, session, file system, tunnel and remote desktop
 in one self-hosted place, structured by folders, tags, identities and saved layouts, reachable from a single binary.
 Familiar layout (toolbar, left sidebar with Sessions/Files, tabbed workspace, status/monitoring bar), but calmer,
 smarter and more interactive than traditional terminal suites. The owner's words: "refine, refine, refine" — polish,

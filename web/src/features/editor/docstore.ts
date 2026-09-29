@@ -3,9 +3,9 @@
  * opened from this computer (with their File System Access handle when the browser supports it), diff sides and
  * crash/unsaved-change backups of remote buffers ("hot exit"). Falls back to memory when IndexedDB is unavailable.
  *
- * One database per signed-in user ("nexterm-editor:<userId>"): people sharing a browser profile (server mode) never
+ * One database per signed-in user ("termstead-editor:<userId>"): people sharing a browser profile (server mode) never
  * see — or garbage-collect — each other's documents and backups. Documents of the former shared database
- * ("nexterm-editor") move to the first user whose tab asks for them; its stale backups are dropped.
+ * ("termstead-editor") move to the first user whose tab asks for them; its stale backups are dropped.
  */
 import { useAuthStore } from '@/stores/auth'
 
@@ -22,7 +22,7 @@ export interface DocRecord {
   updatedAt: number
 }
 
-const LEGACY_DB = 'nexterm-editor'
+const LEGACY_DB = 'termstead-editor'
 const STORE = 'docs'
 
 const dbs = new Map<string, Promise<IDBDatabase | null>>()

@@ -13,7 +13,7 @@ import (
 	"github.com/labstack/echo/v5"
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 type keygenRequest struct {

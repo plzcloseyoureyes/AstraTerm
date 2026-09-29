@@ -17,7 +17,7 @@ export function passkeyEnvironment(): { ok: boolean; reason?: string } {
   const host = location.hostname
   if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host) || host.includes(':') || host.startsWith('[')) {
     const port = location.port ? `:${location.port}` : ''
-    return { ok: false, reason: `Passkeys need a host name, not an IP address — open NexTerm via ${location.protocol}//localhost${port}.` }
+    return { ok: false, reason: `Passkeys need a host name, not an IP address — open Termstead via ${location.protocol}//localhost${port}.` }
   }
   return { ok: true }
 }

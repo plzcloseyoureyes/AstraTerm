@@ -78,7 +78,7 @@ export function viaText(via: ProxyVia | undefined): string {
   if (!via) return ''
   switch (via.kind) {
     case 'direct':
-      return 'from the NexTerm host'
+      return 'from the Termstead host'
     case 'session':
       return `through session ${via.label}`
     case 'tunnel':

@@ -7,7 +7,7 @@ import (
 
 	"golang.org/x/text/encoding/charmap"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // WinSCP.ini importer (IMP-2). Sessions live in `[Sessions\<name>]` sections; the subkey name is %XX-encoded and
@@ -116,7 +116,7 @@ func winscpConn(b *builder, rawName string, sec *iniSection) {
 	pc.warnings = append(pc.warnings, notes...)
 }
 
-// winscpProtocol maps a WinSCP FSProtocol integer to a NexTerm protocol ("" = not importable).
+// winscpProtocol maps a WinSCP FSProtocol integer to a Termstead protocol ("" = not importable).
 func winscpProtocol(code string) model.Protocol {
 	switch strings.TrimSpace(code) {
 	case "0", "1", "2", "":

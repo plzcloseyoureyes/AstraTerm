@@ -15,9 +15,9 @@ import (
 	"github.com/labstack/echo/v5"
 	"golang.org/x/time/rate"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Command audit (REC-5). Every terminal session gets a commandTracker fed from the term output/input hooks:

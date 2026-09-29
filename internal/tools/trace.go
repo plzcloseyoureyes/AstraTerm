@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 // Traceroute (RESEARCH TOOL-8) comes in two modes:

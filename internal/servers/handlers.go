@@ -12,8 +12,8 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 const maxConfigBody = 1 << 20

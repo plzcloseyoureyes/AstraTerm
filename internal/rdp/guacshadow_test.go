@@ -11,13 +11,13 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/rdp/guac"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/rdp/guac"
 )
 
 // TestGuacShadowAndRecording: an administrator joins a user's guacd session read-only, and the session (options
-// recording) is recorded by NexTerm.
+// recording) is recorded by Termstead.
 func TestGuacShadowAndRecording(t *testing.T) {
 	var (
 		mu         sync.Mutex
@@ -261,11 +261,11 @@ func TestShadowIronRDPUnavailable(t *testing.T) {
 	}
 }
 
-// TestGuacShadowTestEnv joins a real guacd 1.6 connection (shared test environment, NEXTERM_TESTENV=1) read-only as
-// an administrator while its owner drives it, with the session recorded by NexTerm.
+// TestGuacShadowTestEnv joins a real guacd 1.6 connection (shared test environment, TERMSTEAD_TESTENV=1) read-only as
+// an administrator while its owner drives it, with the session recorded by Termstead.
 func TestGuacShadowTestEnv(t *testing.T) {
 	if !testEnvEnabled() {
-		t.Skip("NEXTERM_TESTENV=1 not set")
+		t.Skip("TERMSTEAD_TESTENV=1 not set")
 	}
 	env := newTestEnv(t, func(c *config.Config) { c.Guacd = "127.0.0.1:22822" })
 	admin := env.setup()

@@ -10,9 +10,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/server/servertest"
-	"github.com/nexterm/nexterm/internal/vault"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/termstead/termstead/internal/vault"
 )
 
 const adminPass = "correct horse battery staple"
@@ -28,9 +28,9 @@ func fixture(t *testing.T, name string) []byte {
 	return b
 }
 
-// isEncrypted reports whether data is a NexTerm passphrase-encrypted envelope (matches importer/crypto.go).
+// isEncrypted reports whether data is a Termstead passphrase-encrypted envelope (matches importer/crypto.go).
 func isEncrypted(data []byte) bool {
-	return bytes.Contains(data, []byte(`"envelope"`)) && bytes.Contains(data, []byte("nexterm-encrypted"))
+	return bytes.Contains(data, []byte(`"envelope"`)) && bytes.Contains(data, []byte("termstead-encrypted"))
 }
 
 type previewCounts struct {

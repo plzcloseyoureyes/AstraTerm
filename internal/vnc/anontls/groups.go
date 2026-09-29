@@ -1,7 +1,7 @@
 package anontls
 
 // Well-known finite-field Diffie-Hellman groups (safe primes p = 2q+1, generator 2): the RFC 7919 FFDHE groups that
-// NexTerm advertises in supported_groups (and that GnuTLS / OpenSSL servers pick when the client offers them), and
+// Termstead advertises in supported_groups (and that GnuTLS / OpenSSL servers pick when the client offers them), and
 // the RFC 3526 MODP groups many servers are configured with. A server group equal to one of these needs no primality
 // test, and because q is prime the only small subgroups are {1} and {1, p-1} (excluded by 1 < Y < p-1), so short
 // private exponents are safe (RFC 7919 section 5.2). Values exported from OpenSSL's built-in tables (openssl genpkey

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Snippet placeholders (AUTO-3; the same grammar is implemented in web/src/features/automation/template.ts):

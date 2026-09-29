@@ -1080,7 +1080,7 @@ export class TransferController {
   }
 
   // ===================================================================================================================
-  // uploads started from NexTerm (drop, menu)
+  // uploads started from Termstead (drop, menu)
   // ===================================================================================================================
 
   /** Upload local files to the SSH session's folder (SFTP) or, for local shells, the host (and type the path). */

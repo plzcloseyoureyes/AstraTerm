@@ -13,10 +13,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/auth"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/store"
+	"github.com/termstead/termstead/internal/auth"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/store"
 )
 
 // ceremonyResponse starts a ceremony in the browser: options is the PublicKeyCredential{Creation,Request}OptionsJSON
@@ -588,7 +588,7 @@ func (s *Service) handlePutConfig(c *echo.Context) error {
 	cfg.Origins = origins
 	if cfg.RPID != "" {
 		if err := protocol.ValidateRPID(cfg.RPID); err != nil {
-			return httpx.BadRequest("rpId must be a domain name such as nexterm.example.com")
+			return httpx.BadRequest("rpId must be a domain name such as termstead.example.com")
 		}
 		if len(cfg.Origins) == 0 {
 			return httpx.BadRequest("list at least one origin, e.g. https://" + cfg.RPID)

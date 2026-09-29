@@ -8,9 +8,9 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Secret injection (AUTO-9, TERM-33): the browser names a stored secret of the session's connection ("password",

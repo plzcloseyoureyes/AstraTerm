@@ -20,7 +20,7 @@ import (
 
 	"golang.org/x/net/proxy"
 
-	"github.com/nexterm/nexterm/internal/netguard"
+	"github.com/termstead/termstead/internal/netguard"
 )
 
 // proxySpec is options.proxy (password from secrets.proxyPassword).
@@ -36,7 +36,7 @@ func (s proxySpec) addr() string { return net.JoinHostPort(s.Host, strconv.Itoa(
 
 // dialProxy connects to addr through a SOCKS4/4a/5 or HTTP CONNECT proxy (SSH-30/31). Host names are resolved by the
 // proxy (remote DNS) except for plain SOCKS4, which only carries IPv4 addresses. g vets the connection to the proxy
-// server (made from the NexTerm host); the proxy's own connection to addr is its business.
+// server (made from the Termstead host); the proxy's own connection to addr is its business.
 func dialProxy(ctx context.Context, spec proxySpec, network, addr string, timeout time.Duration, g *netguard.Guard) (net.Conn, error) {
 	if network != "tcp" && network != "tcp4" && network != "tcp6" {
 		return nil, fmt.Errorf("%s proxies only carry TCP", spec.Type)
@@ -151,7 +151,7 @@ func dialHTTPConnect(ctx context.Context, spec proxySpec, addr string, timeout t
 	stop := context.AfterFunc(ctx, func() { c.Close() })
 	defer stop()
 	var b strings.Builder
-	fmt.Fprintf(&b, "CONNECT %s HTTP/1.1\r\nHost: %s\r\nUser-Agent: NexTerm\r\n", addr, addr)
+	fmt.Fprintf(&b, "CONNECT %s HTTP/1.1\r\nHost: %s\r\nUser-Agent: Termstead\r\n", addr, addr)
 	if spec.Username != "" {
 		cred := base64.StdEncoding.EncodeToString([]byte(spec.Username + ":" + spec.Password))
 		fmt.Fprintf(&b, "Proxy-Authorization: Basic %s\r\n", cred)

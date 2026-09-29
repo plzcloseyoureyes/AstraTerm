@@ -1,7 +1,7 @@
-// Package vnc implements NexTerm's VNC session type (RESEARCH PROTO-17, GFX-1..5, GFX-17, GFX-18, §3.12; SPEC §6.3).
+// Package vnc implements Termstead's VNC session type (RESEARCH PROTO-17, GFX-1..5, GFX-17, GFX-18, §3.12; SPEC §6.3).
 //
 // A VNC runtime session (kind "vnc", created by POST /api/sessions) has no terminal backend: every browser viewer
-// opens WS /ws/vnc/{sessionId} and NexTerm connects to the VNC server for it — directly or through the generic sshx
+// opens WS /ws/vnc/{sessionId} and Termstead connects to the VNC server for it — directly or through the generic sshx
 // Dialer (options.sshTunnelVia, jumpHosts, proxy) — terminating RFB security in Go: RFB 3.3/3.7/3.8, None, VNC
 // Authentication, Apple Remote Desktop and VeNCrypt 0.2 (Plain, TLSNone/TLSVnc/TLSPlain over anonymous TLS,
 // X509None/X509Vnc/X509Plain over crypto/tls with TOFU of the certificate fingerprint). noVNC is then offered RFB 3.8
@@ -34,11 +34,11 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Module is the VNC feature's runtime state.

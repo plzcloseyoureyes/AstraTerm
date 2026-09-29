@@ -299,7 +299,7 @@ export function KnownHostsImportDialog({ onClose }: { onClose: () => void }) {
             {mode === 'desktop' && (
               <RadioGroup value={source} onValueChange={(v) => setSource(v as 'text' | 'system')} aria-label="Source">
                 <RadioField value="text" label="Paste or load a file" />
-                <RadioField value="system" label="This computer's ~/.ssh/known_hosts" description="The OpenSSH file of the user running NexTerm." />
+                <RadioField value="system" label="This computer's ~/.ssh/known_hosts" description="The OpenSSH file of the user running Termstead." />
               </RadioGroup>
             )}
             {source === 'text' && (

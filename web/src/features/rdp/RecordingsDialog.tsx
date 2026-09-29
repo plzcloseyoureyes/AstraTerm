@@ -1,5 +1,5 @@
 /*
- * Remote desktop recordings (guacd sessions recorded by NexTerm, GET /api/rdp/recordings): list with play, download
+ * Remote desktop recordings (guacd sessions recorded by Termstead, GET /api/rdp/recordings): list with play, download
  * and delete, and a player built on Guacamole.SessionRecording (lazy, streamed). Opened by the command rdp.recordings.
  */
 import { useEffect, useRef, useState } from 'react'

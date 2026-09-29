@@ -1,6 +1,6 @@
 /*
  * Traceroute (TOOL-8): classic mode (probes per hop, TTL windows) and an mtr-style continuous mode with live per-hop
- * loss / latency statistics. Runs from the NexTerm host or from a saved SSH host.
+ * loss / latency statistics. Runs from the Termstead host or from a saved SSH host.
  */
 import * as React from 'react'
 import { Waypoints } from 'lucide-react'

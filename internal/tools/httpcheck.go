@@ -17,7 +17,7 @@ import (
 
 	"golang.org/x/net/http/httpguts"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 type httpCheckRequest struct {
@@ -205,7 +205,7 @@ func httpAttempt(ctx context.Context, guard *netGuard, req *httpCheckRequest, u 
 	if err != nil {
 		return nil, 0, httpx.BadRequest("invalid request: " + err.Error())
 	}
-	hreq.Header.Set("User-Agent", "NexTerm-httpcheck")
+	hreq.Header.Set("User-Agent", "Termstead-httpcheck")
 	for k, v := range req.Headers {
 		if k = strings.TrimSpace(k); k == "" {
 			continue

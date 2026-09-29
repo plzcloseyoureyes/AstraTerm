@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // collector accumulates the rows a sink emits so job runners can be tested without an events hub.

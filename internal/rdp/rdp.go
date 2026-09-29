@@ -1,4 +1,4 @@
-// Package rdp implements NexTerm's RDP session type (PROTO-16, GFX-1..9, GFX-11, GFX-18, CORE-16, CC-15; RESEARCH
+// Package rdp implements Termstead's RDP session type (PROTO-16, GFX-1..9, GFX-11, GFX-18, CORE-16, CC-15; RESEARCH
 // §3.10, §3.11; SPEC §6.3). RDP sessions are graphical runtime sessions (kind "rdp") created through
 // POST /api/sessions; they have no terminal backend — this module drives them:
 //
@@ -22,11 +22,11 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
 type handler struct {

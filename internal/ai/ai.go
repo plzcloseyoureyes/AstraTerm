@@ -1,4 +1,4 @@
-// Package ai implements NexTerm's optional AI assistant (RESEARCH TOOL-10, TOOL-11, TOOL-12): a provider proxy
+// Package ai implements Termstead's optional AI assistant (RESEARCH TOOL-10, TOOL-11, TOOL-12): a provider proxy
 // (Anthropic Messages API, OpenAI-compatible chat/completions) with streamed answers, natural-language → command
 // with a risk rating, explain/fix of terminal errors and a sysadmin chat. The browser never talks to the provider:
 // keys stay in the vault, context is redacted server-side, requests are rate-limited per user and audited without
@@ -26,12 +26,12 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/netguard"
-	"github.com/nexterm/nexterm/internal/store"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/netguard"
+	"github.com/termstead/termstead/internal/store"
 )
 
 type handler struct {
@@ -431,7 +431,7 @@ func (h *handler) test(c *echo.Context) error {
 	start := time.Now()
 	st, err := h.provider(e, key, user).Open(tctx, Request{
 		Model: e.Model, MaxTokens: 256, Effort: "low",
-		Messages: []Message{{Role: "user", Content: "Connection test from NexTerm. Reply with the single word: ready"}},
+		Messages: []Message{{Role: "user", Content: "Connection test from Termstead. Reply with the single word: ready"}},
 	})
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {

@@ -14,7 +14,7 @@ import (
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/sshx"
+	"github.com/termstead/termstead/internal/sshx"
 )
 
 // ---- SSH transport source -----------------------------------------------------------------------------------------
@@ -117,8 +117,8 @@ func (s *sshSource) probeExec(ctx context.Context) bool {
 	ctx, cancel := context.WithTimeout(ctx, 8*time.Second)
 	defer cancel()
 	out := &capWriter{max: 4096}
-	_, code, err := s.Exec(ctx, "echo nexterm-exec-ok", nil, out)
-	return err == nil && code == 0 && strings.Contains(out.String(), "nexterm-exec-ok")
+	_, code, err := s.Exec(ctx, "echo termstead-exec-ok", nil, out)
+	return err == nil && code == 0 && strings.Contains(out.String(), "termstead-exec-ok")
 }
 
 // ---- owner names --------------------------------------------------------------------------------------------------

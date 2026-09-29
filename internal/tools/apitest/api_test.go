@@ -1,4 +1,4 @@
-// Package apitest exercises the tools module end-to-end through a real in-process NexTerm server (HTTP API + events
+// Package apitest exercises the tools module end-to-end through a real in-process Termstead server (HTTP API + events
 // socket). It lives in its own package so the tools unit tests do not depend on every other module compiling.
 package apitest_test
 
@@ -19,8 +19,8 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/server/servertest"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/server/servertest"
 )
 
 const adminPass = "correct horse battery staple"
@@ -264,7 +264,7 @@ func TestToolsAPIDesktop(t *testing.T) {
 		t.Fatalf("own listener with our pid not listed")
 	}
 	if st, _ := admin.ErrorCode("POST", "/api/tools/listening/kill", map[string]any{"pid": os.Getpid()}); st != http.StatusBadRequest {
-		t.Fatalf("killing NexTerm itself: %d", st)
+		t.Fatalf("killing Termstead itself: %d", st)
 	}
 	if st, _ := admin.ErrorCode("POST", "/api/tools/listening/kill", map[string]any{"pid": 1}); st != http.StatusBadRequest {
 		t.Fatalf("killing pid 1: %d", st)
@@ -309,7 +309,7 @@ func TestToolsAPIServerMode(t *testing.T) {
 			t.Errorf("non-admin %s %s: %d %s", tc.method, tc.path, st, code)
 		}
 	}
-	// Non-admins cannot aim tools at the NexTerm host (SSRF hardening); admins can.
+	// Non-admins cannot aim tools at the Termstead host (SSRF hardening); admins can.
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { fmt.Fprint(w, "internal") }))
 	defer srv.Close()
 	id := start(t, user, "httpcheck", map[string]any{"url": srv.URL})
@@ -353,8 +353,8 @@ func createConn(t *testing.T, c *servertest.Client, name, host string, port int,
 
 func requireTestenv(t *testing.T) {
 	t.Helper()
-	if os.Getenv("NEXTERM_TESTENV") != "1" {
-		t.Skip("set NEXTERM_TESTENV=1 to run tests against the Docker test environment")
+	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
+		t.Skip("set TERMSTEAD_TESTENV=1 to run tests against the Docker test environment")
 	}
 }
 
@@ -413,16 +413,16 @@ func TestToolsViaSSH(t *testing.T) {
 }
 
 // TestRemoteTraceAsRoot runs the remote traceroute / mtr path (busybox traceroute output) on an SSH host where the
-// login user is root. NEXTERM_TOOLS_ROOT_SSH=host:port:user:password (e.g. a disposable container on the testenv
+// login user is root. TERMSTEAD_TOOLS_ROOT_SSH=host:port:user:password (e.g. a disposable container on the testenv
 // network that can reach "ssh2").
 func TestRemoteTraceAsRoot(t *testing.T) {
-	spec := os.Getenv("NEXTERM_TOOLS_ROOT_SSH")
+	spec := os.Getenv("TERMSTEAD_TOOLS_ROOT_SSH")
 	if spec == "" {
-		t.Skip("set NEXTERM_TOOLS_ROOT_SSH=host:port:user:password to test remote traceroute as root")
+		t.Skip("set TERMSTEAD_TOOLS_ROOT_SSH=host:port:user:password to test remote traceroute as root")
 	}
 	parts := strings.SplitN(spec, ":", 4)
 	if len(parts) != 4 {
-		t.Fatalf("bad NEXTERM_TOOLS_ROOT_SSH %q", spec)
+		t.Fatalf("bad TERMSTEAD_TOOLS_ROOT_SSH %q", spec)
 	}
 	var port int
 	fmt.Sscan(parts[1], &port)

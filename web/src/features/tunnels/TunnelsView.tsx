@@ -320,8 +320,8 @@ function TunnelRow({
           <td className="hidden text-center @xl:table-cell">
             <Checkbox
               checked={t.autoStart}
-              aria-label={`Start ${t.name} with NexTerm`}
-              title="Start with NexTerm"
+              aria-label={`Start ${t.name} with Termstead`}
+              title="Start with Termstead"
               tabIndex={-1}
               onClick={(e) => e.stopPropagation()}
               onCheckedChange={(v) => void setAutoStart(t, v === true)}
@@ -656,7 +656,7 @@ export default function TunnelsView(_props: TabProps) {
               <th className="hidden w-40 px-2.5 font-medium @2xl:table-cell">Server side</th>
               <th className="hidden w-14 px-2.5 text-right font-medium @md:table-cell">Conns</th>
               <th className="hidden w-36 px-2.5 font-medium @4xl:table-cell">Traffic</th>
-              <th className="hidden w-12 px-1 text-center font-medium @xl:table-cell" title="Start with NexTerm">
+              <th className="hidden w-12 px-1 text-center font-medium @xl:table-cell" title="Start with Termstead">
                 Auto
               </th>
               <th className="w-9" aria-label="Actions" />

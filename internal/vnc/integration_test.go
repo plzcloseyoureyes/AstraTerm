@@ -7,19 +7,19 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/vnc"
-	"github.com/nexterm/nexterm/internal/vnc/vnctest"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/vnc"
+	"github.com/termstead/termstead/internal/vnc/vnctest"
 )
 
-// Integration tests against the shared Docker test environment (NEXTERM_TESTENV=1): TigerVNC (VeNCrypt TLSVnc +
+// Integration tests against the shared Docker test environment (TERMSTEAD_TESTENV=1): TigerVNC (VeNCrypt TLSVnc +
 // VncAuth, password "vncpassword") at 127.0.0.1:22059, and the same server reached as "vnc:5901" through the ssh1
 // gateway (127.0.0.1:22022, test/test) with options.sshTunnelVia.
 
 func testenv(t *testing.T) {
-	if os.Getenv("NEXTERM_TESTENV") != "1" {
-		t.Skip("set NEXTERM_TESTENV=1 to run against the shared test environment")
+	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
+		t.Skip("set TERMSTEAD_TESTENV=1 to run against the shared test environment")
 	}
 }
 
@@ -53,9 +53,9 @@ func TestTestenvTigerVNCDirect(t *testing.T) {
 	h := newHarness(t, config.ModeDesktop)
 	admin := h.user("admin", model.RoleAdmin)
 	answerPrompts(t, admin, func(model.Prompt) (bool, []string, bool) { return false, nil, false })
-	addr := envDefault("NEXTERM_TEST_VNC", "127.0.0.1:22059")
+	addr := envDefault("TERMSTEAD_TEST_VNC", "127.0.0.1:22059")
 	connID := createVNCConnection(t, admin, "tigervnc", addr,
-		map[string]string{"vncPassword": envDefault("NEXTERM_TEST_VNC_PASSWORD", "vncpassword")}, nil)
+		map[string]string{"vncPassword": envDefault("TERMSTEAD_TEST_VNC_PASSWORD", "vncpassword")}, nil)
 	s := openSession(t, admin, map[string]any{"connectionId": connID})
 	v := dialVNC(t, admin, s.ID)
 	init, err := vnctest.Viewer(v.nc)
@@ -82,7 +82,7 @@ func TestTestenvTigerVNCViaSSHGateway(t *testing.T) {
 	sshID := h.connection(admin, &model.Connection{Name: "ssh1", Protocol: model.ProtoSSH, Host: "127.0.0.1",
 		Port: 22022, Username: "test", AuthMethod: model.AuthPassword}, map[string]string{"password": "test"})
 	connID := createVNCConnection(t, admin, "vnc via ssh1", "vnc:5901",
-		map[string]string{"vncPassword": envDefault("NEXTERM_TEST_VNC_PASSWORD", "vncpassword")},
+		map[string]string{"vncPassword": envDefault("TERMSTEAD_TEST_VNC_PASSWORD", "vncpassword")},
 		map[string]any{"sshTunnelVia": sshID})
 	s := openSession(t, admin, map[string]any{"connectionId": connID})
 	v := dialVNC(t, admin, s.ID)

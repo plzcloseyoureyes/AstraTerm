@@ -10,8 +10,8 @@ import (
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/server/servertest"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/server/servertest"
 )
 
 var totpOpts = totp.ValidateOpts{Period: 30, Digits: otp.DigitsSix, Algorithm: otp.AlgorithmSHA1}
@@ -141,7 +141,7 @@ func TestLoginPolicy(t *testing.T) {
 	// Remembering disabled: login cookies become browser-session cookies.
 	admin.MustJSON("PUT", "/api/admin/auth/policy", map[string]any{"rememberDays": 0}, nil)
 	resp, _ := env.Client().Do("POST", "/api/auth/login", map[string]any{"username": "bob", "password": "Correct-Horse-9", "remember": true})
-	if ck := findCookie(resp, "nexterm_session"); ck == nil || ck.MaxAge != 0 {
+	if ck := findCookie(resp, "termstead_session"); ck == nil || ck.MaxAge != 0 {
 		t.Fatalf("remember disabled, cookie: %+v", ck)
 	}
 
@@ -195,7 +195,7 @@ func TestAccountLockout(t *testing.T) {
 			}
 		}
 	}
-	// The lock never applies to clients on the NexTerm host itself (break-glass: no permanent remote lock-out).
+	// The lock never applies to clients on the Termstead host itself (break-glass: no permanent remote lock-out).
 	env.Login("bob", "bob password")
 	admin.MustJSON("POST", "/api/admin/users/"+bobID+"/unlock", nil, nil)
 	remoteClient(env, "203.0.113.7").MustJSON("POST", "/api/auth/login", map[string]string{"username": "bob", "password": "bob password"}, nil)

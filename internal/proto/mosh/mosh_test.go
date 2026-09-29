@@ -14,8 +14,8 @@ import (
 
 	mosh "github.com/unixshells/mosh-go"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // realOutput is what mosh-server 1.4.0 prints on `mosh-server new` (captured from the test container).
@@ -337,7 +337,7 @@ func TestUDPTargetPrefersSSHAddress(t *testing.T) {
 	if err != nil || ip.String() != "2001:db8::1" {
 		t.Fatalf("IPv6 literal: %v %v", ip, err)
 	}
-	if _, err := udpTarget(context.Background(), "nexterm-no-such-host.invalid", nil); err == nil {
+	if _, err := udpTarget(context.Background(), "termstead-no-such-host.invalid", nil); err == nil {
 		t.Fatal("unresolvable host accepted")
 	}
 }

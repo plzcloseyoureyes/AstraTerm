@@ -1,5 +1,5 @@
 /*
- * Caffeine (SEC-22): keep the NexTerm host awake (backend inhibitor) and this screen on (Screen Wake Lock) during long
+ * Caffeine (SEC-22): keep the Termstead host awake (backend inhibitor) and this screen on (Screen Wake Lock) during long
  * jobs. Status bar toggle, commands and a keeper overlay that holds the wake lock while Caffeine is on.
  */
 import { useEffect } from 'react'

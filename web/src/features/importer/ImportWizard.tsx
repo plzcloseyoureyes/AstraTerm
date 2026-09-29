@@ -67,7 +67,7 @@ const FORMAT_OPTIONS: { value: ImportFormat; label: string }[] = [
   { value: 'winscp', label: 'WinSCP (WinSCP.ini)' },
   { value: 'securecrt', label: 'SecureCRT (XML export)' },
   { value: 'csv', label: 'Generic CSV' },
-  { value: 'json', label: 'NexTerm JSON export' },
+  { value: 'json', label: 'Termstead JSON export' },
   { value: 'known_hosts', label: 'known_hosts / PuTTY host keys' },
 ]
 
@@ -418,7 +418,7 @@ function SourceStep(props: {
             e.target.value = ''
           }}
         />
-        <p className="text-xs text-muted-foreground">MobaXterm .mxtsessions / MobaXterm.ini, PuTTY .reg, ssh_config, CSV, XML, NexTerm JSON…</p>
+        <p className="text-xs text-muted-foreground">MobaXterm .mxtsessions / MobaXterm.ini, PuTTY .reg, ssh_config, CSV, XML, Termstead JSON…</p>
       </div>
 
       {desktop && <DiscoverPanel onPick={onDiscovered} busy={busy} />}
@@ -434,7 +434,7 @@ function SourceStep(props: {
       </Field>
 
       {needPass && (
-        <Field label="Passphrase" hint="This NexTerm export is encrypted.">
+        <Field label="Passphrase" hint="This Termstead export is encrypted.">
           <PasswordInput
             value={passphrase}
             onChange={(e) => setPassphrase(e.target.value)}
@@ -954,7 +954,7 @@ function ResultStep({ result }: { result: CommitResponse }) {
         <ShieldCheck className="size-5 text-success" aria-hidden />{' '}
         {result.created + result.updated + result.knownHostsAdded + result.keysImported + (result.snippetsCreated ?? 0) > 0
           ? 'Import finished'
-          : 'Nothing new — everything in this file is already in NexTerm'}
+          : 'Nothing new — everything in this file is already in Termstead'}
       </div>
       <dl className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {rows

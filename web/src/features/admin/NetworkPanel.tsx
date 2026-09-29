@@ -1,5 +1,5 @@
 /*
- * Network policy (SEC-7, owned by the netguard module's REST API): which destinations NexTerm may connect to on
+ * Network policy (SEC-7, owned by the netguard module's REST API): which destinations Termstead may connect to on
  * behalf of users, with a dry-run tester. Rendered only when the endpoints exist.
  */
 import { useEffect, useMemo, useState } from 'react'
@@ -74,11 +74,11 @@ export function NetworkPanel() {
 
   return (
     <>
-      <PageHeader title="Network policy" description="Which destinations NexTerm connects to on behalf of users (SSH, RDP, VNC, file transfers, tunnels, tools)." />
+      <PageHeader title="Network policy" description="Which destinations Termstead connects to on behalf of users (SSH, RDP, VNC, file transfers, tunnels, tools)." />
       <div className="grid gap-6">
         {!v.enforced && (
           <Notice icon={Info}>
-            Desktop mode: the policy is not enforced (you are the only user). It applies once NexTerm runs in server mode.
+            Desktop mode: the policy is not enforced (you are the only user). It applies once Termstead runs in server mode.
           </Notice>
         )}
         <Section title="Destinations">
@@ -90,7 +90,7 @@ export function NetworkPanel() {
               onCheckedChange={(x) => set('allowPrivate', x)}
             />
             <SwitchField
-              label="Block the NexTerm host’s own addresses"
+              label="Block the Termstead host’s own addresses"
               description={v.hostAddresses.length ? `Currently ${v.hostAddresses.slice(0, 4).join(', ')}${v.hostAddresses.length > 4 ? '…' : ''}` : undefined}
               checked={draft.blockHostAddresses}
               onCheckedChange={(x) => set('blockHostAddresses', x)}

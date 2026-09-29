@@ -14,8 +14,8 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/sshx"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/sshx"
 )
 
 // "Run via" a saved SSH connection: ping and traceroute execute the remote host's own ping / traceroute (tracepath)

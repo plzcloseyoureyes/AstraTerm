@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/store"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/store"
 )
 
 // Module table (migration auth/1): per-user security metadata the core users table has no columns for — the

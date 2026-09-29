@@ -18,11 +18,11 @@ import (
 )
 
 // TestTestEnvRemoteClients drives the embedded servers from a real remote machine: the shared Docker test
-// environment's ssh1 container (curl, nc, OpenSSH sftp) connects back to NexTerm through host.docker.internal.
-// Run with NEXTERM_TESTENV=1 (ssh1 on 127.0.0.1:22022, key scripts/testenv/keys/id_ed25519).
+// environment's ssh1 container (curl, nc, OpenSSH sftp) connects back to Termstead through host.docker.internal.
+// Run with TERMSTEAD_TESTENV=1 (ssh1 on 127.0.0.1:22022, key scripts/testenv/keys/id_ed25519).
 func TestTestEnvRemoteClients(t *testing.T) {
-	if os.Getenv("NEXTERM_TESTENV") != "1" {
-		t.Skip("set NEXTERM_TESTENV=1 to run against the shared Docker test environment")
+	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
+		t.Skip("set TERMSTEAD_TESTENV=1 to run against the shared Docker test environment")
 	}
 	keyPEM, err := os.ReadFile(filepath.Join("..", "..", "scripts", "testenv", "keys", "id_ed25519"))
 	if err != nil {
@@ -106,7 +106,7 @@ func TestTestEnvRemoteClients(t *testing.T) {
 	h.configure(u, KindSFTP, map[string]any{"root": root, "port": sp,
 		"users": []map[string]any{{"username": "carol", "publicKeys": []string{string(ssh.MarshalAuthorizedKey(spk))}}}})
 	h.start(u, KindSFTP)
-	keyPath := "/tmp/nexterm-servers-test-key"
+	keyPath := "/tmp/termstead-servers-test-key"
 	sess, _ := remote.NewSession()
 	sess.Stdin = bytes.NewReader(pem.EncodeToMemory(block))
 	if err := sess.Run("umask 077 && cat > " + keyPath); err != nil {
@@ -114,9 +114,9 @@ func TestTestEnvRemoteClients(t *testing.T) {
 	}
 	sess.Close()
 	defer run("rm -f " + keyPath)
-	out := run(fmt.Sprintf("printf 'ls /\\nget /hello.txt /tmp/nexterm-sftp-hello\\n' | sftp -q -b - -i %s -P %d "+
-		"-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null carol@%s && cat /tmp/nexterm-sftp-hello && "+
-		"rm -f /tmp/nexterm-sftp-hello", keyPath, sp, host))
+	out := run(fmt.Sprintf("printf 'ls /\\nget /hello.txt /tmp/termstead-sftp-hello\\n' | sftp -q -b - -i %s -P %d "+
+		"-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null carol@%s && cat /tmp/termstead-sftp-hello && "+
+		"rm -f /tmp/termstead-sftp-hello", keyPath, sp, host))
 	if !strings.Contains(out, "hello.txt") || !strings.HasSuffix(out, "hello world\n") {
 		t.Fatalf("sftp output %q", out)
 	}

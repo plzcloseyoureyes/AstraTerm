@@ -16,8 +16,8 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/auth"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/auth"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Kind identifies one embedded server.
@@ -79,7 +79,7 @@ type Common struct {
 	// BindAddress is an IP literal ("127.0.0.1" by default, "0.0.0.0" / "::" = every interface).
 	BindAddress string `json:"bindAddress"`
 	Port        int    `json:"port"`
-	// AutoStart starts the server when NexTerm starts.
+	// AutoStart starts the server when Termstead starts.
 	AutoStart bool `json:"autoStart"`
 	// StopAfterSec stops the server automatically this long after it was started (0 = never).
 	StopAfterSec int `json:"stopAfterSec"`
@@ -100,7 +100,7 @@ type HTTPConfig struct {
 	// RequireAuth enables HTTP basic authentication with Users.
 	RequireAuth bool   `json:"requireAuth"`
 	Users       []User `json:"users"`
-	// TLS serves HTTPS with a self-signed certificate generated (and kept) by NexTerm.
+	// TLS serves HTTPS with a self-signed certificate generated (and kept) by Termstead.
 	TLS bool `json:"tls"`
 }
 
@@ -129,7 +129,7 @@ type SFTPConfig struct {
 	Root     string `json:"root"`
 	ReadOnly bool   `json:"readOnly"`
 	Users    []User `json:"users"`
-	// Shell allows interactive shells and remote commands (run as the NexTerm OS user, not jailed). Off by default.
+	// Shell allows interactive shells and remote commands (run as the Termstead OS user, not jailed). Off by default.
 	Shell bool `json:"shell"`
 	// ShellCommand overrides the shell program ("" = the user's default shell).
 	ShellCommand   string `json:"shellCommand"`
@@ -200,7 +200,7 @@ type env struct {
 	home        string
 	dataDir     string
 	defaultRoot string
-	// nexHost / nexPort: NexTerm's own listener (never bindable by an embedded server).
+	// nexHost / nexPort: Termstead's own listener (never bindable by an embedded server).
 	nexHost string
 	nexPort int
 }
@@ -325,7 +325,7 @@ func (c *Common) validate(e *env, tcp bool) error {
 		return invalidf("port must be between 1 and 65535")
 	}
 	if tcp && e.nexPort != 0 && c.Port == e.nexPort && overlaps(host, e.nexHost) {
-		return invalidf("port %d is NexTerm's own port", c.Port)
+		return invalidf("port %d is Termstead's own port", c.Port)
 	}
 	if c.StopAfterSec < 0 || c.StopAfterSec > maxStopAfterSec {
 		return invalidf("stopAfterSec must be between 0 and %d", maxStopAfterSec)
@@ -683,7 +683,7 @@ func rootOf(c config) string {
 	return ""
 }
 
-// checkRoot verifies (at start) that root is an existing directory that neither contains nor lies inside NexTerm's
+// checkRoot verifies (at start) that root is an existing directory that neither contains nor lies inside Termstead's
 // data directory (its database and vault key must never be served). The default root is created when missing.
 func checkRoot(root string, e *env) error {
 	st, err := os.Stat(root)
@@ -703,7 +703,7 @@ func checkRoot(root string, e *env) error {
 		return invalidf("%s is not a folder", root)
 	}
 	if e.dataDir != "" && pathsOverlap(root, e.dataDir) {
-		return invalidf("the folder %s overlaps NexTerm's data directory (%s); choose another folder", root, e.dataDir)
+		return invalidf("the folder %s overlaps Termstead's data directory (%s); choose another folder", root, e.dataDir)
 	}
 	return nil
 }

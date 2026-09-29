@@ -22,7 +22,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/vnc/anontls/anontlstest"
+	"github.com/termstead/termstead/internal/vnc/anontls/anontlstest"
 )
 
 // Security types used by the fake server.

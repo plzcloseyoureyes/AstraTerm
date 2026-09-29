@@ -8,8 +8,8 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
 )
 
 type createRequest struct {
@@ -21,7 +21,7 @@ type createRequest struct {
 }
 
 var errUnavailable = httpx.NewError(http.StatusConflict, "webproxy_unavailable",
-	"the web proxy needs NexTerm to be opened on a loopback address (localhost), a wildcard domain configured by an "+
+	"the web proxy needs Termstead to be opened on a loopback address (localhost), a wildcard domain configured by an "+
 		"administrator (Settings → Web proxy), or path mode enabled")
 
 // open resolves spec, optionally checks the upstream, and registers a proxy for user.

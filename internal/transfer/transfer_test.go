@@ -18,13 +18,13 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/events"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/server/servertest"
-	"github.com/nexterm/nexterm/internal/transfer"
-	"github.com/nexterm/nexterm/internal/vfs"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/events"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/termstead/termstead/internal/transfer"
+	"github.com/termstead/termstead/internal/vfs"
 )
 
 // flakyFS fails the first read of every file after half of it with a transient network error.

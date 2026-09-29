@@ -252,7 +252,7 @@ func (a aferoFS) Remove(name string) error              { return a.r.Remove(name
 func (a aferoFS) RemoveAll(name string) error           { return a.r.RemoveAll(name) }
 func (a aferoFS) Rename(from, to string) error          { return a.r.Rename(from, to) }
 func (a aferoFS) Stat(name string) (os.FileInfo, error) { return a.r.Stat(name) }
-func (a aferoFS) Name() string                          { return "nexterm-root" }
+func (a aferoFS) Name() string                          { return "termstead-root" }
 func (a aferoFS) Chmod(name string, mode os.FileMode) error {
 	return a.r.Chmod(name, mode)
 }

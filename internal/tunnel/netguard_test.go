@@ -12,14 +12,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/netguard"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/netguard"
 )
 
 func serverModeCfg(c *config.Config) { c.Mode = config.ModeServer; c.Listen = "0.0.0.0:7822" }
 
 // TestRemoteForwardToLoopbackRefused covers SEC-7 for remote (-R) forwards, whose connections are made from the
-// NexTerm host: ordinary users cannot create them (nor session forwards of that kind) in server mode, and the
+// Termstead host: ordinary users cannot create them (nor session forwards of that kind) in server mode, and the
 // destination guard vets every connection of a running forward, so a policy change applies at once.
 func TestRemoteForwardToLoopbackRefused(t *testing.T) {
 	h := newHarness(t, serverModeCfg)

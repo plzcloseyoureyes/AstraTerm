@@ -17,10 +17,10 @@ import (
 	"github.com/coder/websocket"
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/netguard"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/netguard"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Timeouts of the RDCleanPath relay.

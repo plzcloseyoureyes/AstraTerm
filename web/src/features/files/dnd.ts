@@ -16,7 +16,7 @@ import { getFsHandle } from './fsHandles'
 import { collectDrop, planUpload, withSlowToast } from './upload'
 import type { FsContext } from './types'
 
-export const INTERNAL_MIME = 'application/x-nexterm-files'
+export const INTERNAL_MIME = 'application/x-termstead-files'
 
 interface ActiveDrag {
   viewId: string
@@ -123,7 +123,7 @@ let guardInstalled = false
 
 /**
  * OS files dropped where nothing handles them (a gap between drop zones, a disconnected SFTP panel, the tab strip…)
- * would make the browser open the file in place of NexTerm. Drop zones handle (preventDefault) their own events
+ * would make the browser open the file in place of Termstead. Drop zones handle (preventDefault) their own events
  * first; this window-level fallback only turns an unhandled file drop into a no-op.
  */
 export function installDropGuard(): void {

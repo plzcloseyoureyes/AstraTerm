@@ -15,10 +15,10 @@ import (
 
 	"github.com/miekg/dns"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
 )
 
 func mustGuard(t *testing.T, p Policy) *Guard {
@@ -257,10 +257,10 @@ func TestSelfAndHostAddresses(t *testing.T) {
 		allowed bool
 		class   string
 	}{
-		{"127.0.0.1", 7822, false, ClassNexTerm}, // NexTerm's own listener, even with a loopback exception
-		{"203.0.113.7", 7822, false, ClassNexTerm},
-		{"203.0.113.8", 7822, false, ClassNexTerm}, // exceptions never open NexTerm's port
-		{"0.0.0.0", 7822, false, ClassNexTerm},
+		{"127.0.0.1", 7822, false, ClassTermstead}, // Termstead's own listener, even with a loopback exception
+		{"203.0.113.7", 7822, false, ClassTermstead},
+		{"203.0.113.8", 7822, false, ClassTermstead}, // exceptions never open Termstead's port
+		{"0.0.0.0", 7822, false, ClassTermstead},
 		{"127.0.0.1", 7823, true, ClassAllowRule},
 		{"203.0.113.7", 22, false, ClassHost}, // a host address, any port
 		{"203.0.113.8", 22, true, ClassAllowRule},
@@ -275,7 +275,7 @@ func TestSelfAndHostAddresses(t *testing.T) {
 	if d := c.check(netip.MustParseAddr("127.0.0.1"), 7822, specific); !d.Allowed {
 		t.Errorf("loopback exception with a specific listen address: %+v", d)
 	}
-	if d := c.check(netip.MustParseAddr("203.0.113.7"), 7822, specific); d.Class != ClassNexTerm {
+	if d := c.check(netip.MustParseAddr("203.0.113.7"), 7822, specific); d.Class != ClassTermstead {
 		t.Errorf("specific listen address: %+v", d)
 	}
 	c2, _ := compile(Policy{AllowPrivate: true, BlockHostAddresses: false})
@@ -477,7 +477,7 @@ func TestManagerForUser(t *testing.T) {
 	if g == nil {
 		t.Fatal("applyToAdmins")
 	}
-	if d := g.Check(netip.MustParseAddr("127.0.0.1"), 7822); d.Class != ClassNexTerm {
+	if d := g.Check(netip.MustParseAddr("127.0.0.1"), 7822); d.Class != ClassTermstead {
 		t.Fatalf("manager guard knows the listener: %+v", d)
 	}
 	if _, err := m.SetPolicy(context.Background(), Policy{AllowedPorts: "x"}); err == nil {

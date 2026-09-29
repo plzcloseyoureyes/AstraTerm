@@ -13,14 +13,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/vnc/anontls"
+	"github.com/termstead/termstead/internal/vnc/anontls"
 )
 
-// The RFB client side of NexTerm's Go-side security termination (SPEC §6.3, RESEARCH §3.12): NexTerm connects to the
+// The RFB client side of Termstead's Go-side security termination (SPEC §6.3, RESEARCH §3.12): Termstead connects to the
 // VNC server, negotiates the protocol version, picks the strongest security type it implements (VeNCrypt with real
 // TLS, Apple Remote Desktop, VNC Authentication, None), authenticates with vault credentials (prompting through the
 // broker when missing or rejected), sends ClientInit and reads ServerInit. The browser (noVNC) is then offered RFB
-// 3.8 with security type None and receives the server's ServerInit. Security types NexTerm does not implement but
+// 3.8 with security type None and receives the server's ServerInit. Security types Termstead does not implement but
 // noVNC does (RA2ne, Tight, XVP, MS-Logon II, …) are handed to noVNC unchanged ("pass-through").
 
 // errCanceled is returned when the user dismissed a credentials or certificate prompt.
@@ -48,7 +48,7 @@ func (e *refusedError) Error() string {
 	return "the VNC server refused the connection: " + e.reason
 }
 
-// unsupportedError reports that neither NexTerm nor the browser can use any offered security type.
+// unsupportedError reports that neither Termstead nor the browser can use any offered security type.
 type unsupportedError struct{ offered string }
 
 func (e *unsupportedError) Error() string {
@@ -518,7 +518,7 @@ func (h *handshake) chooseSubtype(subtypes []uint32) uint32 {
 }
 
 // unencryptedAlternatives reports what the server offers besides anonymous TLS: unencrypted VeNCrypt subtypes, and
-// other top-level security types NexTerm (or the viewer) can use.
+// other top-level security types Termstead (or the viewer) can use.
 func (h *handshake) unencryptedAlternatives(subtypes []uint32, topTypes []byte) (inVeNCrypt, topLevel bool) {
 	for _, t := range subtypes {
 		if t == secNone || t == secVNCAuth || t == vcPlain {
@@ -689,7 +689,7 @@ func (h *handshake) startTLS(sub uint32, offered []uint32, topTypes []byte) erro
 }
 
 // anonTLSUnavailable decides what happens when the server's anonymous TLS cannot be used: the server refused
-// NexTerm's offer, or its Diffie-Hellman group is too weak. Depending on the policy the connection fails, retries
+// Termstead's offer, or its Diffie-Hellman group is too weak. Depending on the policy the connection fails, retries
 // (weak TLS allowed: the handshake already accepted it; unencrypted allowed: without anonymous TLS), or asks.
 func (h *handshake) anonTLSUnavailable(err error, subtypes []uint32, topTypes []byte) error {
 	var weak *anontls.WeakGroupError

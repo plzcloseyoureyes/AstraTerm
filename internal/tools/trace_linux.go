@@ -34,7 +34,7 @@ type recvErrTracer struct {
 func openTracer(dst net.IP, udp bool) (tracer, error) {
 	v6 := dst.To4() == nil
 	t := &recvErrTracer{v6: v6, dst: dst, buf: make([]byte, 2048), oob: make([]byte, 512), next: rand.IntN(0xffff),
-		payload: []byte("NexTerm traceroute probe 0123456")}
+		payload: []byte("Termstead traceroute probe 0123456")}
 	var err error
 	if !udp {
 		if t.fd, err = openProbeSocket(v6, false); err != nil {

@@ -19,16 +19,16 @@ import (
 	"github.com/coder/websocket"
 )
 
-// TestE2ERunningServer exercises a running NexTerm binary end to end (enable with NEXTERM_E2E_URL=http://host:port and
-// NEXTERM_E2E_SSH=host:port of an SSH server accepting test/test; a fresh server-mode target also needs
-// NEXTERM_E2E_SETUP_TOKEN, the ?setup= token from its banner):
+// TestE2ERunningServer exercises a running Termstead binary end to end (enable with TERMSTEAD_E2E_URL=http://host:port and
+// TERMSTEAD_E2E_SSH=host:port of an SSH server accepting test/test; a fresh server-mode target also needs
+// TERMSTEAD_E2E_SETUP_TOKEN, the ?setup= token from its banner):
 // setup/login → events socket answering host-key and password prompts → SSH quick-connect session → terminal
 // WebSocket echo → detach / re-attach with a delta → flood while detached / re-attach with a reset → local shell.
 func TestE2ERunningServer(t *testing.T) {
-	base := os.Getenv("NEXTERM_E2E_URL")
-	sshAddr := os.Getenv("NEXTERM_E2E_SSH")
+	base := os.Getenv("TERMSTEAD_E2E_URL")
+	sshAddr := os.Getenv("TERMSTEAD_E2E_SSH")
 	if base == "" || sshAddr == "" {
-		t.Skip("set NEXTERM_E2E_URL and NEXTERM_E2E_SSH to run against a live server")
+		t.Skip("set TERMSTEAD_E2E_URL and TERMSTEAD_E2E_SSH to run against a live server")
 	}
 	jar, _ := cookiejar.New(nil)
 	hc := &http.Client{Jar: jar, Timeout: 30 * time.Second}
@@ -41,7 +41,7 @@ func TestE2ERunningServer(t *testing.T) {
 		}
 		req, _ := http.NewRequest(method, base+path, rd)
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("X-NexTerm", "1")
+		req.Header.Set("X-Termstead", "1")
 		resp, err := hc.Do(req)
 		if err != nil {
 			t.Fatal(err)
@@ -67,7 +67,7 @@ func TestE2ERunningServer(t *testing.T) {
 	creds := map[string]string{"username": "e2e", "password": "e2e correct horse battery"}
 	if state.SetupRequired {
 		setup := map[string]string{"username": creds["username"], "password": creds["password"]}
-		if tok := os.Getenv("NEXTERM_E2E_SETUP_TOKEN"); tok != "" { // server mode: the ?setup= token from the banner
+		if tok := os.Getenv("TERMSTEAD_E2E_SETUP_TOKEN"); tok != "" { // server mode: the ?setup= token from the banner
 			setup["setupToken"] = tok
 		}
 		if st := call("POST", "/api/auth/setup", setup, nil); st != 200 && st != 201 {
@@ -162,8 +162,8 @@ func TestE2ERunningServer(t *testing.T) {
 	if term.mode != "delta" && term.mode != "reset" {
 		t.Fatalf("attach mode %q", term.mode)
 	}
-	term.send("echo hello-nexterm\r")
-	term.waitCount("hello-nexterm", 2) // the echoed command line and the command's output
+	term.send("echo hello-termstead\r")
+	term.waitCount("hello-termstead", 2) // the echoed command line and the command's output
 	t.Logf("echo observed at offset %d", term.offset())
 
 	// 5. Detach, produce output, re-attach with the last offset → delta.

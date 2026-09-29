@@ -13,7 +13,7 @@ import (
 	probing "github.com/prometheus-community/pro-bing"
 	"golang.org/x/net/icmp"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 type pingRequest struct {

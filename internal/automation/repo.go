@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // repo gives typed access to the module tables (schema.go). Times are stored as unix milliseconds (SPEC §5.1).
@@ -556,7 +556,7 @@ func (r *repo) clearRuns(ctx context.Context, owner string) error {
 
 // interruptRuns marks runs left "running" by a previous process as failed (called at startup).
 func (r *repo) interruptRuns(ctx context.Context) error {
-	_, err := r.db.ExecContext(ctx, `UPDATE automation_runs SET status = 'error', error = 'interrupted (NexTerm was restarted)',
+	_, err := r.db.ExecContext(ctx, `UPDATE automation_runs SET status = 'error', error = 'interrupted (Termstead was restarted)',
 		finished_at = ? WHERE status = 'running'`, toMs(now()))
 	return err
 }

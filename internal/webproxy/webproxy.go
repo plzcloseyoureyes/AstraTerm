@@ -1,16 +1,16 @@
-// Package webproxy implements NexTerm's per-user HTTP(S) reverse proxy (PROTO-28 "Browser" sessions, TUN-8 "open a
+// Package webproxy implements Termstead's per-user HTTP(S) reverse proxy (PROTO-28 "Browser" sessions, TUN-8 "open a
 // forwarded web service in the browser") and remote X11 applications in the browser through Xpra (PROTO-20).
 //
-// A proxy reaches one upstream origin (scheme://host:port) directly from the NexTerm host (vetted by internal/netguard
+// A proxy reaches one upstream origin (scheme://host:port) directly from the Termstead host (vetted by internal/netguard
 // in server mode), through a saved or live SSH connection (direct-tcpip channels) or along a saved "web" connection's
 // route (sshTunnelVia / jumpHosts / proxy through sshx.Pool.Dialer). Proxies are served in one of two modes:
 //
 //   - host mode: every proxy is its own origin "p-<id>.localhost:<port>" (browsers resolve *.localhost to loopback)
 //     or "p-<id>.<hostSuffix>" when an administrator configured a wildcard domain. The browser authenticates with a
-//     one-time token (query parameter) exchanged for a host-only cookie; NexTerm's own cookies never reach that origin.
-//   - path mode (server-mode fallback): "/proxy/<id>-<key>/…" on NexTerm's origin. The capability key authorizes the
+//     one-time token (query parameter) exchanged for a host-only cookie; Termstead's own cookies never reach that origin.
+//   - path mode (server-mode fallback): "/proxy/<id>-<key>/…" on Termstead's origin. The capability key authorizes the
 //     requests and every response carries a CSP sandbox (no allow-same-origin), so the proxied page runs in an opaque
-//     origin and cannot use NexTerm's session.
+//     origin and cannot use Termstead's session.
 //
 // Requests are dispatched by a pre-routing Echo middleware installed in Mount (see dispatch.go), in front of the API
 // routes and the SPA fallback.
@@ -25,11 +25,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/store"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/store"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Limits and timings.
@@ -52,7 +52,7 @@ const SettingsKey = "webproxy"
 // Settings is the administrator configuration (global settings key "webproxy").
 type Settings struct {
 	// HostSuffix enables host mode for UIs not served from a loopback host: proxies are served as
-	// "p-<id>.<HostSuffix>" (wildcard DNS and, with TLS, a wildcard certificate pointing at NexTerm are required).
+	// "p-<id>.<HostSuffix>" (wildcard DNS and, with TLS, a wildcard certificate pointing at Termstead are required).
 	HostSuffix string `json:"hostSuffix,omitempty"`
 	// PathMode allows the "/proxy/<id>-<key>/" fallback (default true).
 	PathMode *bool `json:"pathMode,omitempty"`
@@ -121,7 +121,7 @@ func Mount(d *app.Deps, c *core.Core) error {
 	api.POST("/xpra/start", s.handleXpraStart)
 
 	// Proxied requests must be handled before routing: their paths belong to the upstream application (e.g. its own
-	// /api/…), they carry no CSRF header, and NexTerm's authentication / body limits do not apply to them.
+	// /api/…), they carry no CSRF header, and Termstead's authentication / body limits do not apply to them.
 	d.Router.Echo().Pre(s.dispatch)
 
 	if c != nil && c.Sessions != nil {
@@ -131,7 +131,7 @@ func Mount(d *app.Deps, c *core.Core) error {
 	}
 	go s.janitor()
 	context.AfterFunc(d.Ctx, func() {
-		s.closeWhere(func(*Proxy) bool { return true }, "NexTerm is shutting down")
+		s.closeWhere(func(*Proxy) bool { return true }, "Termstead is shutting down")
 		svcMu.Lock()
 		if services[d] == s {
 			delete(services, d)

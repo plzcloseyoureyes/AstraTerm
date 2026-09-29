@@ -1,4 +1,4 @@
-// Package store is NexTerm's persistence layer: SQLite via modernc.org/sqlite (pure Go), a per-module migration
+// Package store is Termstead's persistence layer: SQLite via modernc.org/sqlite (pure Go), a per-module migration
 // registry, and typed repositories for every core table (SPEC §5.1). Secrets are stored as opaque ciphertext
 // ([]byte) produced by the vault; the store never sees plaintext secrets.
 package store
@@ -15,8 +15,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/model"
 
 	_ "modernc.org/sqlite" // registers driver "sqlite"
 )

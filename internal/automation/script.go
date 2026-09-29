@@ -12,8 +12,8 @@ import (
 	"github.com/dop251/goja"
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Scripts (AUTO-10): JavaScript (goja, ES5.1+ with most of ES2015+) executed inside the backend, sandboxed — no file

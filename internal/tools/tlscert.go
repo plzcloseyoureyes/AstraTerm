@@ -20,7 +20,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 type tlsCertRequest struct {
@@ -343,7 +343,7 @@ func doStartTLS(conn net.Conn, proto, sni string) error {
 		if err := expect(code, 220, lines, err); err != nil {
 			return err
 		}
-		helo := orString(sni, "nexterm.localdomain")
+		helo := orString(sni, "termstead.localdomain")
 		if err := write("EHLO " + helo + "\r\n"); err != nil {
 			return err
 		}

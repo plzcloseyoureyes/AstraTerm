@@ -18,21 +18,21 @@ import (
 	"github.com/coder/websocket"
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/audit"
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/events"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/proto/local"
-	"github.com/nexterm/nexterm/internal/sshx"
-	"github.com/nexterm/nexterm/internal/store"
-	"github.com/nexterm/nexterm/internal/term"
-	"github.com/nexterm/nexterm/internal/vault"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/audit"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/events"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/proto/local"
+	"github.com/termstead/termstead/internal/sshx"
+	"github.com/termstead/termstead/internal/store"
+	"github.com/termstead/termstead/internal/term"
+	"github.com/termstead/termstead/internal/vault"
 )
 
-// harness is an in-process NexTerm built from the foundation packages only (so the tests do not depend on other
+// harness is an in-process Termstead built from the foundation packages only (so the tests do not depend on other
 // feature modules): store, vault, events, jobs, audit, router, term + sshx + local shells and this module. Requests
 // are authenticated by an X-Test-User header carrying a user ID.
 type harness struct {
@@ -58,7 +58,7 @@ func newHarness(t *testing.T, mutate ...func(*config.Config)) *harness {
 	if err := config.EnsureDataDir(dir); err != nil {
 		t.Fatal(err)
 	}
-	st, err := store.Open(ctx, filepath.Join(dir, "nexterm.db"))
+	st, err := store.Open(ctx, filepath.Join(dir, "termstead.db"))
 	if err != nil {
 		t.Fatal(err)
 	}

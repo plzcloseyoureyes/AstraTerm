@@ -41,7 +41,7 @@ export function ManagerDialog({ onClose }: { onClose: () => void }) {
           <DialogTitle>
             <Network className="size-4 text-primary" /> Web proxies
           </DialogTitle>
-          <DialogDescription>Web pages and X11 applications NexTerm currently proxies for you. Idle proxies close by themselves.</DialogDescription>
+          <DialogDescription>Web pages and X11 applications Termstead currently proxies for you. Idle proxies close by themselves.</DialogDescription>
         </DialogHeader>
         <DialogBody className="min-h-40">
           <QueryState
@@ -54,7 +54,7 @@ export function ManagerDialog({ onClose }: { onClose: () => void }) {
                 size="sm"
                 icon={Globe}
                 title="No open web proxies"
-                description="Open a web page reachable from NexTerm or from one of your SSH servers."
+                description="Open a web page reachable from Termstead or from one of your SSH servers."
                 action={
                   <Button
                     size="sm"

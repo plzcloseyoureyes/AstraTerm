@@ -1,4 +1,4 @@
-// Package vault encrypts NexTerm's secrets (SPEC §4 "Vault keys", RESEARCH SEC-1).
+// Package vault encrypts Termstead's secrets (SPEC §4 "Vault keys", RESEARCH SEC-1).
 //
 // Two keys exist:
 //   - the system key: 32 random bytes in <data>/system.key (0600), always available; it protects server-internal
@@ -26,8 +26,8 @@ import (
 	"golang.org/x/crypto/argon2"
 	"golang.org/x/crypto/chacha20poly1305"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/store"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/store"
 )
 
 // Errors.
@@ -50,7 +50,7 @@ const (
 	metaDEKMaster  = "dek.master" // DEK sealed with the master-password KEK
 	metaKDF        = "kdf"        // JSON kdfParams
 	metaVerifier   = "verifier"   // constant sealed with the KEK (fast wrong-password detection)
-	verifierPlain  = "nexterm-vault-verifier-v1"
+	verifierPlain  = "termstead-vault-verifier-v1"
 	minPasswordLen = 8
 	maxPasswordLen = 1024
 )

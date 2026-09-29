@@ -3,7 +3,7 @@
 //
 // VNC servers use anonymous TLS for the VeNCrypt security types TLSNone, TLSVnc and TLSPlain (TigerVNC, QEMU,
 // x11vnc): the channel is encrypted but the server is not authenticated, so it protects against passive
-// eavesdropping only — an active attacker can run its own key exchange with both sides. NexTerm prefers the
+// eavesdropping only — an active attacker can run its own key exchange with both sides. Termstead prefers the
 // certificate-based X509* types (crypto/tls) whenever a server offers them.
 //
 // Scope: full handshakes only (no resumption, renegotiation, tickets or client certificates); AES-GCM and AES-CBC

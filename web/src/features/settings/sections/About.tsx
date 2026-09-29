@@ -18,7 +18,7 @@ export default function AboutSection() {
   const user = useCurrentUser()
   const features = Object.entries(st?.features ?? {})
   return (
-    <SettingsPage title="About NexTerm" description="An organized remote-management workspace in a single, self-contained binary.">
+    <SettingsPage title="About Termstead" description="An organized remote-management workspace in a single, self-contained binary.">
       <SettingsGroup title="Build">
         <SettingRow label="Version">
           <span className="font-mono text-sm">{st?.version || 'dev'}</span>
@@ -35,7 +35,7 @@ export default function AboutSection() {
         )}
       </SettingsGroup>
 
-      <SettingsGroup title="Optional integrations" description="Detected on the machine running NexTerm; missing ones disable the related features.">
+      <SettingsGroup title="Optional integrations" description="Detected on the machine running Termstead; missing ones disable the related features.">
         {features.length === 0 && <p className="px-4 py-3 text-sm text-muted-foreground">No integration information available.</p>}
         {features.map(([k, v]) => (
           <SettingRow key={k} label={INTEGRATION_LABELS[k] ?? k}>

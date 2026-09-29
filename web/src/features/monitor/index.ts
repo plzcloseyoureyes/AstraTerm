@@ -7,7 +7,7 @@
  *   monitor.open {sessionId?|target?, panel?}   host monitor of a session (default: the active tab / terminal)
  *   monitor.toggleBar {enabled?}                remote monitoring bar on / off (definition carries `checked()`)
  *   monitor.processes | services | ports | diskUsage | logs | connectionInfo   monitor tab on that panel
- *   monitor.systemInfo, monitor.taskManager     the NexTerm host (desktop mode / admins)
+ *   monitor.systemInfo, monitor.taskManager     the Termstead host (desktop mode / admins)
  *   monitor.caffeine.toggle | on {minutes?} | off
  */
 import { lazy } from 'react'
@@ -142,7 +142,7 @@ registerCommand({
   category: 'Tools',
   icon: MonitorCog,
   keywords: ['swinfo', 'hwinfo', 'hardware', 'software', 'this computer', 'local host'],
-  description: 'Hardware, software and live statistics of the computer NexTerm runs on',
+  description: 'Hardware, software and live statistics of the computer Termstead runs on',
   run: () => void openSystemInfo(),
   when: canMonitorLocal,
 })

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /*
- * NexTerm end-to-end smoke test — drives the real binary like the browser does (REST + /ws/events + /ws/terminal).
+ * Termstead end-to-end smoke test — drives the real binary like the browser does (REST + /ws/events + /ws/terminal).
  *
- *   make build                                  # builds bin/nexterm (frontend embedded)
+ *   make build                                  # builds bin/termstead (frontend embedded)
  *   node scripts/smoke/smoke.mjs                # starts its own SSH container + a throwaway server, runs everything
  *   node scripts/smoke/smoke.mjs --ssh 127.0.0.1:22022 --ssh-user test --ssh-password test   # reuse a running target
  *   node scripts/smoke/smoke.mjs --hold         # keep server + container up afterwards (prints a browser launch URL)
@@ -37,7 +37,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.
 
 const { values: opt } = parseArgs({
   options: {
-    bin: { type: 'string', default: path.join(ROOT, 'bin', process.platform === 'win32' ? 'nexterm.exe' : 'nexterm') },
+    bin: { type: 'string', default: path.join(ROOT, 'bin', process.platform === 'win32' ? 'termstead.exe' : 'termstead') },
     ssh: { type: 'string' }, // host:port of an existing SSH target (skips Docker)
     'ssh-user': { type: 'string', default: 'smoke' },
     'ssh-password': { type: 'string' },
@@ -54,7 +54,7 @@ const { values: opt } = parseArgs({
 if (opt.help) {
   console.log(`Usage: node scripts/smoke/smoke.mjs [options]
 
-  --bin PATH            NexTerm binary (default: bin/nexterm)
+  --bin PATH            Termstead binary (default: bin/termstead)
   --ssh HOST:PORT       use an existing SSH server instead of starting a container
   --ssh-user USER       SSH user (default: smoke; the container is created with it)
   --ssh-password PW     SSH password (default: random for the container; required with --ssh)
@@ -188,7 +188,7 @@ function sshBanner(host, port, timeoutMs = 3000) {
 }
 
 async function startSSHContainer() {
-  const name = `nexterm-smoke-ssh-${rnd(4).toLowerCase().replace(/[^a-z0-9]/g, 'x')}`
+  const name = `termstead-smoke-ssh-${rnd(4).toLowerCase().replace(/[^a-z0-9]/g, 'x')}`
   const password = opt['ssh-password'] || rnd(12)
   const user = opt['ssh-user']
   log(`starting SSH container ${name} (${opt['ssh-image']})`)
@@ -211,7 +211,7 @@ async function startSSHContainer() {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-// NexTerm server process
+// Termstead server process
 // ---------------------------------------------------------------------------------------------------------------------
 
 class Server {
@@ -233,7 +233,7 @@ class Server {
     // A throwaway home: local shells, the Local files tab and importers must never see the real one.
     const home = path.join(path.dirname(this.dataDir), `home-${path.basename(this.dataDir)}`)
     fs.mkdirSync(home, { recursive: true, mode: 0o700 })
-    const env = { ...process.env, NEXTERM_NO_OPEN: '1', HOME: home, USERPROFILE: home }
+    const env = { ...process.env, TERMSTEAD_NO_OPEN: '1', HOME: home, USERPROFILE: home }
     const proc = spawn(this.bin, args, { stdio: ['ignore', 'pipe', logFd], env })
     fs.closeSync(logFd)
     this.proc = proc
@@ -291,7 +291,7 @@ class Client {
 
   async req(method, p, body, { csrf = true, headers = {}, raw = false } = {}) {
     const h = { Accept: 'application/json', ...headers }
-    if (csrf && method !== 'GET') h['X-NexTerm'] = '1'
+    if (csrf && method !== 'GET') h['X-Termstead'] = '1'
     if (this.cookie) h.Cookie = this.cookie
     let payload
     if (body !== undefined) {
@@ -302,7 +302,7 @@ class Client {
     for (const sc of res.headers.getSetCookie?.() ?? []) {
       const [pair] = sc.split(';')
       const [k, v] = pair.split('=')
-      if (k.trim() === 'nexterm_session') this.cookie = v ? `nexterm_session=${v}` : ''
+      if (k.trim() === 'termstead_session') this.cookie = v ? `termstead_session=${v}` : ''
       if (/max-age=0|expires=thu, 01 jan 1970/i.test(sc)) this.cookie = ''
       this.lastSetCookie = sc
     }
@@ -580,7 +580,7 @@ async function main() {
     console.error(`binary not found: ${bin} (run "make build" first)`)
     process.exit(2)
   }
-  const workDir = opt['work-dir'] ? path.resolve(opt['work-dir']) : fs.mkdtempSync(path.join(os.tmpdir(), 'nexterm-smoke-'))
+  const workDir = opt['work-dir'] ? path.resolve(opt['work-dir']) : fs.mkdtempSync(path.join(os.tmpdir(), 'termstead-smoke-'))
   fs.mkdirSync(workDir, { recursive: true })
   const dataDir = path.join(workDir, 'data')
   const logPath = path.join(workDir, 'server.log')
@@ -669,7 +669,7 @@ async function main() {
 
   await step('auth: CSRF header required on mutations', async () => {
     const r = await anon.req('POST', '/api/auth/setup', { username: adminName, password: adminPass }, { csrf: false })
-    assertEq(r.status, 403, 'setup without X-NexTerm')
+    assertEq(r.status, 403, 'setup without X-Termstead')
     assertEq(r.json?.code, 'csrf', 'error code')
   })
 

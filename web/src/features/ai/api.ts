@@ -122,7 +122,7 @@ export async function streamChat(req: ChatRequest, onEvent: (ev: StreamEvent) =>
   } finally {
     reader.releaseLock()
   }
-  if (!ended) onEvent({ type: 'error', error: 'The connection to NexTerm was interrupted', code: 'network_error' })
+  if (!ended) onEvent({ type: 'error', error: 'The connection to Termstead was interrupted', code: 'network_error' })
 }
 
 /** Human-readable text for API / provider errors. */

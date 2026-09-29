@@ -1,7 +1,7 @@
-// Package transfer is NexTerm's server-side transfer queue (SPEC §6.0 "Files" transfers, RESEARCH FILE-8, FILE-14):
+// Package transfer is Termstead's server-side transfer queue (SPEC §6.0 "Files" transfers, RESEARCH FILE-8, FILE-14):
 // copies and moves between any two file system handles of the vfs registry (SFTP ↔ SFTP across hosts, local ↔
 // remote, S3, FTP...), recursive with folder merge, conflict policies (ask / overwrite / skip / resume / rename with
-// "apply to all"), atomic "<name>.nexterm-part" writes, mtime / permission preservation, optional SHA-256
+// "apply to all"), atomic "<name>.termstead-part" writes, mtime / permission preservation, optional SHA-256
 // verification, retries with resume on transient network errors, a concurrency limit, throttled progress events and
 // audit entries. Data never passes through the browser.
 package transfer
@@ -21,11 +21,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/events"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/vfs"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/events"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/vfs"
 )
 
 // Overwrite policies.
@@ -896,7 +896,7 @@ func (j *job) copyLink(ctx context.Context, it item, dstPath string) error {
 	return nil
 }
 
-// copyFile copies one file through "<dst>.nexterm-part" + rename, resuming and retrying on transient errors.
+// copyFile copies one file through "<dst>.termstead-part" + rename, resuming and retrying on transient errors.
 func (j *job) copyFile(ctx context.Context, it item, dstPath string) error {
 	dfs := j.dst.FS
 	// Object stores / WebDAV commit a PUT atomically and cannot rename cheaply: write the final name directly.

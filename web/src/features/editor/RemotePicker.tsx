@@ -609,8 +609,8 @@ function LocationSelect({
         )}
         {serverFiles && (
           <SelectGroup>
-            <SelectLabel>NexTerm server</SelectLabel>
-            <SelectItem value="open:local:">Server files (the machine running NexTerm)</SelectItem>
+            <SelectLabel>Termstead server</SelectLabel>
+            <SelectItem value="open:local:">Server files (the machine running Termstead)</SelectItem>
           </SelectGroup>
         )}
       </SelectContent>

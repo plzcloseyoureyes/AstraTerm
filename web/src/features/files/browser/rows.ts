@@ -20,7 +20,7 @@ export interface SortOptions {
 
 export interface FilterOptions {
   showHidden: boolean
-  /** Show "<name>.nexterm-part" files (settings.files.showPartialUploads). */
+  /** Show "<name>.termstead-part" files (settings.files.showPartialUploads). */
   showPartial: boolean
   /** Filter box text: a substring, or globs ("*.log", "a?.txt"; several separated by spaces / commas). */
   filter: string

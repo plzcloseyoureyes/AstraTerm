@@ -10,9 +10,9 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/store"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/store"
 )
 
 // Error responses specific to auth.
@@ -187,7 +187,7 @@ func (s *Service) handleLogin(c *echo.Context) error {
 		return errLoginNotAllowed
 	}
 	// Backoff keys: per client (IPv6 by /64) + user name, per client, and — for remote clients — per user name across
-	// all clients, so a password spray from many addresses still slows down. Loopback clients (the NexTerm host
+	// all clients, so a password spray from many addresses still slows down. Loopback clients (the Termstead host
 	// itself) are exempt from the cross-client key: they are the break-glass path.
 	rip, lname := RateKeyIP(ip), strings.ToLower(username)
 	userKey, ipKey, nameKey := "login:"+rip+"|"+lname, "login-ip:"+rip, "login-user:"+lname
@@ -226,7 +226,7 @@ func (s *Service) handleLogin(c *echo.Context) error {
 		return failed(ua.User, "bad password", errInvalidCredentials)
 	}
 	// A locked account is refused even with the right password (the lock is only revealed to someone who knows it).
-	// Clients on the NexTerm host itself are exempt, so remote failures can never lock the owner out for good.
+	// Clients on the Termstead host itself are exempt, so remote failures can never lock the owner out for good.
 	meta, err := s.userMeta(ctx, ua.User.ID)
 	if err != nil {
 		return err

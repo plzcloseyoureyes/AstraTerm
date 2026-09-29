@@ -135,10 +135,10 @@ func TestConnectOldServerAndErrors(t *testing.T) {
 	client.Close()
 }
 
-// TestGuacdTestEnv runs the handshake against the shared test environment's guacd (NEXTERM_TESTENV=1).
+// TestGuacdTestEnv runs the handshake against the shared test environment's guacd (TERMSTEAD_TESTENV=1).
 func TestGuacdTestEnv(t *testing.T) {
-	if os.Getenv("NEXTERM_TESTENV") != "1" {
-		t.Skip("NEXTERM_TESTENV=1 not set")
+	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
+		t.Skip("TERMSTEAD_TESTENV=1 not set")
 	}
 	dial := func(ctx context.Context) (net.Conn, error) {
 		return (&net.Dialer{Timeout: 3 * time.Second}).DialContext(ctx, "tcp", "127.0.0.1:22822")

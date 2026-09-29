@@ -7,8 +7,8 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // RateKeyIP returns the rate-limiting identity of a client address: IPv4 addresses as they are, IPv6 addresses by
@@ -27,7 +27,7 @@ func RateKeyIP(ip string) string {
 	return a.String()
 }
 
-// isLoopbackIP reports whether ip is a loopback address (a client on the NexTerm host itself).
+// isLoopbackIP reports whether ip is a loopback address (a client on the Termstead host itself).
 func isLoopbackIP(ip string) bool {
 	a, err := netip.ParseAddr(ip)
 	return err == nil && a.Unmap().IsLoopback()

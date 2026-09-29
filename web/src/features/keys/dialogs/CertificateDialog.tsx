@@ -1,6 +1,6 @@
 /*
  * OpenSSH user certificate of a stored key (SSH-5): details with a live expiry countdown, attach / replace (the
- * id_*-cert.pub file, validated against the key and its CA signature), download, detach. NexTerm presents the
+ * id_*-cert.pub file, validated against the key and its CA signature), download, detach. Termstead presents the
  * certificate (before the plain key) whenever the key is used to log in.
  */
 import { useEffect, useState } from 'react'
@@ -81,7 +81,7 @@ export default function CertificateDialog({ keyId, onClose }: { keyId: string; o
 
   const detach = async () => {
     if (!k) return
-    if (!(await confirm({ title: 'Detach the certificate?', description: 'NexTerm will log in with the plain key only.', confirmLabel: 'Detach', destructive: true }))) return
+    if (!(await confirm({ title: 'Detach the certificate?', description: 'Termstead will log in with the plain key only.', confirmLabel: 'Detach', destructive: true }))) return
     try {
       await updateKey(k.id, { certificate: '' })
       invalidateKeys(qc)

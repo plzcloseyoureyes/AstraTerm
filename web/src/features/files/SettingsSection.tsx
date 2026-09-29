@@ -48,7 +48,7 @@ export default function FilesSettingsSection() {
         </SettingRow>
         <SettingRow
           label="Show partial uploads"
-          description="“.nexterm-part” files: uploads and transfers in progress, or left behind when one was interrupted."
+          description="“.termstead-part” files: uploads and transfers in progress, or left behind when one was interrupted."
           htmlFor="files-parts"
         >
           <Switch id="files-parts" checked={s.showPartialUploads} onCheckedChange={(v) => filesSettings.set({ showPartialUploads: v })} />

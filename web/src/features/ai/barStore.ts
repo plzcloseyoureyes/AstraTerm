@@ -56,7 +56,7 @@ const MAX_HISTORY = 40
 /** Intent history is per user (a shared browser in server mode must not show one user's requests to the next). */
 function historyKey(): string | null {
   const id = useAuthStore.getState().user?.id
-  return id ? `nexterm:ai:intents:v1:${id}` : null
+  return id ? `termstead:ai:intents:v1:${id}` : null
 }
 
 export function intentHistory(): string[] {

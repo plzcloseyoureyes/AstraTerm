@@ -22,7 +22,7 @@ export default function LoginEnroll({ mfaToken, username, onCancel }: { mfaToken
         <RecoveryCodeActions codes={codes} username={username} />
         <CheckboxField checked={saved} onCheckedChange={(v) => setSaved(v === true)} label="I saved these codes somewhere safe" />
         <Button size="lg" disabled={!saved} onClick={() => void refreshAuth()}>
-          Continue to NexTerm
+          Continue to Termstead
         </Button>
       </div>
     )

@@ -5,7 +5,7 @@ SOURCE_DATE_EPOCH ?= $(shell git log -1 --format=%ct 2>/dev/null)
 BUILD_DATE := $(if $(SOURCE_DATE_EPOCH),$(shell date -u -d @$(SOURCE_DATE_EPOCH) +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -r $(SOURCE_DATE_EPOCH) +%Y-%m-%dT%H:%M:%SZ))
 LDFLAGS := -s -w -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.date=$(BUILD_DATE)
 GOFLAGS := -trimpath
-BIN := bin/nexterm
+BIN := bin/termstead
 # Release matrix; keep in sync with .goreleaser.yaml, scripts/release/dist and scripts/release/notices.
 # linux/arm/7 (32-bit ARMv7) can be added once internal/recording builds on 32-bit platforms (see docs/RELEASING.md).
 PLATFORMS := darwin/amd64 darwin/arm64 linux/amd64 linux/arm64 linux/arm/7 windows/amd64 windows/arm64 freebsd/amd64
@@ -38,14 +38,14 @@ precompress:
 	go run ./internal/webui/precompress internal/webui/dist
 
 build: web
-	CGO_ENABLED=0 go build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o $(BIN) ./cmd/nexterm
+	CGO_ENABLED=0 go build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o $(BIN) ./cmd/termstead
 
 # Backend only (assumes the frontend was already built into internal/webui/dist)
 build-go:
-	CGO_ENABLED=0 go build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o $(BIN) ./cmd/nexterm
+	CGO_ENABLED=0 go build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o $(BIN) ./cmd/termstead
 
 dev-backend:
-	go run ./cmd/nexterm --dev --no-open --data-dir ./.nexterm-data
+	go run ./cmd/termstead --dev --no-open --data-dir ./.termstead-data
 
 dev-web:
 	cd web && npm run dev

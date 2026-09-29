@@ -20,7 +20,7 @@ interface UIStore {
   quickConnectFocus: number
 }
 
-const LOCK_KEY = 'nexterm:locked'
+const LOCK_KEY = 'termstead:locked'
 
 export const useUIStore = create<UIStore>(() => ({
   paletteOpen: false,

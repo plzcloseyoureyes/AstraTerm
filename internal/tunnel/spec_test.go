@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/model"
 )
 
 func TestDefNormalize(t *testing.T) {
@@ -37,7 +37,7 @@ func TestDefNormalize(t *testing.T) {
 		{"dest socket", def{Type: "local", DestSocket: "/var/run/docker.sock", DestHost: "x", DestPort: 3}, def{Type: "local", BindHost: "127.0.0.1", DestSocket: "/var/run/docker.sock"}, ""},
 		{"relative remote socket", def{Type: "local", DestSocket: "run/docker.sock"}, def{}, "absolute path on the SSH server"},
 		{"local bind socket", def{Type: "local", BindSocket: abs, BindPort: 5, DestPort: 1}, def{Type: "local", BindSocket: abs, DestHost: "localhost", DestPort: 1}, ""},
-		{"relative local socket", def{Type: "local", BindSocket: "x.sock", DestPort: 1}, def{}, "absolute path on the NexTerm host"},
+		{"relative local socket", def{Type: "local", BindSocket: "x.sock", DestPort: 1}, def{}, "absolute path on the Termstead host"},
 		{"socket too long", def{Type: "remote", BindSocket: "/" + strings.Repeat("a", 200), DestPort: 1}, def{}, "at most"},
 		{"control chars", def{Type: "remote", BindSocket: "/tmp/a\nb", DestPort: 1}, def{}, "invalid characters"},
 	}
@@ -160,9 +160,9 @@ func TestPolicy(t *testing.T) {
 		{server, user, &spec{kind: kindLocal, bindSocket: "/tmp/x"}, "Unix socket"},
 		{server, user, &spec{kind: kindLocal, bindHost: "127.0.0.1", bindPort: 80}, "below 1024"},
 		{server, admin, &spec{kind: kindRemote, bindHost: "0.0.0.0", bindPort: 80}, ""},
-		{server, admin, &spec{kind: kindLocal, bindHost: "127.0.0.1", bindPort: 7822}, "NexTerm's own port"},
+		{server, admin, &spec{kind: kindLocal, bindHost: "127.0.0.1", bindPort: 7822}, "Termstead's own port"},
 		{desktop, user, &spec{kind: kindRemote, bindHost: "*", bindPort: 80}, ""},
-		{desktop, user, &spec{kind: kindLocal, bindHost: "127.0.0.1", bindPort: 7822}, "NexTerm's own port"},
+		{desktop, user, &spec{kind: kindLocal, bindHost: "127.0.0.1", bindPort: 7822}, "Termstead's own port"},
 	}
 	for i, c := range cases {
 		err := c.m.policy(c.u, c.sp)
@@ -189,7 +189,7 @@ func TestPermanentClassification(t *testing.T) {
 		err  error
 		want bool
 	}{
-		{errString("input is required but no NexTerm window is connected"), false},
+		{errString("input is required but no Termstead window is connected"), false},
 		{errString("no answer to the password prompt"), true},
 		{errString("connect to 1.2.3.4:22: connection refused"), false},
 		{model.ErrNotFound, true},

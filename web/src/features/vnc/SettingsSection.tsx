@@ -93,7 +93,7 @@ export default function VncSettingsSection() {
       <SettingsGroup title="Keyboard and clipboard">
         <SettingRow
           label="Send all keys to the remote desktop"
-          description="While the desktop has focus, NexTerm shortcuts do not fire. Otherwise only plain Ctrl+key combinations go to the remote (like terminals). Full screen with keyboard lock always sends everything."
+          description="While the desktop has focus, Termstead shortcuts do not fire. Otherwise only plain Ctrl+key combinations go to the remote (like terminals). Full screen with keyboard lock always sends everything."
           htmlFor="vnc-capture"
         >
           <Switch id="vnc-capture" checked={s.keyboardCapture === 'all'} onCheckedChange={(v) => set({ keyboardCapture: v ? 'all' : 'standard' })} />
@@ -154,7 +154,7 @@ function AdminPolicy() {
     >
       <SettingRow
         label="Clipboard"
-        description="Local → remote is enforced by NexTerm (clipboard messages never reach the server); remote → local is enforced by the viewer."
+        description="Local → remote is enforced by Termstead (clipboard messages never reach the server); remote → local is enforced by the viewer."
       >
         <LoadingState busy={settings.isLoading} skeleton={<Spinner />}>
           {(

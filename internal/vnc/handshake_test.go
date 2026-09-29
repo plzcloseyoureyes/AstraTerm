@@ -21,8 +21,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/vnc/anontls/anontlstest"
-	"github.com/nexterm/nexterm/internal/vnc/vnctest"
+	"github.com/termstead/termstead/internal/vnc/anontls/anontlstest"
+	"github.com/termstead/termstead/internal/vnc/vnctest"
 )
 
 func TestVNCAuthResponseKnownAnswer(t *testing.T) {
@@ -456,7 +456,7 @@ func TestHandshakeVeNCryptUnsupportedSubtypes(t *testing.T) {
 	srv := &vnctest.Server{Types: []byte{vnctest.SecVeNCrypt, vnctest.SecVNCAuth}, VeNCryptSubtypes: []uint32{vnctest.VcTLSSASL},
 		Password: "pw"}
 	addr := startFake(t, srv)
-	// The server offered VeNCrypt (encryption) that NexTerm cannot use: continuing unencrypted needs confirmation.
+	// The server offered VeNCrypt (encryption) that Termstead cannot use: continuing unencrypted needs confirmation.
 	_, err := handshakeTo(t, addr, &handshakeConfig{creds: &testCreds{pass: "pw"}})
 	var ie *insecureError
 	if !errors.As(err, &ie) || !ie.unencrypted {

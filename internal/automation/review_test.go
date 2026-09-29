@@ -8,7 +8,7 @@ import (
 
 	"github.com/dop251/goja"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Tests added by the automation review: macro wait / secret steps, event triggers, the trigger loop guard, the

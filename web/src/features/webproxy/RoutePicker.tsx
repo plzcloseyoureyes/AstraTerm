@@ -1,4 +1,4 @@
-/* "Reach it through" picker: the NexTerm host (direct), a live SSH session, or a saved SSH connection. */
+/* "Reach it through" picker: the Termstead host (direct), a live SSH session, or a saved SSH connection. */
 import { useMemo, type ReactNode } from 'react'
 import { Server, TerminalSquare, Waypoints } from 'lucide-react'
 import { useConnections } from '@/api/connections'
@@ -72,7 +72,7 @@ export function RoutePicker({
       <SelectContent>
         {allowDirect && (
           <SelectItem value="direct">
-            <Row icon={<Server className="size-3.5 text-muted-foreground" />}>This NexTerm host (direct)</Row>
+            <Row icon={<Server className="size-3.5 text-muted-foreground" />}>This Termstead host (direct)</Row>
           </SelectItem>
         )}
         {value.startsWith('t:') && (

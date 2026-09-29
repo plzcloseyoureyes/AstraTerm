@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/nexterm/nexterm/internal/auth"
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/server/servertest"
+	"github.com/termstead/termstead/internal/auth"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/server/servertest"
 )
 
 // trustLoopbackProxy makes the test server honour X-Forwarded-For from the (loopback) test client, so tests can

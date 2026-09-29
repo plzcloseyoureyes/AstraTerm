@@ -12,7 +12,7 @@ import { cn, storage } from '@/lib/utils'
 import { appearanceSettings } from '@/stores/settings'
 import { setDrawerOpen, useUIStore } from '@/stores/ui'
 
-const PREFS_KEY = 'nexterm:sidebar'
+const PREFS_KEY = 'termstead:sidebar'
 const MIN_W = 200
 const MAX_W = 640
 const DEFAULT_W = 280

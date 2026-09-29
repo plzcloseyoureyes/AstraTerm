@@ -19,8 +19,8 @@ import (
 	"github.com/bougou/go-ipmi/pkg/server"
 	"github.com/bougou/go-ipmi/pkg/transport/udp"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // referenceBMC starts go-ipmi's reference IPMI v2.0 BMC (RMCP+, SOL, chassis) on UDP loopback with a fake system
@@ -184,13 +184,13 @@ func TestRoutedIPMIRefused(t *testing.T) {
 	}
 }
 
-// TestServeReferenceBMC is a manual end-to-end harness, not a unit test: with NEXTERM_SERVE_REFBMC=host:port it serves
+// TestServeReferenceBMC is a manual end-to-end harness, not a unit test: with TERMSTEAD_SERVE_REFBMC=host:port it serves
 // the reference BMC (user ADMIN / s3cret) until the process is killed. The system console echoes keystrokes back
 // upper-cased and prints "bmc-console> " once a SOL session attaches.
 func TestServeReferenceBMC(t *testing.T) {
-	addr := os.Getenv("NEXTERM_SERVE_REFBMC")
+	addr := os.Getenv("TERMSTEAD_SERVE_REFBMC")
 	if addr == "" {
-		t.Skip("set NEXTERM_SERVE_REFBMC=host:port to serve a reference BMC for manual end-to-end tests")
+		t.Skip("set TERMSTEAD_SERVE_REFBMC=host:port to serve a reference BMC for manual end-to-end tests")
 	}
 	fake := &mock.FakeConsoleConn{}
 	hal := mock.New()

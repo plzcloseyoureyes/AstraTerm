@@ -13,7 +13,7 @@ import (
 // data directory had been removed).
 func TestCloseWaitsForBusyConnections(t *testing.T) {
 	dir := t.TempDir()
-	path := filepath.Join(dir, "nexterm.db")
+	path := filepath.Join(dir, "termstead.db")
 	s, err := Open(context.Background(), path)
 	if err != nil {
 		t.Fatal(err)

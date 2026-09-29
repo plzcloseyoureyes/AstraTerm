@@ -140,7 +140,7 @@ function ActionEditor({ a, event, onChange, onRemove }: { a: TriggerAction; even
             ]}
             aria-label="Level"
           />
-          <CheckboxField label="Desktop notification when NexTerm is in the background" checked={!!a.desktop} onCheckedChange={(v) => onChange({ ...a, desktop: v === true })} />
+          <CheckboxField label="Desktop notification when Termstead is in the background" checked={!!a.desktop} onCheckedChange={(v) => onChange({ ...a, desktop: v === true })} />
         </div>
       )}
       {a.type === 'sound' && (

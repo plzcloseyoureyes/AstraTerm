@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Secret keys used by VNC connections: the VNC password (SPEC §5.3), falling back to the generic password (quick

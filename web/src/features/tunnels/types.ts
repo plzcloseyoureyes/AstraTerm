@@ -8,11 +8,11 @@ import type { Tunnel, TunnelStatus, TunnelType } from '@/api/types'
 export type TunnelKind = 'local' | 'remote' | 'dynamic' | 'rdynamic'
 
 export interface TunnelOptions {
-  /** Dynamic tunnels: serve the SOCKS proxy on the SSH server, exit through the NexTerm host (TUN-5). */
+  /** Dynamic tunnels: serve the SOCKS proxy on the SSH server, exit through the Termstead host (TUN-5). */
   reverse?: boolean
-  /** Listen on a Unix socket (NexTerm host for local/dynamic, SSH server for remote) instead of bindHost:bindPort. */
+  /** Listen on a Unix socket (Termstead host for local/dynamic, SSH server for remote) instead of bindHost:bindPort. */
   bindSocket?: string
-  /** Connect to a Unix socket (SSH server for local, NexTerm host for remote) instead of destHost:destPort. */
+  /** Connect to a Unix socket (SSH server for local, Termstead host for remote) instead of destHost:destPort. */
   destSocket?: string
   /** SOCKS / HTTP proxy username (password: secret `socksPassword`). */
   socksUsername?: string
@@ -25,7 +25,7 @@ export interface TunnelOptions {
   idleTimeoutSec?: number
   /** Concurrent connection cap (0 = default). */
   maxConns?: number
-  /** Client allow list for listeners on the NexTerm host (IPs / CIDRs). */
+  /** Client allow list for listeners on the Termstead host (IPs / CIDRs). */
   allowFrom?: string[]
   /** "Open in browser" scheme ('' = guess from the port). */
   scheme?: '' | 'http' | 'https'
@@ -167,7 +167,7 @@ export interface BulkStartResult {
 }
 
 export interface ExportFile {
-  format: 'nexterm-tunnels'
+  format: 'termstead-tunnels'
   version: number
   exportedAt: string
   tunnels: {

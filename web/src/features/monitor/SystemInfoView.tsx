@@ -1,6 +1,6 @@
 /*
- * System information of the NexTerm host (MON-6: software, hardware, task list, kill task): software and
- * hardware details, live charts, processes, services, ports, disk usage and logs of the machine NexTerm runs on.
+ * System information of the Termstead host (MON-6: software, hardware, task list, kill task): software and
+ * hardware details, live charts, processes, services, ports, disk usage and logs of the machine Termstead runs on.
  * Desktop mode or administrators only.
  */
 import type { ReactNode } from 'react'
@@ -40,7 +40,7 @@ export default function SystemInfoView({ tabId, params }: TabProps<SysInfoTabPar
   const platform = feed?.stats?.platform ?? info.data?.host.platform
 
   if (!allowed) {
-    return <EmptyState icon={ShieldAlert} title="Not available" description="System information about the NexTerm server is available in desktop mode or to administrators." />
+    return <EmptyState icon={ShieldAlert} title="Not available" description="System information about the Termstead server is available in desktop mode or to administrators." />
   }
   const setPanel = (p: string) => updateTabParams<SysInfoTabParams>(tabId, { panel: p as Panel })
   const i = info.data
@@ -54,7 +54,7 @@ export default function SystemInfoView({ tabId, params }: TabProps<SysInfoTabPar
         <div className="grid min-w-0 flex-1 gap-0.5">
           <div className="flex items-center gap-2">
             <h2 className="truncate text-md font-semibold">{i?.host.hostname || feed?.stats?.hostname || 'This computer'}</h2>
-            <Badge variant="outline">NexTerm host</Badge>
+            <Badge variant="outline">Termstead host</Badge>
           </div>
           <div className="truncate text-xs text-muted-foreground">
             {i ? [i.host.os, i.host.kernelVersion && `kernel ${i.host.kernelVersion}`, i.host.arch, `up ${uptime(i.host.uptimeSec)}`].filter(Boolean).join(' · ') : 'Loading…'}
@@ -161,7 +161,7 @@ function Details({ info }: { info: SystemInfo }) {
           ['Swap', info.mem.swapTotal ? `${bytes(info.mem.swapUsed)} of ${bytes(info.mem.swapTotal)}` : 'none'],
         ])}
       </Section>
-      <Section title="NexTerm server" actions={<ServerCog className="size-4 text-muted-foreground" />}>
+      <Section title="Termstead server" actions={<ServerCog className="size-4 text-muted-foreground" />}>
         {rows([
           ['Version', info.server.version || '—'],
           ['Mode', info.server.mode],

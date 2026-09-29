@@ -16,18 +16,18 @@ import (
 
 	"golang.org/x/net/html"
 
-	"github.com/nexterm/nexterm/internal/netguard"
+	"github.com/termstead/termstead/internal/netguard"
 )
 
 // sandboxPolicy is applied to every path-mode response: the page runs in an opaque origin (no allow-same-origin), so
-// it cannot use NexTerm's cookies, storage or API although it is served from NexTerm's origin.
+// it cannot use Termstead's cookies, storage or API although it is served from Termstead's origin.
 const sandboxPolicy = "sandbox allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals " +
 	"allow-downloads allow-pointer-lock allow-presentation allow-orientation-lock"
 
 // ---- request ------------------------------------------------------------------------------------------------------
 
 // rewriteRequest points the outgoing request at the upstream, keeping the proxy transparent: Host / Origin / Referer
-// are the upstream's, NexTerm's cookies and headers are removed, and the path-mode prefix is stripped.
+// are the upstream's, Termstead's cookies and headers are removed, and the path-mode prefix is stripped.
 func (p *Proxy) rewriteRequest(pr *httputil.ProxyRequest) {
 	m := modeOf(pr.In)
 	t := p.rt.target
@@ -49,7 +49,7 @@ func (p *Proxy) rewriteRequest(pr *httputil.ProxyRequest) {
 	out.Host = t.authority()
 
 	h := out.Header
-	h.Del("X-Nexterm")
+	h.Del("X-Termstead")
 	filterCookies(h)
 	if o := h.Get("Origin"); o != "" && (o == "null" || strings.EqualFold(o, m.origin)) {
 		h.Set("Origin", t.Origin())
@@ -60,7 +60,7 @@ func (p *Proxy) rewriteRequest(pr *httputil.ProxyRequest) {
 		case strings.HasPrefix(ref, base+"/") || ref == base:
 			h.Set("Referer", t.Origin()+strings.TrimPrefix(ref, base))
 		case strings.HasPrefix(ref, m.origin):
-			h.Del("Referer") // a NexTerm page (path mode) — never leak NexTerm URLs upstream
+			h.Del("Referer") // a Termstead page (path mode) — never leak Termstead URLs upstream
 		}
 	}
 	if strings.Contains(h.Get("Accept"), "text/html") && h.Get("Accept-Encoding") != "" {
@@ -71,7 +71,7 @@ func (p *Proxy) rewriteRequest(pr *httputil.ProxyRequest) {
 	}
 }
 
-// filterCookies removes NexTerm's session cookie and the proxy cookie from the Cookie header(s).
+// filterCookies removes Termstead's session cookie and the proxy cookie from the Cookie header(s).
 func filterCookies(h http.Header) {
 	vals := h.Values("Cookie")
 	if len(vals) == 0 {
@@ -85,7 +85,7 @@ func filterCookies(h http.Header) {
 				continue
 			}
 			name, _, _ := strings.Cut(part, "=")
-			if name == cookieName || name == nextermSessionCookie {
+			if name == cookieName || name == termsteadSessionCookie {
 				continue
 			}
 			keep = append(keep, part)
@@ -115,7 +115,7 @@ func dropQueryParam(raw, name string) string {
 
 // ---- response -----------------------------------------------------------------------------------------------------
 
-// modifyResponse adapts upstream responses to the proxy origin: redirects and cookies, framing (only NexTerm may
+// modifyResponse adapts upstream responses to the proxy origin: redirects and cookies, framing (only Termstead may
 // frame the page), path-mode sandboxing and the HTML bridge / link rewriting.
 func (p *Proxy) modifyResponse(resp *http.Response) error {
 	m := modeOf(resp.Request)
@@ -141,7 +141,7 @@ func (p *Proxy) modifyResponse(resp *http.Response) error {
 		h.Del(k)
 	}
 	if m.path {
-		// Path mode serves the upstream on NexTerm's own origin: nothing the upstream says may configure that origin.
+		// Path mode serves the upstream on Termstead's own origin: nothing the upstream says may configure that origin.
 		for _, k := range pathModeDeniedHeaders {
 			h.Del(k)
 		}
@@ -197,8 +197,8 @@ func (p *Proxy) modifyResponse(resp *http.Response) error {
 // proxy origin could point the browser elsewhere, so they never pass.
 var originScopedHeaders = []string{"Alt-Svc", "Public-Key-Pins", "Public-Key-Pins-Report-Only", "Expect-CT"}
 
-// pathModeDeniedHeaders would configure NexTerm's own origin in path mode: wipe its storage, pin HSTS, register
-// reporting endpoints that receive reports about NexTerm's own requests (NEL), service-worker scope, client hints or
+// pathModeDeniedHeaders would configure Termstead's own origin in path mode: wipe its storage, pin HSTS, register
+// reporting endpoints that receive reports about Termstead's own requests (NEL), service-worker scope, client hints or
 // login status.
 var pathModeDeniedHeaders = []string{
 	"Clear-Site-Data", "Strict-Transport-Security", "Service-Worker-Allowed", "NEL", "Report-To", "Reporting-Endpoints",
@@ -330,13 +330,13 @@ func (p *Proxy) mapRefresh(v string, m reqMode) string {
 
 // rewriteSetCookie adapts an upstream cookie to the proxy origin: Domain is dropped (host-only), path-mode paths get
 // the prefix, and on secure contexts cookies become SameSite=None; Secure; Partitioned so the application's session
-// works inside NexTerm's iframe. NexTerm's own cookie names are refused.
+// works inside Termstead's iframe. Termstead's own cookie names are refused.
 func rewriteSetCookie(v string, m reqMode) string {
 	parts := strings.Split(v, ";")
 	nameVal := strings.TrimSpace(parts[0])
 	name, _, ok := strings.Cut(nameVal, "=")
 	name = strings.TrimSpace(name)
-	if !ok || name == "" || name == cookieName || name == nextermSessionCookie {
+	if !ok || name == "" || name == cookieName || name == termsteadSessionCookie {
 		return ""
 	}
 	out := []string{nameVal}
@@ -374,7 +374,7 @@ func rewriteSetCookie(v string, m reqMode) string {
 
 // ---- Content-Security-Policy --------------------------------------------------------------------------------------
 
-// fixCSPHeaders removes frame-ancestors from the upstream policies (NexTerm adds its own) and, when nonce is set,
+// fixCSPHeaders removes frame-ancestors from the upstream policies (Termstead adds its own) and, when nonce is set,
 // allows the injected bridge script.
 func fixCSPHeaders(h http.Header, nonce string) {
 	vals := h.Values("Content-Security-Policy")
@@ -579,7 +579,7 @@ func (rw htmlRewrite) mapSrcset(v string) string {
 // ---- errors -------------------------------------------------------------------------------------------------------
 
 // errorHandler renders upstream failures as a page inside the proxied origin (with the bridge reporting the error to
-// the NexTerm tab).
+// the Termstead tab).
 func (p *Proxy) errorHandler(w http.ResponseWriter, r *http.Request, err error) {
 	if errors.Is(err, context.Canceled) && r.Context().Err() != nil {
 		return // the browser went away
@@ -616,7 +616,7 @@ func errorTitle(code string) string {
 	case "session_gone", "session_disconnected":
 		return "SSH session not available"
 	case "locked":
-		return "NexTerm is locked"
+		return "Termstead is locked"
 	}
 	return "Cannot reach the site"
 }

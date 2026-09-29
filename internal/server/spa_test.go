@@ -23,7 +23,7 @@ func gz(t *testing.T, s string) []byte {
 }
 
 func TestSPAPrecompressedAssets(t *testing.T) {
-	js := strings.Repeat("console.log('nexterm');\n", 200)
+	js := strings.Repeat("console.log('fixture');\n", 200)
 	fsys := fstest.MapFS{
 		"index.html":            {Data: []byte("<!doctype html><html></html>")},
 		"boot.js":               {Data: []byte("/* boot */")},

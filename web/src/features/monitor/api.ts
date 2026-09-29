@@ -1,6 +1,6 @@
 /*
  * REST + WebSocket endpoints of the monitor module (SPEC §6.0 Monitoring, §9 monitor notes) and react-query hooks.
- * Targets are runtime session ids or 'local' (the NexTerm host, desktop mode / admins).
+ * Targets are runtime session ids or 'local' (the Termstead host, desktop mode / admins).
  */
 import { useQuery } from '@tanstack/react-query'
 import { api, seg, wsUrl } from '@/api/client'

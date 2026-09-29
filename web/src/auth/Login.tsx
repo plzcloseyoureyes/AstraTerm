@@ -227,7 +227,7 @@ export function Login() {
   const hasTotp = !!challenge?.methods.includes('totp')
   const hasPasskey = !!challenge?.methods.includes('webauthn') && !!challenge.mfaToken
 
-  const title = step === 'enroll' ? 'Set up two-factor authentication' : step === 'mfa' ? 'Two-factor authentication' : 'Sign in to NexTerm'
+  const title = step === 'enroll' ? 'Set up two-factor authentication' : step === 'mfa' ? 'Two-factor authentication' : 'Sign in to Termstead'
   const subtitle =
     step === 'enroll'
       ? 'Your administrator requires a second factor for this account.'
@@ -258,7 +258,7 @@ export function Login() {
   )
 
   return (
-    <AuthLayout wide={step === 'enroll'} footer={state?.version ? `NexTerm ${state.version}${state.mode === 'server' ? ' · server mode' : ''}` : undefined}>
+    <AuthLayout wide={step === 'enroll'} footer={state?.version ? `Termstead ${state.version}${state.mode === 'server' ? ' · server mode' : ''}` : undefined}>
       <div className="mb-6 flex flex-col items-center gap-3 text-center">
         <BrandMark />
         <div>

@@ -7,13 +7,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/netguard"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/netguard"
 )
 
 // netGuard adapts the shared destination policy (internal/netguard, SEC-7) to the tools: in server mode, ordinary
-// users' probes must not reach the NexTerm host itself (loopback, its own addresses and listener), unspecified,
+// users' probes must not reach the Termstead host itself (loopback, its own addresses and listener), unspecified,
 // link-local or cloud-metadata addresses, nor anything the administrator's network policy refuses. The check runs
 // on the address actually dialed (net.Dialer.Control), so DNS rebinding and HTTP redirects cannot bypass it. A nil
 // *netGuard allows everything (desktop mode, admins unless the policy applies to them); a zero netGuard applies the

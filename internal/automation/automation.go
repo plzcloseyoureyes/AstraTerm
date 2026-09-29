@@ -1,4 +1,4 @@
-// Package automation is NexTerm's automation module (SPEC §10.3 "automation"; RESEARCH AUTO-1, AUTO-4..12, TERM-15,
+// Package automation is Termstead's automation module (SPEC §10.3 "automation"; RESEARCH AUTO-1, AUTO-4..12, TERM-15,
 // TERM-17 pacing, TERM-33, SEC-21):
 //
 //   - snippets & macros REST (core tables), server-side snippet runs, macro replays (with timing) and paced sends
@@ -23,12 +23,12 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/store"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/store"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Module holds the automation runtime.
@@ -279,7 +279,7 @@ func (m *Module) audit(ctx any, user *model.User, action, target string, details
 	m.d.Audit.Log(ctx, action, target, details)
 }
 
-// isServerMode reports whether NexTerm runs in multi-user server mode.
+// isServerMode reports whether Termstead runs in multi-user server mode.
 func (m *Module) isServerMode() bool { return m.d.Cfg != nil && m.d.Cfg.IsServer() }
 
 // globalAutomationSettings returns the admin's global "automation" settings section.
@@ -291,7 +291,7 @@ func (m *Module) globalAutomationSettings(ctx context.Context) map[string]json.R
 	return sec
 }
 
-// scriptsAllowed: scripts run inside the NexTerm process, so in server mode they are admin-only unless an admin
+// scriptsAllowed: scripts run inside the Termstead process, so in server mode they are admin-only unless an admin
 // enabled them for everyone (global settings automation.userScripts = true). Desktop mode allows them.
 func (m *Module) scriptsAllowed(ctx context.Context, user *model.User) bool {
 	if user == nil {

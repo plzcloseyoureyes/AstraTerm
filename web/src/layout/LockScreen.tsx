@@ -83,7 +83,7 @@ export function LockScreen() {
     }
   }
 
-  const name = user?.displayName || user?.username || 'NexTerm'
+  const name = user?.displayName || user?.username || 'Termstead'
   const initial = name.trim().charAt(0).toUpperCase()
 
   return (
@@ -108,7 +108,7 @@ export function LockScreen() {
         </div>
         <div className="grid gap-0.5">
           <div className="text-md font-semibold">{name}</div>
-          <div className="text-sm text-muted-foreground">NexTerm is locked. Sessions keep running.</div>
+          <div className="text-sm text-muted-foreground">Termstead is locked. Sessions keep running.</div>
         </div>
         <div className="grid w-full gap-1.5 text-left">
           <PasswordInput

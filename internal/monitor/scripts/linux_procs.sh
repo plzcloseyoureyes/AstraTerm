@@ -1,4 +1,4 @@
-# NexTerm remote monitor — Linux process list (MON-3). Raw /proc/<pid>/stat lines (CPU ticks, state, RSS, threads,
+# Termstead remote monitor — Linux process list (MON-3). Raw /proc/<pid>/stat lines (CPU ticks, state, RSS, threads,
 # start time) joined with ps for the user and full command line. Works with procps and BusyBox.
 export LC_ALL=C
 echo "@@SELF $$"

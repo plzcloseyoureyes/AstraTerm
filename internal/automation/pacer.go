@@ -12,7 +12,7 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 // Paced sending (TERM-17, AUTO-6, CC-8): text is typed line by line into one or more sessions with an optional

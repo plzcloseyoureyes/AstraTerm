@@ -26,7 +26,7 @@ import (
 // Dynamic forwards (TUN-4/TUN-5) serve one port speaking SOCKS5 (go-socks5, optional username/password), SOCKS4/4a
 // (first-byte sniffing; no authentication) and — unless disabled — HTTP proxying (CONNECT and absolute-URI
 // requests) plus a PAC file at /proxy.pac. Host names are never resolved locally: they travel to the exit side
-// (the SSH server for -D, the NexTerm host for reverse dynamic forwards). UDP ASSOCIATE and BIND are refused.
+// (the SSH server for -D, the Termstead host for reverse dynamic forwards). UDP ASSOCIATE and BIND are refused.
 
 // handshakeTimeout bounds the proxy negotiation of a client, in nanoseconds (atomic so tests can shorten it).
 var handshakeTimeout atomic.Int64
@@ -315,7 +315,7 @@ func (p *proxy) handleHTTP(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusBadRequest)
-		_, _ = io.WriteString(w, "This is a NexTerm SOCKS/HTTP proxy. Configure it as the proxy of your client, or use /proxy.pac.\n")
+		_, _ = io.WriteString(w, "This is a Termstead SOCKS/HTTP proxy. Configure it as the proxy of your client, or use /proxy.pac.\n")
 	}
 }
 
@@ -329,7 +329,7 @@ func (p *proxy) authorize(w http.ResponseWriter, r *http.Request) bool {
 		return true
 	}
 	time.Sleep(300 * time.Millisecond)
-	w.Header().Set("Proxy-Authenticate", `Basic realm="NexTerm tunnel", charset="UTF-8"`)
+	w.Header().Set("Proxy-Authenticate", `Basic realm="Termstead tunnel", charset="UTF-8"`)
 	http.Error(w, "proxy authentication required", http.StatusProxyAuthRequired)
 	return false
 }
@@ -354,7 +354,7 @@ func (p *proxy) handleConnect(w http.ResponseWriter, r *http.Request) {
 	}
 	up, err := p.dialTarget(r.Context(), target)
 	if err != nil {
-		http.Error(w, "NexTerm proxy: "+dialError(target, "the tunnel", err), http.StatusBadGateway)
+		http.Error(w, "Termstead proxy: "+dialError(target, "the tunnel", err), http.StatusBadGateway)
 		return
 	}
 	hj, ok := w.(http.Hijacker)
@@ -398,7 +398,7 @@ func (p *proxy) forwardHTTP(w http.ResponseWriter, r *http.Request) {
 		ErrorLog:      log.New(io.Discard, "", 0),
 		ErrorHandler: func(w http.ResponseWriter, r *http.Request, err error) {
 			if r.Context().Err() == nil {
-				http.Error(w, "NexTerm proxy: "+dialError(r.URL.Host, "the tunnel", err), http.StatusBadGateway)
+				http.Error(w, "Termstead proxy: "+dialError(r.URL.Host, "the tunnel", err), http.StatusBadGateway)
 			}
 		},
 	}

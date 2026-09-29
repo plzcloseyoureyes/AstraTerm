@@ -13,8 +13,8 @@ import (
 	"github.com/labstack/echo/v5"
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // agentStatus is the response of GET /api/agent/status.
@@ -24,11 +24,11 @@ type agentStatus struct {
 	Running    bool       `json:"running"`
 	Owner      bool       `json:"owner"` // running for the caller
 	SocketPath string     `json:"socketPath,omitempty"`
-	Platform   string     `json:"platform"` // GOOS of the NexTerm host (shell snippets)
+	Platform   string     `json:"platform"` // GOOS of the Termstead host (shell snippets)
 	StartedAt  *time.Time `json:"startedAt,omitempty"`
 	KeyCount   int        `json:"keyCount"`
 	Locked     bool       `json:"locked"`
-	// LockedByClient: locked with ssh-add -x (unlock with ssh-add -X, or from NexTerm).
+	// LockedByClient: locked with ssh-add -x (unlock with ssh-add -X, or from Termstead).
 	LockedByClient bool       `json:"lockedByClient"`
 	VaultLocked    bool       `json:"vaultLocked"`
 	Autostart      bool       `json:"autostart"`
@@ -65,7 +65,7 @@ func (s *agentService) status(ctx context.Context, u *model.User) agentStatus {
 		st.LastUsedAt = &t
 	}
 	r.mu.Unlock()
-	if keys, err := r.view(ctx, agentOrigin{kind: originNexTerm}, true, "").List(); err == nil {
+	if keys, err := r.view(ctx, agentOrigin{kind: originTermstead}, true, "").List(); err == nil {
 		st.KeyCount = len(keys)
 	}
 	return st
@@ -83,7 +83,7 @@ type agentKeyView struct {
 	Comment         string     `json:"comment"`
 	Loaded          bool       `json:"loaded"`          // offered by the agent right now
 	Excluded        bool       `json:"excluded"`        // excluded in the settings
-	Unloaded        bool       `json:"unloaded"`        // removed for this agent run (ssh-add -d / NexTerm)
+	Unloaded        bool       `json:"unloaded"`        // removed for this agent run (ssh-add -d / Termstead)
 	Unlocked        bool       `json:"unlocked"`        // decrypted in memory
 	NeedsPassphrase bool       `json:"needsPassphrase"` // encrypted and the passphrase is not remembered
 	Confirm         bool       `json:"confirm"`         // confirmation required on each use (ssh-add -c)

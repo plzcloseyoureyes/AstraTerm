@@ -19,7 +19,7 @@ import type { LoginMethods } from '../types'
  * a way to sign in, so the server wants a recent sign-in: confirm first, before leaving the page.
  */
 export async function linkProvider(id: string): Promise<void> {
-  if (!(await ensureRecentAuth('Linking an account adds a way to sign in to NexTerm.'))) return
+  if (!(await ensureRecentAuth('Linking an account adds a way to sign in to Termstead.'))) return
   window.location.assign(`/api/auth/oidc/link?provider=${encodeURIComponent(id)}`)
 }
 

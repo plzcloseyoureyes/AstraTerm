@@ -13,7 +13,7 @@ export interface FilesSettings {
   /** Default of "Follow terminal folder" for SSH sessions (a connection's `followCwd: false` turns it off). */
   followTerminal: boolean
   showHidden: boolean
-  /** List "<name>.nexterm-part" files (uploads / transfers in progress or interrupted); hidden by default. */
+  /** List "<name>.termstead-part" files (uploads / transfers in progress or interrupted); hidden by default. */
   showPartialUploads: boolean
   confirmDelete: boolean
   /** Double-click on a file. */
@@ -91,7 +91,7 @@ export function removeBookmark(placeKey: string, path: string): void {
 // recent folders (browser-local)
 // ---------------------------------------------------------------------------------------------------------------------
 
-const RECENT_KEY = 'nexterm:files:recent:v1'
+const RECENT_KEY = 'termstead:files:recent:v1'
 const MAX_RECENT = 12
 const MAX_PLACES = 60
 

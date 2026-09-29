@@ -121,7 +121,7 @@ const LAYOUTS: Record<string, () => Layout> = {
   }),
 }
 
-/** Multi-byte encodings NexTerm can write. */
+/** Multi-byte encodings Termstead can write. */
 export const MULTIBYTE_ENCODINGS = new Set(Object.keys(LAYOUTS))
 
 function tableFor(encoding: string): Table {

@@ -13,7 +13,7 @@ import { cn, storage } from '@/lib/utils'
 import { appearanceSettings } from '@/stores/settings'
 import { useUIStore } from '@/stores/ui'
 
-const HISTORY_KEY = 'nexterm:quickconnect-history'
+const HISTORY_KEY = 'termstead:quickconnect-history'
 const MAX_HISTORY = 20
 
 export function getQuickConnectHistory(): string[] {

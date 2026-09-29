@@ -18,7 +18,7 @@ import { markUnauthenticated } from '@/stores/auth'
 import { requestVaultUnlock } from '@/stores/ui'
 import { fsApi, fsKeys, isDisconnected, isHandleGone } from './api'
 import { askConflict } from './dialogs/store'
-// The server receives chunks into "<target>.nexterm-part" and renames it onto the target with the final chunk.
+// The server receives chunks into "<target>.termstead-part" and renames it onto the target with the final chunk.
 import { PART_SUFFIX } from './format'
 import { openFs, useFsStore, withFs } from './fsHandles'
 import { dirname, joinPath, normalizePath, uniqueName } from './paths'
@@ -528,7 +528,7 @@ function putChunk(item: Item, url: string, body: Blob): Promise<{ size?: number 
       item.xhr = undefined
     }
     xhr.open('PUT', url)
-    xhr.setRequestHeader('X-NexTerm', '1')
+    xhr.setRequestHeader('X-Termstead', '1')
     xhr.setRequestHeader('Content-Type', 'application/octet-stream')
     xhr.setRequestHeader('Accept', 'application/json')
     xhr.upload.onprogress = (e) => {

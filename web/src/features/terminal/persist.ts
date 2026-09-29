@@ -8,7 +8,7 @@
  * offset 0 and the server replays its whole ring buffer.
  */
 
-const PREFIX = 'nexterm:term:v1:'
+const PREFIX = 'termstead:term:v1:'
 /** Upper bound of one snapshot (UTF-16 chars) — sessionStorage quotas are ~5M chars per origin. */
 const MAX_SNAPSHOT_CHARS = 1_500_000
 

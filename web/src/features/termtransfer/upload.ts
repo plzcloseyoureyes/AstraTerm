@@ -1,7 +1,7 @@
 /*
  * Drop-to-upload through the Files API (FILE-22): POST /api/fs {sessionId} (the terminal's own SSH transport — no
  * second login) or {local:true} for local shells, then chunked PUT …/upload?path=&offset=&total=&mtime=[&final=1]
- * (8 MiB raw chunks; the server writes "<target>.nexterm-part" and renames it with the last chunk). A failed chunk
+ * (8 MiB raw chunks; the server writes "<target>.termstead-part" and renames it with the last chunk). A failed chunk
  * resumes from the size the server holds (409 offset_mismatch carries it; otherwise GET …/upload?path=). Cancelling
  * removes the partial file. Progress shows in a toast (UploadToast).
  */
@@ -45,7 +45,7 @@ function closeFs(id: string): void {
 }
 
 export interface UploadRequest {
-  /** SSH session (its own transport) or the NexTerm host (local shells). */
+  /** SSH session (its own transport) or the Termstead host (local shells). */
   source: { sessionId: string } | { local: true }
   /** Destination folder; empty = the file system's start folder. */
   dir?: string
@@ -311,7 +311,7 @@ function retriable(err: unknown): boolean {
 }
 
 async function removePart(fsId: string, target: string): Promise<void> {
-  await api.post(`${base(fsId)}/delete`, { paths: [`${target}.nexterm-part`], recursive: false }).catch(() => undefined)
+  await api.post(`${base(fsId)}/delete`, { paths: [`${target}.termstead-part`], recursive: false }).catch(() => undefined)
 }
 
 function putChunk(job: Job, url: string, body: Blob, onProgress: (loaded: number) => void): Promise<{ size?: number } | null> {
@@ -327,7 +327,7 @@ function putChunk(job: Job, url: string, body: Blob, onProgress: (loaded: number
       if (job.xhr === xhr) job.xhr = null
     }
     xhr.open('PUT', url)
-    xhr.setRequestHeader('X-NexTerm', '1')
+    xhr.setRequestHeader('X-Termstead', '1')
     xhr.setRequestHeader('Content-Type', 'application/octet-stream')
     xhr.setRequestHeader('Accept', 'application/json')
     xhr.upload.onprogress = (e) => {

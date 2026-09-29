@@ -11,10 +11,10 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
-// Redaction (RESEARCH SEC-11): everything that leaves NexTerm for an AI provider — context and the conversation —
+// Redaction (RESEARCH SEC-11): everything that leaves Termstead for an AI provider — context and the conversation —
 // is passed through a redactor that removes the user's stored secrets (exact values) and anything that looks like a
 // credential (private-key blocks, cloud/API tokens, JWTs, Authorization headers, password assignments, URL
 // credentials, …).
@@ -43,7 +43,7 @@ var builtinRedactions = []redactRule{
 	{name: "jwt", re: regexp.MustCompile(`\beyJ[A-Za-z0-9_-]{8,}\.eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}`)},
 	{name: "auth-header", re: regexp.MustCompile(`(?i)(\b(?:proxy-)?authorization\s*[:=]\s*"?(?:bearer|basic|token|digest)\s+)[A-Za-z0-9._~+/=\-]{6,}`), keep: 1},
 	{name: "bearer", re: regexp.MustCompile(`(?i)(\bbearer\s+)[A-Za-z0-9._~+/=\-]{16,}`), keep: 1},
-	{name: "nexterm-token", re: regexp.MustCompile(`\bnxt_[A-Za-z0-9_\-]{16,}`)},
+	{name: "termstead-token", re: regexp.MustCompile(`\bnxt_[A-Za-z0-9_\-]{16,}`)},
 	{name: "cookie-header", re: regexp.MustCompile(`(?im)(\b(?:set-)?cookie\s*:\s*[^=\s;]+=)([^;\s]{6,})`), keep: 1},
 	{name: "url-credentials", re: regexp.MustCompile(`(\b[a-zA-Z][a-zA-Z0-9+.\-]*://[^/\s:@'"]+:)[^@\s/'"]+(@)`), keep: 1, tail: true},
 	{name: "cli-password", re: regexp.MustCompile(`(?i)(--[a-z0-9-]*(?:password|passwd|pass|token|secret|api-?key|access-?key|secret-?key|client-?secret|auth-?token)(?:=|\s+))("[^"\n]*"|'[^'\n]*'|\S+)`), keep: 1},

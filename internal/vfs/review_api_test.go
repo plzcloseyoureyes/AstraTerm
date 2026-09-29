@@ -16,14 +16,14 @@ import (
 	"syscall"
 	"testing"
 
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/server/servertest"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/server/servertest"
 )
 
 // Regression tests of the files-backend review (security).
 
-// Server mode: an ordinary user's WebDAV / FTP / S3 / SMB connections must not reach the NexTerm host's loopback
+// Server mode: an ordinary user's WebDAV / FTP / S3 / SMB connections must not reach the Termstead host's loopback
 // (or link-local / metadata addresses) — SSRF through a file browser.
 func TestFilesSSRFGuard(t *testing.T) {
 	env := servertest.New(t, func(c *config.Config) { c.Mode = config.ModeServer })

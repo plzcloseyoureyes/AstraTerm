@@ -5,8 +5,8 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 // Mount registers the SSH-specific REST endpoints (extensions, see SPEC §9 B1 notes):

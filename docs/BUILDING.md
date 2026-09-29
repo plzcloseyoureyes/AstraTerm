@@ -1,6 +1,6 @@
-# Building NexTerm
+# Building Termstead
 
-NexTerm is one Go executable with the React UI embedded (`go:embed` of `internal/webui/dist`). Building it means:
+Termstead is one Go executable with the React UI embedded (`go:embed` of `internal/webui/dist`). Building it means:
 build the UI, precompress it, compile Go with `CGO_ENABLED=0`.
 
 ## Requirements
@@ -18,9 +18,9 @@ which needs cgo.
 ## Everyday builds
 
 ```sh
-make build          # npm ci (first time / lockfile change) → vite build → precompress → bin/nexterm
+make build          # npm ci (first time / lockfile change) → vite build → precompress → bin/termstead
 make build-go       # Go only, reusing the UI already in internal/webui/dist
-./bin/nexterm version
+./bin/termstead version
 ```
 
 `make web` does the UI part alone: it installs the locked npm dependencies when `web/package-lock.json` changed,
@@ -56,7 +56,7 @@ The Makefile and the release tooling set, through `-ldflags -X`:
 | `main.commit` | `git rev-parse HEAD` |
 | `main.date` | RFC 3339 UTC time from `SOURCE_DATE_EPOCH`, else the last commit's time |
 
-`nexterm version` prints them with the Go version and platform. A plain `go build` falls back to Go's VCS stamp
+`termstead version` prints them with the Go version and platform. A plain `go build` falls back to Go's VCS stamp
 (`vcs.revision`, `vcs.time`) when built inside a git checkout.
 
 ## Cross-compilation and release archives
@@ -72,13 +72,13 @@ make dist           # archives from the UI already in internal/webui/dist
 
 ```text
 dist/
-  build/<os>_<arch>/nexterm[.exe]                 the raw binaries
-  nexterm_<version>_<os>_<arch>.tar.gz            macOS, Linux, FreeBSD
-  nexterm_<version>_windows_<arch>.zip            Windows
+  build/<os>_<arch>/termstead[.exe]                 the raw binaries
+  termstead_<version>_<os>_<arch>.tar.gz            macOS, Linux, FreeBSD
+  termstead_<version>_windows_<arch>.zip            Windows
   SHA256SUMS                                      sha256sum -c / shasum -a 256 -c compatible
 ```
 
-Each archive contains one top-level folder `nexterm_<version>_<os>_<arch>/` with the executable, `README.md`,
+Each archive contains one top-level folder `termstead_<version>_<os>_<arch>/` with the executable, `README.md`,
 `LICENSE` (once it exists), `CHANGELOG.md` and `THIRD_PARTY_NOTICES.md`. Names match the GoReleaser pipeline
 (`.goreleaser.yaml`), which CI uses for the actual releases; `make snapshot` runs that pipeline locally.
 

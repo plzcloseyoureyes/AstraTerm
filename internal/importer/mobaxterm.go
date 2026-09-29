@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // MobaXterm .mxtsessions / MobaXterm.ini / .moba importer (IMP-1).
@@ -40,7 +40,7 @@ import (
 // In-field escapes: ';' "__PTVIRG__", '"' "__DBLQUO__", '|' "__PIPE__" (also the separator of gateway lists), '%'
 // "__PERCENT__", '#' "__DIEZE__"; a stored path's "C:" is written "_CurrentDrive_:". Booleans are "-1" (on) / "0".
 // Where a type's layout is only known up to host/port/user (Telnet, FTP, Mosh), nothing further is read. S3, WSL,
-// Shell, File, XDMCP and Browser sessions have no faithful NexTerm equivalent and are reported, not imported.
+// Shell, File, XDMCP and Browser sessions have no faithful Termstead equivalent and are reported, not imported.
 //
 // Passwords are never part of a bookmark line (MobaXterm keeps them in its encrypted password store), except an SFTP
 // session's proxy password, which is dropped with a warning.
@@ -70,13 +70,13 @@ var mobaTypeName = map[int]string{
 	mobaBrowser: "Browser", mobaMosh: "Mosh", mobaS3: "S3", mobaWSL: "WSL",
 }
 
-// mobaDefaultIcon is the ImgNum a new session of each type gets; sessions that keep it use NexTerm's protocol icon.
+// mobaDefaultIcon is the ImgNum a new session of each type gets; sessions that keep it use Termstead's protocol icon.
 var mobaDefaultIcon = map[int]int{
 	mobaSSH: 109, mobaTelnet: 98, mobaRsh: 100, mobaXDMCP: 88, mobaRDP: 91, mobaVNC: 128, mobaFTP: 130, mobaSFTP: 140,
 	mobaSerial: 131, mobaFile: 84, mobaShell: 97, mobaBrowser: 313, mobaMosh: 145, mobaS3: 343, mobaWSL: 151,
 }
 
-// mobaIconMap maps a customised MobaXterm session icon to the closest icon of NexTerm's built-in set
+// mobaIconMap maps a customised MobaXterm session icon to the closest icon of Termstead's built-in set
 // (web/src/features/sessions/icons.tsx). Icons without a meaningful equivalent (distribution logos on terminals, …)
 // are left to the protocol default rather than replaced by a generic glyph.
 var mobaIconMap = map[int]string{
@@ -228,7 +228,7 @@ func parseMobaXterm(content []byte) (*parsed, error) {
 		b.warn("Skipped %d session(s) — %s: %s", len(names), r, list)
 	}
 	if len(b.p.conns) > 0 || sawPasswords {
-		b.warn("Saved passwords are not imported: MobaXterm keeps them in its own encrypted password store. Re-enter them in NexTerm or use SSH keys.")
+		b.warn("Saved passwords are not imported: MobaXterm keeps them in its own encrypted password store. Re-enter them in Termstead or use SSH keys.")
 	}
 	return b.finish()
 }
@@ -286,14 +286,14 @@ func (m *mobaImport) session(folderID, name, value string) {
 		m.serial(folderID, s)
 	case mobaMosh:
 		m.mosh(folderID, s)
-	default: // XDMCP, File, Shell, Browser, S3, WSL and unknown codes have no faithful NexTerm mapping.
+	default: // XDMCP, File, Shell, Browser, S3, WSL and unknown codes have no faithful Termstead mapping.
 		tn := mobaTypeName[typeCode]
 		if tn == "" {
 			tn = "type " + strconv.Itoa(typeCode)
 		}
-		reason := "MobaXterm " + tn + " sessions have no NexTerm equivalent"
+		reason := "MobaXterm " + tn + " sessions have no Termstead equivalent"
 		if typeCode == mobaS3 {
-			reason = "MobaXterm S3 sessions are not imported (create an S3 connection in NexTerm)"
+			reason = "MobaXterm S3 sessions are not imported (create an S3 connection in Termstead)"
 		}
 		m.skip(reason, name)
 	}
@@ -345,7 +345,7 @@ func (m *mobaImport) ssh(folderID string, s *mobaSession) {
 		o["sshBrowser"] = "scp"
 	}
 	if s.get(27) == "2" {
-		notes = append(notes, "MobaXterm forced SSH protocol 1, which NexTerm does not support")
+		notes = append(notes, "MobaXterm forced SSH protocol 1, which Termstead does not support")
 	}
 	if s.get(28) != "" || s.get(29) != "" || s.get(30) != "" {
 		notes = append(notes, "custom KEX / host-key / cipher preferences (PuTTY names) were not imported")
@@ -571,7 +571,7 @@ func (m *mobaImport) vnc(folderID string, s *mobaSession) {
 	}
 	var notes []string
 	if s.on(11) {
-		notes = append(notes, "MobaXterm's SSL tunnel option was not imported (NexTerm negotiates VeNCrypt TLS itself)")
+		notes = append(notes, "MobaXterm's SSL tunnel option was not imported (Termstead negotiates VeNCrypt TLS itself)")
 	}
 	pc := m.b.conn(folderID, c)
 	pc.hops = append(mobaProxy(pc, s, 13, 14, 15, 16, -1, &notes), mobaGateways(s, 5, 6, 7, 8)...)
@@ -623,7 +623,7 @@ func (m *mobaImport) sftp(folderID string, s *mobaSession) {
 }
 
 // serial — type 8. Only the device ("COM3", "/dev/ttyUSB0", possibly followed by a description) and a standard baud
-// rate are unambiguous in the undocumented layout; line settings are left at NexTerm's defaults (8N1).
+// rate are unambiguous in the undocumented layout; line settings are left at Termstead's defaults (8N1).
 func (m *mobaImport) serial(folderID string, s *mobaSession) {
 	device, baud := "", 0
 	for i := 1; i < len(s.f); i++ {
@@ -736,8 +736,8 @@ func mobaProxy(pc *pconn, s *mobaSession, typeIdx, hostIdx, portIdx, loginIdx, c
 	return nil
 }
 
-// mobaProxyCommand translates a MobaXterm/PuTTY local proxy command to NexTerm's ProxyCommand tokens (%h %p %r %%).
-// ok is false for an empty command or one needing the password (%pass), which NexTerm never substitutes.
+// mobaProxyCommand translates a MobaXterm/PuTTY local proxy command to Termstead's ProxyCommand tokens (%h %p %r %%).
+// ok is false for an empty command or one needing the password (%pass), which Termstead never substitutes.
 func mobaProxyCommand(raw, proxyHost, proxyPort string) (string, bool) {
 	s := mobaText(raw)
 	if s == "" {
@@ -789,7 +789,7 @@ func clampProxyPort(s, kind string) int {
 	return p
 }
 
-// mobaIcon maps a session's ImgNum: the type's default icon → "" (NexTerm's protocol icon), else the closest built-in
+// mobaIcon maps a session's ImgNum: the type's default icon → "" (Termstead's protocol icon), else the closest built-in
 // icon, if any.
 func mobaIcon(icon, typ int) string {
 	if icon < 0 || icon == mobaDefaultIcon[typ] {
@@ -812,10 +812,10 @@ func mobaTabColor(s string) string {
 
 // ---- terminal block ------------------------------------------------------------------------------------------------
 
-// mobaTerm is the per-session terminal configuration that has a NexTerm equivalent.
+// mobaTerm is the per-session terminal configuration that has a Termstead equivalent.
 type mobaTerm struct {
 	fontPt     int    // font size in points (MobaXterm default 10)
-	encoding   string // NexTerm encoding name ("" = UTF-8)
+	encoding   string // Termstead encoding name ("" = UTF-8)
 	cursor     int    // 0 block, 1 underline, 2 line, 3-5 blinking variants; -1 unknown
 	log        bool
 	termType   string
@@ -896,7 +896,7 @@ func (t mobaTerm) apply(pc *pconn, present bool) []string {
 		o["terminal"] = ov
 	}
 	if t.colors {
-		notes = append(notes, "the session's own colour scheme was not imported (pick a NexTerm theme)")
+		notes = append(notes, "the session's own colour scheme was not imported (pick a Termstead theme)")
 	}
 	if t.macro {
 		notes = append(notes, "the login macro was not imported (use a startup command or a snippet)")

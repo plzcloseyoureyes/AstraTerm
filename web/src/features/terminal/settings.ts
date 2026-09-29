@@ -116,8 +116,8 @@ export interface TerminalSettings {
 }
 
 export const TERMINAL_DEFAULTS: TerminalSettings = {
-  theme: 'nexterm-dark',
-  lightTheme: 'nexterm-light',
+  theme: 'termstead-dark',
+  lightTheme: 'termstead-light',
   matchAppTheme: true,
   customSchemes: [],
   minimumContrastRatio: 1,

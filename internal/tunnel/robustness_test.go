@@ -22,8 +22,8 @@ import (
 	"github.com/coder/websocket"
 	xproxy "golang.org/x/net/proxy"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Load, teardown, counter and resilience tests of the data plane.

@@ -1,4 +1,4 @@
-# Shared test targets for NexTerm development & e2e tests.
+# Shared test targets for Termstead development & e2e tests.
 #   docker compose -f scripts/testenv/docker-compose.yml up -d
 # All ports bind to 127.0.0.1 only. Credentials are throwaway test values.
 #
@@ -11,10 +11,10 @@
 #   vnc       22059            VNC password: vncpassword  (XFCE desktop on :1)
 #   rdp       22089            ubuntu / ubuntu (xrdp, TLS security)
 #   guacd     22822            guacamole/guacd 1.6
-#   s3        22090            SeaweedFS S3 API, access key nexterm / secret nexterm-secret (create buckets via API), path-style
+#   s3        22090            SeaweedFS S3 API, access key termstead / secret termstead-secret (create buckets via API), path-style
 #   webdav    22080            test / test
 #   smb       22445            test / test, share "share"
-name: nexterm-testenv
+name: termstead-testenv
 
 networks:
   lab:
@@ -112,9 +112,9 @@ services:
 
   s3:
     image: chrislusf/seaweedfs:latest
-    command: ["server", "-dir=/data", "-s3", "-s3.port=8333", "-s3.config=/etc/nexterm/s3.json", "-ip.bind=0.0.0.0"]
+    command: ["server", "-dir=/data", "-s3", "-s3.port=8333", "-s3.config=/etc/termstead/s3.json", "-ip.bind=0.0.0.0"]
     volumes:
-      - ./s3.json:/etc/nexterm/s3.json:ro
+      - ./s3.json:/etc/termstead/s3.json:ro
     ports:
       - "127.0.0.1:22090:8333"
     networks: [lab]

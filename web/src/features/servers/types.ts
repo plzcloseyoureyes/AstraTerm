@@ -157,7 +157,7 @@ export interface HostInfo {
   privilegedPorts: boolean
   /** …except on the wildcard address (macOS). */
   privilegedWildcardOk: boolean
-  nexTermPort: number
+  termsteadPort: number
   interfaces: HostInterface[]
 }
 

@@ -10,7 +10,7 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 type handlers struct{ s *Service }
@@ -50,7 +50,7 @@ func apiError(err error) error {
 	return httpx.NewError(http.StatusBadGateway, "monitor_failed", clip(strings.TrimSpace(err.Error()), 300))
 }
 
-// GET /api/monitor/local — System information of the NexTerm host (MON-6).
+// GET /api/monitor/local — System information of the Termstead host (MON-6).
 func (h *handlers) systemInfo(c *echo.Context) error {
 	user := httpx.UserFrom(c)
 	if !h.s.allowLocal(user) {

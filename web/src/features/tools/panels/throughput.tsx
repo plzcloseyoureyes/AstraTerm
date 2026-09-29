@@ -1,6 +1,6 @@
 /*
  * TCP throughput (TOOL-8 "iperf client"). Two clearly separated modes:
- *   - iperf3 server: NexTerm speaks the iperf3 protocol (TCP) to any `iperf3 -s` (port 5201).
+ *   - iperf3 server: Termstead speaks the iperf3 protocol (TCP) to any `iperf3 -s` (port 5201).
  *   - SSH host: the throughput of an SSH channel to a saved connection (no server software needed).
  */
 import * as React from 'react'
@@ -88,7 +88,7 @@ export default function ThroughputPanel() {
       title="Throughput test"
       description={
         f.mode === 'iperf3'
-          ? 'Measure TCP throughput against an iperf3 server (iperf3 -s, port 5201) — NexTerm acts as the iperf3 client.'
+          ? 'Measure TCP throughput against an iperf3 server (iperf3 -s, port 5201) — Termstead acts as the iperf3 client.'
           : 'Measure how fast data moves through an SSH channel to a saved host (no server software needed; includes SSH encryption cost).'
       }
       form={

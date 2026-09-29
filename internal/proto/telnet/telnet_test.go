@@ -427,8 +427,8 @@ func TestServerCloseIsEOF(t *testing.T) {
 
 // TestTelnetAgainstTestServer connects to the busybox telnetd in the shared docker test environment.
 func TestTelnetAgainstTestServer(t *testing.T) {
-	if os.Getenv("NEXTERM_TESTENV") != "1" {
-		t.Skip("set NEXTERM_TESTENV=1 to run against the docker test environment")
+	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
+		t.Skip("set TERMSTEAD_TESTENV=1 to run against the docker test environment")
 	}
 	conn, err := net.DialTimeout("tcp", "127.0.0.1:22023", 5*time.Second)
 	if err != nil {
@@ -444,11 +444,11 @@ func TestTelnetAgainstTestServer(t *testing.T) {
 		t.Fatal("no output from telnet server")
 	}
 	// The window size reached the remote pty through NAWS.
-	if _, err := b.Write([]byte("stty size; echo NEXTERM_$((40+2))\r")); err != nil {
+	if _, err := b.Write([]byte("stty size; echo TERMSTEAD_$((40+2))\r")); err != nil {
 		t.Fatalf("write: %v", err)
 	}
-	out := col.until(8*time.Second, func(acc []byte) bool { return bytes.Contains(acc, []byte("NEXTERM_42")) })
-	if !bytes.Contains(out, []byte("NEXTERM_42")) {
+	out := col.until(8*time.Second, func(acc []byte) bool { return bytes.Contains(acc, []byte("TERMSTEAD_42")) })
+	if !bytes.Contains(out, []byte("TERMSTEAD_42")) {
 		t.Fatalf("did not see command output; got %q", out)
 	}
 	if !bytes.Contains(out, []byte("24 80")) {

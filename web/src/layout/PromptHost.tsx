@@ -176,7 +176,7 @@ function CredentialsPrompt({ p, onAnswer }: { p: Prompt; onAnswer: (accept: bool
             checked={save}
             onCheckedChange={(v) => setSave(v === true)}
             label={p.kind === 'passphrase' ? 'Remember passphrase' : 'Remember password'}
-            description="Stored encrypted in the NexTerm vault."
+            description="Stored encrypted in the Termstead vault."
           />
         )}
       </div>

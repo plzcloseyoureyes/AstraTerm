@@ -4,7 +4,7 @@ import (
 	"encoding/csv"
 	"strings"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // CSV importers: Termius export (fixed header) and a generic CSV with header auto-detection plus an optional caller
@@ -149,7 +149,7 @@ func mapHeader(h string, mapping map[string]string) string {
 	return ""
 }
 
-// parseProtocolName maps a free-form protocol string to a NexTerm protocol ("" when unknown).
+// parseProtocolName maps a free-form protocol string to a Termstead protocol ("" when unknown).
 func parseProtocolName(s string) model.Protocol {
 	switch strings.ToLower(strings.TrimSpace(s)) {
 	case "ssh", "ssh2", "sshv2", "secure shell":

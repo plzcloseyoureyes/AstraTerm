@@ -21,12 +21,12 @@ import (
 	"github.com/coder/websocket"
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/events"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/netguard"
-	"github.com/nexterm/nexterm/internal/rdp/guac"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/events"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/netguard"
+	"github.com/termstead/termstead/internal/rdp/guac"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // The guacd engine (RESEARCH §3.11, SPEC §6.3): /ws/guac/{id}?token=…&width=…&height=…&dpi=…&audio=…&image=…
@@ -207,7 +207,7 @@ func (t *guacTunnel) run() string {
 	return end
 }
 
-// prepare builds the guacd handshake: certificate trust through NexTerm's store (guacd only knows "ignore-cert"),
+// prepare builds the guacd handshake: certificate trust through Termstead's store (guacd only knows "ignore-cert"),
 // a loopback forwarder for gateway routes, and the connection parameters.
 func (t *guacTunnel) prepare() (guac.Handshake, func(), error) {
 	h, tk, opts := t.h, t.tk, t.opts
@@ -757,7 +757,7 @@ func (h *handler) requiredValues(ctx context.Context, s *term.Session, u *model.
 	})
 	switch {
 	case errors.Is(err, events.ErrNoInteractiveClient):
-		return nil, errors.New("credentials are required but no NexTerm window is connected")
+		return nil, errors.New("credentials are required but no Termstead window is connected")
 	case errors.Is(err, events.ErrPromptTimeout):
 		return nil, errors.New("the credential prompt was not answered in time")
 	case err != nil:
@@ -821,7 +821,7 @@ func firstNonEmpty(v ...string) string {
 	return ""
 }
 
-// probeCertificate checks the server's TLS certificate with NexTerm's trust store (system roots, pinned rdp-tls
+// probeCertificate checks the server's TLS certificate with Termstead's trust store (system roots, pinned rdp-tls
 // certificates, or the user through the prompt broker) before guacd connects. It returns true when the certificate is
 // trusted (guacd then skips its own verification), false when the server does not offer TLS.
 func (h *handler) probeCertificate(ctx context.Context, s *term.Session, u *model.User, tk *ticket) (bool, error) {

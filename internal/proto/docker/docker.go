@@ -8,7 +8,7 @@
 //	GET  /api/docker/containers?host=&connectionId=&all=   list containers
 //	POST /api/docker/containers/:id/start|stop|restart      lifecycle actions (host/connectionId query honoured)
 //
-// Local and TCP engines run as the NexTerm process (the socket is effectively root), so in server mode they are
+// Local and TCP engines run as the Termstead process (the socket is effectively root), so in server mode they are
 // restricted to administrators; reaching an engine through the caller's own SSH connection is allowed for everyone.
 package docker
 
@@ -25,11 +25,11 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Mount registers the "docker" terminal protocol and the container-management endpoints.

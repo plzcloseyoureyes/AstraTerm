@@ -396,7 +396,7 @@ type CwdHintReason = 'option' | 'setting' | 'command'
 
 const CWD_HINTS: Record<CwdHintReason | 'default', string> = {
   default:
-    'The shell has not reported its folder. NexTerm sets this up at login for bash, zsh, fish and ksh, but skips it when you type before the first prompt appears — reconnect to retry. Other shells need to emit OSC 7.',
+    'The shell has not reported its folder. Termstead sets this up at login for bash, zsh, fish and ksh, but skips it when you type before the first prompt appears — reconnect to retry. Other shells need to emit OSC 7.',
   option: 'The shell was not set up to report its folder because “Follow SSH path” is off for this session. Turn it on in the session settings and reconnect.',
   setting: 'The shell was not set up to report its folder because “Follow terminal folder by default” is off in Settings → Files & SFTP. Turn it on and reconnect.',
   command: 'This session runs a remote command instead of a login shell, so its folder is only known if the program emits OSC 7.',

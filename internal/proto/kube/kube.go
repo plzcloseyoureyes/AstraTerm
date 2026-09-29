@@ -1,7 +1,7 @@
 // Package kube implements the "kube" terminal protocol and Kubernetes pickers (PROTO-31, RESEARCH §3.17) by driving
 // the host's kubectl binary inside a local PTY: `kubectl exec -it` with a bash→sh fallback, or `kubectl logs -f`
 // (options.kubeMode="logs"). Contexts, namespaces and pods are listed with `kubectl config view` / `kubectl get`.
-// kubectl runs on the NexTerm host with the host's kubeconfig, so in server mode it is restricted to administrators.
+// kubectl runs on the Termstead host with the host's kubeconfig, so in server mode it is restricted to administrators.
 //
 // Endpoints:
 //
@@ -30,11 +30,11 @@ import (
 	"github.com/charmbracelet/x/xpty"
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Mount registers the "kube" protocol, its policy and the context/pod pickers.
@@ -84,7 +84,7 @@ func kubectlPath() (string, error) {
 			return p, nil
 		}
 	}
-	return "", errors.New("kubectl was not found on the NexTerm host (install it or add it to PATH)")
+	return "", errors.New("kubectl was not found on the Termstead host (install it or add it to PATH)")
 }
 
 func kubectlCandidates() []string {

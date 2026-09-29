@@ -1,6 +1,6 @@
 package webauthn
 
-import "github.com/nexterm/nexterm/internal/auth"
+import "github.com/termstead/termstead/internal/auth"
 
 // loginOptions describes a passwordless passkey login for auth.CompleteLogin. User verification was required, so
 // the passkey counts as multi-factor (possession + biometric / PIN).

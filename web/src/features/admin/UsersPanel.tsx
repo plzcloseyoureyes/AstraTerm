@@ -138,7 +138,7 @@ export function UsersPanel() {
     <>
       <PageHeader
         title="Users"
-        description="Accounts that can sign in to this NexTerm server."
+        description="Accounts that can sign in to this Termstead server."
         actions={
           <Button onClick={() => setDlg({ kind: 'create' })}>
             <UserPlus /> New user

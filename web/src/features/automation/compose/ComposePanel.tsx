@@ -35,7 +35,7 @@ type Mode = 'active' | 'multiexec' | 'all' | 'sessions'
 const HISTORY_MAX = 50
 
 function historyKey(userId: string | undefined): string {
-  return `nexterm:automation:compose-history:${userId ?? 'anon'}`
+  return `termstead:automation:compose-history:${userId ?? 'anon'}`
 }
 
 export function ComposePanel() {

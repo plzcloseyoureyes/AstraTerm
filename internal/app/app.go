@@ -10,13 +10,13 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/nexterm/nexterm/internal/audit"
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/events"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/store"
-	"github.com/nexterm/nexterm/internal/vault"
+	"github.com/termstead/termstead/internal/audit"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/events"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/store"
+	"github.com/termstead/termstead/internal/vault"
 )
 
 // Deps is the set of core services every module receives in Mount.

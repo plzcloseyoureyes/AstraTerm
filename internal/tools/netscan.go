@@ -17,7 +17,7 @@ import (
 	"golang.org/x/net/ipv4"
 	"golang.org/x/sync/semaphore"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 type netscanRequest struct {
@@ -366,7 +366,7 @@ func icmpSweep(ctx context.Context, ips []net.IP, timeout time.Duration) map[str
 			continue
 		}
 		seq++
-		wb, err := (&icmp.Message{Type: ipv4.ICMPTypeEcho, Body: &icmp.Echo{ID: id, Seq: seq, Data: []byte("nexterm-netscan")}}).Marshal(nil)
+		wb, err := (&icmp.Message{Type: ipv4.ICMPTypeEcho, Body: &icmp.Echo{ID: id, Seq: seq, Data: []byte("termstead-netscan")}}).Marshal(nil)
 		if err != nil {
 			continue
 		}

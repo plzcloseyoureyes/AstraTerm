@@ -1,4 +1,4 @@
-// Package config loads NexTerm's runtime configuration from command-line flags and NEXTERM_* environment variables
+// Package config loads Termstead's runtime configuration from command-line flags and TERMSTEAD_* environment variables
 // (flags win over env, env wins over defaults) and resolves the data directory (SPEC §8, RESEARCH CORE-8).
 package config
 
@@ -30,8 +30,8 @@ const (
 	DefaultScrollbackBytes = 4 << 20
 	// PortableDirName is the data directory created next to the executable in portable mode. Its presence (or the
 	// PortableMarker file) next to the executable enables portable mode automatically.
-	PortableDirName = "nexterm-data"
-	PortableMarker  = "nexterm.portable"
+	PortableDirName = "termstead-data"
+	PortableMarker  = "termstead.portable"
 )
 
 // Config is the fully resolved runtime configuration.
@@ -59,7 +59,7 @@ type Config struct {
 	// loopback listener — the public name of a reverse proxy on the same machine.
 	AllowedHosts []string
 
-	// Version of the running binary (set by cmd/nexterm).
+	// Version of the running binary (set by cmd/termstead).
 	Version string
 }
 
@@ -78,7 +78,7 @@ func (c *Config) Path(elem ...string) string {
 }
 
 // DBPath is the SQLite database file.
-func (c *Config) DBPath() string { return c.Path("nexterm.db") }
+func (c *Config) DBPath() string { return c.Path("termstead.db") }
 
 // RecordingsDir holds asciicast recordings and text logs.
 func (c *Config) RecordingsDir() string { return c.Path("recordings") }
@@ -107,29 +107,29 @@ func IsLoopbackListen(addr string) bool {
 	return err == nil && ip.IsLoopback()
 }
 
-// FlagSet builds the flag set used by Load. Defaults are taken from NEXTERM_* environment variables when set.
+// FlagSet builds the flag set used by Load. Defaults are taken from TERMSTEAD_* environment variables when set.
 // The returned apply function must be called after parsing to produce the Config.
 func FlagSet(name string, output io.Writer) (*flag.FlagSet, func() (*Config, error)) {
 	fs := flag.NewFlagSet(name, flag.ContinueOnError)
 	fs.SetOutput(output)
 
-	listen := fs.String("listen", env("LISTEN", DefaultListen), "address to listen on (host:port) [NEXTERM_LISTEN]")
-	dataDir := fs.String("data-dir", env("DATA_DIR", ""), "data directory (default: per-user config dir, or ./nexterm-data beside the executable in portable mode) [NEXTERM_DATA_DIR]")
-	portable := fs.Bool("portable", envBool("PORTABLE", false), "portable mode: keep data in nexterm-data/ beside the executable [NEXTERM_PORTABLE]")
-	mode := fs.String("mode", env("MODE", ModeDesktop), "run mode: desktop | server [NEXTERM_MODE]")
-	tlsCert := fs.String("tls-cert", env("TLS_CERT", ""), "TLS certificate file (PEM) [NEXTERM_TLS_CERT]")
-	tlsKey := fs.String("tls-key", env("TLS_KEY", ""), "TLS private key file (PEM) [NEXTERM_TLS_KEY]")
-	selfSigned := fs.Bool("tls-self-signed", envBool("TLS_SELF_SIGNED", false), "serve HTTPS with a generated self-signed certificate [NEXTERM_TLS_SELF_SIGNED]")
-	insecure := fs.Bool("insecure-http", envBool("INSECURE_HTTP", false), "allow plain HTTP on a non-loopback address (NOT recommended) [NEXTERM_INSECURE_HTTP]")
-	open := fs.Bool("open", envBool("OPEN", false), "open the UI in the default browser on start (default in desktop mode) [NEXTERM_OPEN]")
-	noOpen := fs.Bool("no-open", envBool("NO_OPEN", false), "do not open the browser on start [NEXTERM_NO_OPEN]")
-	guacd := fs.String("guacd", env("GUACD", DefaultGuacd), "guacd address host:port for the optional Guacamole RDP engine (\"\" or \"off\" disables) [NEXTERM_GUACD]")
-	dev := fs.Bool("dev", envBool("DEV", false), "development mode: allow the Vite dev server origins (localhost:5173) [NEXTERM_DEV]")
-	logLevel := fs.String("log-level", env("LOG_LEVEL", "info"), "log level: debug | info | warn | error [NEXTERM_LOG_LEVEL]")
-	ttl := fs.String("detached-ttl", env("DETACHED_TTL", DefaultDetachedTTL.String()), "reap detached sessions after this duration (0 = never) [NEXTERM_DETACHED_TTL]")
-	scrollback := fs.String("scrollback-bytes", env("SCROLLBACK_BYTES", "4MiB"), "per-session scrollback ring size (e.g. 4MiB) [NEXTERM_SCROLLBACK_BYTES]")
-	proxies := fs.String("trusted-proxies", env("TRUSTED_PROXIES", ""), "comma-separated CIDRs/IPs of trusted reverse proxies [NEXTERM_TRUSTED_PROXIES]")
-	allowedHosts := fs.String("allowed-hosts", env("ALLOWED_HOSTS", ""), "comma-separated extra host names accepted on a loopback listener, e.g. a same-machine reverse proxy's public name [NEXTERM_ALLOWED_HOSTS]")
+	listen := fs.String("listen", env("LISTEN", DefaultListen), "address to listen on (host:port) [TERMSTEAD_LISTEN]")
+	dataDir := fs.String("data-dir", env("DATA_DIR", ""), "data directory (default: per-user config dir, or ./termstead-data beside the executable in portable mode) [TERMSTEAD_DATA_DIR]")
+	portable := fs.Bool("portable", envBool("PORTABLE", false), "portable mode: keep data in termstead-data/ beside the executable [TERMSTEAD_PORTABLE]")
+	mode := fs.String("mode", env("MODE", ModeDesktop), "run mode: desktop | server [TERMSTEAD_MODE]")
+	tlsCert := fs.String("tls-cert", env("TLS_CERT", ""), "TLS certificate file (PEM) [TERMSTEAD_TLS_CERT]")
+	tlsKey := fs.String("tls-key", env("TLS_KEY", ""), "TLS private key file (PEM) [TERMSTEAD_TLS_KEY]")
+	selfSigned := fs.Bool("tls-self-signed", envBool("TLS_SELF_SIGNED", false), "serve HTTPS with a generated self-signed certificate [TERMSTEAD_TLS_SELF_SIGNED]")
+	insecure := fs.Bool("insecure-http", envBool("INSECURE_HTTP", false), "allow plain HTTP on a non-loopback address (NOT recommended) [TERMSTEAD_INSECURE_HTTP]")
+	open := fs.Bool("open", envBool("OPEN", false), "open the UI in the default browser on start (default in desktop mode) [TERMSTEAD_OPEN]")
+	noOpen := fs.Bool("no-open", envBool("NO_OPEN", false), "do not open the browser on start [TERMSTEAD_NO_OPEN]")
+	guacd := fs.String("guacd", env("GUACD", DefaultGuacd), "guacd address host:port for the optional Guacamole RDP engine (\"\" or \"off\" disables) [TERMSTEAD_GUACD]")
+	dev := fs.Bool("dev", envBool("DEV", false), "development mode: allow the Vite dev server origins (localhost:5173) [TERMSTEAD_DEV]")
+	logLevel := fs.String("log-level", env("LOG_LEVEL", "info"), "log level: debug | info | warn | error [TERMSTEAD_LOG_LEVEL]")
+	ttl := fs.String("detached-ttl", env("DETACHED_TTL", DefaultDetachedTTL.String()), "reap detached sessions after this duration (0 = never) [TERMSTEAD_DETACHED_TTL]")
+	scrollback := fs.String("scrollback-bytes", env("SCROLLBACK_BYTES", "4MiB"), "per-session scrollback ring size (e.g. 4MiB) [TERMSTEAD_SCROLLBACK_BYTES]")
+	proxies := fs.String("trusted-proxies", env("TRUSTED_PROXIES", ""), "comma-separated CIDRs/IPs of trusted reverse proxies [TERMSTEAD_TRUSTED_PROXIES]")
+	allowedHosts := fs.String("allowed-hosts", env("ALLOWED_HOSTS", ""), "comma-separated extra host names accepted on a loopback listener, e.g. a same-machine reverse proxy's public name [TERMSTEAD_ALLOWED_HOSTS]")
 
 	apply := func() (*Config, error) {
 		c := &Config{
@@ -152,7 +152,7 @@ func FlagSet(name string, output io.Writer) (*flag.FlagSet, func() (*Config, err
 				openSet = true
 			}
 		})
-		if _, ok := os.LookupEnv("NEXTERM_OPEN"); ok {
+		if _, ok := os.LookupEnv("TERMSTEAD_OPEN"); ok {
 			openSet = true
 		}
 		c.Open = *open
@@ -194,7 +194,7 @@ func FlagSet(name string, output io.Writer) (*flag.FlagSet, func() (*Config, err
 
 // Load parses args (without the program name) and resolves + creates the data directory.
 func Load(args []string) (*Config, error) {
-	fs, apply := FlagSet("nexterm", io.Discard)
+	fs, apply := FlagSet("termstead", io.Discard)
 	if err := fs.Parse(args); err != nil {
 		return nil, err
 	}
@@ -283,7 +283,7 @@ func ResolveDataDir(flagDir string, portable bool) (dir string, isPortable bool,
 		}
 		base = filepath.Join(home, ".config")
 	}
-	return filepath.Join(base, "nexterm"), false, nil
+	return filepath.Join(base, "termstead"), false, nil
 }
 
 // EnsureDataDir creates dir and its standard subdirectories with mode 0700.
@@ -364,7 +364,7 @@ func ParseHosts(s string) ([]string, error) {
 	for _, f := range strings.FieldsFunc(s, func(r rune) bool { return r == ',' || r == ' ' || r == ';' }) {
 		h := strings.ToLower(f)
 		if strings.Contains(h, "://") || strings.ContainsAny(h, "/*@") {
-			return nil, fmt.Errorf("%q: give a bare host name such as nexterm.example.com (no scheme, path or wildcard)", f)
+			return nil, fmt.Errorf("%q: give a bare host name such as termstead.example.com (no scheme, path or wildcard)", f)
 		}
 		if host, _, err := net.SplitHostPort(h); err == nil {
 			h = host
@@ -415,14 +415,14 @@ func parseDuration(s string) (time.Duration, error) {
 }
 
 func env(key, def string) string {
-	if v, ok := os.LookupEnv("NEXTERM_" + key); ok {
+	if v, ok := os.LookupEnv("TERMSTEAD_" + key); ok {
 		return v
 	}
 	return def
 }
 
 func envBool(key string, def bool) bool {
-	v, ok := os.LookupEnv("NEXTERM_" + key)
+	v, ok := os.LookupEnv("TERMSTEAD_" + key)
 	if !ok {
 		return def
 	}

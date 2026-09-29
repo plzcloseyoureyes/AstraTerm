@@ -1,5 +1,5 @@
 /*
- * NexTerm design system — Tailwind 4 CSS-first tokens.
+ * Termstead design system — Tailwind 4 CSS-first tokens.
  *
  * Theme model: semantic tokens are plain CSS variables on :root (light) and .dark (dark, the default); <html> gets the
  * `dark` class from src/lib/theme.ts ('dark' | 'light' | 'system'). Runtime knobs set on <html> by theme.ts:
@@ -321,10 +321,10 @@
 }
 
 /* ------------------------------------------------------------------------------------------------------------------
- * Dockview theme ("dockview-theme-nexterm"): maps dockview's variables onto the design tokens.
+ * Dockview theme ("dockview-theme-termstead"): maps dockview's variables onto the design tokens.
  * Tab height 30px (scaled with the UI), active tab gets an accent underline (rendered by our tab component).
  * ---------------------------------------------------------------------------------------------------------------- */
-.dockview-theme-nexterm {
+.dockview-theme-termstead {
   --dv-paneview-active-outline-color: var(--ring);
   --dv-tabs-and-actions-container-font-size: var(--text-sm);
   --dv-tabs-and-actions-container-height: 1.875rem;
@@ -392,22 +392,22 @@
  * document taller than the viewport, and the next focus() scrolled the entire shell up (body has overflow:hidden, so
  * the user could not scroll back). Anchor overlays at the origin; visible ones get inline geometry from dockview.
  */
-.dockview-theme-nexterm .dv-render-overlay {
+.dockview-theme-termstead .dv-render-overlay {
   top: 0;
   left: 0;
 }
 
-.dockview-theme-nexterm .dv-tab {
+.dockview-theme-termstead .dv-tab {
   padding: 0;
 }
-.dockview-theme-nexterm .dv-tabs-and-actions-container {
+.dockview-theme-termstead .dv-tabs-and-actions-container {
   border-bottom: 1px solid var(--border);
 }
-.dockview-theme-nexterm .dv-groupview > .dv-tabs-and-actions-container .dv-tab:last-child {
+.dockview-theme-termstead .dv-groupview > .dv-tabs-and-actions-container .dv-tab:last-child {
   box-shadow: 1px 0 0 var(--dv-tab-divider-color);
 }
 /* Accent underline for the active tab (element rendered inside our tab component). */
-.dockview-theme-nexterm .nx-tab-indicator {
+.dockview-theme-termstead .nx-tab-indicator {
   position: absolute;
   left: 0;
   right: 0;
@@ -417,38 +417,38 @@
   pointer-events: none;
   z-index: 6;
 }
-.dockview-theme-nexterm .dv-tab.dv-active-tab .nx-tab-indicator {
+.dockview-theme-termstead .dv-tab.dv-active-tab .nx-tab-indicator {
   background: color-mix(in oklab, var(--muted-foreground) 55%, transparent);
 }
-.dockview-theme-nexterm .dv-active-group .dv-tab.dv-active-tab .nx-tab-indicator {
+.dockview-theme-termstead .dv-active-group .dv-tab.dv-active-tab .nx-tab-indicator {
   background: var(--primary);
 }
-.dockview-theme-nexterm .dv-tab.dv-active-tab {
+.dockview-theme-termstead .dv-tab.dv-active-tab {
   /* Active tab visually merges with the panel below. */
   box-shadow: inset 0 -1px 0 var(--panel);
 }
-.dockview-theme-nexterm .dv-tabs-overflow-dropdown-default {
+.dockview-theme-termstead .dv-tabs-overflow-dropdown-default {
   color: var(--muted-foreground);
 }
 /* Phones: the group header's "all tabs" sheet (layout/workspace/TabsSheet) replaces dockview's overflow chip, which
    had to squeeze the active tab's title to fit ("Tunn ⌄ 3"). */
 @media (max-width: 767px) {
-  .dockview-theme-nexterm .dv-tabs-overflow-dropdown-default {
+  .dockview-theme-termstead .dv-tabs-overflow-dropdown-default {
     display: none;
   }
 }
-.dockview-theme-nexterm .dv-context-menu,
-.dockview-theme-nexterm .dv-tabs-overflow-container {
+.dockview-theme-termstead .dv-context-menu,
+.dockview-theme-termstead .dv-tabs-overflow-container {
   background: var(--popover);
   color: var(--popover-foreground);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-popover);
 }
-.dockview-theme-nexterm .dv-resize-container {
+.dockview-theme-termstead .dv-resize-container {
   border-radius: var(--radius);
   overflow: hidden;
 }
-.dockview-theme-nexterm .dv-watermark {
+.dockview-theme-termstead .dv-watermark {
   height: 100%;
 }
 

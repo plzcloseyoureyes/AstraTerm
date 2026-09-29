@@ -121,7 +121,7 @@ function ShareDialogBody({ sessionId, title }: { sessionId: string; title?: stri
           <Share2 className="size-4 text-muted-foreground" />
           Share {title ? `“${title}”` : 'session'}
         </DialogTitle>
-        <DialogDescription>People with a link watch this terminal live in their browser — no NexTerm account needed unless you require one.</DialogDescription>
+        <DialogDescription>People with a link watch this terminal live in their browser — no Termstead account needed unless you require one.</DialogDescription>
       </DialogHeader>
       <DialogBody className="flex flex-col gap-4">
         {disabled ? (

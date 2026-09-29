@@ -18,7 +18,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/auth"
+	"github.com/termstead/termstead/internal/auth"
 )
 
 func TestLogRing(t *testing.T) {

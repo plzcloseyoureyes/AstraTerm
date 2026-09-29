@@ -13,7 +13,7 @@ import (
 //     requests, so the remote desktop never follows the tab. The filter reports build 2600 (FreeRDP's default)
 //     instead of such values.
 //   - INFO_AUTOLOGON of the Client Info PDU (2.2.1.11.1.1): IronRDP never sets it, so servers using TLS security (xrdp,
-//     Windows without NLA) ignore the password NexTerm handed to the client and show their own logon screen. When the
+//     Windows without NLA) ignore the password Termstead handed to the client and show their own logon screen. When the
 //     ticket carried a user name and a password, the filter sets the flag, as mstsc does with saved credentials.
 //   - the static virtual channels of the Client Network Data (2.2.1.3.4): channels the connection's policy disables
 //     (clipboard, printer / drive redirection, sound) are renamed so the server never attaches its clipboard, device

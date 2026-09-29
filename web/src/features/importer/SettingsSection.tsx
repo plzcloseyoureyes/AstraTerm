@@ -162,7 +162,7 @@ function BackupRestore() {
       setPending(null)
       setRestorePass('')
       void qc.invalidateQueries({ queryKey: RESTORE_KEY })
-      toast.success('Restore staged', { description: 'It is applied the next time NexTerm starts.' })
+      toast.success('Restore staged', { description: 'It is applied the next time Termstead starts.' })
     } catch (err) {
       if (isApiError(err) && (err.code === 'passphrase_required' || err.code === 'wrong_password')) {
         setPending(file)
@@ -279,7 +279,7 @@ function BackupRestore() {
       {(result || staged.data?.pending) && (
         <div className="rounded-lg border border-info/40 bg-info/10 p-3">
           <p className="flex items-center gap-1.5 text-sm font-medium">
-            <FileUp className="size-4 text-info" /> Restore staged — nothing was changed yet. It is applied the next time NexTerm starts.
+            <FileUp className="size-4 text-info" /> Restore staged — nothing was changed yet. It is applied the next time Termstead starts.
           </p>
           {result ? (
             <ol className="mt-1 grid gap-0.5 text-sm text-muted-foreground">

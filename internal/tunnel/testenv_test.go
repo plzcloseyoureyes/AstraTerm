@@ -14,12 +14,12 @@ import (
 	"golang.org/x/crypto/ssh"
 	xproxy "golang.org/x/net/proxy"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/sshx"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/sshx"
+	"github.com/termstead/termstead/internal/term"
 )
 
-// Integration tests against the shared Docker test environment (scripts/testenv): run with NEXTERM_TESTENV=1.
+// Integration tests against the shared Docker test environment (scripts/testenv): run with TERMSTEAD_TESTENV=1.
 //   ssh1  127.0.0.1:22022  test/test, TCP forwarding enabled
 //   web   web:80 (nginx), reachable from ssh1 only
 
@@ -27,8 +27,8 @@ const testenvSSH = "127.0.0.1:22022"
 
 func testenv(t *testing.T) {
 	t.Helper()
-	if os.Getenv("NEXTERM_TESTENV") != "1" {
-		t.Skip("set NEXTERM_TESTENV=1 to run against the Docker test environment")
+	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
+		t.Skip("set TERMSTEAD_TESTENV=1 to run against the Docker test environment")
 	}
 }
 

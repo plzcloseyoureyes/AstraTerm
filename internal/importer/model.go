@@ -1,5 +1,5 @@
 // Package importer imports saved sessions from other clients (MobaXterm, PuTTY/KiTTY, OpenSSH ~/.ssh/config, Termius,
-// mRemoteNG, Remmina, FileZilla, WinSCP, SecureCRT, generic CSV, NexTerm JSON and OpenSSH known_hosts), exports the
+// mRemoteNG, Remmina, FileZilla, WinSCP, SecureCRT, generic CSV, Termstead JSON and OpenSSH known_hosts), exports the
 // user's own sessions (JSON / CSV / ssh_config, optionally passphrase-encrypted), and provides admin backup/restore.
 //
 // # Security
@@ -9,7 +9,7 @@
 // in the bookmark lines), PuTTY never stores them, and mRemoteNG (AES), FileZilla, WinSCP and Remmina protect or
 // obfuscate theirs — none of it is decrypted or read. The only plaintext credential MobaXterm puts in a bookmark line
 // (an SFTP session's proxy password) is dropped with a warning. Plaintext secrets and private keys are only ever read
-// from a NexTerm JSON export that the user encrypted with a passphrase (see export.go / json.go). The importer never
+// from a Termstead JSON export that the user encrypted with a passphrase (see export.go / json.go). The importer never
 // guesses, cracks or reverse-engineers another product's credential storage.
 package importer
 
@@ -17,7 +17,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Supported import formats (the `format` field of preview/commit; "auto" asks the server to detect it).
@@ -52,8 +52,8 @@ type parsed struct {
 	conns      []*pconn
 	keys       []*pkey
 	knownHosts []*pknownHost
-	identities []*pidentity // only from a native NexTerm JSON import
-	snippets   []*psnippet  // only from a native NexTerm JSON import
+	identities []*pidentity // only from a native Termstead JSON import
+	snippets   []*psnippet  // only from a native Termstead JSON import
 	warnings   []string
 	// unsupported counts entries recognised but not mappable (reported, not imported).
 	unsupported int
@@ -73,7 +73,7 @@ type pconn struct {
 	tempID   string
 	folderID string // temp folder id, or "" for the import target root
 	conn     model.Connection
-	// secrets holds plaintext secrets to store (only from an encrypted NexTerm export the user decrypted). Never
+	// secrets holds plaintext secrets to store (only from an encrypted Termstead export the user decrypted). Never
 	// populated from third-party formats.
 	secrets map[string]string
 	// keyRef links to a pkey.tempID whose material should be imported (desktop mode) and referenced by keyId.
@@ -95,7 +95,7 @@ type pconn struct {
 // ad-hoc ProxyJump entries).
 type phop struct {
 	ref        string
-	existingID string // an id of an existing connection (NexTerm JSON re-import); verified at commit
+	existingID string // an id of an existing connection (Termstead JSON re-import); verified at commit
 	host       string
 	port       int
 	user       string
@@ -201,7 +201,7 @@ type previewRequest struct {
 
 // previewOptions carry format hints (the CSV column mapping, a passphrase for encrypted JSON, a legacy charset).
 type previewOptions struct {
-	Passphrase string            `json:"passphrase,omitempty"` // decrypt an encrypted NexTerm JSON export
+	Passphrase string            `json:"passphrase,omitempty"` // decrypt an encrypted Termstead JSON export
 	CSVMapping map[string]string `json:"csvMapping,omitempty"` // generic CSV: header name → field (name/host/port/username/protocol/folder/notes/tags)
 	CSVDelim   string            `json:"csvDelim,omitempty"`   // generic CSV delimiter override ("," ";" "\t" "|")
 	// Charset decodes legacy 8-bit text files ("" / "auto" = UTF-16 by BOM, UTF-8 when valid, else Windows-1252 —
@@ -238,7 +238,7 @@ type previewConnection struct {
 	DuplicateOf string         `json:"duplicateOf,omitempty"` // id of the existing connection
 	KeyName     string         `json:"keyName,omitempty"`     // an SSH key that would be imported alongside
 	Via         []string       `json:"via,omitempty"`         // SSH jump chain / gateway, first hop first (display)
-	// RunsLocalCommand flags connections that execute a program on the NexTerm host when opened (ProxyCommand,
+	// RunsLocalCommand flags connections that execute a program on the Termstead host when opened (ProxyCommand,
 	// local shell) — the wizard highlights them because an import file could carry a malicious one.
 	RunsLocalCommand bool     `json:"runsLocalCommand,omitempty"`
 	Warnings         []string `json:"warnings,omitempty"`

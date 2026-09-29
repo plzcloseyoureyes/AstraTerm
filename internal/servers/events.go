@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Event topics (subscribe with {type:'subscribe', topic, ...params} on /ws/events).

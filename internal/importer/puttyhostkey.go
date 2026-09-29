@@ -15,7 +15,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/sshx"
+	"github.com/termstead/termstead/internal/sshx"
 )
 
 // PuTTY-family host key caches (SSH-19 import path of IMP-1/IMP-2): PuTTY/KiTTY keep them under

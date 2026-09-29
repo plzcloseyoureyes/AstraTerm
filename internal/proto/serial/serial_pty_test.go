@@ -17,7 +17,7 @@ import (
 	goserial "go.bug.st/serial"
 	"golang.org/x/sys/unix"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // A pseudo-terminal slave is a real tty: go.bug.st/serial opens and configures it like a serial port, and its master

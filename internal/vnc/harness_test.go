@@ -16,21 +16,21 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/audit"
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/events"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/sshx"
-	"github.com/nexterm/nexterm/internal/store"
-	"github.com/nexterm/nexterm/internal/term"
-	"github.com/nexterm/nexterm/internal/vault"
-	"github.com/nexterm/nexterm/internal/vnc"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/audit"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/events"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/sshx"
+	"github.com/termstead/termstead/internal/store"
+	"github.com/termstead/termstead/internal/term"
+	"github.com/termstead/termstead/internal/vault"
+	"github.com/termstead/termstead/internal/vnc"
 )
 
-// harness is a minimal NexTerm server built from the foundation packages only (store, vault, events, audit, term,
+// harness is a minimal Termstead server built from the foundation packages only (store, vault, events, audit, term,
 // sshx) plus this module, so the tests do not depend on other feature modules. Requests authenticate with the
 // X-Test-User header (user ID) as Bearer-like token logins (no CSRF header needed).
 type harness struct {
@@ -47,7 +47,7 @@ func newHarness(t *testing.T, mode string) *harness {
 	t.Helper()
 	// Own temp dir (not t.TempDir): hijacked WebSocket handlers are not awaited by httptest.Server.Close, so a late
 	// write may race with the removal; retry instead of failing the test.
-	dataDir, err := os.MkdirTemp("", "nexterm-vnc-test-")
+	dataDir, err := os.MkdirTemp("", "termstead-vnc-test-")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,7 +64,7 @@ func newHarness(t *testing.T, mode string) *harness {
 		t.Fatal(err)
 	}
 	var log *slog.Logger
-	if testing.Verbose() && os.Getenv("NEXTERM_TEST_LOG") != "" {
+	if testing.Verbose() && os.Getenv("TERMSTEAD_TEST_LOG") != "" {
 		log = slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelDebug}))
 	} else {
 		log = slog.New(slog.NewTextHandler(io.Discard, nil))

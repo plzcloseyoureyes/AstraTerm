@@ -167,7 +167,7 @@ export function SessionTree({
     onDrop,
     // Firefox only starts HTML5 drags that carry data; other features may accept these ids.
     createForeignDragObject: (items) => ({
-      format: 'application/x-nexterm-sessions',
+      format: 'application/x-termstead-sessions',
       data: JSON.stringify(items.map((i) => i.getId())),
       effectAllowed: 'move',
     }),

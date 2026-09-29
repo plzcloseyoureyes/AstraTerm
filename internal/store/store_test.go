@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 func openTest(t *testing.T) *Store {

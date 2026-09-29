@@ -8,13 +8,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // forwarder listens on a local address and connects every accepted stream to a connection's destination along its
 // route (options.sshTunnelVia / jumpHosts / proxy). guacd and native RDP clients dial the target themselves, so
-// connections that need NexTerm's generic Dialer are handed to them as such a local endpoint.
+// connections that need Termstead's generic Dialer are handed to them as such a local endpoint.
 type forwarder struct {
 	h       *handler
 	ln      net.Listener
@@ -162,7 +162,7 @@ func (f *forwarder) idleLoop() {
 	}
 }
 
-// forwardBindIP picks the local address a forwarder listens on for a peer that reaches NexTerm at host: that
+// forwardBindIP picks the local address a forwarder listens on for a peer that reaches Termstead at host: that
 // address when it is an IP of this machine (e.g. the Docker bridge gateway), else loopback.
 func forwardBindIP(host string) string {
 	ip := net.ParseIP(host)

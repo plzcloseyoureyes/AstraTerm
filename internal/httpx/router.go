@@ -1,4 +1,4 @@
-// Package httpx is NexTerm's HTTP layer, built on Echo v5 (SPEC §3, §4 "Router helpers"): a Router wrapping an
+// Package httpx is Termstead's HTTP layer, built on Echo v5 (SPEC §3, §4 "Router helpers"): a Router wrapping an
 // *echo.Echo with the middleware chain (request log, recover, security headers, Host guard, authentication, CSRF, body
 // limit), route groups for public / authenticated / admin API routes, Origin-checked WebSocket routes, the SPA
 // fallback, a JSON error handler for typed errors ({error, code}) and request helpers (UserFrom, ClientIP, Bind,
@@ -16,12 +16,12 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // CSRFHeader must accompany every mutating request that is not authenticated by a Bearer token.
 const (
-	CSRFHeader      = "X-NexTerm"
+	CSRFHeader      = "X-Termstead"
 	CSRFHeaderValue = "1"
 )
 
@@ -57,7 +57,7 @@ type Options struct {
 	TLS bool
 }
 
-// Router is the application's HTTP handler: an *echo.Echo with NexTerm's middleware chain, error handler and route
+// Router is the application's HTTP handler: an *echo.Echo with Termstead's middleware chain, error handler and route
 // groups. Middleware order, outermost first:
 //
 //	Pre:   request log → recover → security headers → Host guard      (every request, before routing)

@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/netguard"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/netguard"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Dialer reaches a connection's host for any protocol (telnet, raw, VNC, RDP, FTP, ...) through the connection's

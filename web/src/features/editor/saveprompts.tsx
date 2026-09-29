@@ -34,7 +34,7 @@ export function askPermissionDenied(opts: { path: string; host?: string; message
     tone: 'security',
     choices: opts.canSudo
       ? [
-          { value: 'sudo', label: 'Save with sudo', hint: 'Write it as root. NexTerm asks for the sudo password when the connection has none saved.', icon: ShieldCheck, variant: 'default' },
+          { value: 'sudo', label: 'Save with sudo', hint: 'Write it as root. Termstead asks for the sudo password when the connection has none saved.', icon: ShieldCheck, variant: 'default' },
           { value: 'saveas', label: 'Save as…', hint: 'Keep your changes in another file you can write.', icon: FilePlus2 },
           { value: 'cancel', label: 'Cancel' },
         ]

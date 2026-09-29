@@ -16,16 +16,16 @@ import (
 	"github.com/coder/websocket"
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/events"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/events"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // WebSocket close codes of /ws/vnc/:id (the viewer maps them to messages and decides whether to retry).
 const (
 	CloseServerEnded   = websocket.StatusNormalClosure // the VNC server closed the connection
-	CloseShutdown      = websocket.StatusGoingAway     // NexTerm is shutting down
+	CloseShutdown      = websocket.StatusGoingAway     // Termstead is shutting down
 	CloseBadRequest    = websocket.StatusCode(4400)    // not a VNC session / protocol error of the viewer
 	CloseAuthFailed    = websocket.StatusCode(4401)    // authentication rejected (permanent)
 	CloseForbidden     = websocket.StatusCode(4403)    // not allowed (e.g. pass-through for read-only viewers)
@@ -164,7 +164,7 @@ func (v *viewer) sessionClosed() {
 func (v *viewer) run() {
 	defer v.cancel()
 	if !v.m.attach(v) {
-		closeWS(v.ws, CloseShutdown, "NexTerm is shutting down")
+		closeWS(v.ws, CloseShutdown, "Termstead is shutting down")
 		return
 	}
 	if v.s.Closed() {
@@ -214,7 +214,7 @@ func (v *viewer) run() {
 	}
 
 	if res.pass != nil && (v.readOnly || !v.clip.toRemote) {
-		// NexTerm cannot parse (and so cannot filter) the viewer's messages while the browser authenticates.
+		// Termstead cannot parse (and so cannot filter) the viewer's messages while the browser authenticates.
 		endState, endMsg = model.StateError, "read-only viewers cannot use browser-side authentication"
 		if !v.readOnly {
 			endMsg = "the clipboard policy cannot be enforced with browser-side authentication (" + res.pass.offered + ")"
@@ -574,7 +574,7 @@ func (v *viewer) prompt(ctx context.Context, p model.Prompt, waiting string) (mo
 	case err == nil:
 		return resp, nil
 	case errors.Is(err, events.ErrNoInteractiveClient):
-		return resp, fmt.Errorf("%s: input is required but no NexTerm window is connected", strings.ToLower(p.Title))
+		return resp, fmt.Errorf("%s: input is required but no Termstead window is connected", strings.ToLower(p.Title))
 	case errors.Is(err, events.ErrPromptTimeout):
 		return resp, fmt.Errorf("no answer to the %q prompt", p.Title)
 	}

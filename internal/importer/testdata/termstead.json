@@ -1,5 +1,5 @@
 {
-  "format": "nexterm-export",
+  "format": "termstead-export",
   "version": 1,
   "includesSecrets": false,
   "folders": [

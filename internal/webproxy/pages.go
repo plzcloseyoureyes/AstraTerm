@@ -9,7 +9,7 @@ import (
 // bridgeConfig is embedded into the bridge script.
 type bridgeConfig struct {
 	ID      string   `json:"id"`
-	Origins []string `json:"origins"` // NexTerm UI origins allowed to talk to the bridge ("*" = any, error pages only)
+	Origins []string `json:"origins"` // Termstead UI origins allowed to talk to the bridge ("*" = any, error pages only)
 	Prefix  string   `json:"prefix"`  // path-mode prefix
 	Kind    string   `json:"kind"`
 	Error   *pageErr `json:"error,omitempty"`
@@ -21,22 +21,22 @@ type pageErr struct {
 	Status  int    `json:"status"`
 }
 
-// bridgeJS reports navigation (path, title) of the proxied page to the NexTerm tab that frames it and executes its
-// toolbar commands (back, forward, reload, navigate). It only talks to the configured NexTerm origins and only acts in
-// the frame NexTerm embeds directly (not in the application's own nested frames, not in a top-level window).
+// bridgeJS reports navigation (path, title) of the proxied page to the Termstead tab that frames it and executes its
+// toolbar commands (back, forward, reload, navigate). It only talks to the configured Termstead origins and only acts in
+// the frame Termstead embeds directly (not in the application's own nested frames, not in a top-level window).
 const bridgeJS = `(function(){
 var C=__CONFIG__;
-if(window.__nexterm_bridge)return;window.__nexterm_bridge=1;
+if(window.__termstead_bridge)return;window.__termstead_bridge=1;
 var P=window.parent;if(!P||P===window)return;
 try{if(P.location.href){return}}catch(e){}
-function post(m){m.source='nexterm-webproxy';m.proxyId=C.id;for(var i=0;i<C.origins.length;i++){try{P.postMessage(m,C.origins[i])}catch(e){}}}
+function post(m){m.source='termstead-webproxy';m.proxyId=C.id;for(var i=0;i<C.origins.length;i++){try{P.postMessage(m,C.origins[i])}catch(e){}}}
 function rel(){var p=location.pathname+location.search+location.hash;if(C.prefix&&p.indexOf(C.prefix)===0){p=p.slice(C.prefix.length)||'/'}return p}
 var last='';function report(){var k=rel()+'\n'+document.title;if(k===last)return;last=k;post({type:'location',path:rel(),title:document.title||''})}
 var t=0;function soon(){clearTimeout(t);t=setTimeout(report,50)}
 ['pushState','replaceState'].forEach(function(n){var o=history[n];if(typeof o!=='function')return;history[n]=function(){var r=o.apply(this,arguments);soon();return r}});
 addEventListener('popstate',soon);addEventListener('hashchange',soon);
 addEventListener('pagehide',function(){post({type:'unload'})});
-addEventListener('message',function(e){if(e.source!==P)return;if(C.origins.indexOf('*')<0&&C.origins.indexOf(e.origin)<0)return;var d=e.data;if(!d||d.source!=='nexterm-webproxy'||!d.cmd)return;
+addEventListener('message',function(e){if(e.source!==P)return;if(C.origins.indexOf('*')<0&&C.origins.indexOf(e.origin)<0)return;var d=e.data;if(!d||d.source!=='termstead-webproxy'||!d.cmd)return;
 switch(d.cmd){case'back':history.back();break;case'forward':history.forward();break;case'reload':location.reload();break;
 case'navigate':if(typeof d.path==='string'&&d.path.charAt(0)==='/'&&d.path.charAt(1)!=='/'){location.href=C.prefix+d.path}break;
 case'ping':last='';report();break}});
@@ -67,7 +67,7 @@ func jsonForScript(v any) string {
 	return r.Replace(s)
 }
 
-// page is a NexTerm-rendered page on a proxy origin (errors, closed proxies, authentication).
+// page is a Termstead-rendered page on a proxy origin (errors, closed proxies, authentication).
 type page struct {
 	Code    string
 	Title   string
@@ -116,7 +116,7 @@ func writePage(w http.ResponseWriter, r *http.Request, status int, p page) {
 		csp = "sandbox allow-scripts; " + csp
 	}
 	h := w.Header()
-	clearNexTermHeaders(h, false)
+	clearTermsteadHeaders(h, false)
 	h.Set("Content-Security-Policy", csp)
 	h.Set("Content-Type", "text/html; charset=utf-8")
 	h.Set("Cache-Control", "no-store")

@@ -224,7 +224,7 @@ export default function SignDialog({ caKeyId, subjectKeyId, onClose }: { caKeyId
               </Field>
             )}
             {canAttach && subject && (
-              <CheckboxField checked={attach} onCheckedChange={(v) => setAttach(v === true)} label={`Attach the certificate to “${subject.name}”`} description="NexTerm then presents it when the key logs in." />
+              <CheckboxField checked={attach} onCheckedChange={(v) => setAttach(v === true)} label={`Attach the certificate to “${subject.name}”`} description="Termstead then presents it when the key logs in." />
             )}
             {error && (
               <p role="alert" className="text-sm text-destructive">

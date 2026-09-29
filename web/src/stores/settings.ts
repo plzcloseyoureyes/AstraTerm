@@ -77,7 +77,7 @@ async function flush(keepalive = false): Promise<void> {
         method: 'PUT',
         credentials: 'same-origin',
         keepalive: true,
-        headers: { 'Content-Type': 'application/json', 'X-NexTerm': '1' },
+        headers: { 'Content-Type': 'application/json', 'X-Termstead': '1' },
         body: JSON.stringify(patch),
       }).catch(() => undefined)
       return

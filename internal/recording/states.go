@@ -7,7 +7,7 @@ import (
 
 	"golang.org/x/time/rate"
 
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // sessState is this module's per-session bookkeeping, fed by the term hooks: the output timing index (instant

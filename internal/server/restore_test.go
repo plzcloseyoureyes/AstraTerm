@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/server/servertest"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/server/servertest"
 )
 
 // A restore staged through the admin API (importer, IMP-4) is applied by the next start, before the database opens.
@@ -63,11 +63,11 @@ func TestStagedRestoreAppliedOnRestart(t *testing.T) {
 	if st.Pending {
 		t.Fatal("restore still pending after it was applied")
 	}
-	prev, _ := filepath.Glob(filepath.Join(dataDir, "restore", "previous-*", "nexterm.db"))
+	prev, _ := filepath.Glob(filepath.Join(dataDir, "restore", "previous-*", "termstead.db"))
 	if len(prev) != 1 {
 		t.Fatalf("previous database not kept: %v", prev)
 	}
-	if _, err := os.Stat(filepath.Join(dataDir, "restore", "nexterm.db")); !os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(dataDir, "restore", "termstead.db")); !os.IsNotExist(err) {
 		t.Fatalf("staged database still present (err %v)", err)
 	}
 }

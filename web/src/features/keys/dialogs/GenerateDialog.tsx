@@ -1,7 +1,7 @@
 /*
  * MobaKeyGen-style generator (TOOL-1): type / size / comment / passphrase → the key is generated as a server-side draft
  * (never stored until asked) and shown with its public key, SHA256 + MD5 fingerprints and OpenSSH randomart; it can
- * then be saved as files (public, OpenSSH / PuTTY / PEM private) and/or stored in the NexTerm vault.
+ * then be saved as files (public, OpenSSH / PuTTY / PEM private) and/or stored in the Termstead vault.
  */
 import { useEffect, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
@@ -132,7 +132,7 @@ export default function GenerateDialog({ onClose }: { onClose: () => void }) {
             <Sparkles className="size-4.5 text-primary" /> Generate SSH key
           </DialogTitle>
           <DialogDescription>
-            {draft ? 'Save the key files you need, and store the key in the NexTerm vault to use it in sessions.' : 'Choose the key type and protect it with an optional passphrase.'}
+            {draft ? 'Save the key files you need, and store the key in the Termstead vault to use it in sessions.' : 'Choose the key type and protect it with an optional passphrase.'}
           </DialogDescription>
         </DialogHeader>
         <DialogBody className="@container grid gap-5">
@@ -191,7 +191,7 @@ export default function GenerateDialog({ onClose }: { onClose: () => void }) {
                 </div>
               </div>
               <div className="grid gap-3 rounded-lg border bg-card/60 p-3.5 @xl:col-span-2">
-                <SectionLabel>Store in NexTerm</SectionLabel>
+                <SectionLabel>Store in Termstead</SectionLabel>
                 {stored ? (
                   <div className="flex flex-wrap items-center gap-2 text-base">
                     <ShieldCheck className="size-4 text-success" />
@@ -222,7 +222,7 @@ export default function GenerateDialog({ onClose }: { onClose: () => void }) {
                         checked={remember}
                         onCheckedChange={(v) => setRemember(v === true)}
                         label="Remember the passphrase in the vault"
-                        description="Otherwise NexTerm asks for it whenever the key is used."
+                        description="Otherwise Termstead asks for it whenever the key is used."
                       />
                     )}
                   </div>

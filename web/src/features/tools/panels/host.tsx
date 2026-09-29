@@ -1,5 +1,5 @@
 /*
- * Synchronous host views of the NexTerm server: network interfaces, and listening / established sockets with their
+ * Synchronous host views of the Termstead server: network interfaces, and listening / established sockets with their
  * owning process (TOOL-6, MobaListPorts) including terminating the owner. Admin-only in server mode.
  */
 import * as React from 'react'
@@ -57,7 +57,7 @@ function SyncPanel({
       {error && !forbidden ? <div role="alert" className="shrink-0 px-4 py-3 text-sm text-destructive">{errorMessage(error)}</div> : null}
       <div className="min-h-0 flex-1">
         {forbidden ? (
-          <EmptyState size="sm" title="Administrators only" description="Host details of the NexTerm server are available to administrators in server mode." className="h-full" />
+          <EmptyState size="sm" title="Administrators only" description="Host details of the Termstead server are available to administrators in server mode." className="h-full" />
         ) : loading ? (
           <LoadingPane />
         ) : (
@@ -71,7 +71,7 @@ function SyncPanel({
 export function InterfacesPanel() {
   const q = useQuery({ queryKey: ['tools', 'interfaces'], queryFn: getInterfaces, retry: false })
   return (
-    <SyncPanel title="Network interfaces" description="Interfaces of the NexTerm host." onRefresh={() => void q.refetch()} fetching={q.isFetching} loading={q.isLoading} error={q.error}>
+    <SyncPanel title="Network interfaces" description="Interfaces of the Termstead host." onRefresh={() => void q.refetch()} fetching={q.isFetching} loading={q.isLoading} error={q.error}>
       <div className="h-full overflow-auto">
         <div className="grid grid-cols-1 gap-2 p-4 @3xl:grid-cols-2 @6xl:grid-cols-3">
           {(q.data ?? []).map((ifc: InterfaceInfo) => (
@@ -188,7 +188,7 @@ export function ListeningPanel() {
   return (
     <SyncPanel
       title="Listening ports"
-      description="Sockets on the NexTerm host with the owning process (listening only, or every connection)."
+      description="Sockets on the Termstead host with the owning process (listening only, or every connection)."
       onRefresh={() => void q.refetch()}
       fetching={q.isFetching}
       loading={q.isLoading}

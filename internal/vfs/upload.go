@@ -20,12 +20,12 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Resumable uploads (FILE-6): PUT /api/fs/{id}/upload?path=<target>&offset=<n>[&final=1][&mtime=][&total=] streams
-// the raw body into "<target>.nexterm-part" at offset; final=1 atomically renames the part onto the target. The part
+// the raw body into "<target>.termstead-part" at offset; final=1 atomically renames the part onto the target. The part
 // size is the resume point (GET/HEAD upload?path=). S3 uses native multipart uploads instead of part files, WebDAV
 // (no partial writes) stages chunks locally until the final one.
 
@@ -353,13 +353,13 @@ func commitPart(ctx context.Context, fsys FS, target string) error {
 	return fsys.Rename(ctx, part, target)
 }
 
-// stagingReserve is the free space always left on the NexTerm host's disk when data is staged locally (WebDAV
+// stagingReserve is the free space always left on the Termstead host's disk when data is staged locally (WebDAV
 // uploads, zip extraction): a user's upload must never fill the disk that holds the database.
 func stagingReserve(total int64) int64 { return max(1<<30, total/20) }
 
 // errNoStagingRoom is answered as 507 Insufficient Storage.
 var errNoStagingRoom = httpx.NewError(http.StatusInsufficientStorage, "insufficient_storage",
-	"not enough free disk space on the NexTerm server to stage this data")
+	"not enough free disk space on the Termstead server to stage this data")
 
 // stagingRoom reports whether need more bytes can be staged in dir (unknown sizes / platforms pass).
 func stagingRoom(dir string, need int64) error {

@@ -12,7 +12,7 @@ import (
 	gnet "github.com/shirou/gopsutil/v4/net"
 	"github.com/shirou/gopsutil/v4/process"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 // interfaceInfo describes one local network interface (GET /api/tools/interfaces).
@@ -150,7 +150,7 @@ func (h *handler) killListener(c *echo.Context) error {
 		return httpx.BadRequest("invalid pid")
 	}
 	if int(req.PID) == os.Getpid() {
-		return httpx.BadRequest("refusing to terminate NexTerm itself")
+		return httpx.BadRequest("refusing to terminate Termstead itself")
 	}
 	sig := "TERM"
 	switch strings.ToUpper(strings.TrimSpace(req.Signal)) {

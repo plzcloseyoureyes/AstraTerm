@@ -16,7 +16,7 @@ import (
 
 	xproxy "golang.org/x/net/proxy"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 func TestLocalForwardEndToEnd(t *testing.T) {
@@ -438,12 +438,12 @@ func TestReverseDynamicProxy(t *testing.T) {
 	if string(b) != "hello /reverse" {
 		t.Fatalf("reverse SOCKS GET = %q", b)
 	}
-	// Clients on the SSH server never reach NexTerm's own port (harness: 127.0.0.1:7822) through the reverse proxy.
+	// Clients on the SSH server never reach Termstead's own port (harness: 127.0.0.1:7822) through the reverse proxy.
 	if c, err := d.Dial("tcp", "127.0.0.1:7822"); err == nil {
 		c.Close()
-		t.Fatal("reverse SOCKS reached NexTerm's own port")
+		t.Fatal("reverse SOCKS reached Termstead's own port")
 	}
-	h.waitStatus(v.ID, func(s Status) bool { return strings.Contains(s.LastError, "NexTerm's own port") })
+	h.waitStatus(v.ID, func(s Status) bool { return strings.Contains(s.LastError, "Termstead's own port") })
 }
 
 func TestUnixSocketForwards(t *testing.T) {

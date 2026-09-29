@@ -16,8 +16,8 @@ import (
 	"github.com/coder/websocket"
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/server/servertest"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/server/servertest"
 )
 
 const adminPass = "correct horse battery staple"
@@ -228,7 +228,7 @@ func TestLocalHostEndpoints(t *testing.T) {
 	if !caf.Allowed {
 		t.Fatal("caffeine not allowed in desktop mode")
 	}
-	if caf.Supported && os.Getenv("NEXTERM_TEST_CAFFEINE") == "1" {
+	if caf.Supported && os.Getenv("TERMSTEAD_TEST_CAFFEINE") == "1" {
 		admin.MustJSON("POST", "/api/system/caffeine", map[string]any{"enabled": true, "durationMin": 1}, &caf)
 		if !caf.Enabled {
 			t.Fatal("caffeine not enabled")
@@ -309,8 +309,8 @@ func TestLocalSessionMonitoring(t *testing.T) {
 // TestSSHSessionMonitoring runs the whole stack against the Docker test environment: a saved SSH connection, the
 // monitor topic over /ws/events, REST endpoints (sudo through the login password), and the log-follow WebSocket.
 func TestSSHSessionMonitoring(t *testing.T) {
-	if os.Getenv("NEXTERM_TESTENV") != "1" {
-		t.Skip("set NEXTERM_TESTENV=1 to run tests against the Docker test environment")
+	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
+		t.Skip("set TERMSTEAD_TESTENV=1 to run tests against the Docker test environment")
 	}
 	env := servertest.New(t)
 	admin := env.Setup("admin", adminPass)

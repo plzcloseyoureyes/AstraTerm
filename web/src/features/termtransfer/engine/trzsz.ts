@@ -4,13 +4,13 @@
  * escaped binary, tmux-aware, directories). In a browser it insists on the File System Access API with pickers of
  * its own that need a fresh user gesture, so the two entry points that choose files are replaced on the instance:
  *
- *   downloads  the destination comes from NexTerm's UI: a folder (File System Access API, streamed) or the browser's
+ *   downloads  the destination comes from Termstead's UI: a folder (File System Access API, streamed) or the browser's
  *              download manager (per file; folders as one ZIP) — see engine/save.ts
- *   uploads    files come from NexTerm's pickers / drops (any browser, folders included)
+ *   uploads    files come from Termstead's pickers / drops (any browser, folders included)
  *
  * Everything else (protocol, progress bar in the terminal, Ctrl+C handling, drag-upload typing `trz`) is the
  * library's. Flow control: each chunk waits for the server's acknowledgement; the chunk size is capped at 1 MiB so a
- * chunk (base64 grows it by a third) always fits NexTerm's 8 MiB per-session input queue.
+ * chunk (base64 grows it by a third) always fits Termstead's 8 MiB per-session input queue.
  *
  * Library internals used (checked at construction, pinned version): trzszTransfer, createProgressBar,
  * textProgressBar, uploadFiles* fields, handleTrzsz{Download,Upload}Files. No app imports: unit-tested under Node.
@@ -344,7 +344,7 @@ export class TrzszStage {
     const filter = new TrzszFilter({
       writeToTerminal: (out) => this.write(out),
       sendToServer: (input) => opts.send(input),
-      // Node builds of trzsz require these; NexTerm replaces the handlers that would call them.
+      // Node builds of trzsz require these; Termstead replaces the handlers that would call them.
       chooseSendFiles: async () => undefined,
       chooseSaveDirectory: async () => undefined,
       terminalColumns: Math.max(1, opts.columns || 80),

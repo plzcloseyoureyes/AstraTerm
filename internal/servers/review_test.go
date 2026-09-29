@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/auth"
+	"github.com/termstead/termstead/internal/auth"
 )
 
 // Read-only users of the HTTP server cannot upload (the per-user flag used to be ignored), and non-canonical paths

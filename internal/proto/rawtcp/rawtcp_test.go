@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/proto/rawtcp/linedisc"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/proto/rawtcp/linedisc"
 )
 
 func TestRoutedDetection(t *testing.T) {

@@ -16,7 +16,7 @@ import (
 	"github.com/hirochachacha/go-smb2"
 )
 
-// smbFS is the SMB2/3 driver (PROTO-27) on hirochachacha/go-smb2 over NexTerm's Dialer. With a configured share the
+// smbFS is the SMB2/3 driver (PROTO-27) on hirochachacha/go-smb2 over Termstead's Dialer. With a configured share the
 // share root is "/"; without one "/" lists the shares and paths are /share/dir/file. Broken sessions are re-dialed
 // on the next operation.
 type smbFS struct {

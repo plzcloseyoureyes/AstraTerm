@@ -83,7 +83,7 @@ export default function SessionsSettingsSection() {
             onClick={() => {
               sessionsSettings.set({ quickConnectHistory: [] })
               // The ribbon field's own drop-down history (browser-local).
-              storage.remove('nexterm:quickconnect-history')
+              storage.remove('termstead:quickconnect-history')
               toast.success('Quick connect history cleared')
             }}
           >

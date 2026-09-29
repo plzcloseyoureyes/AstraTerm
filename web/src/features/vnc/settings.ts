@@ -15,7 +15,7 @@ export interface VncSettings {
   clipboard: 'auto' | 'manual'
   /**
    * The user's own clipboard direction limit (applied on top of the connection's and the administrator's policy,
-   * which NexTerm enforces server-side for local → remote).
+   * which Termstead enforces server-side for local → remote).
    */
   clipboardDirection: ClipboardDirection
   /**

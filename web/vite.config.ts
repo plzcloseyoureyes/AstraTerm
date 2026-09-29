@@ -4,13 +4,13 @@ import tailwindcss from '@tailwindcss/vite'
 import { writeFileSync } from 'node:fs'
 import path from 'node:path'
 
-const backend = process.env.NEXTERM_BACKEND ?? 'http://127.0.0.1:7822'
+const backend = process.env.TERMSTEAD_BACKEND ?? 'http://127.0.0.1:7822'
 const outDir = path.resolve(__dirname, '../internal/webui/dist')
 
 /** emptyOutDir wipes internal/webui/dist; keep the tracked placeholder that lets go:embed compile on fresh clones. */
 function keepPlaceholder(): Plugin {
   return {
-    name: 'nexterm-keep-placeholder',
+    name: 'termstead-keep-placeholder',
     apply: 'build',
     closeBundle() {
       writeFileSync(path.join(outDir, '.keep'), '')
@@ -28,7 +28,7 @@ const PRELOAD_FONTS = [/inter-latin-wght-normal/, /jetbrains-mono-latin-wght-nor
 
 function calmFonts(): Plugin {
   return {
-    name: 'nexterm-calm-fonts',
+    name: 'termstead-calm-fonts',
     enforce: 'pre',
     transform(code, id) {
       if (!FONT_CSS_RE.test(id.split('?')[0])) return null
@@ -74,7 +74,7 @@ export default defineConfig({
     emptyOutDir: true,
     chunkSizeWarningLimit: 4096,
     sourcemap: false,
-    // ES2022 keeps top-level await working (noVNC) and matches every browser NexTerm supports.
+    // ES2022 keeps top-level await working (noVNC) and matches every browser Termstead supports.
     target: 'es2022',
     rolldownOptions: {
       output: {

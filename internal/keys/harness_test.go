@@ -16,18 +16,18 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/audit"
-	"github.com/nexterm/nexterm/internal/auth"
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/events"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/sshx"
-	"github.com/nexterm/nexterm/internal/store"
-	"github.com/nexterm/nexterm/internal/term"
-	"github.com/nexterm/nexterm/internal/vault"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/audit"
+	"github.com/termstead/termstead/internal/auth"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/events"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/sshx"
+	"github.com/termstead/termstead/internal/store"
+	"github.com/termstead/termstead/internal/term"
+	"github.com/termstead/termstead/internal/vault"
 )
 
 // A self-contained test environment: the foundation services (store, vault, router, auth, events, term, sshx) plus

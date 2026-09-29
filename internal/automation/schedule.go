@@ -12,14 +12,14 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/robfig/cron/v3"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Scheduled tasks (AUTO-12): a standard 5-field cron expression (minute hour day-of-month month day-of-week, names
 // allowed) or a descriptor (@hourly, @daily, @weekly, @monthly, @yearly, @every 15m), optionally prefixed with
 // CRON_TZ=<zone>, runs a command / snippet / script on connections as a batch run owned by the schedule's owner.
-// Tasks run only while NexTerm runs; a run still in progress when the next one is due is skipped. Secrets need an
+// Tasks run only while Termstead runs; a run still in progress when the next one is due is skipped. Secrets need an
 // unlocked vault and interactive prompts (host keys, 2FA) fail the host because nobody may be watching.
 
 const minScheduleInterval = time.Minute

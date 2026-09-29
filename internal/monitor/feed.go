@@ -11,10 +11,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/sshx"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/sshx"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Feed states sent with errors ({type:'monitor', sessionId, error, state}).
@@ -48,7 +48,7 @@ func (s *Service) subscribe(_ context.Context, user *model.User, clientID string
 	if user == nil {
 		return nil, errors.New("session not found")
 	}
-	if p.SessionID == "local" { // the NexTerm host itself (System information view)
+	if p.SessionID == "local" { // the Termstead host itself (System information view)
 		if !s.allowLocal(user) {
 			return nil, errors.New("local host monitoring is available in desktop mode or to administrators")
 		}

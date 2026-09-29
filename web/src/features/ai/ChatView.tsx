@@ -106,7 +106,7 @@ function Unavailable({ status }: { status: AiStatus | null }) {
       <ul className="mt-4 grid max-w-72 gap-2 text-left text-sm text-muted-foreground">
         <li className="flex gap-2">
           <ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-success" />
-          Nothing leaves NexTerm until you choose a provider — Claude, OpenAI, or a local model (Ollama, LM Studio).
+          Nothing leaves Termstead until you choose a provider — Claude, OpenAI, or a local model (Ollama, LM Studio).
         </li>
         <li className="flex gap-2">
           <ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-success" />

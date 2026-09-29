@@ -153,7 +153,7 @@ var opensslName = map[uint16]string{
 }
 
 // TestOpenSSLInterop runs every suite against `openssl s_server -nocert -rev` (an echo server replying with each line
-// reversed). Enabled with NEXTERM_TESTENV=1 when an OpenSSL with anonymous cipher suites is installed.
+// reversed). Enabled with TERMSTEAD_TESTENV=1 when an OpenSSL with anonymous cipher suites is installed.
 func TestOpenSSLInterop(t *testing.T) {
 	bin := opensslForTest(t)
 	dhparam := filepath.Join(t.TempDir(), "ffdhe2048.pem")
@@ -251,8 +251,8 @@ func TestOpenSSLAutoDH1024(t *testing.T) {
 
 func opensslForTest(t *testing.T) string {
 	t.Helper()
-	if os.Getenv("NEXTERM_TESTENV") != "1" {
-		t.Skip("set NEXTERM_TESTENV=1 to run the OpenSSL interoperability tests")
+	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
+		t.Skip("set TERMSTEAD_TESTENV=1 to run the OpenSSL interoperability tests")
 	}
 	bin, err := exec.LookPath("openssl")
 	if err != nil {
@@ -316,14 +316,14 @@ func startOpenSSL(t *testing.T, bin, cipher string, ems, etm bool, extra ...stri
 // TestGnuTLSInterop negotiates VeNCrypt TLSVnc with the testenv TigerVNC server (GnuTLS, anonymous (EC)DH) and
 // completes VNC authentication inside TLS, once with the default offer and once each restricted to the ECDH-CBC and
 // DH-CBC suites (skipped when GnuTLS does not enable them). Every attempt authenticates correctly: TigerVNC
-// blacklists clients after repeated security failures. Enabled with NEXTERM_TESTENV=1 (server NEXTERM_TEST_VNC,
-// default 127.0.0.1:22059, password NEXTERM_TEST_VNC_PASSWORD, default "vncpassword").
+// blacklists clients after repeated security failures. Enabled with TERMSTEAD_TESTENV=1 (server TERMSTEAD_TEST_VNC,
+// default 127.0.0.1:22059, password TERMSTEAD_TEST_VNC_PASSWORD, default "vncpassword").
 func TestGnuTLSInterop(t *testing.T) {
-	if os.Getenv("NEXTERM_TESTENV") != "1" {
-		t.Skip("set NEXTERM_TESTENV=1 to run against the shared test environment")
+	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
+		t.Skip("set TERMSTEAD_TESTENV=1 to run against the shared test environment")
 	}
-	addr := envOr("NEXTERM_TEST_VNC", "127.0.0.1:22059")
-	password := envOr("NEXTERM_TEST_VNC_PASSWORD", "vncpassword")
+	addr := envOr("TERMSTEAD_TEST_VNC", "127.0.0.1:22059")
+	password := envOr("TERMSTEAD_TEST_VNC_PASSWORD", "vncpassword")
 	offers := []struct {
 		name   string
 		suites []uint16

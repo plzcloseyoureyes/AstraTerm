@@ -8,7 +8,7 @@ import { useAuthStore } from '@/stores/auth'
 import { storage, uid } from '@/lib/utils'
 import type { ToolRun } from './types'
 
-const PREFIX = 'nexterm:tools:history:v2:'
+const PREFIX = 'termstead:tools:history:v2:'
 const MAX = 40
 const SECRET_KEYS = new Set(['authPass', 'privPass', 'passphrase', 'password', 'community', 'secureOn', 'headers', 'body', 'contextName'])
 

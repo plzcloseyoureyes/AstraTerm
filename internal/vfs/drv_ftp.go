@@ -19,7 +19,7 @@ import (
 	"github.com/jlaffaye/ftp"
 )
 
-// ftpFS is the FTP / FTPS driver (PROTO-23, RESEARCH §3.14): jlaffaye/ftp over NexTerm's generic Dialer (proxies,
+// ftpFS is the FTP / FTPS driver (PROTO-23, RESEARCH §3.14): jlaffaye/ftp over Termstead's generic Dialer (proxies,
 // jump hosts, sshTunnelVia), explicit (AUTH TLS) or implicit TLS with one shared TLS session cache so servers that
 // require data-channel session reuse (vsftpd require_ssl_reuse) work, EPSV with PASV fallback (data connections go to
 // the control host unless ftpTrustPasvIP), MLSD/MLST unless ftpMlsd:false, NOOP keepalive and REST-based resume.

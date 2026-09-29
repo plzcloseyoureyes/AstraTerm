@@ -1,4 +1,4 @@
-# NexTerm remote monitor — Windows (OpenSSH + PowerShell) sampler (MON-2). One compact JSON object per line every
+# Termstead remote monitor — Windows (OpenSSH + PowerShell) sampler (MON-2). One compact JSON object per line every
 # __INTERVAL__ s, __COUNT__ samples (0 = forever). Raw perf counters: the Go side computes CPU/network deltas.
 $ProgressPreference='SilentlyContinue';$ErrorActionPreference='SilentlyContinue'
 $n=0

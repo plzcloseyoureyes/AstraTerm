@@ -1,4 +1,4 @@
-// Package monitor implements NexTerm's host monitoring (RESEARCH MON-1..6, SSH-38 display, SEC-22; SPEC §6.0
+// Package monitor implements Termstead's host monitoring (RESEARCH MON-1..6, SSH-38 display, SEC-22; SPEC §6.0
 // "Monitoring"):
 //
 //   - the MobaXterm-style remote monitoring bar: an events topic "monitor" ({type:'subscribe', topic:'monitor',
@@ -9,7 +9,7 @@
 //   - REST: snapshot, process list / kill / renice (optional sudo), systemd / Windows services, listening ports, disk
 //     usage drill-down, SSH connection details with a live latency probe, the local System info view;
 //   - a WebSocket log follower (tail -F / journalctl -f, MON-5);
-//   - Caffeine: keep the NexTerm host awake (desktop mode or administrators).
+//   - Caffeine: keep the Termstead host awake (desktop mode or administrators).
 package monitor
 
 import (
@@ -24,12 +24,12 @@ import (
 
 	"golang.org/x/sync/singleflight"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/sshx"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/sshx"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Topic is the events topic of the monitoring feed.
@@ -65,7 +65,7 @@ type Service struct {
 	caffeine *caffeine
 }
 
-// localKey identifies the NexTerm host in the per-source maps.
+// localKey identifies the Termstead host in the per-source maps.
 type localKey struct{}
 
 // clientState caches what the monitor learned about one transport.
@@ -134,7 +134,7 @@ func (s *Service) routes() {
 	s.d.Router.WS("/ws/monitor/:id/tail", h.tail)
 }
 
-// allowLocal reports whether user may monitor and act on the NexTerm host itself (principle 7: desktop mode or admins).
+// allowLocal reports whether user may monitor and act on the Termstead host itself (principle 7: desktop mode or admins).
 func (s *Service) allowLocal(user *model.User) bool {
 	if user == nil {
 		return false
@@ -146,7 +146,7 @@ var errLocalForbidden = httpx.Forbidden("the local host monitor is available in 
 
 // ---- targets --------------------------------------------------------------------------------------------------------
 
-// target is a monitored host resolved for one request: a live SSH session's transport or the NexTerm host.
+// target is a monitored host resolved for one request: a live SSH session's transport or the Termstead host.
 type target struct {
 	id      string // session id, or "local"
 	local   bool
@@ -162,7 +162,7 @@ type target struct {
 // label is "user@host" for prompts and audit details.
 func (t *target) label() string {
 	if t.local || t.sess == nil {
-		return "the NexTerm host"
+		return "the Termstead host"
 	}
 	info := t.sess.Info()
 	switch {
@@ -174,7 +174,7 @@ func (t *target) label() string {
 	return info.Title
 }
 
-// resolveTarget resolves a target id from a URL: "local" (the NexTerm host) or a runtime session the user owns.
+// resolveTarget resolves a target id from a URL: "local" (the Termstead host) or a runtime session the user owns.
 func (s *Service) resolveTarget(ctx context.Context, user *model.User, id string) (*target, error) {
 	if user == nil {
 		return nil, httpx.ErrUnauthorized

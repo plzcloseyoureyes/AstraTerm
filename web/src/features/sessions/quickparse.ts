@@ -800,6 +800,6 @@ export const QUICK_CONNECT_HELP: { example: string; description: string }[] = [
   { example: 'serial:/dev/ttyUSB0@115200', description: 'Serial console (COM3@9600 on Windows)' },
   { example: 'docker://web', description: 'Shell in a container (docker exec -it web bash)' },
   { example: 'kubectl exec -it pod -n ns -- sh', description: 'Kubernetes pod shell' },
-  { example: 'local', description: 'Local shell on the NexTerm host' },
+  { example: 'local', description: 'Local shell on the Termstead host' },
   { example: 'My saved session', description: 'A saved session name (or @name)' },
 ]

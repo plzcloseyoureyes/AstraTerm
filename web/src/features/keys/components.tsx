@@ -88,7 +88,7 @@ export function KeyTypeBadge({ type, bits }: { type: string; bits: number }) {
 export function PassphraseBadge({ k }: { k: Pick<StoredKey, 'hasPassphrase' | 'passphraseSaved'> }) {
   if (!k.hasPassphrase) {
     return (
-      <Tooltip content="The stored private key has no passphrase (it is still encrypted by the NexTerm vault)">
+      <Tooltip content="The stored private key has no passphrase (it is still encrypted by the Termstead vault)">
         <Badge variant="secondary">
           <LockOpen /> None
         </Badge>

@@ -11,7 +11,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // maxImportItems caps how many connections/folders a single import may contain (guards pathological inputs).
@@ -190,7 +190,7 @@ func cleanSecrets(m map[string]string) map[string]string {
 	return out
 }
 
-// cleanColor keeps a short CSS colour value ("#rrggbb" from importers, anything ≤ 64 runes from a NexTerm export).
+// cleanColor keeps a short CSS colour value ("#rrggbb" from importers, anything ≤ 64 runes from a Termstead export).
 func cleanColor(s string) string {
 	s = strings.TrimSpace(stripControl(s))
 	if utf8.RuneCountInString(s) > maxColorRunes {
@@ -349,7 +349,7 @@ func isSSHFamily(p model.Protocol) bool {
 	return p == model.ProtoSSH || p == model.ProtoSFTP || p == model.ProtoMosh
 }
 
-// runsLocalCommand reports whether opening c executes a program on the NexTerm host (ProxyCommand or a local shell).
+// runsLocalCommand reports whether opening c executes a program on the Termstead host (ProxyCommand or a local shell).
 func runsLocalCommand(c *model.Connection) bool {
 	if c.Protocol == model.ProtoLocal || c.Protocol == model.ProtoKube {
 		return true

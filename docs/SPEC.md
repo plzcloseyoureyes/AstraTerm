@@ -1,9 +1,9 @@
-# NexTerm — Architecture & Contract Specification
+# Termstead — Architecture & Contract Specification
 
-NexTerm is an organized remote-management workspace. The **UI runs in the browser** (React 19 + Vite 8 +
+Termstead is an organized remote-management workspace. The **UI runs in the browser** (React 19 + Vite 8 +
 TypeScript 7 + Tailwind 4) and **all protocol logic runs in a Go backend** (Go 1.26). `make build` compiles the
 frontend into `internal/webui/dist`, which is embedded with `go:embed`, producing **one self-contained executable**
-(`bin/nexterm`) for macOS / Linux / Windows. CGO is **disabled** (`CGO_ENABLED=0`) — every dependency must be pure Go.
+(`bin/termstead`) for macOS / Linux / Windows. CGO is **disabled** (`CGO_ENABLED=0`) — every dependency must be pure Go.
 
 This document is the binding contract between all contributors (human or agent). If you need to deviate, keep the
 deviation local to your module and document it in your module's `README.md` section at the bottom of this file.
@@ -39,7 +39,7 @@ Module scopes in §10 reference those IDs — read the rows for your IDs before 
 ## 2. Repository layout
 
 ```
-cmd/nexterm/main.go            CLI entry (flags, subcommands: serve [default], version, reset-password, export)
+cmd/termstead/main.go            CLI entry (flags, subcommands: serve [default], version, reset-password, export)
 internal/app/                  Core contracts: Deps, Router helpers, errors, context helpers, interfaces (SEE §4)
 internal/model/                Shared domain structs (JSON contract types) — mirrors web/src/api/types.ts
 internal/config/               Config (flags + env + data dir resolution, portable mode)
@@ -85,7 +85,7 @@ Makefile                       web, build, dev, test, cross-compile targets
 
 ## 3. Conventions (Go)
 
-* Module path: `github.com/nexterm/nexterm`. Go 1.26, `CGO_ENABLED=0`.
+* Module path: `github.com/termstead/termstead`. Go 1.26, `CGO_ENABLED=0`.
 * Logging: `log/slog` (`app.Deps.Log`). No `fmt.Println` in library code.
 * HTTP: [Echo v5](https://github.com/labstack/echo) (`github.com/labstack/echo/v5`) behind `internal/httpx` (§4 "Router
   helpers"). Routes are registered on the router's groups — `d.Router.API().GET("/connections/:id", h.get)` — with Echo
@@ -102,7 +102,7 @@ Makefile                       web, build, dev, test, cross-compile targets
 * Concurrency: guard shared maps with mutexes; never block the events hub on a slow client (drop/close slow clients).
 * Auth: all `/api/**` except `/api/auth/state`, `/api/auth/login`, `/api/auth/setup`, `/api/share/**` require an
   authenticated user (`httpx.UserFrom(c)`; routes on `d.Router.API()`). Mutating requests (POST/PUT/PATCH/DELETE) must
-  carry header `X-NexTerm: 1` (CSRF guard; checked by middleware). Admin-only routes are registered on `d.Router.Admin()`.
+  carry header `X-Termstead: 1` (CSRF guard; checked by middleware). Admin-only routes are registered on `d.Router.Admin()`.
 * Ownership/visibility: user-owned rows have `ownerId`. A user sees their own rows + rows with `shared=true`
   (shared connections are read-only for non-owners unless admin; their secrets are *used* server-side but never returned).
 * Module wiring: every module exposes `func Mount(d *app.Deps, ...managers it needs)` which registers routes with `d.Router` and may register
@@ -110,7 +110,7 @@ Makefile                       web, build, dev, test, cross-compile targets
 * Migrations: `store.RegisterMigration(module string, version int, sql string)` — applied in (module, version) order at
   startup, tracked in `schema_migrations(module, version)`. Core tables are created by module `core` (store package).
 * Tests: `go test ./...` must pass. Put unit tests next to code. Integration tests needing network targets are guarded by
-  env vars (e.g. `NEXTERM_TEST_SSH=user:pass@127.0.0.1:2222`).
+  env vars (e.g. `TERMSTEAD_TEST_SSH=user:pass@127.0.0.1:2222`).
 
 ---------------------------------------------------------------------------------------------------------------------
 
@@ -137,7 +137,7 @@ vfs        (app[, sshx])              VFS registry + drivers (local, sftp, ftp, 
 transfer   (app, vfs)                 transfer queue + /api/transfers
 tunnel, monitor, vnc, guac, keys, snippets, recording, importer, tools, servers   (app, term, sshx, vfs as needed)
 server     (everything)               builds Deps, installs middleware, calls every module's Mount, serves SPA
-cmd/nexterm (server, config)
+cmd/termstead (server, config)
 ```
 
 ### 4.1 `internal/app.Deps`
@@ -198,7 +198,7 @@ var RequireUser, RequireAdmin echo.MiddlewareFunc          // for groups/routes 
   (streams, WebSockets). `c.JSON` sends `application/json; charset=utf-8` and `Cache-Control: no-store`.
 * **Middleware** (outermost first): Pre — request log (slog, share tokens redacted), recover, security headers
   (CSP/HSTS/nosniff/frame), Host guard (loopback binds); routing; Use — authentication (cookie / Bearer, stored in the
-  request context), CSRF (`X-NexTerm: 1` on mutating requests unless Bearer), canonical-path redirect, body limit; then
+  request context), CSRF (`X-Termstead: 1` on mutating requests unless Bearer), canonical-path redirect, body limit; then
   the route's Origin check (WS) and `RequireUser` / `RequireAdmin`. Unmatched `/api` and `/ws` paths → JSON 404
   `no such endpoint`; other methods than GET/HEAD elsewhere → JSON 405; everything else → the SPA fallback.
 
@@ -435,7 +435,7 @@ Known secret keys: `password`, `passphrase`, `proxyPassword`, `vncPassword`, `se
 
 ## 6. API
 
-All JSON. Base path `/api`. Mutating calls require header `X-NexTerm: 1`. Errors: `{error, code}`.
+All JSON. Base path `/api`. Mutating calls require header `X-Termstead: 1`. Errors: `{error, code}`.
 
 ### 6.0 REST endpoint catalogue
 
@@ -627,7 +627,7 @@ increasing **byte offset** (total bytes ever produced). Each attached client has
 * Directory layout:
 ```
 src/main.tsx, src/App.tsx               bootstrap: QueryClient, theme, auth gate, events socket
-src/api/client.ts                       fetch wrapper (adds X-NexTerm header, JSON, ApiError), ws URL helper
+src/api/client.ts                       fetch wrapper (adds X-Termstead header, JSON, ApiError), ws URL helper
 src/api/types.ts                        ALL shared JSON types (§5.2, §6) — single source of truth on the frontend
 src/api/<resource>.ts                   typed endpoint functions + react-query hooks per resource
 src/lib/events.ts                       events WebSocket singleton (auto-reconnect, typed subscribe(type, cb))
@@ -669,11 +669,11 @@ registerStatusItem({ id, align: 'left'|'right', order, component })
 
 ```
 make web      # cd web && npm ci && npm run build   (outputs to internal/webui/dist)
-make build    # CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=…" -o bin/nexterm ./cmd/nexterm
-make dev      # go run ./cmd/nexterm --dev & (cd web && npm run dev)   — vite proxies /api and /ws to :7822
+make build    # CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=…" -o bin/termstead ./cmd/termstead
+make dev      # go run ./cmd/termstead --dev & (cd web && npm run dev)   — vite proxies /api and /ws to :7822
 make release  # cross-compile darwin/linux/windows × amd64/arm64 into dist/
 ```
-Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./nexterm-data` with `--portable`),
+Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/termstead` (or `./termstead-data` with `--portable`),
 `--open` opens the browser, `--tls-cert/--tls-key` or `--tls-self-signed`, `--guacd 127.0.0.1:4822`.
 
 ---------------------------------------------------------------------------------------------------------------------
@@ -809,7 +809,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
 * **Local shells.** `GET /api/local/shells` is admin-only in server mode (like the protocol). Unix IDs are basenames ($SHELL
   first, /etc/shells, PATH); Windows: `pwsh`, `powershell`, `cmd`, `git-bash`, `wsl:<distro>`. Options: `shell` (ID, path or
   command), `args`, `cwd` (`~` expanded, default home), `env`, `loginShell` (Unix, default true: argv0 `-name` when no args).
-  The environment gets TERM, COLORTERM=truecolor, TERM_PROGRAM=NexTerm, LANG=en_US.UTF-8 if unset; NEXTERM_* is dropped.
+  The environment gets TERM, COLORTERM=truecolor, TERM_PROGRAM=Termstead, LANG=en_US.UTF-8 if unset; TERMSTEAD_* is dropped.
 
 
 ### F1a — terminal UI (`web/src/features/terminal/**`)
@@ -833,7 +833,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
 * **Replay semantics.** A view attaching from offset 0 to an existing session (or getting `attach(reset)`) treats the replayed
   bytes as history: xterm's automatic replies (DA, CPR, OSC 52…), bells and notifications generated while parsing them are
   dropped. Deltas after the view's own render point and the first output of a session this page created are live. Reload:
-  a serialize snapshot + offset per session is kept in sessionStorage (`nexterm:term:v1:<sessionId>`, only at a clean VT/UTF-8
+  a serialize snapshot + offset per session is kept in sessionStorage (`termstead:term:v1:<sessionId>`, only at a clean VT/UTF-8
   boundary) → delta attach. The UI prints no reconnect separator (the backend's notices do).
 * **Commands** (category Terminal, all rebindable): `terminal.newLocal` ($mod+Shift+L), `terminal.attach {sessionId}`,
   `terminal.duplicate`, `terminal.splitRight|splitDown`, `terminal.find` ($mod+Shift+F), `terminal.clear`, `terminal.reset`,
@@ -874,7 +874,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   session tree". The `sessions` ribbon button is re-registered (replaces the shell placeholder); menubar additions at order 150.
 * **Dialogs** (editor, folder) render in their own small React root (dialogs/host.tsx) sharing the query client and
   stores: hidden but kept while the screen is locked, dropped on sign-out, app shortcuts suspended while open.
-* **Quick connect** scrubs inline passwords from the ribbon field's local history (`nexterm:quickconnect-history`); the
+* **Quick connect** scrubs inline passwords from the ribbon field's local history (`termstead:quickconnect-history`); the
   shell could store the sanitised text itself. `src/features/sessions/open.ts` re-exports F1a's `terminal/open.ts`.
 
 ### Integration — foundation stage
@@ -954,7 +954,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   running transfer pins them), and close with their runtime session. Extra: `GET /api/fs` (own handles), `GET
   /api/fs/{id}`. Unknown / closed / foreign handle → 404 `{code:'fs_not_found'}` (reopen). The session's transport is
   gone → 409 `session_not_connected`. Local: desktop mode = the whole host (Windows: `/C:/…`, `/` lists drives);
-  server mode = admins only, jailed with `os.Root` in `$NEXTERM_LOCAL_FS_ROOT`, else global setting `files.localRoot`,
+  server mode = admins only, jailed with `os.Root` in `$TERMSTEAD_LOCAL_FS_ROOT`, else global setting `files.localRoot`,
   else `<data dir>/files`.
 * **Connection options.** ssh: `sshBrowser: 'sftp'|'scp'|'none'` (default sftp, automatic SCP/shell fallback when the
   SFTP subsystem is missing; `none` → 409 `ssh_browser_disabled`), `sftpRoot`, `sftpServerCommand` (sudo mode),
@@ -973,7 +973,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   and `linkType` (`file|dir|broken`). `list` → `{path, parent, entries}`, dirs (and links to dirs) first, then name
   (case-insensitive); Lstat semantics. `stat` = Lstat.
 * **Upload.** `PUT /api/fs/{id}/upload?path=<target>&offset=<n>[&final=1][&total=<bytes>][&mtime=<unix s|ms>]`, raw
-  body, no size cap. Data goes to `<target>.nexterm-part` from `offset` (0 truncates and creates missing parent folders;
+  body, no size cap. Data goes to `<target>.termstead-part` from `offset` (0 truncates and creates missing parent folders;
   an offset below the part size truncates = safe chunk retry; above it → 409 `offset_mismatch` with the stored `size`,
   header `Upload-Offset`). `final=1` — or `offset + body == total` — atomically renames the part onto the target
   (replacing a file, keeping its permissions; a folder of that name → 409) and applies `mtime`. **Without `final`/`total`
@@ -1015,7 +1015,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   different, leftOnly, rightOnly, typeMismatch}}` (mtime tolerance 2 s; one-sided folders are not expanded).
 * **Transfers.** `POST /api/transfers` → 201; extra keys `move` (sources deleted after each copied file; same handle →
   rename), `preserve` (mtime + permissions, default true), `verify` (SHA-256 of source vs destination), `label`.
-  Copies go through `<name>.nexterm-part` + rename, recurse (folders merge), recreate symlinks where the destination
+  Copies go through `<name>.termstead-part` + rename, recurse (folders merge), recreate symlinks where the destination
   supports them (else file links are followed, folder links skipped), retry transient network errors 3× resuming from
   the part size, run ≤ 3 at a time (others `queued`). `overwrite:'resume'` continues a smaller destination / part file.
   `overwrite:'ask'` raises a `confirm` prompt per conflict (title "File already exists", one field `action` = default):
@@ -1062,7 +1062,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
 * **Auto-show** (MobaXterm): on the first `connected` of an ssh session this page opened (`isFreshSession`), when it is
   the active tab and `files.autoShowPanel` (default true) and `sshBrowser !== 'none'`, the panel is shown with
   `showSidebarPanel('sftp')` (`src/layout/Sidebar.tsx`). Skipped on phones and while the sidebar is hidden or
-  collapsed (collapse state read — read-only — from the shell's `nexterm:sidebar` localStorage prefs).
+  collapsed (collapse state read — read-only — from the shell's `termstead:sidebar` localStorage prefs).
 * **Follow terminal folder** (FILE-2): per session; default = `files.followTerminal` ∧ connection `followCwd !== false`.
   cwd = terminal info `cwd` (terminal WS) / `RuntimeSession.cwd`, polling `GET /api/fs/{id}/cwd` while unknown. While
   it stays unknown the footer shows a focusable hint explaining why (option / setting off, remote command, or typing
@@ -1091,7 +1091,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   other failures → resume from `GET …/upload?path=` (≤ 6 attempts, 423 → vault unlock dialog). OS drops walk folders
   (`webkitGetAsEntry`) and create empty folders too. Conflicts with top-level names are resolved in the UI first
   (`files.conflictPolicy`: ask | overwrite | skip | rename). Removing a canceled / failed upload from the queue deletes
-  the `<target>.nexterm-part` it left (best effort; not while another upload writes that target). Drops into the list
+  the `<target>.termstead-part` it left (best effort; not while another upload writes that target). Drops into the list
   go to the folder the list shows (a navigation still loading does not count). **Server transfers** send `overwrite`
   (resolved in the UI), `move` (moves) and `preserve: true`; same-fs moves use `rename`, same-fs copies `copy` with a
   boolean `overwrite` (into the same folder = duplicate; the "rename" policy goes through a server transfer).
@@ -1100,14 +1100,14 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
 * **Queue UI** (FILE-8): overlay drawer bottom-right above the status bar, status bar item, rail badge, per-panel mini
   progress. Toasts announce finished / failed transfers only while the drawer is closed.
 * **Listings** refresh in the background every 8 s while shown (not for folders above 5 000 entries or after errors)
-  and after every change made through NexTerm.
+  and after every change made through Termstead.
 * **Preview** (FILE-12): images (zoom/pan, previous/next), PDF (iframe), audio/video via `download?inline=1`; text and
   Markdown read the first 256 KiB with a `Range` request on `download` (`read` answers 413 for larger files); when
   the ranged response fails the client streams the plain download and stops after 256 KiB.
 * **Settings** section `files` ("Files & SFTP"): `autoShowPanel`, `followTerminal`, `showHidden`, `confirmDelete`,
   `doubleClickAction` ('edit'|'preview'|'download'), `uploadParallelism`, `foldersFirst`, `conflictPolicy`,
   `openQueueOnTransfer`, `columns`, `columnSizes`, `sortBy`, `sortDesc`, `bookmarks` (per place: `conn:<id>`,
-  `host:<user@host:port>`, `local`). Recent folders are browser-local (`nexterm:files:recent:v1`).
+  `host:<user@host:port>`, `local`). Recent folders are browser-local (`termstead:files:recent:v1`).
 
 ### protocols — `internal/proto/{telnet,rlogin,rawtcp,serial,docker,kube,mosh,winrm,ipmi}` (PROTO-6..13,15,30,31, CC-1,2,18)
 * **Backends.** All dial network protocols through `sshx.Pool.DialConnection` / `Dialer`, so `proxy` / `jumpHosts` /
@@ -1219,7 +1219,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   None. **Anonymous TLS**: Go's crypto/tls has no anon (EC)DH suites, so `internal/vnc/anontls` is a minimal TLS 1.2
   client (DH/ECDH-anon with AES-GCM/CBC, X25519/P-256/P-384/FFDHE, extended master secret; verified against OpenSSL
   and GnuTLS/TigerVNC). It is unauthenticated (UI shows "Encrypted (server not authenticated)"); when the server
-  cannot negotiate it, NexTerm reconnects without it. X509 certificates: system roots for the host, else TOFU through a
+  cannot negotiate it, Termstead reconnects without it. X509 certificates: system roots for the host, else TOFU through a
   `hostkey` prompt (fingerprint `SHA256:AA:…`, `fingerprintMd5` = MD5 of the DER); X509 failures never downgrade.
   Other types noVNC supports (RA2ne, Tight, XVP, MS-Logon II) are **passed through** (noVNC asks for credentials in
   the tab; not stored).
@@ -1246,7 +1246,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   and is announced with `{type:'vnc.incoming', sessionId, listenerId, from, title}`; listener changes push
   `{type:'vnc.listeners'}`. Audit `vnc.listen.start|stop`, `vnc.reverse.accept`.
 * **Frontend.** Tab kind `vnc` params `{sessionId, protocol, connectionId?, quick?, color?, title, reverse?}`; closing
-  the tab closes the owner's session (confirm when connected), "Detach" keeps it; a tab whose session vanished (NexTerm
+  the tab closes the owner's session (confirm when connected), "Detach" keeps it; a tab whose session vanished (Termstead
   restart) starts an equivalent session once. Commands (category VNC): `vnc.attach {sessionId}`, `vnc.reconnect`,
   `vnc.disconnect`, `vnc.detach`, `vnc.ctrlAltDel` (Ctrl+Alt+End), `vnc.sendKeys {combo}`, `vnc.clipboard`,
   `vnc.pasteClipboard`, `vnc.typeClipboard`, `vnc.screenshot`, `vnc.copyScreenshot`, `vnc.fullscreen`
@@ -1302,9 +1302,9 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   error?, sidecar?}` (address/source/error/sidecar for admins; version = guacd's protocol version, probed ≤ every
   10 min — reachability is a TCP connect, so polling does not spawn guacd processes). **CORE-16**
   `POST /api/guacd/sidecar {action:'start'|'stop'}` (admin) → 202 `{jobId}` (job events `{stage, message}`): docker CLI,
-  container `nexterm-guacd` (label `nexterm.managed=guacd`; containers without it are never touched),
+  container `termstead-guacd` (label `termstead.managed=guacd`; containers without it are never touched),
   `guacamole/guacd:1.6.0` published on `127.0.0.1:4822`, restart unless-stopped; on start saves
-  `rdp.{guacdAddress, guacdSidecar, guacdDataPath:'/tmp/nexterm', guacdForwardHost}`. Global section `rdp` (admin):
+  `rdp.{guacdAddress, guacdSidecar, guacdDataPath:'/tmp/termstead', guacdForwardHost}`. Global section `rdp` (admin):
   `guacdAddress`, `defaultEngine`, `guacdSidecar`, `guacdDataPath` (drives `<path>/drives/<userId>`, recordings
   `<path>/recordings/<userId>` inside guacd's filesystem), `guacdForwardHost`. Only the global scope is read.
 * **Options beyond §5.3** (the sessions editor may expose them): `preconnectionBlob` (Hyper-V VM id; else asked at
@@ -1324,7 +1324,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   (close = end session with confirmation; reopen re-attaches or starts anew; "session gone" → start new session in
   place). IronRDP is lazy-loaded; its WASM ships as a `data:` URL that the CSP's `connect-src 'self'` would block, so
   the module answers that one fetch from memory while it initializes (no CSP change needed). The web component is
-  created with an unknown `scale` and a shadow-root stylesheet so NexTerm sizes it (its own sizing is window-based);
+  created with an unknown `scale` and a shadow-root stylesheet so Termstead sizes it (its own sizing is window-based);
   hover focus is reduced to click-to-focus. Commands (category Remote desktop): `rdp.attach {sessionId}`,
   `rdp.ctrlAltDel`, `rdp.sendKeys {combo}`, `rdp.fullscreen`, `rdp.screenshot`, `rdp.copyScreenshot`,
   `rdp.scaling {mode}`, `rdp.reconnect`, `rdp.disconnect`, `rdp.downloadFile {connectionId|sessionId}`,
@@ -1353,7 +1353,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   vault answers 423 so the UI unlocks and repeats), `POST /api/tunnels/reorder {items:[{id, sortOrder}]}`,
   `POST /api/tunnels/check-bind {bindHost, bindPort, bindSocket?, id?}` → `{available, error?, suggestion?}` (editor
   pre-flight; names the caller's tunnel / session forward holding the port), `GET /api/tunnels/export` →
-  `{format:'nexterm-tunnels', version:1, exportedAt, tunnels:[{…, connection:{id, name, host, port, username}}]}` (no
+  `{format:'termstead-tunnels', version:1, exportedAt, tunnels:[{…, connection:{id, name, host, port, username}}]}` (no
   secrets), `POST /api/tunnels/import {file, defaultConnectionId?, dryRun?}` → `{created, planned:[{name, connectionId,
   connectionName, matched: id|name+address|address|name|default}], skipped:[{name, reason}]}` (imported tunnels are
   stopped, without autostart or SOCKS credentials), `GET /api/tunnels/remote-ports?sessionId=|connectionId=` →
@@ -1380,8 +1380,8 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
 * **Dynamic proxies.** SOCKS5 (go-socks5, names resolved on the exit side, CONNECT only — BIND / UDP ASSOCIATE
   refused), SOCKS4/4a (refused when credentials are set), HTTP CONNECT and absolute-URI requests (Basic
   Proxy-Authorization with credentials), `/proxy.pac` and `/wpad.dat`. A proxy on a non-loopback address needs
-  credentials or `allowFrom`. Reverse SOCKS never connects to NexTerm's own port.
-* **Policy.** NexTerm's own listen port is never bindable. Server mode, non-admins: loopback TCP listeners on ports ≥
+  credentials or `allowFrom`. Reverse SOCKS never connects to Termstead's own port.
+* **Policy.** Termstead's own listen port is never bindable. Server mode, non-admins: loopback TCP listeners on ports ≥
   1024 only; no remote or reverse-dynamic forwards, no Unix socket listeners (session forwards included).
 * **TUN-7.** `connection.options.forwards: [{type, bindHost?, bindPort?, destHost?, destPort?, reverse?, bindSocket?,
   destSocket?, name?, disabled?}]` start over the terminal's client (`Pool.ForSession`) whenever an SSH terminal
@@ -1400,7 +1400,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
 * **Not implemented.** TUN-10 (Kubernetes / SSM port-forwards): client-go and ssm-session-client are not in go.mod.
 
 ### monitor — `internal/monitor`, `web/src/features/monitor` (MON-1..6, SSH-38 display, SEC-22)
-* **Feed.** Events topic `monitor` (`{type:'subscribe', topic:'monitor', sessionId}`; `sessionId:'local'` = the NexTerm
+* **Feed.** Events topic `monitor` (`{type:'subscribe', topic:'monitor', sessionId}`; `sessionId:'local'` = the Termstead
   host, desktop mode or admins). One feed per session (ref-counted by sockets) attaches to one collector per SSH
   transport (shared by duplicate sessions, stopped 10 s after the last subscriber): a one-shot probe (`uname`,
   os-release…) picks the sampler, which runs as `/bin/sh -s` (script on stdin, login-shell independent) on ONE non-PTY
@@ -1417,14 +1417,14 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   `net[].virtual`, `netTotal {rxBps,txBps}` (physical interfaces; all non-loopback ones in containers), `diskIo
   {readBps,writeBps}`, `fds {used,max}`, `threads`, `platform`, `arch`, `cpuModel`, `virt`, `intervalSec`, `warmup`
   (first sample: rates not yet known). `load` on Windows = [processor queue length, 0, 0].
-* **REST** (`:id` = a runtime session id the caller owns — SSH or local shell — or `local` = the NexTerm host, which
+* **REST** (`:id` = a runtime session id the caller owns — SSH or local shell — or `local` = the Termstead host, which
   is desktop mode or admins only; non-owners get 404): `GET /api/monitor/local` → SystemInfo (host, cpu, mem, disks,
-  net interfaces, users, top processes, NexTerm server); `GET /api/monitor/{id}/host` → probe result (`platform, os,
+  net interfaces, users, top processes, Termstead server); `GET /api/monitor/{id}/host` → probe result (`platform, os,
   kernel, hostname, arch, cpuModel, cores, virt, model, tools{sudo,systemctl,journalctl,ss,lsof,…}`);
   `/snapshot` (the collector's sample when fresh, else two readings 1 s apart); `/processes` → `Process[]` superset
   (`name, threads, nice, vsz, cpuTime`; `rss`/`vsz` bytes; `cpu` = % of one core, recent delta between listings,
   lifetime average on the first; the listing script itself is hidden); `POST /kill {pid, signal, sudo?}` (TERM KILL
-  INT HUP QUIT STOP CONT USR1 USR2 or numbers 1/2/3/9/15; PIDs ≤ 1 and NexTerm itself refused); `POST /renice
+  INT HUP QUIT STOP CONT USR1 USR2 or numbers 1/2/3/9/15; PIDs ≤ 1 and Termstead itself refused); `POST /renice
   {pid, nice, sudo?}`; `GET /services` → `{manager:'systemd'|'windows'|'', services:[{name, description, load,
   active, sub, enabled?, pid?}], message?}`; `POST /services/{name}/{action} {sudo?}` (start stop restart reload
   enable disable); `GET /services/{name}/logs?lines=&sudo=` → `{lines}` (journalctl); `GET /ports?sudo=` →
@@ -1445,14 +1445,14 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   prompt through the broker ("remember" saves it as the connection's `sudoPassword`, audited
   `connection.secret.save`). The password is only fed to `sudo -S` through a quoted here-document with a random
   delimiter (never on a command line); a working one is remembered in session memory.
-* **Caffeine.** macOS `caffeinate -dimsu -w <nexterm pid>`; Linux `systemd-inhibit --what=idle:sleep` holding a
-  command that polls NexTerm's PID (instead of `sleep infinity`, so a crash cannot leak the lock); Windows
+* **Caffeine.** macOS `caffeinate -dimsu -w <termstead pid>`; Linux `systemd-inhibit --what=idle:sleep` holding a
+  command that polls Termstead's PID (instead of `sleep infinity`, so a crash cannot leak the lock); Windows
   SetThreadExecutionState on a locked OS thread. Released when switched off, on its timer, and on shutdown. The page
   also holds a Screen Wake Lock while it is on. Feature probe `features.caffeine`.
 * **Frontend.** Status item `monitor.bar` (left, order 30): the monitoring bar for the ACTIVE tab's session
   (`params.sessionId`; a monitor tab's target) when SSH (and local shells, setting) — host, CPU, RAM, swap, disk of
   the primary volume, net ↓↑, load, users, uptime, processes, with sparklines and warn/critical colours (80/90 %);
-  hover = details, click = monitor tab on the matching panel; sampling only while shown and a NexTerm window is
+  hover = details, click = monitor tab on the matching panel; sampling only while shown and a Termstead window is
   visible. Status item `monitor.caffeine` (right, 80). Tab kinds `monitor` `{target, panel?, path?, title?}` — the
   session is `params.target`, deliberately not `params.sessionId` (the shell / terminal would treat the monitor tab as
   a tab showing the session: closing the terminal would keep the session alive); `sessionId` is still accepted — and
@@ -1474,13 +1474,13 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
 * **Sampler.** A sampler producing no sample for max(8 × interval, 30 s) is ended, reported (`state:'error'`) and
   restarted with the usual backoff. The Linux sampler no longer passes container / system runtime mounts to df
   (`/var/lib/{docker,containers,kubelet,lxcfs}`, `/run` except `/run/media`, `/snap`, `/proc`, `/sys`, `/dev`).
-* **Local host.** Disks come from all mounts minus pseudo / network / runtime ones (a Docker-deployed NexTerm listed
+* **Local host.** Disks come from all mounts minus pseudo / network / runtime ones (a Docker-deployed Termstead listed
   none); bind mounts merge; the volumes of an APFS container are reported as the Data volume. macOS memory follows
   Activity Monitor (vm_stat), as the remote macOS sampler does. Service names may contain systemd `\xNN` escapes.
 * **Bar.** Degrades to fit the status bar (sparklines → users/uptime/processes/swap → host/load → CPU/RAM/disk) with
   a "⋯" item listing what is hidden; load is orange from 1 runnable task per core and red from 2 (Windows queue 2 / 4),
   not by the % thresholds. Per-session choices (`monitor.toggleBar {sessionId}`) persist in localStorage
-  (`nexterm:monitor:bar-sessions:v1`; dropped when the session closes, after 30 days, beyond 200).
+  (`termstead:monitor:bar-sessions:v1`; dropped when the session closes, after 30 days, beyond 200).
 
 ### keys — `internal/keys`, `web/src/features/keys`, `internal/sshx/{cert_hostca,agent_builtin}.go` (TOOL-1, SSH-5, SSH-11, SSH-12 built-in keyring, SSH-19, SSH-20, SM-7 UI)
 * **Keys.** `SSHKey` responses add `fingerprintMd5, hasPrivateKey, passphraseSaved` (an encrypted key's passphrase is
@@ -1511,7 +1511,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   the stored protection: unencrypted stays unencrypted, encrypted needs the remembered passphrase). `POST
   /api/keys/{id}/export {format, keepPassphrase?, passphrase? (new one; "" = unencrypted), currentPassphrase? (when not
   remembered), ppkVersion?}` → `{content, filename, mime, encrypted}`, so passphrases never travel in URLs. PPK is
-  written by NexTerm (v3 Argon2id 8 MiB / 16 passes, default; v2 SHA-1 KDF); OpenSSH via x/crypto (bcrypt KDF);
+  written by Termstead (v3 Argon2id 8 MiB / 16 passes, default; v2 SHA-1 KDF); OpenSSH via x/crypto (bcrypt KDF);
   encrypted PKCS#8 = PBES2 PBKDF2-SHA256 / AES-256-CBC.
 * **Install (ssh-copy-id).** `POST /api/keys/{id}/install {connectionId}` → `{installed, alreadyPresent, method:
   sftp|shell, path, target}` (502 `connect_failed` / `install_failed`) over the pooled client: SFTP (mkdir `~/.ssh`
@@ -1527,7 +1527,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
 * **Known hosts (SSH-19).** `GET /api/known-hosts?q=`; `POST /api/known-hosts {host, port?, publicKey, comment?,
   replace?}` → 201 (409 `already_known`; 409 `host_key_conflict` when another key of that type is trusted — resend
   with `replace:true`); `DELETE /api/known-hosts/{id}`; `POST /api/known-hosts/bulk-delete {ids}`; `POST
-  /api/known-hosts/import {text | source:'system' (~/.ssh/known_hosts of the NexTerm host: desktop mode / admins),
+  /api/known-hosts/import {text | source:'system' (~/.ssh/known_hosts of the Termstead host: desktop mode / admins),
   format: auto|openssh|putty (PuTTY `.reg` export, MobaXterm.ini `[SSH_Hostkeys]`), onConflict: skip|replace|add}` →
   `{format, added, replaced, skipped, conflicts, hashed, patterns, markers, invalid, errors:[{line, error}]}` (hashed
   host names and wildcard plain entries cannot be imported and are only counted); `GET
@@ -1553,14 +1553,14 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   name, type, bits, fingerprint, comment, loaded, excluded, unloaded, unlocked, needsPassphrase, confirm, certificate,
   expiresAt?}]`; `DELETE /api/agent/keys/{id}` (ssh-add -d); `POST /api/agent/reload` (offer removed keys again, forget
   decrypted keys and remembered confirmations); `POST /api/agent/lock|unlock` (unlock also clears an `ssh-add -x`
-  lock). Endpoint: Unix socket `<data dir>/agent.sock` (0600; in a private 0700 `$TMPDIR/nexterm-agent-<uid>-<hash>/`
-  when that path is too long; peer uid checked), Windows pipe `\\.\pipe\nexterm-ssh-agent-<hash>` with a
+  lock). Endpoint: Unix socket `<data dir>/agent.sock` (0600; in a private 0700 `$TMPDIR/termstead-agent-<uid>-<hash>/`
+  when that path is too long; peer uid checked), Windows pipe `\\.\pipe\termstead-ssh-agent-<hash>` with a
   current-user DACL. Offers the user's stored keys (certificates first) and keys added with `ssh-add` (memory only;
   `-t` / `-c` honoured, other constraints refused); missing passphrases are asked through the prompt broker (kind
   `passphrase`; "save" remembers); optional confirm-on-use (kind `confirm`, naming the key, the local program (pid /
   name) or forwarding server and — from `session-bind@openssh.com` — the destination host). Decrypted keys are purged
   when the vault locks. Audit `agent.start|stop|lock|unlock|sign.denied|forwarded.sign`; feature `features.sshAgent`.
-* **Agent in NexTerm's SSH connections (SSH-12, built-in keyring part).** While the built-in agent runs for the user,
+* **Agent in Termstead's SSH connections (SSH-12, built-in keyring part).** While the built-in agent runs for the user,
   logins offer its keys after the connection's own key, merged with the host agent (its prompts pause the handshake
   deadline), and agent forwarding serves it read-only, merged with the host agent. Where the host agent is not used
   (server-mode non-admins, or no host agent), forwarding serves this module's keyring of the user's stored keys instead
@@ -1594,12 +1594,12 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   `SSH_FXF_APPEND` (e.g. pkg/sftp's) otherwise overwrite the start of authorized_keys — refuses when the file changed
   between reading and writing, checks the old content survived, and is bounded (60 s) and cancellable.
 * **Agent endpoint.** `<data dir>/agent.sock` only while the data directory is a real directory of this user without
-  group/other access; otherwise (or when the path is too long) the private `$TMPDIR/nexterm-agent-<uid>-<hash>/`.
+  group/other access; otherwise (or when the path is too long) the private `$TMPDIR/termstead-agent-<uid>-<hash>/`.
   Endpoint problems → 409 `agent_unavailable` with the reason.
 * **Agent lock.** A locked built-in agent answers signature requests like "key not found", so the merged agents
   (logins, forwarding) still sign with the host agent's keys; it refuses extensions (`session-bind`) like ssh-agent.
   `ssh-add -X` attempts are serialized; each wrong passphrase adds 100 ms (≤ 10 s) to the answer, reset by a
-  successful unlock, a NexTerm unlock or a restart. Decrypted stored keys are dropped as soon as a locked vault is seen.
+  successful unlock, a Termstead unlock or a restart. Decrypted stored keys are dropped as soon as a locked vault is seen.
 * **Markers.** Hashed names (`|1|salt|hmac`) are valid marker patterns (kept verbatim, may be negated with `!`).
 * **sshx hook.** `checkMarkers` also accepts, at re-key, the host key accepted through its certificate when it is
   presented without the certificate (was a spurious "different host key during re-keying").
@@ -1633,7 +1633,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
 
 ### vnc — review addendum (supersedes the matching points above)
 * **No silent downgrade — encryption policy** (`options.encryption`: `require` | `prefer` (default) | `allow-weak` |
-  `allow-unencrypted`; replaces "when the server cannot negotiate it, NexTerm reconnects without it"). Under `prefer`,
+  `allow-unencrypted`; replaces "when the server cannot negotiate it, Termstead reconnects without it"). Under `prefer`,
   a refused/failed anonymous-TLS handshake, an anonymous-TLS DH group of 1024–2047 bits, an unusable VeNCrypt offer, or
   VeNCrypt Plain without TLS (clear-text password) stops the viewer with close code **4426** instead of connecting;
   `vnc-info.confirm = {reason, weakTls, dhBits?, unencrypted, cleartext}` describes the choice. The viewer reconnects
@@ -1723,7 +1723,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   /api/automation/schedules/{id}`, `GET /api/automation/schedules/preview?spec=` → `{valid, error?, next[]}`, `POST
   /api/automation/schedules/{id}/run` → `{jobId, runId}`; `{name, enabled, spec (5-field cron, @hourly…, @every ≥ 1m,
   CRON_TZ=), action (JobAction as in batch), connectionIds, notify: never|failure|always}` (≤ 100 per user; they run
-  while NexTerm runs, as the owner; skipped for disabled users; an overlapping run is skipped). Runs: `GET
+  while Termstead runs, as the owner; skipped for disabled users; an overlapping run is skipped). Runs: `GET
   /api/automation/runs?kind=&refId=&origin=&before=&limit=`, `GET/DELETE /api/automation/runs/{id}`, `DELETE
   /api/automation/runs` (last 500 per user; runs still running at shutdown become `error: interrupted`); event
   `{type:'automation.run', run}`. Module tables: `automation_scripts`, `automation_triggers`, `automation_schedules`,
@@ -1747,14 +1747,14 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   hashes.
 * **REST** (desktop mode: any signed-in user; server mode: administrators, else 403). `GET /api/servers` → `Status[]`;
   `GET /api/servers/host` → `{hostname, platform, osUser, home, defaultRoot, privilegedPorts, privilegedWildcardOk,
-  nexTermPort, interfaces[]}`; `GET|PUT /api/servers/{kind}` (PUT is a partial update: omitted keys keep their value,
+  termsteadPort, interfaces[]}`; `GET|PUT /api/servers/{kind}` (PUT is a partial update: omitted keys keep their value,
   `users` replaces the list; per user write-only `password` — omitted = keep, `""` = remove; users are matched by `id`, so
   renames keep passwords; a running server restarts, a stale error of a stopped one is cleared) → `Status`;
   `POST /api/servers/{kind}/start|stop|restart` → `Status` (start errors: 400 `invalid_config`, 409 `port_in_use` |
   `port_privileged` | `address_unavailable` | `start_failed`, 503 `shutting_down`; the status keeps `error`/`errorCode`);
   `POST /api/servers/stop-all` → `Status[]`; `GET /api/servers/{kind}/logs?after=&limit=` → `{entries:[{id, ts, level:
   debug|info|warn|error, client?, user?, message}], lastId}` (2000-entry ring per server; survives server restarts, not
-  NexTerm restarts); `DELETE …/logs`; `GET /api/servers/{kind}/clients` → `[{id, addr, user?, since, activity?, bytesIn,
+  Termstead restarts); `DELETE …/logs`; `GET /api/servers/{kind}/clients` → `[{id, addr, user?, since, activity?, bytesIn,
   bytesOut}]` (syslog: senders of the last 5 min); `DELETE /api/servers/{kind}/clients/{id}` disconnects one;
   `GET /api/servers/syslog/messages?q=(or filter=)&regex=1&severity=<max 0-7>&facility=&host=&app=&after=&before=&limit=` →
   `{messages (oldest first), hasMore, total, lastId, capacity}`; `DELETE /api/servers/syslog/messages`;
@@ -1769,14 +1769,14 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   rather than sealed values. SSH host keys (ed25519, ecdsa, rsa) and the self-signed TLS certificate (HTTPS / FTPS) are
   sealed with the vault system key (`servers.hostkeys`, `servers.tls`), so autostart works while the vault is locked.
 * **Security.** Bind 127.0.0.1 by default (status warnings for wildcard / LAN binds, privileged ports, unencrypted logins,
-  TFTP writes, shells); NexTerm's own port is refused. Shared folders are jailed with `os.Root` (deviation: afero
+  TFTP writes, shells); Termstead's own port is refused. Shared folders are jailed with `os.Root` (deviation: afero
   `BasePathFs` follows symlinks out of the root, so FTP gets an `os.Root`-backed afero.Fs); folders containing or inside
-  NexTerm's data directory are refused. Per-IP login throttling (10 failures / 10 min → 10 min block, 400 ms delay per
+  Termstead's data directory are refused. Per-IP login throttling (10 failures / 10 min → 10 min block, 400 ms delay per
   failure). HTTP serves user files with `Content-Security-Policy: sandbox`, refuses cross-site form uploads and stores
   uploads through temporary files. SSH: port / agent / X11 forwarding refused; shell and exec only with `shell` on (run
-  as the NexTerm OS user, not jailed). ftpserverlib debug output (raw command lines incl. `PASS`) is never forwarded.
+  as the Termstead OS user, not jailed). ftpserverlib debug output (raw command lines incl. `PASS`) is never forwarded.
 * **Defaults.** HTTP 8080 (read-only, listings), FTP 2121 (TLS optional), SFTP 2222, TFTP 69 (read-only), Telnet 2323,
-  Syslog 514 (UDP + TCP, 10 000 messages); shared folder `~/NexTermShare` (created on first start). Ports < 1024 need root
+  Syslog 514 (UDP + TCP, 10 000 messages); shared folder `~/TermsteadShare` (created on first start). Ports < 1024 need root
   on Linux and, on macOS, work unprivileged only on the wildcard address.
 * **Audit** `server.config` (changed keys only), `server.start`, `server.stop`, `server.restart`, `server.stop_all`,
   `server.client.disconnect`, `server.syslog.clear`.
@@ -1825,14 +1825,14 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   summary `hostnameMatch`; `snmp` accepts MIB names (`sysDescr.0`, `ifTable`, …) in `oid`/`oids`, `var` rows add
   `name`, summary `truncated`; `sshaudit` adds `hostkey {type, algorithm, sha256, md5, bits?, warning?}` rows;
   `wol` `{…, viaConnectionId}` (sent from the SSH host with wakeonlan or python3). `POST /api/tools/listening/kill`
-  refuses pid ≤ 1 and NexTerm itself, `signal` must be TERM or KILL (400), 403 when the OS denies it.
+  refuses pid ≤ 1 and Termstead itself, `signal` must be TERM or KILL (400), 403 when the OS denies it.
 * **Frontend**: `tools.open {tool?, params?}` (`params` prefills the tool's form); "Network tools" submenus on the
   `session-node` and `terminal` context menus; tool state is kept per tool (switching tools keeps results / running
   jobs); closing the Tools tab cancels running tool jobs; panels are lazy chunks; run history is per user and never
   stores secrets, headers or bodies.
 
 ### files-ui — review addendum (supersedes the matching points above)
-* **Partial uploads.** `<name>.nexterm-part` files (uploads / transfers in progress or interrupted) are hidden from
+* **Partial uploads.** `<name>.termstead-part` files (uploads / transfers in progress or interrupted) are hidden from
   listings and search results unless the new setting `files.showPartialUploads` (default false, Settings → Files &
   SFTP) is on; shown ones are dimmed. Empty-folder states say what the filters hide.
 * **Remote monitoring checkbox** (panel footer) mirrors the monitor feature's own state — per-session override
@@ -1879,13 +1879,13 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   follow pop-outs). No backend; no new endpoints.
 * **One answering view per session.** Every view of a session sees a transfer start; an arbiter picks one (in the page:
   active tab > focused window > visible, ties by age; across pages/windows of the same browser: a BroadcastChannel
-  `nexterm:termtransfer` claim with a 90 ms window, heartbeats, release). Other views hide the protocol bytes and show
+  `termstead:termtransfer` claim with a 90 ms window, heartbeats, release). Other views hide the protocol bytes and show
   the shell's lines afterwards. Views in *another browser* cannot be coordinated (both would answer). Read-only viewers
   never answer.
 * **trzsz** (`trzsz` 1.1.6, tested against trzsz-go 1.2.0): the library's `TrzszFilter` with its two file-choosing
   handlers replaced (runtime patch, checked at start): downloads go to a folder (File System Access API, streamed;
   remembered per user in IndexedDB) or the browser's downloads (per file; `tsz -d` folders as one STORE ZIP); uploads
-  come from NexTerm's pickers or drops (any browser; `trz -d` folders). `maxDataChunkSize` is capped at 1 MiB so one
+  come from Termstead's pickers or drops (any browser; `trz -d` folders). `maxDataChunkSize` is capped at 1 MiB so one
   chunk always fits the server's 8 MiB per-session input queue. A magic line split across two WS frames is held back
   briefly.
 * **ZMODEM** (`zmodem.js` 0.1.10, tested against lrzsz 0.12.21rc): detection → 150 ms grace (retracted when text
@@ -1898,7 +1898,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   not UTF-8 refuse ZMODEM (output is transcoded); `backspace: ctrl-h` rewrites DEL in uploads (warned).
 * **Drop on a terminal (FILE-22).** Zones: *Upload to <shell folder>* (SSH: `POST /api/fs {sessionId}` + chunked
   `PUT …/upload` with `total`/`final=1`, 8 MiB chunks, resume from `offset_mismatch` / `GET …/upload`, conflict dialog,
-  cancel deletes the `.nexterm-part`, progress toast with "Show in SFTP browser" via `files.revealInPanel` when
+  cancel deletes the `.termstead-part`, progress toast with "Show in SFTP browser" via `files.revealInPanel` when
   registered), *Copy to <folder>* for local shells (`{local:true}`; desktop mode or admins) which then types the
   quoted path, *Upload with trz* / *Upload with rz* (Ctrl+C, then the command — `rzCommand`, default `rz -E` — and the
   dropped files answer it), *Paste contents* (one UTF-8 text file ≤ `pasteMaxBytes`, through the paste pipeline). The
@@ -1925,8 +1925,8 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   sessions; files are saved/streamed by the browser instead of passing through the transfer queue. History replays
   (a new view attaching from offset 0) show earlier in-band transfers as binary noise.
 * **Tests.** `node --import ./src/features/termtransfer/tests/register.mjs --test 'src/features/termtransfer/tests/*.test.mjs'`
-  (from `web/`): engine unit tests; with `NEXTERM_TESTENV=1` also lrzsz / trzsz-go protocol tests (container from
-  `tests/testenv.Dockerfile`) and, with `NEXTERM_BIN`, end-to-end transfers through a real NexTerm server.
+  (from `web/`): engine unit tests; with `TERMSTEAD_TESTENV=1` also lrzsz / trzsz-go protocol tests (container from
+  `tests/testenv.Dockerfile`) and, with `TERMSTEAD_BIN`, end-to-end transfers through a real Termstead server.
 
 ### rdp — review addendum (reviewer-fixer, 2026-09-28; supersedes the matching points of the rdp block above)
 * **Relay filters (IronRDP).** The relay terminates TLS, so it sees the RDP plaintext and filters it in both
@@ -1949,7 +1949,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   session is not a connected guacd session (IronRDP runs in the owner's browser and cannot be shadowed). Non-admins
   still get 404. Audit `session.shadow`. UI: "View only" badge, no input/claimKeys/clipboard/mic, closing a shadow tab
   never ends the owner's session.
-* **Recordings (guacd).** NexTerm records the guacd stream itself (guacd no longer gets `recording-*`; `rdp.guacdDataPath`
+* **Recordings (guacd).** Termstead records the guacd stream itself (guacd no longer gets `recording-*`; `rdp.guacdDataPath`
   is only used for drives). Connections with `recording:true` through guacd write `<dataDir>/recordings/<id>.guac`
   (0600, Guacamole protocol, code-point lengths; mouse input included, clipboard excluded) and a row in the module
   table `rdp_recordings` (migration `rdp` v1: id, owner_id, session_id, connection_id, title, path, size, width,
@@ -1968,14 +1968,14 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   IronRDP logon failures show the `STATUS_*` code. Loading indicators follow docs/UX.md (300 ms delay, 400 ms minimum).
 * **Tests.** `go test ./internal/rdp/...` (filter vectors captured from xrdp 0.9.24 and IronRDP 0.7 in
   `internal/rdp/testdata`, fuzzers `FuzzRLEDecode`, `FuzzServerFilter`, `FuzzClientFilter`, guac `FuzzParse`,
-  `FuzzRoundTrip`); `NEXTERM_TESTENV=1` adds shadow + recording against the testenv guacd/xrdp.
+  `FuzzRoundTrip`); `TERMSTEAD_TESTENV=1` adds shadow + recording against the testenv guacd/xrdp.
 
 ### netguard — `internal/netguard` (SEC-7 SSRF and destination controls; enforcement in `internal/sshx`, `internal/tunnel`, `internal/tools`)
-* **Why.** In server mode NexTerm opens sockets *from its own host* for users (raw/telnet/rlogin/VNC/RDP/FTP/S3/…
+* **Why.** In server mode Termstead opens sockets *from its own host* for users (raw/telnet/rlogin/VNC/RDP/FTP/S3/…
   sockets, SSH targets, proxies, tool probes, remote-forward destinations). Without a guard an ordinary user could aim
-  them at `127.0.0.1:<port>` (another user's tunnel listener, NexTerm's own API, local databases) or at cloud metadata
+  them at `127.0.0.1:<port>` (another user's tunnel listener, Termstead's own API, local databases) or at cloud metadata
   (reproduced by the tunnels reviewer with a raw session). Connections that an SSH server, jump host or proxy makes
-  for NexTerm (direct-tcpip on the far side, the proxy's own outbound connection) are that hop's business and are not
+  for Termstead (direct-tcpip on the far side, the proxy's own outbound connection) are that hop's business and are not
   checked; the connection *to* the proxy / first hop is.
 * **Who is restricted.** Desktop mode: nobody. Server mode: every non-admin (and an unknown/nil user); admins only when
   the policy's `applyToAdmins` is set. `netguard.For(d).ForUser(user)` → `*Guard`, nil = unrestricted (the guard reads
@@ -1990,7 +1990,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   ff02::/16, ff01::/16), metadata endpoints fd00:ec2::254, fd00:ec2::23 (EKS Pod Identity), 100.100.100.200 (Alibaba),
   168.63.129.16 (Azure WireServer), every non-loopback/non-link-local address of the host's own interfaces
   (`blockHostAddresses`, default **true**: services bound to all interfaces but shielded by a security group are
-  otherwise reachable from the host itself), NexTerm's own listener (`Cfg.Listen` port on the listen IP; on every
+  otherwise reachable from the host itself), Termstead's own listener (`Cfg.Listen` port on the listen IP; on every
   loopback/host/unspecified address for a wildcard bind — **never overridable**), and NAT64 (64:ff9b::/96) / 6to4
   (2002::/16) addresses embedding a refused IPv4 address. IPv4-mapped addresses (::ffff:a.b.c.d) are judged as IPv4.
   Private ranges (10/8, 172.16/12, 192.168/16, fc00::/7, fec0::/10) are **allowed** (bastion use). Everything else is
@@ -2012,8 +2012,8 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   (/32, /128) and the admin lists wins; on equal length an admin rule beats a built-in one and deny beats allow. So
   `allow: ["127.0.0.1/32"]` exposes one loopback address, `allow: ["0.0.0.0/0"]` opens nothing that is built-in
   refused, `deny: ["10.0.0.0/8"] + allow: ["10.1.2.3"]` allows one host. `allowedPorts` applies to exceptions too;
-  NexTerm's own listener is checked first and cannot be allowed.
-* **REST** (`d.Router.Admin()`: 401 anonymous, 403 non-admin; mutating calls need `X-NexTerm: 1`):
+  Termstead's own listener is checked first and cannot be allowed.
+* **REST** (`d.Router.Admin()`: 401 anonymous, 403 non-admin; mutating calls need `X-Termstead: 1`):
   - `GET /api/admin/network-policy` → `{policy: NetworkPolicy, default: NetworkPolicy, mode, enforced (false in
     desktop mode), listen, builtin: [{cidr, class, reason}], privateRanges: string[], hostAddresses: string[]}`.
   - `PUT /api/admin/network-policy` `Partial<NetworkPolicy>` (omitted keys keep their value, arrays replace, unknown
@@ -2022,13 +2022,13 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   - `POST /api/admin/network-policy/test {host, port (0 = any), userId?, policy?: NetworkPolicy (unsaved draft)}` →
     `{host, port, decision: 'allow'|'deny'|'unrestricted'|'error', allowed, restricted, reason, user?: {id, username,
     role}, addresses: Decision[], error?}` with `Decision = {ip, port, allowed, class, rule?, reason}` and `class` ∈
-    `public private loopback unspecified ipv4-compatible link-local multicast metadata host nexterm deny-rule
+    `public private loopback unspecified ipv4-compatible link-local multicast metadata host termstead deny-rule
     allow-rule port embedded local-socket invalid`. Without `userId` the request is evaluated for an ordinary user;
     host names are resolved (5 s) and every address is listed; unknown user → 404; bad host/port/draft → 400.
   (UI: owned by the security/admin UI engineer — Settings → Security "Network policy" editor + "Test a destination".)
 * **Errors.** A refusal is `*netguard.BlockedError` (usually inside a `*net.OpError`); it unwraps to an `*httpx.HTTPError`
-  403 `destination_blocked` with a message like `connection to 127.0.0.1:5432 is not allowed in server mode (NexTerm
-  network policy): 127.0.0.1 is loopback (the NexTerm host itself)`. `netguard.IsBlocked(err)`. sshx marks refusals
+  403 `destination_blocked` with a message like `connection to 127.0.0.1:5432 is not allowed in server mode (Termstead
+  network policy): 127.0.0.1 is loopback (the Termstead host itself)`. `netguard.IsBlocked(err)`. sshx marks refusals
   `term.Permanent` (no auto-reconnect loop); terminal sessions show the message as their error state.
 * **Go API.** `netguard.For(d) *Manager` (per `*app.Deps`), `ForUser(d, user)`, `(*Manager) ForUser / Policy /
   SetPolicy / Enforced`, `NewGuard(Policy)` (fixed policy, no listener/host knowledge), zero `Guard{}` = default policy
@@ -2046,15 +2046,15 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   HTTP-proxy targets are dialed with the owner's guard per connection (`forward.localDial`); a refused literal
   destination / Unix socket is rejected when a remote forward is saved or started (`Manager.destinationPolicy`);
   refusals land in `status.lastError` / `failedConns`. Unchanged tunnel policy: server-mode non-admins get loopback
-  TCP listeners on ports ≥ 1024 only, no remote / reverse forwards, no Unix sockets; NexTerm's port is never bindable.
-  tools: `internal/tools/guard.go` now delegates to netguard (same checks as before plus host addresses, the NexTerm
+  TCP listeners on ports ≥ 1024 only, no remote / reverse forwards, no Unix sockets; Termstead's port is never bindable.
+  tools: `internal/tools/guard.go` now delegates to netguard (same checks as before plus host addresses, the Termstead
   listener, NAT64/6to4, Azure/EKS endpoints and the admin policy; errors are 403 `destination_blocked`).
 * **Migration for `internal/vfs` (owner still reviewing; not changed here).** netguard is a superset of
   `vfs/netguard.go` (same classes and the same Control-time enforcement). Steps: (1) delete `internal/vfs/netguard.go`;
   (2) `registry.go` `dialer()`: drop the `if r.restricted(user) && !needsDialer(conn) { return guardedDial, … }` branch —
   `r.c.SSH.Dialer` now guards direct routes *and* the proxy server / first jump hop (which the private guard did not);
   and replace the fallback `var nd net.Dialer` with `nd := netguard.ForUser(r.d, user).Dialer(30 * time.Second)`;
-  (3) `open_remote.go`: `r.restricted(user)` → `netguard.ForUser(r.d, user) != nil` (keeps forcing NexTerm's own
+  (3) `open_remote.go`: `r.restricted(user)` → `netguard.ForUser(r.d, user) != nil` (keeps forcing Termstead's own
   transport, i.e. no environment proxies, for restricted users). Error codes change from 403 `forbidden` to 403
   `destination_blocked`.
 * **Known gaps outside this module's paths (owners please fix).** (1) `internal/proto/rlogin` dials *non-routed*
@@ -2064,8 +2064,8 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   guacd engine: guacd connects to `hostname` itself — for restricted users call `CheckHostPort` before handing the
   host to guacd, or always route through the loopback forwarder (whose dial goes through the guarded Dialer).
   (4) `internal/proto/mosh`: the UDP leg (`net.DialUDP` in `dialBuiltin`, and the system `mosh-client`) is dialed
-  directly; with jump hosts / proxies `udpTarget` resolves the host name *on the NexTerm host* (a "127.0.0.1" meant for
-  the far side hits NexTerm's own loopback), and the port comes from the server's `MOSH CONNECT` line — call
+  directly; with jump hosts / proxies `udpTarget` resolves the host name *on the Termstead host* (a "127.0.0.1" meant for
+  the far side hits Termstead's own loopback), and the port comes from the server's `MOSH CONNECT` line — call
   `netguard.ForUser(d, req.User).CheckIP(ip, port)` before dialing / spawning. (5) Pooled
   SSH clients are keyed per user and outlive a policy change / demotion until idle (60 s after the last release);
   running tunnels re-check per connection.
@@ -2089,7 +2089,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
 * **rdp / guacd**: for restricted users on direct routes the destination is resolved and every address checked
   before guacd is contacted (or the certificate probe runs); guacd receives the **vetted IP as `hostname`** (IPv4
   preferred) — DNS rebinding between check and guacd's lookup cannot redirect it; the name stays in the ticket for
-  display, audit and NexTerm's certificate check. An unresolvable name is an error for restricted users. An RD Gateway
+  display, audit and Termstead's certificate check. An unresolvable name is an error for restricted users. An RD Gateway
   (`gateway-hostname`, which guacd dials itself) is resolved and vetted the same way but not pinned (HTTPS name check).
   Routed connections go through the loopback forwarder (guarded dial). Ticket requests (both engines) refuse a
   literal / localhost destination early with 403 `destination_blocked`. IronRDP relay: dials via `Pool.DialConnection`
@@ -2108,7 +2108,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   destinations outside `dstDir` or below a symlink they created (the item fails with an error). Search results must
   lie below the searched folder. Windows local paths refuse `\`, `:`, drive-relative forms and device names; SMB
   refuses `\` / `:` in names; FTP refuses CR/LF/NUL in paths (command injection on the control connection).
-* **Safe editor saves** (`PUT …/write`): new content goes to `.<name>.nexterm-tmp-<random>` in the same folder
+* **Safe editor saves** (`PUT …/write`): new content goes to `.<name>.termstead-tmp-<random>` in the same folder
   (fsync when the server offers it), its size is verified, the original's permission bits and owner/group are applied,
   and it atomically replaces the file (rename; symlinks are followed, the link stays). A dropped connection at any step
   leaves the original intact and the temporary file is removed. In-place rewriting (the former behaviour) is kept
@@ -2129,7 +2129,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   200 × archive size) (zip bombs → error). Local staging (WebDAV uploads, zip extraction) keeps max(1 GiB, 5 %) of the
   host disk free (507 `insufficient_storage`). S3 keeps ≤ 16 pending resumable uploads per handle (LRU aborted).
 * **SSRF**: direct FTP/S3/WebDAV/SMB connections go through `internal/netguard` (`SSH.Dialer` / guarded fallback
-  dialer; restricted users always get NexTerm's own HTTP transport) → 403 `destination_blocked`.
+  dialer; restricted users always get Termstead's own HTTP transport) → 403 `destination_blocked`.
 * **Transfers are recorded** (module table `transfers`, migration transfer/1): after a restart, transfers that were
   queued/running are listed with state `error`, `error:"Interrupted by a server restart"`, `interrupted:true` and
   `resumable:true` when both sides can be reopened (saved connection, local host, running session). New
@@ -2162,7 +2162,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   connection (`Pool.Get`; host defaults to `localhost` = the SSH server) or a saved **`web`** connection
   (`options.url`, `insecureTls`, `basicAuth` (default true: username + `password` secret → HTTP Basic), reached through
   `sshx.Pool.Dialer` = `sshTunnelVia` / `jumpHosts` / `proxy`); `tunnelId` = the caller's tunnel (its connection; host /
-  port default to destHost / destPort); none = directly from the NexTerm host through `Pool.Dialer`, i.e. vetted by
+  port default to destHost / destPort); none = directly from the Termstead host through `Pool.Dialer`, i.e. vetted by
   **internal/netguard** at dial time (server-mode non-admins: loopback / link-local / metadata → 403
   `destination_blocked`; advisory literal check at creation). `check` dials once: unreachable → 422
   `upstream_refused|upstream_timeout|upstream_unreachable`. `GET /api/webproxy` (list), `GET|DELETE /api/webproxy/{id}`,
@@ -2175,28 +2175,28 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/nexterm` (or `./
   `xpra.start`.
 * **Serving.** *Host mode* (UI opened on localhost / *.localhost / a loopback IP): each proxy is its own origin
   `http(s)://p-<id>.localhost:<port>`; with the global admin setting `webproxy.hostSuffix` (wildcard DNS [+ wildcard
-  certificate] → NexTerm) also `p-<id>.<suffix>` for remote UIs. The entry token (`__nexterm_proxy_token`, 2 min,
-  single use) is exchanged for a host-only cookie `__nexterm_proxy` (HttpOnly; on secure contexts incl. http
-  *.localhost: `Secure; SameSite=None; Partitioned`, so it works in NexTerm's cross-site iframe even where third-party
+  certificate] → Termstead) also `p-<id>.<suffix>` for remote UIs. The entry token (`__termstead_proxy_token`, 2 min,
+  single use) is exchanged for a host-only cookie `__termstead_proxy` (HttpOnly; on secure contexts incl. http
+  *.localhost: `Secure; SameSite=None; Partitioned`, so it works in Termstead's cross-site iframe even where third-party
   cookies are blocked) and a redirect to the clean URL. *Path mode* (fallback; global `webproxy.pathMode`, default
-  true): `/proxy/<id>-<key>/…` on NexTerm's origin; the random key authorizes, every response carries
+  true): `/proxy/<id>-<key>/…` on Termstead's origin; the random key authorizes, every response carries
   `Content-Security-Policy: sandbox allow-scripts allow-forms allow-popups … ` **without allow-same-origin** (the page
-  runs in an opaque origin: no NexTerm cookies / storage / API), `Service-Worker-Allowed` and `Clear-Site-Data` are
+  runs in an opaque origin: no Termstead cookies / storage / API), `Service-Worker-Allowed` and `Clear-Site-Data` are
   dropped, absolute paths in HTML attributes / `Location` / `Set-Cookie Path` get the prefix (JS-built URLs cannot be
-  fixed: best effort). Both modes: requests get the upstream's `Host` / `Origin` / `Referer`, never NexTerm's cookies
-  (`nexterm_session`, `__nexterm_proxy`) or `X-NexTerm`; no X-Forwarded-*; upstream `Location`/`Refresh`/URL
+  fixed: best effort). Both modes: requests get the upstream's `Host` / `Origin` / `Referer`, never Termstead's cookies
+  (`termstead_session`, `__termstead_proxy`) or `X-Termstead`; no X-Forwarded-*; upstream `Location`/`Refresh`/URL
   attributes pointing at the upstream origin are mapped to the proxy; upstream cookies lose `Domain` and on secure
   contexts become `Secure; SameSite=None; Partitioned`; `X-Frame-Options` and CSP `frame-ancestors` are replaced by
-  `frame-ancestors <NexTerm UI origins>`. HTML documents (navigations only, never XHR fragments; gzip/deflate decoded,
+  `frame-ancestors <Termstead UI origins>`. HTML documents (navigations only, never XHR fragments; gzip/deflate decoded,
   documents requested with `Accept-Encoding: gzip`) get an inline **bridge** script (nonce added to the page's CSP only
-  where that does not widen it) that reports path / title to the framing NexTerm tab and executes back / forward /
+  where that does not widen it) that reports path / title to the framing Termstead tab and executes back / forward /
   reload / navigate (postMessage, restricted to the UI origins). Errors (upstream down, TLS verification, policy) are
   rendered as pages on the proxy origin whose bridge reports `{code}` (`tls`, `auth`, `gone`, `upstream_*`,
   `destination_blocked`, `session_*`).
 * **Hooks into the core (no edits outside the module).** (1) `Mount` installs a pre-routing middleware with
-  `d.Router.Echo().Pre(...)` (after NexTerm's request log / recover / security headers / Host guard): requests for
+  `d.Router.Echo().Pre(...)` (after Termstead's request log / recover / security headers / Host guard): requests for
   `p-<id>.localhost|<suffix>` hosts and `/proxy/…` paths are served by the proxy (their paths belong to the upstream
-  app, they carry no CSRF header, NexTerm auth / body limits do not apply); NexTerm's security headers are removed from
+  app, they carry no CSRF header, Termstead auth / body limits do not apply); Termstead's security headers are removed from
   proxied responses. *Integrator:* if the router ever gets a first-class host-dispatch hook, replace that one `Pre` call
   with it. (2) For all other requests the same middleware appends `http://*.localhost:* https://*.localhost:*` (and the
   `hostSuffix` origins) to the SPA CSP's `frame-src` so web tabs can frame proxy origins; *integrator:* this belongs in
@@ -2329,7 +2329,7 @@ Feature folders added for Stage 2: `protocols` (pickers, serial/hex tooling, doc
   Local/Remote/DynamicForward→options.forwards, Include expansion when read from disk), `termius_csv`, `csv` (generic,
   header auto-map + `options.csvMapping`/`csvDelim`), `mremoteng`, `remmina`, `filezilla`, `winscp`, `securecrt`,
   `json` (native export), `known_hosts`. **No passwords are ever read from third-party files** (MobaXterm/PuTTY keep
-  them in OS/registry stores) — a warning says so; plaintext secrets are only read from a NexTerm JSON export the user
+  them in OS/registry stores) — a warning says so; plaintext secrets are only read from a Termstead JSON export the user
   encrypted themselves.
 * **Endpoints.** `POST /api/import/preview {format, content|path, base64?, options:{passphrase?,csvMapping?,csvDelim?}}`
   → `{format, folders, connections, keys?, knownHosts?, warnings, duplicates[], counts}`; each preview item has a
@@ -2343,10 +2343,10 @@ Feature folders added for Stage 2: `protocols` (pickers, serial/hex tooling, doc
   `POST /api/import/sync {enabled}` — SSH-36 ~/.ssh/config live sync into a read-only "~/.ssh/config" folder (desktop).
 * **Export.** `GET /api/export?format=json|csv|ssh_config&includeSecrets=0|1&passphrase=&folderId=&connectionIds=`.
   `includeSecrets` is JSON-only and requires a passphrase; the file is then a passphrase-encrypted envelope
-  (argon2id + XChaCha20-Poly1305, `{"envelope":"nexterm-encrypted",…}`) carrying connection/identity secrets and
+  (argon2id + XChaCha20-Poly1305, `{"envelope":"termstead-encrypted",…}`) carrying connection/identity secrets and
   private-key material. Plaintext exports never contain secrets. CSV/ssh_config never contain secrets.
 * **Backup/restore** (admin, IMP-4). `GET /api/admin/backup[?includeSystemKey=1&passphrase=]` → a `VACUUM INTO`
-  SQLite snapshot; with a passphrase it is an encrypted zip archive (payload `nexterm-backup`), optionally including
+  SQLite snapshot; with a passphrase it is an encrypted zip archive (payload `termstead-backup`), optionally including
   `system.key`. `POST /api/admin/restore {content(base64), passphrase?}` validates and **stages** the backup under
   `<data>/restore/` (never applied to the live DB); the response lists the manual steps to finish it.
 * **Frontend.** Commands `importer.open {format?}` and `importer.export {format?, folderId?, connectionIds?}` (both
@@ -2374,7 +2374,7 @@ Feature folders added for Stage 2: `protocols` (pickers, serial/hex tooling, doc
   **S3 is reported, not imported** (layout undocumented; it could carry keys). `options.charset` (WHATWG label) decodes
   legacy code pages (MobaXterm.ini on a Hebrew/Cyrillic/CJK Windows).
 * **Jump hosts / gateways.** Parsed hops are resolved at commit: an ssh_config `ProxyJump` / `ssh -W` alias of the same file
-  and ids from a NexTerm JSON export become the **imported connections' ids**; inline hops stay ad-hoc
+  and ids from a Termstead JSON export become the **imported connections' ids**; inline hops stay ad-hoc
   `[user@]host[:port]` for ssh/sftp/mosh; for other protocols (RDP/VNC/…) the last hop becomes a **saved SSH connection**
   (`"<spec> (SSH gateway)"`, reused when an equivalent one exists) referenced by `sshTunnelVia` (which only accepts ids).
   A hop with its own readable key (desktop) is also saved to carry the key. `jumpHosts`/`sshTunnelVia`/`viaConnectionId`
@@ -2383,14 +2383,14 @@ Feature folders added for Stage 2: `protocols` (pickers, serial/hex tooling, doc
   is already trusted — never added or replaced by an import); counts add `identities`, `snippets`. Commit: `selectedIds`
   absent = all, `[]` = none (keys/known hosts only); response adds `connectionIds`, `folderIds`, `gatewaysCreated`,
   `knownHostsConflicts`, `identitiesCreated`, `snippetsCreated`. Secrets/private keys are only read from an **encrypted**
-  NexTerm export (plaintext ones are ignored with a warning). Imported rows get the connections API's validation.
+  Termstead export (plaintext ones are ignored with a warning). Imported rows get the connections API's validation.
 * **Export / backup.** `POST /api/export {format, includeSecrets, passphrase, folderId, connectionIds}` and `POST
   /api/admin/backup {includeSystemKey, passphrase}` (the UI uses these so passphrases never travel in URLs; the GET forms
   stay). New passphrases need ≥ 8 characters; a wrong one is 403 `wrong_password`. Decryption bounds the envelope's KDF
   parameters (≤ 256 MiB / 16 passes / 16 lanes) and runs ≤ 2 argon2 derivations at a time (429 after 20 s). The
   ssh_config export writes one comma-joined `ProxyJump` (aliases for exported hops) and refuses values that could inject
   directives; CSV cells are guarded against formula injection.
-* **Restore** accepts only `nexterm.db` (+ `system.key` ≤ 4 KiB) at the archive root, checks declared and actual sizes
+* **Restore** accepts only `termstead.db` (+ `system.key` ≤ 4 KiB) at the archive root, checks declared and actual sizes
   (no silent truncation), opens the database read-only with `PRAGMA quick_check`, warns about a newer schema, and writes
   staged files atomically. Still applied manually (no startup hook: the store is open before modules mount).
 * **Live sync (SSH-36).** `POST /api/import/sync` is admin-only. Syncs are serialized and triggered by a content hash of the
@@ -2617,7 +2617,7 @@ Feature folders added for Stage 2: `protocols` (pickers, serial/hex tooling, doc
   never content), `ai.config.update|reset`, `ai.test`. Config changes emit `{type:'ai.status'}` (broadcast for
   global, per user otherwise).
 * **Frontend.** Tab kind `ai` (singleton) and sidebar panel `ai` (registered only while available) share one chat:
-  local history per user (`nexterm:ai:conversations:v1:<userId>`), Markdown answers (GFM, no HTML, images never
+  local history per user (`termstead:ai:conversations:v1:<userId>`), Markdown answers (GFM, no HTML, images never
   loaded), code blocks with Copy / Insert / Run… (shell languages) or Open in editor, context chips (terminal output
   — rendered xterm lines, else `/scrollback?raw=0` —, selection, editor file via `/api/fs/{id}/read`, failed command),
   model picker, redaction count per message. Target OS facts come from `GET /api/monitor/{sessionId}/host` when
@@ -2642,7 +2642,7 @@ Feature folders added for Stage 2: `protocols` (pickers, serial/hex tooling, doc
   live in the same JSON column of the core `macros` table; the automation module reads/writes those rows itself
   (`store.Macros` would drop the extra keys). The recorder never records what is typed at a password prompt: it
   records a `secret` step instead. Snippets and macros can be dragged from the sidebar onto any terminal
-  (`application/x-nexterm-snippet|macro` drag types, terminal plugin `automation.dropTarget`).
+  (`application/x-termstead-snippet|macro` drag types, terminal plugin `automation.dropTarget`).
 * **Event triggers (AUTO-7).** `Trigger.event: 'output' (default) | 'connect' | 'disconnect' | 'command'`, plus for
   `command`: `exit: 'any'|'ok'|'error'` and `minDurationSec`. `pattern` is required for output triggers only; for
   event triggers it optionally filters the event text (the command line / session title / state message).
@@ -2657,7 +2657,7 @@ Feature folders added for Stage 2: `protocols` (pickers, serial/hex tooling, doc
   reconnects or the rule is edited. Saving a trigger whose `send` text trips the dangerous-command guard answers
   409 `dangerous_command` unless `confirmDangerous:true`.
 * **Scripts.** A heap watchdog interrupts running scripts when the Go heap grows by more than
-  `NEXTERM_SCRIPT_HEAP_MB` (default 1024) over its level when they started ("the script used too much memory");
+  `TERMSTEAD_SCRIPT_HEAP_MB` (default 1024) over its level when they started ("the script used too much memory");
   live log events are throttled to 200/s (burst 500, ≤ 20 000 per run; the run log keeps the tail of everything).
 * **Batch / schedules.** At most 4 concurrent batch runs (including scheduled ones) per user, 32 in total (429 /
   a failed scheduled run); batch hosts running a script wait for a free script slot instead of failing.
@@ -2696,7 +2696,7 @@ Feature folders added for Stage 2: `protocols` (pickers, serial/hex tooling, doc
 
 ### webproxy — review addendum
 * Host-mode token clean-up redirects never produce network-path references (`//host`, `/\host`).
-* Upstream `Alt-Svc` / `Public-Key-Pins*` / `Expect-CT` are dropped in both modes; in path mode (NexTerm's origin) also
+* Upstream `Alt-Svc` / `Public-Key-Pins*` / `Expect-CT` are dropped in both modes; in path mode (Termstead's origin) also
   `Clear-Site-Data`, `Strict-Transport-Security`, `Service-Worker-Allowed`, `NEL`, `Report-To`, `Reporting-Endpoints`,
   `Accept-CH`, `Critical-CH`, `Set-Login`, `Origin-Agent-Cluster`, `Timing-Allow-Origin`, `Set-Cookie2` and upstream
   CORS headers.
@@ -2715,13 +2715,13 @@ Feature folders added for Stage 2: `protocols` (pickers, serial/hex tooling, doc
   SSO link redirects may return `?sso_error=reauth_required`. API-token requests pass the admin check but cannot make
   account-level changes.
 * Passkeys: the last sign-in method / last required second factor cannot be removed (409).
-* Lockout never applies to clients on the NexTerm host itself (so remote attackers cannot lock out the only admin);
+* Lockout never applies to clients on the Termstead host itself (so remote attackers cannot lock out the only admin);
   with a same-host reverse proxy, configure trusted proxies.
 
 ### ai + term-transfer — review addendum (reviewer-fixer, 2026-09-28)
 * **ai / redaction.** Also redacted: `FOO_PASS=` / `MYSQL_PWD=` / `*_pw=` assignments, `echo pw | sudo -S …` and
   `sudo -S … <<< pw`, `curl -u user:pw`, any `--*-password` flag, Cookie / Set-Cookie values, bare `Bearer <token>`,
-  `<password>…</password>`, NexTerm API tokens (`nxt_…`), and the user's stored SSH-key private keys + passphrases.
+  `<password>…</password>`, Termstead API tokens (`nxt_…`), and the user's stored SSH-key private keys + passphrases.
   Stored secrets are re-checked on every request (sealed blobs hashed; decrypted only when they changed), so a secret
   saved a moment ago is redacted at once. Closing tags of the context structure (`</context>`, `</selection>`, … in
   any case/spacing) are neutralised in captured text. Suggested commands lose control / zero-width / bidi characters
@@ -2735,7 +2735,7 @@ Feature folders added for Stage 2: `protocols` (pickers, serial/hex tooling, doc
   "failed command" that looks like a password typed at the wrong place (a password prompt just above, or a
   password-like token with exit 127). Insert of a multi-line command into a shell without bracketed paste asks first
   ("Insert would run this command"). Context capture starts at the first row of a wrapped line. Command-bar intent
-  history is per user (`nexterm:ai:intents:v1:<userId>`). "Explain / Fix" follow-ups send the real prompt (not the
+  history is per user (`termstead:ai:intents:v1:<userId>`). "Explain / Fix" follow-ups send the real prompt (not the
   label) and Retry re-captures the original context.
 * **term-transfer / trzsz false positives.** A magic line that is followed by visible text (same chunk, or within
   150 ms — a real `trz` / `tsz` waits silently) is ignored: no prompt, nothing typed into the shell, output shown.
@@ -2777,7 +2777,7 @@ Feature folders added for Stage 2: `protocols` (pickers, serial/hex tooling, doc
   `notify` event.
 * **Restore on restart (IMP-4).** `POST /api/admin/restore` now stages the backup **and** writes
   `<data>/restore/APPLY-ON-RESTART`; the next start applies it in `server.New` before the store opens
-  (`importer.ApplyStagedRestore`): the live `nexterm.db` (+ `-wal`/`-shm`) and, when the backup carries one,
+  (`importer.ApplyStagedRestore`): the live `termstead.db` (+ `-wal`/`-shm`) and, when the backup carries one,
   `system.key` move to `<data>/restore/previous-<UTC time>/`, the staged files move into place (rolled back on failure,
   retried next start; a start is refused only if the rollback itself fails). Response adds `applyOnRestart`. New
   `GET /api/admin/restore` → `{pending, stagedAt?, stagedBy?, systemKey}`, `DELETE /api/admin/restore` (discard;
@@ -2809,7 +2809,7 @@ Feature folders added for Stage 2: `protocols` (pickers, serial/hex tooling, doc
   into `usePortalContainer()` — the body of the document the panel lives in (pop-out windows included).
 * **Dock back.** `dockTab` never targets an empty grid group: dockview removes a pop-out's hidden, empty reference group
   together with the pop-out group before the moved panel is added (the panel ended up 0×0 and missing from the tab bar).
-* **Boot.** `public/boot.js` (blocking, same-origin — no CSP change) applies the cached appearance (`nexterm:appearance`,
+* **Boot.** `public/boot.js` (blocking, same-origin — no CSP change) applies the cached appearance (`termstead:appearance`,
   now carrying the resolved accent colours) before the first paint; index.html holds a static `.nx-splash` identical to
   AuthGate's single, continuously mounted splash (auth state → settings → AppShell chunk, which is preloaded with the
   auth request), which fades out once. Fonts: `@fontsource-variable` CSS is served with `font-display: block` and the
@@ -2880,7 +2880,7 @@ Feature folders added for Stage 2: `protocols` (pickers, serial/hex tooling, doc
   files-tab and SFTP-panel navigation, follow-cd and idle refresh at 0/150/350/700/1500 ms, SSH connect (0/350/1500 ms)
   and reconnect; options `--nav-latencies`, `--ssh user:pass@host:port|auto|off`, `--nav-only`.
 ### Final polish pass — shell, sessions, settings, loading primitives, host guard (2026-09-28; F0 + F1b + B0 owners' paths)
-* **Allowed hosts (B0).** `--allowed-hosts` / `NEXTERM_ALLOWED_HOSTS` / `config.Config.AllowedHosts`: comma/space
+* **Allowed hosts (B0).** `--allowed-hosts` / `TERMSTEAD_ALLOWED_HOSTS` / `config.Config.AllowedHosts`: comma/space
   separated host names or IP literals (a port and a trailing dot are dropped, lower-cased, de-duplicated; schemes,
   paths and wildcards are rejected at start-up). `httpx.Options.AllowedHosts`: the loopback Host guard (DNS rebinding,
   421 `invalid_host`) also accepts exactly these names — for a same-machine reverse proxy that forwards the original

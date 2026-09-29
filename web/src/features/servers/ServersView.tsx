@@ -32,7 +32,7 @@ export default function ServersView(_props: TabProps) {
       <EmptyState
         icon={ShieldAlert}
         title="Administrators only"
-        description="In server mode the embedded servers run on the NexTerm host and can only be managed by administrators."
+        description="In server mode the embedded servers run on the Termstead host and can only be managed by administrators."
         className="h-full"
       />
     )
@@ -85,7 +85,7 @@ export default function ServersView(_props: TabProps) {
       <div className="min-h-0 flex-1 overflow-auto">
         <div className="mx-auto grid max-w-[1400px] gap-4 p-4 @container">
           <p className="max-w-3xl text-sm text-muted-foreground">
-            Servers run on {mode === 'server' ? `the NexTerm host${host?.hostname ? ` (${host.hostname})` : ''}` : 'this computer'}
+            Servers run on {mode === 'server' ? `the Termstead host${host?.hostname ? ` (${host.hostname})` : ''}` : 'this computer'}
             {host?.osUser ? ` as ${host.osUser}` : ''}. By default they only accept connections from this machine; choose
             another interface in a server's settings to reach it from the network. Settings are kept when you stop a server.
           </p>

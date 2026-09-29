@@ -1,13 +1,13 @@
 /*
  * Integration tests of the transfer engines against the real tools: lrzsz (sz / rz) and trzsz-go (tsz / trz), run in
- * a throwaway container through `docker exec -i … script` (a PTY, like an SSH session). Guarded by NEXTERM_TESTENV=1.
+ * a throwaway container through `docker exec -i … script` (a PTY, like an SSH session). Guarded by TERMSTEAD_TESTENV=1.
  *
- *   docker build -t nexterm-termtransfer-ssh:test -f src/features/termtransfer/tests/testenv.Dockerfile src/features/termtransfer/tests
- *   docker run -d --name nexterm-termtransfer-ssh -p 127.0.0.1:23050:22 nexterm-termtransfer-ssh:test
- *   cd web && NEXTERM_TESTENV=1 node --import ./src/features/termtransfer/tests/register.mjs --test \
+ *   docker build -t termstead-termtransfer-ssh:test -f src/features/termtransfer/tests/testenv.Dockerfile src/features/termtransfer/tests
+ *   docker run -d --name termstead-termtransfer-ssh -p 127.0.0.1:23050:22 termstead-termtransfer-ssh:test
+ *   cd web && TERMSTEAD_TESTENV=1 node --import ./src/features/termtransfer/tests/register.mjs --test \
  *     src/features/termtransfer/tests/protocols.int.test.mjs
  *
- * NEXTERM_TT_CONTAINER overrides the container name.
+ * TERMSTEAD_TT_CONTAINER overrides the container name.
  */
 import assert from 'node:assert/strict'
 import { execFileSync, spawn } from 'node:child_process'
@@ -17,8 +17,8 @@ import { DownloadTarget } from '../engine/save.ts'
 import { TrzszStage } from '../engine/trzsz.ts'
 import { ZmodemStage, zmodemReceive, zmodemSend } from '../engine/zmodem.ts'
 
-const ENABLED = process.env.NEXTERM_TESTENV === '1'
-const C = process.env.NEXTERM_TT_CONTAINER || 'nexterm-termtransfer-ssh'
+const ENABLED = process.env.TERMSTEAD_TESTENV === '1'
+const C = process.env.TERMSTEAD_TT_CONTAINER || 'termstead-termtransfer-ssh'
 const sha = (b) => crypto.createHash('sha256').update(b).digest('hex')
 const sh = (cmd) => execFileSync('docker', ['exec', C, 'sh', '-c', cmd]).toString()
 
@@ -32,7 +32,7 @@ function withTimeout(p, ms, what) {
   return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error(`timeout: ${what}`)), ms))])
 }
 
-describe('ZMODEM against lrzsz', { skip: !ENABLED && 'set NEXTERM_TESTENV=1' }, () => {
+describe('ZMODEM against lrzsz', { skip: !ENABLED && 'set TERMSTEAD_TESTENV=1' }, () => {
   it('receives files from sz (binary content, several files, mtime)', async () => {
     sh('rm -rf /tmp/tt-z && mkdir -p /tmp/tt-z && head -c 2500000 /dev/urandom > /tmp/tt-z/a.bin && printf "hello\\n" > /tmp/tt-z/b.txt && touch -d "2020-01-02 03:04:05" /tmp/tt-z/b.txt')
     const want = { 'a.bin': sh('sha256sum /tmp/tt-z/a.bin').split(' ')[0], 'b.txt': sha('hello\n') }
@@ -173,7 +173,7 @@ describe('ZMODEM against lrzsz', { skip: !ENABLED && 'set NEXTERM_TESTENV=1' }, 
   })
 })
 
-describe('trzsz against trzsz-go', { skip: !ENABLED && 'set NEXTERM_TESTENV=1' }, () => {
+describe('trzsz against trzsz-go', { skip: !ENABLED && 'set TERMSTEAD_TESTENV=1' }, () => {
   function run(cmd, hooks) {
     const { proc, write } = pty(cmd)
     let rendered = ''

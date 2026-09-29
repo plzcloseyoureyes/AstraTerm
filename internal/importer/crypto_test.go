@@ -11,7 +11,7 @@ func init() {
 }
 
 func TestEncryptDecryptRoundTrip(t *testing.T) {
-	plain := []byte(`{"format":"nexterm-export","secret":"top"}`)
+	plain := []byte(`{"format":"termstead-export","secret":"top"}`)
 	env, err := encrypt(plain, "correct horse", payloadExport)
 	if err != nil {
 		t.Fatalf("encrypt: %v", err)

@@ -17,12 +17,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/netguard"
-	"github.com/nexterm/nexterm/internal/proto/rawtcp/linedisc"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/netguard"
+	"github.com/termstead/termstead/internal/proto/rawtcp/linedisc"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Mount registers the "raw" terminal protocol.
@@ -82,7 +82,7 @@ func open(ctx context.Context, d *app.Deps, c *core.Core, req term.OpenRequest) 
 		if routed(conn) {
 			return nil, term.Permanent(errors.New("raw: UDP cannot be routed through a proxy or SSH gateway"))
 		}
-		// A direct socket of the NexTerm host: vetted by the owner's destination guard (SEC-7) on the concrete
+		// A direct socket of the Termstead host: vetted by the owner's destination guard (SEC-7) on the concrete
 		// address, after DNS (nil guard = unrestricted: desktop mode, administrators).
 		nc, err = netguard.ForUser(d, req.User).DialContext(ctx, "udp", addr, 15*time.Second)
 		if err == nil {

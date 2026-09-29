@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to NexTerm are documented in this file.
+All notable changes to Termstead are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html). While the version is below 1.0.0, minor releases may
@@ -46,7 +46,7 @@ First public release candidate: an organized, self-hosted remote-management work
 - **Import and backup.** Import from MobaXterm, PuTTY, `~/.ssh/config` (live sync), Termius, mRemoteNG, Remmina,
   FileZilla, WinSCP, SecureCRT, CSV and JSON; encrypted exports; admin backup and restore.
 - **Distribution.** One CGO-free executable per platform (macOS, Linux and Windows on amd64/arm64, FreeBSD amd64) with the
-  web UI embedded and precompressed; `nexterm version` prints version, commit and build date; reproducible release
+  web UI embedded and precompressed; `termstead version` prints version, commit and build date; reproducible release
   archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/OWNER/nexterm/commits/main
+[Unreleased]: https://github.com/OWNER/termstead/commits/main

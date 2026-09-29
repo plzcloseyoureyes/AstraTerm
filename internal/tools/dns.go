@@ -12,7 +12,7 @@ import (
 
 	"github.com/miekg/dns"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 type dnsRequest struct {

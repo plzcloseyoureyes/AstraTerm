@@ -8,7 +8,7 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/nexterm/nexterm/internal/recording"
+	"github.com/termstead/termstead/internal/recording"
 )
 
 // shareViewer is a test client of /ws/share/{token}.

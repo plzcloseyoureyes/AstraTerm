@@ -53,7 +53,7 @@ export function SystemPanel({ visible }: { visible: boolean }) {
   const exposed = !s.listen.startsWith('127.') && !s.listen.startsWith('localhost') && !s.listen.startsWith('[::1]')
   return (
     <>
-      <PageHeader title="System" description={`NexTerm ${s.version} · ${s.mode === 'server' ? 'server mode (multi-user)' : 'desktop mode (single user)'}`} />
+      <PageHeader title="System" description={`Termstead ${s.version} · ${s.mode === 'server' ? 'server mode (multi-user)' : 'desktop mode (single user)'}`} />
       <div className="grid gap-4 @3xl:grid-cols-2">
         <Card icon={Server} title="Server">
           <Item label="Version">{s.version}</Item>

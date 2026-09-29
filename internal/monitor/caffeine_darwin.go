@@ -16,8 +16,8 @@ func inhibitSupported() bool {
 	return err == nil
 }
 
-// startInhibit runs `caffeinate -dimsu -w <nexterm pid>`: display, idle, disk and system sleep are prevented, and the
-// helper exits by itself when NexTerm does.
+// startInhibit runs `caffeinate -dimsu -w <termstead pid>`: display, idle, disk and system sleep are prevented, and the
+// helper exits by itself when Termstead does.
 func startInhibit() (inhibitor, error) {
 	path, err := exec.LookPath("caffeinate")
 	if err != nil {

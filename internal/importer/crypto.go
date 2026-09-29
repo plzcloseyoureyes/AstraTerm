@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/argon2"
 	"golang.org/x/crypto/chacha20poly1305"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 // Passphrase-based encryption for exports that include secrets (IMP-3) and encrypted backups (IMP-4): argon2id
@@ -19,7 +19,7 @@ import (
 // self-describing JSON so a future decrypt knows the KDF parameters.
 
 const (
-	encEnvelopeType = "nexterm-encrypted"
+	encEnvelopeType = "termstead-encrypted"
 	encAlg          = "argon2id+xchacha20poly1305"
 	// minPassphrase is the minimum length of a passphrase that protects exported secrets or a backup.
 	minPassphrase = 8
@@ -27,7 +27,7 @@ const (
 )
 
 // Bounds on the KDF parameters an uploaded envelope may ask for: the envelope is attacker-controlled input, and
-// argon2 allocates its memory parameter up front (NexTerm itself writes 64 MiB / 3 passes).
+// argon2 allocates its memory parameter up front (Termstead itself writes 64 MiB / 3 passes).
 const (
 	maxKDFMemKiB  = 256 << 10
 	maxKDFTime    = 16
@@ -65,7 +65,7 @@ func deriveKey(passphrase string, salt []byte, t, memKiB uint32, threads uint8) 
 type encEnvelope struct {
 	Envelope string    `json:"envelope"` // encEnvelopeType
 	Alg      string    `json:"alg"`
-	Payload  string    `json:"payload"` // what the plaintext is ("nexterm-export" | "nexterm-backup")
+	Payload  string    `json:"payload"` // what the plaintext is ("termstead-export" | "termstead-backup")
 	KDF      encKDFDoc `json:"kdf"`
 	Nonce    string    `json:"nonce"`      // base64 (24 bytes)
 	Cipher   string    `json:"ciphertext"` // base64
@@ -131,10 +131,10 @@ func encrypt(plaintext []byte, passphrase, payloadKind string) ([]byte, error) {
 func decrypt(envelope []byte, passphrase string) ([]byte, string, error) {
 	var env encEnvelope
 	if err := json.Unmarshal(envelope, &env); err != nil {
-		return nil, "", badRequest("not a valid encrypted NexTerm file")
+		return nil, "", badRequest("not a valid encrypted Termstead file")
 	}
 	if env.Envelope != encEnvelopeType {
-		return nil, "", badRequest("not a NexTerm encrypted envelope")
+		return nil, "", badRequest("not a Termstead encrypted envelope")
 	}
 	if env.Alg != "" && env.Alg != encAlg {
 		return nil, "", badRequest("unsupported encryption algorithm")

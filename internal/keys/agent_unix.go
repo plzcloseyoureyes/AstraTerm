@@ -26,7 +26,7 @@ func agentEndpoint(dataDir string) (string, error) {
 		return p, nil
 	}
 	sum := sha256.Sum256([]byte(dataDir))
-	dir := filepath.Join(os.TempDir(), fmt.Sprintf("nexterm-agent-%d-%s", os.Getuid(), hex.EncodeToString(sum[:5])))
+	dir := filepath.Join(os.TempDir(), fmt.Sprintf("termstead-agent-%d-%s", os.Getuid(), hex.EncodeToString(sum[:5])))
 	if err := os.Mkdir(dir, 0o700); err != nil && !errors.Is(err, fs.ErrExist) {
 		return "", err
 	}
@@ -91,7 +91,7 @@ func listenAgent(path string) (net.Listener, error) {
 // socket itself when it closes).
 func cleanupEndpoint(path string) {
 	dir := filepath.Dir(path)
-	if strings.HasPrefix(filepath.Base(dir), "nexterm-agent-") && filepath.Dir(dir) == filepath.Clean(os.TempDir()) {
+	if strings.HasPrefix(filepath.Base(dir), "termstead-agent-") && filepath.Dir(dir) == filepath.Clean(os.TempDir()) {
 		_ = os.Remove(dir) // fails (harmlessly) while the directory is not empty
 	}
 }

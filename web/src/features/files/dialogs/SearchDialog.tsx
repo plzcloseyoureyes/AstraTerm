@@ -57,7 +57,7 @@ export default function SearchDialog({ ctx, path, viewId, onClose }: { ctx: FsCo
     try {
       const r = await withFs(ctx.key, (fsId) => fsApi.search(fsId, root.trim() || path, pat, max, { content: content.trim() || undefined, signal: ac.signal }))
       if (ac.signal.aborted) return
-      // Like the listings: partial uploads (".nexterm-part") only when the setting shows them.
+      // Like the listings: partial uploads (".termstead-part") only when the setting shows them.
       const entries = filesSettings.get().showPartialUploads ? r.entries : r.entries.filter((e) => !isPartialUpload(e))
       setSt({ status: 'done', entries, truncated: r.truncated, ms: performance.now() - t0 })
     } catch (err) {

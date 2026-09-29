@@ -397,7 +397,7 @@ func (f *syslogFile) write(m *SyslogMessage) {
 	}
 	if f.maxBytes > 0 && f.size+int64(len(line)) > f.maxBytes {
 		f.capped = true
-		note := fmt.Sprintf("%s NexTerm: daily size limit (%d MB) reached; messages are no longer written today\n",
+		note := fmt.Sprintf("%s Termstead: daily size limit (%d MB) reached; messages are no longer written today\n",
 			time.Now().Format("2006-01-02T15:04:05.000Z07:00"), f.maxBytes>>20)
 		_, _ = f.w.WriteString(note)
 		_ = f.w.Flush()

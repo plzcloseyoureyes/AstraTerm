@@ -9,14 +9,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/store"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/store"
+	"github.com/termstead/termstead/internal/term"
 )
 
-// Recording of guacd sessions (options.recording): NexTerm writes the Guacamole instruction stream the tunnel relays
+// Recording of guacd sessions (options.recording): Termstead writes the Guacamole instruction stream the tunnel relays
 // from guacd — what guacd's own session recordings contain, and what Guacamole.SessionRecording plays — into
-// <data>/recordings/<id>.guac, listed in the module table rdp_recordings (recordings.go). Recording in NexTerm
+// <data>/recordings/<id>.guac, listed in the module table rdp_recordings (recordings.go). Recording in Termstead
 // (instead of guacd's recording-path) keeps the files next to the terminal recordings whichever guacd is used;
 // guacd's filesystem is usually a container's. The browser's mouse movements are recorded too (the cursor during
 // playback); keystrokes and clipboard contents are not (they may carry passwords).

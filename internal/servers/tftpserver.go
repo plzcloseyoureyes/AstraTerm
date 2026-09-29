@@ -231,7 +231,7 @@ func (s *tftpService) handleWrite(filename string, wt io.WriterTo) error {
 		return errors.New("a folder with that name exists")
 	}
 	dir, base := path.Split(filepath.ToSlash(name))
-	tmp := path.Join(dir, "."+base+".nexterm-part-"+randomSuffix())
+	tmp := path.Join(dir, "."+base+".termstead-part-"+randomSuffix())
 	f, err := s.fs.OpenFile(tmp, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
 	if err != nil {
 		s.in.logf(levelWarn, remote, "", "Write %s refused: %v", name, tftpError(err))

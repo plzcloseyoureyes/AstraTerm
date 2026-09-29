@@ -1,6 +1,6 @@
 /*
  * SSH connection details (SSH-38) and connection health (MON-4): negotiated algorithms (post-quantum badge), host key,
- * route, and a latency graph that measures NexTerm → server (keepalive round trip) and browser → NexTerm separately,
+ * route, and a latency graph that measures Termstead → server (keepalive round trip) and browser → Termstead separately,
  * with stall detection.
  */
 import { useEffect, useRef, useState } from 'react'
@@ -121,8 +121,8 @@ export function ConnectionPanel({ target, active }: { target: TargetId; active: 
           }
           xs={points.map((p) => p.t)}
           series={[
-            { label: 'NexTerm → server', color: '--primary', values: points.map((p) => p.server), fill: true },
-            { label: 'Browser → NexTerm', color: '--success', values: points.map((p) => p.browser) },
+            { label: 'Termstead → server', color: '--primary', values: points.map((p) => p.server), fill: true },
+            { label: 'Browser → Termstead', color: '--success', values: points.map((p) => p.browser) },
           ]}
           format={(v) => ms(v)}
           windowMs={WINDOW_MS}

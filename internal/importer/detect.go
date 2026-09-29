@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 // badRequest is a thin alias so parsers can return typed 400s without importing httpx everywhere.
@@ -51,7 +51,7 @@ func parseSource(format string, content []byte, opts previewOptions) (*parsed, e
 	case fmtCSV:
 		return parseGenericCSV(content, opts)
 	case fmtJSON:
-		return parseNexTermJSON(content, opts)
+		return parseTermsteadJSON(content, opts)
 	case fmtKnownHosts:
 		return parseKnownHostsSource(content)
 	default:
@@ -79,9 +79,9 @@ func detectFormat(content []byte) string {
 	s := decodeMaybeCP1252(content) // normalise UTF-16 / CP1252 before sniffing
 	trimmed := strings.TrimSpace(s)
 
-	// JSON (NexTerm export): starts with '{' and mentions our marker.
+	// JSON (Termstead export): starts with '{' and mentions our marker.
 	if strings.HasPrefix(trimmed, "{") {
-		if looksLikeNexTermJSON(trimmed) {
+		if looksLikeTermsteadJSON(trimmed) {
 			return fmtJSON
 		}
 		return ""
@@ -163,8 +163,8 @@ func firstNonEmptyLine(s string) string {
 	return ""
 }
 
-// looksLikeNexTermJSON reports whether trimmed JSON is a NexTerm export (plain or encrypted envelope).
-func looksLikeNexTermJSON(trimmed string) bool {
+// looksLikeTermsteadJSON reports whether trimmed JSON is a Termstead export (plain or encrypted envelope).
+func looksLikeTermsteadJSON(trimmed string) bool {
 	if isEncryptedEnvelope([]byte(trimmed)) {
 		return true
 	}

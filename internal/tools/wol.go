@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 type wolRequest struct {

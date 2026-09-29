@@ -19,7 +19,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Generic implementations of higher-level operations on top of the FS primitives. Drivers with native (exec, server
@@ -29,7 +29,7 @@ import (
 
 // entryNameOK reports whether a name returned by a server is usable as ONE path element. Listings come from remote
 // servers (SFTP, FTP, S3, WebDAV, SMB, parsed `ls` / `stat` output) that may be malicious or broken: an entry named
-// "..", "a/../../x" (a valid S3 key segment) or containing NUL must never make NexTerm address a path outside the
+// "..", "a/../../x" (a valid S3 key segment) or containing NUL must never make Termstead address a path outside the
 // folder that was listed — a recursive transfer would otherwise write anywhere on the destination (zip-slip).
 // Invalid UTF-8 is allowed (POSIX names are bytes).
 func entryNameOK(name string) bool {

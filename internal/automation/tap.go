@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Output taps: the automation features that read session output (expect in scripts, logon actions, triggers, batch

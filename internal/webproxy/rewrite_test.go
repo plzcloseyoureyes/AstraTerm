@@ -102,7 +102,7 @@ func TestRewriteSetCookie(t *testing.T) {
 		{"sid=abc; Path=/; Secure; SameSite=Strict", plain, "sid=abc; Path=/; SameSite=Strict"},
 		{"sid=abc; SameSite=None; Secure", plain, "sid=abc"},
 		{"a=1; Path=/app; Max-Age=60", path, "a=1; Path=/proxy/i-k/app; Max-Age=60; Secure; SameSite=None; Partitioned"},
-		{"nexterm_session=stolen; Path=/", secure, ""},
+		{"termstead_session=stolen; Path=/", secure, ""},
 		{cookieName + "=x", secure, ""},
 		{"=novalue", secure, ""},
 	}
@@ -136,13 +136,13 @@ func TestFixCSP(t *testing.T) {
 
 func TestFilterCookiesAndQuery(t *testing.T) {
 	h := http.Header{}
-	h.Add("Cookie", "a=1; nexterm_session=secret; "+cookieName+"=p")
+	h.Add("Cookie", "a=1; termstead_session=secret; "+cookieName+"=p")
 	h.Add("Cookie", "b=2")
 	filterCookies(h)
 	if got := h.Get("Cookie"); got != "a=1; b=2" {
 		t.Fatalf("cookies = %q", got)
 	}
-	h = http.Header{"Cookie": {"nexterm_session=x"}}
+	h = http.Header{"Cookie": {"termstead_session=x"}}
 	filterCookies(h)
 	if _, ok := h["Cookie"]; ok {
 		t.Fatal("empty Cookie header kept")

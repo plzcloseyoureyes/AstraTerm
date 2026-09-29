@@ -1,4 +1,4 @@
-// Package term is NexTerm's runtime session manager (SPEC §4 "Terminal protocol registry", §6.0 runtime sessions,
+// Package term is Termstead's runtime session manager (SPEC §4 "Terminal protocol registry", §6.0 runtime sessions,
 // §6.2 terminal WebSocket). Sessions live in the Go process, independent of browser sockets: backend output is
 // pumped into an offset-addressed ring buffer, fanned out to any number of attached WebSocket clients with ack-based
 // flow control, scanned for OSC title/cwd/prompt marks, optionally recorded (asciicast v3) and logged (plain text).
@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Backend is a live terminal connection produced by an Opener.

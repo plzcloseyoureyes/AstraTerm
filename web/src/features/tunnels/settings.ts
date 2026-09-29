@@ -6,7 +6,7 @@ import { defineSettings } from '@/stores/settings'
 export interface TunnelsSettings {
   /** Ask before deleting a tunnel. */
   confirmDelete: boolean
-  /** "Open in browser": prefer the NexTerm web proxy (works when NexTerm runs remotely) over a direct URL. */
+  /** "Open in browser": prefer the Termstead web proxy (works when Termstead runs remotely) over a direct URL. */
   openWith: 'auto' | 'proxy' | 'direct'
   /** Show live session forwards below the saved tunnels. */
   showSessionForwards: boolean

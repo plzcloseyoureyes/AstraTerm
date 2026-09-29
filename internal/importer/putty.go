@@ -9,7 +9,7 @@ import (
 
 	"golang.org/x/text/encoding/charmap"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // PuTTY / KiTTY registry-export (.reg) importer (IMP-2). A .reg export of HKCU\Software\SimonTatham\PuTTY\Sessions
@@ -308,7 +308,7 @@ func puttyProtocol(s string) model.Protocol {
 var reCodePage = regexp.MustCompile(`(?i)^(ISO-8859-\d+|KOI8-[RU]|CP\d+|Win\d+|UTF-8)`)
 
 // puttyEncoding maps PuTTY's LineCodePage ("ISO-8859-1:1998 (Latin-1, West Europe)", "Win1251 (Cyrillic)", "CP866",
-// "UTF-8", "Use font encoding") to a NexTerm encoding name ("" = unchanged / UTF-8).
+// "UTF-8", "Use font encoding") to a Termstead encoding name ("" = unchanged / UTF-8).
 func puttyEncoding(cp string) string {
 	m := reCodePage.FindString(strings.TrimSpace(cp))
 	if m == "" {

@@ -18,9 +18,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/studio-b12/gowebdav"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/netguard"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/netguard"
 )
 
 // Connection options read by the non-SSH drivers (SPEC §5.3 + §9 files-backend):
@@ -136,7 +136,7 @@ func (r *Registry) openS3(ctx context.Context, user *model.User, conn *model.Con
 	}
 	var closeDial func()
 	var transport http.RoundTripper
-	// Restricted users (netguard) always get NexTerm's own transport (never the environment's proxies).
+	// Restricted users (netguard) always get Termstead's own transport (never the environment's proxies).
 	if needsDialer(conn) || endpointURL != nil || netguard.ForUser(r.d, user) != nil {
 		dconn := conn.Clone()
 		if endpointURL != nil {

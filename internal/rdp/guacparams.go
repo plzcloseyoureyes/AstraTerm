@@ -5,12 +5,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // defaultGuacdDataPath is the directory in guacd's filesystem used for virtual drives and recordings when the admin
 // did not configure rdp.guacdDataPath (writable by guacd's user in the official image).
-const defaultGuacdDataPath = "/tmp/nexterm"
+const defaultGuacdDataPath = "/tmp/termstead"
 
 // guacParams maps a connection's options (SPEC §5.3 "rdp") onto guacd's RDP parameters. host/port is what guacd
 // dials (a local forwarder for gateway routes). Credentials come from the vault and never reach the browser.
@@ -51,7 +51,7 @@ func (h *handler) guacParams(tk *ticket, opts rdpOptions, g globalSettings, host
 		"enable-wallpaper":      b(opts.EnableWallpaper),
 		"enable-theming":        b(opts.EnableTheming),
 		"enable-font-smoothing": b(opts.EnableFontSmoothing),
-		"client-name":           "NexTerm",
+		"client-name":           "Termstead",
 		"load-balance-info":     opts.LoadBalanceInfo,
 	}
 	if opts.ResizeMethod != "none" {
@@ -64,7 +64,7 @@ func (h *handler) guacParams(tk *ticket, opts rdpOptions, g globalSettings, host
 		p["dpi"] = strconv.Itoa(opts.DPI)
 	}
 	if opts.EnablePrinting {
-		p["printer-name"] = "NexTerm PDF"
+		p["printer-name"] = "Termstead PDF"
 	}
 	if opts.RemoteApp != "" {
 		p["remote-app"] = opts.RemoteApp
@@ -91,13 +91,13 @@ func (h *handler) guacParams(tk *ticket, opts rdpOptions, g globalSettings, host
 		data = defaultGuacdDataPath
 	}
 	if opts.EnableDrive {
-		// One drive per NexTerm user (user ids are [a-z0-9] only, safe as path segments).
+		// One drive per Termstead user (user ids are [a-z0-9] only, safe as path segments).
 		p["enable-drive"] = "true"
 		p["drive-name"] = opts.DriveName
 		p["drive-path"] = path.Join(data, "drives", tk.userID)
 		p["create-drive-path"] = "true"
 	}
-	// options.recording is honoured by NexTerm itself (guacrecord.go): guacd's recording-path would write into guacd's
-	// (usually a container's) filesystem, out of reach of NexTerm's recordings.
+	// options.recording is honoured by Termstead itself (guacrecord.go): guacd's recording-path would write into guacd's
+	// (usually a container's) filesystem, out of reach of Termstead's recordings.
 	return p
 }

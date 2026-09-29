@@ -8,7 +8,7 @@
   var root = document.documentElement
   var a = null
   try {
-    a = JSON.parse(localStorage.getItem('nexterm:appearance') || 'null')
+    a = JSON.parse(localStorage.getItem('termstead:appearance') || 'null')
   } catch (e) {
     a = null
   }

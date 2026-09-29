@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 // DiskUsage is one level of the disk-usage drill-down (MON-3): the sizes of a directory's subdirectories on the same

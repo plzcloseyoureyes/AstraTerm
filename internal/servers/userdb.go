@@ -13,7 +13,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/auth"
+	"github.com/termstead/termstead/internal/auth"
 )
 
 var (

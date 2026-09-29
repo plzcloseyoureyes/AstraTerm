@@ -1,4 +1,4 @@
-module github.com/nexterm/nexterm
+module github.com/termstead/termstead
 
 go 1.26.2
 

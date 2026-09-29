@@ -6,7 +6,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/sshx"
+	"github.com/termstead/termstead/internal/sshx"
 )
 
 // OpenSSH known_hosts importer (SSH-19). Plain and "[host]:port" entries become trusted host keys, and so do PuTTY-style

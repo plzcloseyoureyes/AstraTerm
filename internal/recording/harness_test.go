@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/server/servertest"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // fakeShell is a deterministic terminal backend: it echoes typed characters (except while a password is asked),

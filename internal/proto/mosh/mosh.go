@@ -11,10 +11,10 @@
 // blocked), ends the session when the remote shell exits (the server's shutdown state), and sends the protocol's
 // shutdown when the session is closed so mosh-server and its shell do not linger on the remote host.
 //
-// The UDP leg is a direct socket of the NexTerm host, so it is vetted by the session owner's destination guard
+// The UDP leg is a direct socket of the Termstead host, so it is vetted by the session owner's destination guard
 // (internal/netguard, SEC-7): the concrete IP and the port announced by mosh-server are checked before the built-in
 // client dials (whose socket is also vetted in Control) or mosh-client is spawned. With jump hosts / proxies the host
-// name is resolved on the NexTerm host, so a literal / localhost destination is refused before mosh-server is started.
+// name is resolved on the Termstead host, so a literal / localhost destination is refused before mosh-server is started.
 package mosh
 
 import (
@@ -34,11 +34,11 @@ import (
 	"github.com/charmbracelet/x/xpty"
 	mosh "github.com/unixshells/mosh-go"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/netguard"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/netguard"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Mount registers the "mosh" terminal protocol. The built-in client needs no local mosh installation, so the
@@ -66,7 +66,7 @@ func open(ctx context.Context, d *app.Deps, c *core.Core, req term.OpenRequest) 
 	// vetted by the pool; the UDP leg here.
 	g := netguard.ForUser(d, req.User)
 	if routed(conn) {
-		// The UDP leg resolves the host name on the NexTerm host (not on the jump host / proxy): refuse an obviously
+		// The UDP leg resolves the host name on the Termstead host (not on the jump host / proxy): refuse an obviously
 		// blocked destination before starting mosh-server remotely (DNS names are checked once resolved).
 		if err := g.CheckLiteral(conn.Host, 0); err != nil {
 			return nil, term.Permanent(err)
@@ -81,7 +81,7 @@ func open(ctx context.Context, d *app.Deps, c *core.Core, req term.OpenRequest) 
 	if useSystem {
 		p, err := exec.LookPath("mosh-client")
 		if err != nil {
-			return nil, term.Permanent(errors.New("mosh: mosh-client is not installed on the NexTerm host (choose the built-in client)"))
+			return nil, term.Permanent(errors.New("mosh: mosh-client is not installed on the Termstead host (choose the built-in client)"))
 		}
 		systemClient = p
 	}
@@ -346,7 +346,7 @@ func dialBuiltin(ctx context.Context, g *netguard.Guard, target *net.UDPAddr, ke
 		}
 		if time.Since(start) > firstContactTimeout {
 			b.Close()
-			return nil, fmt.Errorf("mosh: no reply from mosh-server at %s over UDP within %s (UDP must be reachable from the NexTerm host — firewall, NAT or port range?)", target, firstContactTimeout)
+			return nil, fmt.Errorf("mosh: no reply from mosh-server at %s over UDP within %s (UDP must be reachable from the Termstead host — firewall, NAT or port range?)", target, firstContactTimeout)
 		}
 	}
 	return b, nil

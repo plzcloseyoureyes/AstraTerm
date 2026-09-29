@@ -1,4 +1,4 @@
-// Package tools implements NexTerm's network tools module (RESEARCH TOOL-4..9, TOOL-15, CC-4, CC-13, CC-17):
+// Package tools implements Termstead's network tools module (RESEARCH TOOL-4..9, TOOL-15, CC-4, CC-13, CC-17):
 // ping, traceroute (classic and mtr-style continuous), port scan, network scan, DNS, whois, Wake-on-LAN, HTTP check,
 // TLS certificate inspection, SNMP, an ssh-audit-style SSH server audit and a TCP throughput test (iperf3 client /
 // SSH channel), plus the synchronous host endpoints (interfaces, listening ports) and a store-less key generator.
@@ -6,9 +6,9 @@
 // §6.1); the frontend renders them in the 'tools' tab.
 //
 // Every tool request is validated synchronously (a bad request is an HTTP 4xx, not a failed job) and then runs as a
-// job. Tools run from the NexTerm host; ping, traceroute and port scan can optionally run "via" a saved SSH connection
+// job. Tools run from the Termstead host; ping, traceroute and port scan can optionally run "via" a saved SSH connection
 // so they execute from a remote vantage point. In server mode the scanners, the throughput test and the host-info
-// endpoints are admin-only (SPEC principle 7, RESEARCH TOOL-5), and non-admin users cannot aim tools at the NexTerm
+// endpoints are admin-only (SPEC principle 7, RESEARCH TOOL-5), and non-admin users cannot aim tools at the Termstead
 // host itself or at link-local / cloud-metadata addresses (see guard.go).
 package tools
 
@@ -21,10 +21,10 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Job limits: a user may run a handful of tools at once (a scan, an mtr and a ping side by side); the global cap keeps
@@ -58,7 +58,7 @@ func Mount(d *app.Deps, c *core.Core) error {
 	api.POST("/tools/:tool", h.runTool)
 
 	// Synchronous host queries.
-	api.GET("/tools/interfaces", h.interfaces) // network inventory of the NexTerm host
+	api.GET("/tools/interfaces", h.interfaces) // network inventory of the Termstead host
 	api.GET("/tools/listening", h.listening)   // TOOL-6 local listening/established sockets
 	api.POST("/tools/listening/kill", h.killListener)
 

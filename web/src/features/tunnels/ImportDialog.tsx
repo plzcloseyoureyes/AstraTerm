@@ -1,5 +1,5 @@
 /*
- * Import tunnels from a NexTerm JSON export: pick a file, preview how each tunnel maps to one of your SSH connections
+ * Import tunnels from a Termstead JSON export: pick a file, preview how each tunnel maps to one of your SSH connections
  * (same id, name + address, address, name, or a default connection), then import. Passwords are never part of an
  * export, so imported SOCKS proxies come without authentication.
  */
@@ -44,8 +44,8 @@ export default function ImportDialog({ onClose }: { onClose: () => void }) {
     }
     try {
       const data = JSON.parse(await f.text())
-      if (!data || data.format !== 'nexterm-tunnels' || !Array.isArray(data.tunnels)) {
-        setParseError('This is not a NexTerm tunnels export (format "nexterm-tunnels").')
+      if (!data || data.format !== 'termstead-tunnels' || !Array.isArray(data.tunnels)) {
+        setParseError('This is not a Termstead tunnels export (format "termstead-tunnels").')
         return
       }
       setFile({ name: f.name, data })
@@ -94,7 +94,7 @@ export default function ImportDialog({ onClose }: { onClose: () => void }) {
           <DialogTitle>
             <Upload className="size-4 text-primary" /> Import tunnels
           </DialogTitle>
-          <DialogDescription>From a NexTerm export (Tunnels → Export). Imported tunnels are stopped and do not autostart.</DialogDescription>
+          <DialogDescription>From a Termstead export (Tunnels → Export). Imported tunnels are stopped and do not autostart.</DialogDescription>
         </DialogHeader>
         <DialogBody className="grid gap-3">
           <button

@@ -23,7 +23,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 // Key material: detection and parsing of private keys in every supported format (OpenSSH, traditional PEM with or

@@ -28,7 +28,7 @@ import type { Script } from '../types'
 
 const CodeEditor = React.lazy(() => import('../components/CodeEditor'))
 
-const TEMPLATE = `// Runs in NexTerm's backend. Bound session: \`session\` (null when run without a target).
+const TEMPLATE = `// Runs in Termstead's backend. Bound session: \`session\` (null when run without a target).
 // Patterns are regular expressions (RE2 syntax).
 session.sendLine("uname -a")
 const r = session.expect(/Linux|Darwin|BSD/, 10000)
@@ -275,7 +275,7 @@ export default function ScriptsPage({ scriptId, runId }: { scriptId?: string; ru
       <EmptyState
         icon={ShieldOff}
         title="Scripts are restricted to administrators"
-        description="Scripts run inside the NexTerm server. An administrator can allow them for everyone in Settings → Highlighting & triggers."
+        description="Scripts run inside the Termstead server. An administrator can allow them for everyone in Settings → Highlighting & triggers."
       />
     )
   }

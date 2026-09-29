@@ -413,13 +413,13 @@ export function EmptyResults({ hint, icon }: { hint: string; icon?: React.Compon
 
 const LOCAL = '__local__'
 
-/** Picks a saved SSH connection to run a tool from ('' = the NexTerm host itself). */
+/** Picks a saved SSH connection to run a tool from ('' = the Termstead host itself). */
 export function ViaConnectionField({
   value,
   onChange,
   label = 'Run from',
-  hint = 'Run on a saved SSH host instead of the NexTerm server',
-  localLabel = 'This host (NexTerm server)',
+  hint = 'Run on a saved SSH host instead of the Termstead server',
+  localLabel = 'This host (Termstead server)',
   required,
 }: {
   value: string

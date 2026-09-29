@@ -306,7 +306,7 @@ func execOwnerNames(ctx context.Context, x Execer, uids, gids []int) (users, gro
 		sp, alt := join(uids)
 		fmt.Fprintf(&b, "getent passwd %s 2>/dev/null || grep -E '^[^:]*:[^:]*:(%s):' /etc/passwd 2>/dev/null; ", sp, alt)
 	}
-	b.WriteString("echo '::nexterm-groups::'; ")
+	b.WriteString("echo '::termstead-groups::'; ")
 	if len(gids) > 0 {
 		sp, alt := join(gids)
 		fmt.Fprintf(&b, "getent group %s 2>/dev/null || grep -E '^[^:]*:[^:]*:(%s):' /etc/group 2>/dev/null; ", sp, alt)
@@ -319,7 +319,7 @@ func execOwnerNames(ctx context.Context, x Execer, uids, gids []int) (users, gro
 	target := users
 	for _, line := range strings.Split(string(out), "\n") {
 		line = strings.TrimSpace(line)
-		if line == "::nexterm-groups::" {
+		if line == "::termstead-groups::" {
 			target = groups
 			continue
 		}

@@ -10,22 +10,22 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/netguard"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/netguard"
 )
 
 // kind is the runtime flavour of a forward.
 type kind int
 
 const (
-	kindLocal         kind = iota // -L: listen on the NexTerm host, connect from the SSH server
-	kindRemote                    // -R: listen on the SSH server, connect from the NexTerm host
-	kindDynamic                   // -D: SOCKS/HTTP proxy on the NexTerm host, exits through the SSH server
-	kindRemoteDynamic             // -R SOCKS (TUN-5): proxy on the SSH server, exits through the NexTerm host
+	kindLocal         kind = iota // -L: listen on the Termstead host, connect from the SSH server
+	kindRemote                    // -R: listen on the SSH server, connect from the Termstead host
+	kindDynamic                   // -D: SOCKS/HTTP proxy on the Termstead host, exits through the SSH server
+	kindRemoteDynamic             // -R SOCKS (TUN-5): proxy on the SSH server, exits through the Termstead host
 )
 
-// listensLocally reports whether the listener lives on the NexTerm host.
+// listensLocally reports whether the listener lives on the Termstead host.
 func (k kind) listensLocally() bool { return k == kindLocal || k == kindDynamic }
 
 // isProxy reports whether the forward is a SOCKS/HTTP proxy.
@@ -78,9 +78,9 @@ type spec struct {
 	idle          time.Duration
 	maxConns      int
 	allowFrom     []netip.Prefix
-	// selfPort is NexTerm's own listen port: reverse SOCKS clients (on the SSH server) may not reach it.
+	// selfPort is Termstead's own listen port: reverse SOCKS clients (on the SSH server) may not reach it.
 	selfPort int
-	// guard returns the owner's destination guard (SEC-7, internal/netguard) for connections made from the NexTerm
+	// guard returns the owner's destination guard (SEC-7, internal/netguard) for connections made from the Termstead
 	// host (remote and remote-dynamic forwards), evaluated per connection so policy changes apply at once; nil or a
 	// nil result = unrestricted.
 	guard func() *netguard.Guard
@@ -152,7 +152,7 @@ func (d *def) normalize() error {
 	case k.isProxy():
 		d.DestHost, d.DestPort, d.DestSocket = "", 0, ""
 	case d.DestSocket != "":
-		// A local tunnel's destination is on the SSH server; a remote tunnel's on the NexTerm host.
+		// A local tunnel's destination is on the SSH server; a remote tunnel's on the Termstead host.
 		if err := checkSocketPath("destination socket", d.DestSocket, k == kindRemote); err != nil {
 			return err
 		}
@@ -225,7 +225,7 @@ func normalizeHost(h string) (string, error) {
 	return h, nil
 }
 
-// checkSocketPath validates a Unix socket path. local paths live on the NexTerm host (OS-specific absolute path);
+// checkSocketPath validates a Unix socket path. local paths live on the Termstead host (OS-specific absolute path);
 // other paths live on the (POSIX) SSH server.
 func checkSocketPath(field, p string, local bool) error {
 	if len(p) > maxSocketPath {
@@ -236,7 +236,7 @@ func checkSocketPath(field, p string, local bool) error {
 	}
 	if local {
 		if !filepath.IsAbs(p) {
-			return httpx.BadRequest(field + " must be an absolute path on the NexTerm host")
+			return httpx.BadRequest(field + " must be an absolute path on the Termstead host")
 		}
 		if filepath.Clean(p) != p {
 			return httpx.BadRequest(field + " path must be clean (no '..', '.' or duplicate separators)")
@@ -258,7 +258,7 @@ func isLoopbackHost(h string) bool {
 	return err == nil && a.IsLoopback()
 }
 
-// exposedLocal reports whether the forward listens on the NexTerm host on an address other machines can reach.
+// exposedLocal reports whether the forward listens on the Termstead host on an address other machines can reach.
 func (s *spec) exposedLocal() bool {
 	return s.kind.listensLocally() && s.bindSocket == "" && !isLoopbackHost(s.bindHost)
 }
@@ -269,7 +269,7 @@ func (s *spec) exposedRemote() bool {
 	return !s.kind.listensLocally() && s.bindSocket == "" && !isLoopbackHost(s.bindHost)
 }
 
-// localListenAddr returns the net.Listen arguments of a listener on the NexTerm host.
+// localListenAddr returns the net.Listen arguments of a listener on the Termstead host.
 func (s *spec) localListenAddr() (network, addr string) {
 	if s.bindSocket != "" {
 		return "unix", s.bindSocket

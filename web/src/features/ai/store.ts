@@ -78,7 +78,7 @@ export const useChatStore = create<ChatStore>(() => ({
   streaming: {},
 }))
 
-const storageKey = (userId: string) => `nexterm:ai:conversations:v1:${userId}`
+const storageKey = (userId: string) => `termstead:ai:conversations:v1:${userId}`
 
 function load(userId: string): void {
   const saved = storage.get<{ conversations?: Conversation[]; activeId?: string | null }>(storageKey(userId), {})

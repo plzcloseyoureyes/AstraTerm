@@ -6,11 +6,11 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/server/servertest"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/server/servertest"
 )
 
-// sshRun runs a command on ssh1 as test (outside NexTerm) and returns its trimmed output.
+// sshRun runs a command on ssh1 as test (outside Termstead) and returns its trimmed output.
 func sshRun(t *testing.T, cmd string) string {
 	t.Helper()
 	c, err := ssh.Dial("tcp", "127.0.0.1:22022", &ssh.ClientConfig{User: "test", Auth: []ssh.AuthMethod{ssh.Password("test")},
@@ -33,7 +33,7 @@ func TestLabSafeWrite(t *testing.T) {
 	env := servertest.New(t)
 	admin := env.Setup("admin", pw)
 	startResponder(t, env, admin, map[string]string{"password": "test"})
-	dir := "/tmp/nexterm-sw-" + randHex(4)
+	dir := "/tmp/termstead-sw-" + randHex(4)
 	sshRun(t, "mkdir -p "+dir+" && printf old > "+dir+"/f.txt && chmod 640 "+dir+"/f.txt && printf x > "+dir+"/h.txt && ln "+dir+"/h.txt "+dir+"/h2.txt")
 	defer sshRun(t, "rm -rf "+dir)
 	for _, mode := range []string{"sftp", "scp"} {
@@ -52,7 +52,7 @@ func TestLabSafeWrite(t *testing.T) {
 		if got := sshRun(t, "cat "+dir+"/h2.txt; echo; stat -c %i "+dir+"/h.txt"); got != "via "+mode+"\n"+hino {
 			t.Fatalf("%s: hard-linked file must be rewritten in place: %q", mode, got)
 		}
-		if leftovers := sshRun(t, "ls -A "+dir); strings.Contains(leftovers, "nexterm-tmp") {
+		if leftovers := sshRun(t, "ls -A "+dir); strings.Contains(leftovers, "termstead-tmp") {
 			t.Fatalf("temporary file left: %s", leftovers)
 		}
 	}

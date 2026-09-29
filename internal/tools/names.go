@@ -15,7 +15,7 @@ import (
 
 // Host naming for the network scanner (RESEARCH TOOL-4 "hostname (reverse DNS, NetBIOS, mDNS)"): the three lookups
 // run in parallel with short timeouts, only for hosts found alive. NetBIOS and mDNS are LAN protocols and are only
-// tried when the scan runs from the NexTerm host itself (local).
+// tried when the scan runs from the Termstead host itself (local).
 func lookupHostNames(ctx context.Context, ip net.IP, local bool) map[string]any {
 	out := map[string]any{}
 	var mu sync.Mutex

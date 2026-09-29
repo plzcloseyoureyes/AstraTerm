@@ -1,4 +1,4 @@
-// Package model holds the shared domain structs that make up NexTerm's JSON contract (docs/SPEC.md §5, §6). It is a
+// Package model holds the shared domain structs that make up Termstead's JSON contract (docs/SPEC.md §5, §6). It is a
 // leaf package: it must not import anything from the project. Field names mirror web/src/api/types.ts.
 package model
 

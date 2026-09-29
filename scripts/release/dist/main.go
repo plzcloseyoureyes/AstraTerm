@@ -1,4 +1,4 @@
-// Command dist cross-compiles nexterm for every release platform and packages reproducible archives plus a
+// Command dist cross-compiles termstead for every release platform and packages reproducible archives plus a
 // SHA256SUMS file — the local equivalent of the GoReleaser pipeline (.goreleaser.yaml), with the same file names.
 // It embeds whatever frontend is in internal/webui/dist, so build that first (`make release` does).
 //
@@ -83,14 +83,14 @@ func main() {
 			goarm = parts[2]
 			archName += "v" + goarm
 		}
-		name := fmt.Sprintf("nexterm_%s_%s_%s", strings.TrimPrefix(*version, "v"), goos, archName)
-		exe := "nexterm"
+		name := fmt.Sprintf("termstead_%s_%s_%s", strings.TrimPrefix(*version, "v"), goos, archName)
+		exe := "termstead"
 		if goos == "windows" {
 			exe += ".exe"
 		}
 		bin := filepath.Join(*out, "build", goos+"_"+archName, exe)
 		fmt.Printf("==> %s\n", p)
-		cmd := exec.Command("go", "build", "-trimpath", "-buildvcs=false", "-ldflags", ldflags, "-o", bin, "./cmd/nexterm")
+		cmd := exec.Command("go", "build", "-trimpath", "-buildvcs=false", "-ldflags", ldflags, "-o", bin, "./cmd/termstead")
 		cmd.Env = append(os.Environ(), "CGO_ENABLED=0", "GOOS="+goos, "GOARCH="+goarch, "GOARM="+goarm, "GOFLAGS=-mod=readonly")
 		cmd.Stdout, cmd.Stderr = os.Stdout, os.Stderr
 		if err := cmd.Run(); err != nil {

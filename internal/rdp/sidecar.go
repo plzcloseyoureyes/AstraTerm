@@ -16,22 +16,22 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/rdp/guac"
+	"github.com/termstead/termstead/internal/rdp/guac"
 )
 
 // The guacd sidecar (CORE-16): a guacamole/guacd container run through the local Docker CLI, published on the
 // loopback interface only, whose address is then saved as the global guacd address. Containers are labelled so
-// NexTerm never touches a container it did not create.
+// Termstead never touches a container it did not create.
 
 const (
-	sidecarLabel      = "nexterm.managed"
+	sidecarLabel      = "termstead.managed"
 	sidecarLabelValue = "guacd"
 	sidecarImage      = "guacamole/guacd:1.6.0"
-	sidecarName       = "nexterm-guacd"
+	sidecarName       = "termstead-guacd"
 	sidecarPort       = 4822
 	// sidecarDataPath is the directory inside the container used for virtual drives and recordings (writable by the
 	// image's unprivileged guacd user).
-	sidecarDataPath = "/tmp/nexterm"
+	sidecarDataPath = "/tmp/termstead"
 )
 
 type sidecarConfig struct {
@@ -68,7 +68,7 @@ type sidecarStatus struct {
 	DockerVersion   string `json:"dockerVersion,omitempty"`
 	Exists          bool   `json:"exists"`
 	Running         bool   `json:"running"`
-	Managed         bool   `json:"managed"` // the container carries NexTerm's label
+	Managed         bool   `json:"managed"` // the container carries Termstead's label
 	Container       string `json:"container"`
 	Image           string `json:"image"`
 	Address         string `json:"address"`
@@ -149,7 +149,7 @@ func (s *sidecar) start(ctx context.Context, emit func(any)) error {
 		return err
 	}
 	if ci.exists && !ci.managed {
-		return fmt.Errorf("a container named %q already exists and was not created by NexTerm", s.cfg.Name)
+		return fmt.Errorf("a container named %q already exists and was not created by Termstead", s.cfg.Name)
 	}
 	if ci.exists && ci.image != s.cfg.Image {
 		say("remove", "Replacing the container of "+ci.image)
@@ -183,7 +183,7 @@ func (s *sidecar) start(ctx context.Context, emit func(any)) error {
 			"-p", net.JoinHostPort(s.cfg.BindIP, strconv.Itoa(s.cfg.Port)) + ":4822",
 		}
 		if runtime.GOOS == "linux" {
-			// Lets guacd reach NexTerm's loopback forwarders through the bridge gateway.
+			// Lets guacd reach Termstead's loopback forwarders through the bridge gateway.
 			args = append(args, "--add-host", "host.docker.internal:host-gateway")
 		}
 		args = append(args, s.cfg.Image)
@@ -252,7 +252,7 @@ func (s *sidecar) stop(ctx context.Context, emit func(any)) error {
 		return nil
 	}
 	if !ci.managed {
-		return fmt.Errorf("the container %q was not created by NexTerm", s.cfg.Name)
+		return fmt.Errorf("the container %q was not created by Termstead", s.cfg.Name)
 	}
 	if ci.running {
 		emit(progress{Stage: "stop", Message: "Stopping the guacd container"})
@@ -271,7 +271,7 @@ func (s *sidecar) remove(ctx context.Context) error {
 		return err
 	}
 	if !ci.managed {
-		return fmt.Errorf("the container %q was not created by NexTerm", s.cfg.Name)
+		return fmt.Errorf("the container %q was not created by Termstead", s.cfg.Name)
 	}
 	_, err = s.run(ctx, nil, "rm", "-f", s.cfg.Name)
 	return err

@@ -8,10 +8,10 @@ import (
 	"time"
 )
 
-// Caffeine (SEC-22) keeps the NexTerm host from sleeping or blanking its display while long jobs run: `caffeinate
+// Caffeine (SEC-22) keeps the Termstead host from sleeping or blanking its display while long jobs run: `caffeinate
 // -dimsu` on macOS, a systemd-inhibit idle:sleep lock on Linux, SetThreadExecutionState on Windows. The browser side
 // additionally holds a Screen Wake Lock. The inhibitor is released when switched off, when its optional timer expires
-// and when NexTerm shuts down (the helper processes also watch NexTerm's PID, so a crash cannot leak the lock).
+// and when Termstead shuts down (the helper processes also watch Termstead's PID, so a crash cannot leak the lock).
 
 // CaffeineStatus is the answer of GET/POST /api/system/caffeine and the payload of {type:'caffeine'} events.
 type CaffeineStatus struct {

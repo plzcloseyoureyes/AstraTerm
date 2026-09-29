@@ -15,9 +15,9 @@ import (
 	"github.com/labstack/echo/v5"
 	"golang.org/x/time/rate"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Triggers (AUTO-7). Rules live in automation_triggers and are cached per owner. When a session of the owner

@@ -23,7 +23,7 @@ import (
 )
 
 // X11 forwarding to the host's X server (PROTO-19, RESEARCH §3.13 mode 3). Desktop mode only: remote X clients show
-// up on the display of the machine running NexTerm (XQuartz, VcXsrv, Xorg/XWayland, WSLg). The server is given a
+// up on the display of the machine running Termstead (XQuartz, VcXsrv, Xorg/XWayland, WSLg). The server is given a
 // random fake MIT-MAGIC-COOKIE-1; every forwarded connection's setup packet is checked against it and rewritten with
 // the real cookie from `xauth list $DISPLAY` (or no authentication when the local server needs none).
 

@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // storedExts are already-compressed formats stored without deflate in zips (FILE-9).

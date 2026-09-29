@@ -3,20 +3,20 @@ package tunnel
 import (
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Options are the per-tunnel settings beyond the core `tunnels` columns (SPEC §5.1). They are stored as JSON in the
 // module table tunnel_meta and returned as Tunnel.options (a SPEC §9 extension of the Tunnel contract).
 type Options struct {
 	// Reverse turns a dynamic tunnel into a *remote* SOCKS proxy (TUN-5): the proxy listens on the SSH server
-	// (bindHost:bindPort there) and connections exit through the NexTerm host's network.
+	// (bindHost:bindPort there) and connections exit through the Termstead host's network.
 	Reverse bool `json:"reverse,omitempty"`
-	// BindSocket listens on a Unix socket instead of bindHost:bindPort (TUN-6): a path on the NexTerm host for
+	// BindSocket listens on a Unix socket instead of bindHost:bindPort (TUN-6): a path on the Termstead host for
 	// local/dynamic tunnels, a path on the SSH server for remote tunnels (streamlocal-forward).
 	BindSocket string `json:"bindSocket,omitempty"`
 	// DestSocket connects to a Unix socket instead of destHost:destPort (TUN-6): a path on the SSH server for local
-	// tunnels (direct-streamlocal, e.g. /var/run/docker.sock), a path on the NexTerm host for remote tunnels.
+	// tunnels (direct-streamlocal, e.g. /var/run/docker.sock), a path on the Termstead host for remote tunnels.
 	DestSocket string `json:"destSocket,omitempty"`
 	// SocksUsername enables username/password authentication on a SOCKS / HTTP proxy (password: secret
 	// "socksPassword").
@@ -33,7 +33,7 @@ type Options struct {
 	IdleTimeoutSec int `json:"idleTimeoutSec,omitempty"`
 	// MaxConns caps concurrent client connections (0 = default cap).
 	MaxConns int `json:"maxConns,omitempty"`
-	// AllowFrom restricts which client addresses may use a listener on the NexTerm host (IPs or CIDRs; empty = any).
+	// AllowFrom restricts which client addresses may use a listener on the Termstead host (IPs or CIDRs; empty = any).
 	AllowFrom []string `json:"allowFrom,omitempty"`
 	// Scheme hints how "open in browser" reaches the service: "http", "https" or "" (guess from the port).
 	Scheme string `json:"scheme,omitempty"`
@@ -211,7 +211,7 @@ const (
 
 // ExportFile is the JSON document of GET /api/tunnels/export and POST /api/tunnels/import.
 type ExportFile struct {
-	Format     string         `json:"format"` // "nexterm-tunnels"
+	Format     string         `json:"format"` // "termstead-tunnels"
 	Version    int            `json:"version"`
 	ExportedAt time.Time      `json:"exportedAt"`
 	Tunnels    []ExportTunnel `json:"tunnels"`
@@ -232,4 +232,4 @@ type ExportTunnel struct {
 	Connection ConnRef `json:"connection"`
 }
 
-const exportFormat = "nexterm-tunnels"
+const exportFormat = "termstead-tunnels"

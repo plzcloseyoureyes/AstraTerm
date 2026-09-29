@@ -170,7 +170,7 @@ export interface CaffeineStatus {
   error?: string
 }
 
-/** A monitored target: a runtime session id or 'local' (the NexTerm host). */
+/** A monitored target: a runtime session id or 'local' (the Termstead host). */
 export type TargetId = string
 
 /** Panels of the monitor tab. */
@@ -192,7 +192,7 @@ export interface MonitorTabParams {
   path?: string
 }
 
-/** Params of the 'sysinfo' tab kind (System information of the NexTerm host). */
+/** Params of the 'sysinfo' tab kind (System information of the Termstead host). */
 export interface SysInfoTabParams {
   panel?: 'overview' | 'processes' | 'services' | 'ports' | 'disk' | 'logs'
 }

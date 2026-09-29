@@ -35,7 +35,7 @@ async function withSudoRetry(what: string, fn: (sudo: boolean) => Promise<unknow
     if (isApiError(err) && err.status === 403 && err.code === 'permission_denied' && !sudo && !windows) {
       const retry = await confirm({
         title: 'Permission denied',
-        description: `${err.message.replace(/\.?\s*$/, '.')} Retry ${what} with sudo? NexTerm asks for the sudo password when the host needs one.`,
+        description: `${err.message.replace(/\.?\s*$/, '.')} Retry ${what} with sudo? Termstead asks for the sudo password when the host needs one.`,
         confirmLabel: 'Retry with sudo',
       })
       if (!retry) return false

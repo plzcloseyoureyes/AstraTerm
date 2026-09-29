@@ -36,7 +36,7 @@ test('UTF-8 / UTF-16 BOMs are detected, stripped and written back', () => {
 
 test('unrepresentable characters and decode-only code pages raise EncodeError', () => {
   assert.throws(() => encodeText('✓', 'windows-1252', false), EncodeError)
-  // encodings NexTerm only decodes (not in the picker's writable list)
+  // encodings Termstead only decodes (not in the picker's writable list)
   assert.throws(() => encodeText('x', 'iso-2022-jp', false), (e) => e instanceof EncodeError && e.index === -1)
   const err = (() => {
     try {

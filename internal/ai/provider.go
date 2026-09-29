@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 // Message is one conversation turn sent to a provider.
@@ -222,7 +222,7 @@ func doRequest(ctx context.Context, client *http.Client, method, url string, hea
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
-	req.Header.Set("User-Agent", "NexTerm")
+	req.Header.Set("User-Agent", "Termstead")
 	for k, v := range headers {
 		req.Header.Set(k, v)
 	}

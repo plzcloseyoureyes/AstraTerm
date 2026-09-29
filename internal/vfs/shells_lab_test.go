@@ -1,12 +1,12 @@
 package vfs_test
 
 // FILE-2 across login shells and the sudo password handshake, against a private container (not part of the shared
-// lab): NEXTERM_TESTENV=1 and a container "nexterm-files-backend-shells" publishing sshd on 127.0.0.1:23020 with
+// lab): TERMSTEAD_TESTENV=1 and a container "termstead-files-backend-shells" publishing sshd on 127.0.0.1:23020 with
 // users ubash / uzsh / ufish / umksh / uash (password "test", login shell as named) and sglob (bash, sudo with
 // "Defaults timestamp_type=global"). Build and run (a private container, not the shared lab):
 //
-//	docker build -t nexterm-files-backend-shells -f internal/vfs/testdata/shells.Dockerfile internal/vfs/testdata
-//	docker run -d --name nexterm-files-backend-shells -p 127.0.0.1:23020:22 nexterm-files-backend-shells
+//	docker build -t termstead-files-backend-shells -f internal/vfs/testdata/shells.Dockerfile internal/vfs/testdata
+//	docker run -d --name termstead-files-backend-shells -p 127.0.0.1:23020:22 termstead-files-backend-shells
 //
 // The test is skipped when the port is closed.
 
@@ -17,8 +17,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/server/servertest"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/server/servertest"
 )
 
 const shellsAddr = "127.0.0.1:23020"
@@ -104,7 +104,7 @@ func TestShellsLabSudoGlobalTimestamp(t *testing.T) {
 		time.Sleep(100 * time.Millisecond)
 	}
 	f, _ := openFS(t, admin, map[string]any{"connectionId": id})
-	target := "/etc/nexterm-glob-" + randHex(3) + ".conf"
+	target := "/etc/termstead-glob-" + randHex(3) + ".conf"
 	for i, content := range []string{"a=1\n", "b=22\n"} { // create, then overwrite
 		var e model.FileEntry
 		f.must("PUT", "write", nil, map[string]any{"path": target, "content": content, "sudo": true}, &e)

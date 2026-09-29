@@ -14,7 +14,7 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <ErrorBoundary label="NexTerm">
+        <ErrorBoundary label="Termstead">
           {isShareLink ? (
             <Suspense fallback={null}>
               <ShareViewer />

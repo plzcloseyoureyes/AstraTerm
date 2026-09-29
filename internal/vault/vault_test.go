@@ -10,7 +10,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/nexterm/nexterm/internal/store"
+	"github.com/termstead/termstead/internal/store"
 )
 
 func init() {

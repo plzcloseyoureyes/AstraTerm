@@ -16,7 +16,7 @@ func TestDetectFormat(t *testing.T) {
 		{"winscp.ini", fmtWinSCP},
 		{"securecrt.xml", fmtSecureCRT},
 		{"known_hosts", fmtKnownHosts},
-		{"nexterm.json", fmtJSON},
+		{"termstead.json", fmtJSON},
 		{"remmina.remmina", fmtRemmina},
 	}
 	for _, tc := range cases {
@@ -30,7 +30,7 @@ func TestDetectFormat(t *testing.T) {
 func TestDetectAutoParses(t *testing.T) {
 	// "auto" must route each fixture to a working parser.
 	for _, f := range []string{"mobaxterm.mxtsessions", "putty.reg", "ssh_config", "termius.csv", "mremoteng.xml",
-		"filezilla.xml", "winscp.ini", "securecrt.xml", "nexterm.json"} {
+		"filezilla.xml", "winscp.ini", "securecrt.xml", "termstead.json"} {
 		if _, err := parseSource(fmtAuto, loadFixtureBytes(t, f), previewOptions{}); err != nil {
 			t.Errorf("auto parse %s: %v", f, err)
 		}

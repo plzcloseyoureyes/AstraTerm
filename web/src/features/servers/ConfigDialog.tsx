@@ -247,7 +247,7 @@ export default function ConfigDialog({ kind, initialTab, onClose }: { kind: Serv
   }
 
   const privileged = !!host?.privilegedPorts && port < 1024 && !(host.privilegedWildcardOk && isWildcard(bind))
-  const ownPort = host?.nexTermPort === port && kind !== 'tftp' && !(kind === 'syslog' && !bool(draft.tcp))
+  const ownPort = host?.termsteadPort === port && kind !== 'tftp' && !(kind === 'syslog' && !bool(draft.tcp))
   const stopAfter = num(draft.stopAfterSec)
   const stopOptions = STOP_AFTER_PRESETS.some((p) => p.value === stopAfter)
     ? STOP_AFTER_PRESETS
@@ -293,7 +293,7 @@ export default function ConfigDialog({ kind, initialTab, onClose }: { kind: Serv
                 <BindField value={bind} onChange={(v) => set({ bindAddress: v })} host={host} />
                 <Field
                   label="Port"
-                  error={ownPort ? "NexTerm's own port" : undefined}
+                  error={ownPort ? "Termstead's own port" : undefined}
                   hint={
                     privileged
                       ? host?.privilegedWildcardOk
@@ -309,7 +309,7 @@ export default function ConfigDialog({ kind, initialTab, onClose }: { kind: Serv
                 <Field
                   label="Shared folder"
                   required
-                  hint="Clients see this folder as “/” and cannot leave it. NexTerm's data folder cannot be shared."
+                  hint="Clients see this folder as “/” and cannot leave it. Termstead's data folder cannot be shared."
                   labelAside={
                     host?.defaultRoot && root !== host.defaultRoot ? (
                       <Button variant="link" size="xs" onClick={() => set({ root: host.defaultRoot })}>
@@ -330,7 +330,7 @@ export default function ConfigDialog({ kind, initialTab, onClose }: { kind: Serv
               <KindGeneral kind={kind} draft={draft} set={set} host={host} />
               <div className="grid gap-3 border-t pt-4 sm:grid-cols-2">
                 <SwitchField
-                  label="Start with NexTerm"
+                  label="Start with Termstead"
                   description="Start this server automatically."
                   checked={bool(draft.autoStart)}
                   onCheckedChange={(v) => set({ autoStart: v })}
@@ -422,7 +422,7 @@ function KindGeneral({ kind, draft, set }: SectionProps) {
           />
           <SwitchField
             label="HTTPS"
-            description="Serve TLS with a self-signed certificate kept by NexTerm."
+            description="Serve TLS with a self-signed certificate kept by Termstead."
             checked={bool(draft.tls)}
             onCheckedChange={(v) => set({ tls: v })}
           />
@@ -564,13 +564,13 @@ function KindAccess({ kind, draft, set, host }: SectionProps) {
           />
           {bool(draft.shell) && (
             <Note tone="warning">
-              Shells run as {host?.osUser || 'the NexTerm user'} on this machine and are not limited to the shared folder.
+              Shells run as {host?.osUser || 'the Termstead user'} on this machine and are not limited to the shared folder.
             </Note>
           )}
         </div>
       )
     case 'telnet':
-      return <Note>Sessions run a shell as {host?.osUser || 'the NexTerm user'} on this machine.</Note>
+      return <Note>Sessions run a shell as {host?.osUser || 'the Termstead user'} on this machine.</Note>
   }
   return null
 }
@@ -673,7 +673,7 @@ function KindAdvanced({ kind, draft, set }: SectionProps) {
           />
           {bool(draft.logToFile) && (
             <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_8rem_8rem]">
-              <Field label="Folder" hint="Empty: NexTerm's data folder (logs/syslog).">
+              <Field label="Folder" hint="Empty: Termstead's data folder (logs/syslog).">
                 <Input
                   value={str(draft.logDir)}
                   onChange={(e) => set({ logDir: e.target.value })}

@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/store"
-	"github.com/nexterm/nexterm/internal/vfs"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/store"
+	"github.com/termstead/termstead/internal/vfs"
 )
 
 // Durability of the queue: every transfer is recorded in the module table "transfers" (created, state changes,
@@ -20,7 +20,7 @@ import (
 // as state "error" with interrupted:true ("Interrupted by a server restart") and, when both sides can be reopened
 // without the old handles (saved connection, the local host, a still running session), resumable:true.
 // POST /api/transfers/{id}/retry reopens both sides and starts the transfer again with overwrite "resume" (finished
-// files are skipped, partial "<name>.nexterm-part" files continue); the old record is replaced by the new one.
+// files are skipped, partial "<name>.termstead-part" files continue); the old record is replaced by the new one.
 
 func init() {
 	store.RegisterMigration("transfer", 1, `CREATE TABLE IF NOT EXISTS transfers (

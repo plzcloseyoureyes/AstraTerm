@@ -1,8 +1,8 @@
 package vfs_test
 
-// Integration tests against the Docker lab (scripts/testenv/docker-compose.yml). Run with NEXTERM_TESTENV=1:
+// Integration tests against the Docker lab (scripts/testenv/docker-compose.yml). Run with TERMSTEAD_TESTENV=1:
 //
-//	NEXTERM_TESTENV=1 go test ./internal/vfs/ -run TestLab -v
+//	TERMSTEAD_TESTENV=1 go test ./internal/vfs/ -run TestLab -v
 //
 // ssh1 127.0.0.1:22022 (test/test, sudo with password), FTP 127.0.0.1:22021, S3 (SeaweedFS) 127.0.0.1:22090,
 // WebDAV 127.0.0.1:22080, SMB 127.0.0.1:22445 share "share".
@@ -26,15 +26,15 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/server/servertest"
-	"github.com/nexterm/nexterm/internal/transfer"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/server/servertest"
+	"github.com/termstead/termstead/internal/transfer"
 )
 
 func labOnly(t *testing.T) {
-	if os.Getenv("NEXTERM_TESTENV") != "1" {
-		t.Skip("set NEXTERM_TESTENV=1 to run against the Docker lab")
+	if os.Getenv("TERMSTEAD_TESTENV") != "1" {
+		t.Skip("set TERMSTEAD_TESTENV=1 to run against the Docker lab")
 	}
 }
 
@@ -193,10 +193,10 @@ func exercise(t *testing.T, f *fsClient, dir string, opts exerciseOpts) {
 		t.Fatalf("checksum %s", sum.Hash)
 	}
 	f.must("POST", "rename", nil, map[string]any{"from": target, "to": dir + "/renamed.bin"}, &e)
-	f.must("PUT", "write", nil, map[string]any{"path": dir + "/note.txt", "content": "hello from nexterm\n"}, &e)
+	f.must("PUT", "write", nil, map[string]any{"path": dir + "/note.txt", "content": "hello from termstead\n"}, &e)
 	var rd struct{ Content string }
 	f.must("GET", "read", q("path", dir+"/note.txt"), nil, &rd)
-	if rd.Content != "hello from nexterm\n" {
+	if rd.Content != "hello from termstead\n" {
 		t.Fatalf("read %q", rd.Content)
 	}
 	var list struct{ Entries []model.FileEntry }
@@ -221,7 +221,7 @@ func exercise(t *testing.T, f *fsClient, dir string, opts exerciseOpts) {
 		f.must("POST", "archive", nil, map[string]any{"paths": []string{dir + "/note.txt", dir + "/renamed.bin"}, "dest": dir + "/pack.zip", "format": "zip"}, &e)
 		f.must("POST", "extract", nil, map[string]any{"path": dir + "/pack.zip", "destDir": dir + "/out"}, nil)
 		f.must("GET", "read", q("path", dir+"/out/note.txt"), nil, &rd)
-		if rd.Content != "hello from nexterm\n" {
+		if rd.Content != "hello from termstead\n" {
 			t.Fatalf("extracted %q", rd.Content)
 		}
 	}
@@ -271,13 +271,13 @@ func waitSession(t *testing.T, c *servertest.Client, id string, cond func(model.
 func TestLab(t *testing.T) {
 	labOnly(t)
 	env := servertest.New(t, func(c *config.Config) {
-		if os.Getenv("NEXTERM_TEST_DEBUG") == "1" {
+		if os.Getenv("TERMSTEAD_TEST_DEBUG") == "1" {
 			c.LogLevel = "debug"
 		}
 	})
 	admin := env.Setup("admin", pw)
 	pr := startResponder(t, env, admin, map[string]string{"password": "test"})
-	run := "nexterm-it-" + randHex(4)
+	run := "termstead-it-" + randHex(4)
 
 	sshConn := createConn(t, admin, map[string]any{"name": "ssh1", "protocol": "ssh", "host": "127.0.0.1", "port": 22022,
 		"username": "test", "authMethod": "password", "secrets": map[string]string{"password": "test"}})
@@ -448,8 +448,8 @@ func TestLab(t *testing.T) {
 
 	t.Run("S3", func(t *testing.T) {
 		id := createConn(t, admin, map[string]any{"name": "seaweed", "protocol": "s3", "host": "", "port": 0,
-			"options": map[string]any{"endpoint": "http://127.0.0.1:22090", "pathStyle": true, "accessKeyId": "nexterm",
-				"region": "us-east-1"}, "secrets": map[string]string{"secretAccessKey": "nexterm-secret"}})
+			"options": map[string]any{"endpoint": "http://127.0.0.1:22090", "pathStyle": true, "accessKeyId": "termstead",
+				"region": "us-east-1"}, "secrets": map[string]string{"secretAccessKey": "termstead-secret"}})
 		var h handleView
 		s3F, h = openFS(t, admin, map[string]any{"connectionId": id})
 		if h.Kind != "s3" || !h.Capabilities.Presign {
@@ -499,7 +499,7 @@ func TestLab(t *testing.T) {
 		local := openLocal(t, admin)
 		dir := tempDir(t)
 		os.MkdirAll(dir+"/tree/sub", 0o755)
-		payload := bytes.Repeat([]byte("nexterm transfer "), 200000)
+		payload := bytes.Repeat([]byte("termstead transfer "), 200000)
 		os.WriteFile(dir+"/tree/a.bin", payload, 0o644)
 		os.WriteFile(dir+"/tree/sub/b.txt", []byte("bee"), 0o644)
 		hops := []struct {

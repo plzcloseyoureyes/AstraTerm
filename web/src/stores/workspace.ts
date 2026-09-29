@@ -82,8 +82,8 @@ let userKey = 'anonymous'
 const pendingOpens: OpenTabOptions[] = []
 const windowListeners = new Set<(win: Window) => void>()
 
-const layoutKey = () => `nexterm:layout:v1:${userKey}`
-const closedKey = () => `nexterm:closed-tabs:v1:${userKey}`
+const layoutKey = () => `termstead:layout:v1:${userKey}`
+const closedKey = () => `termstead:closed-tabs:v1:${userKey}`
 
 // ---------------------------------------------------------------------------------------------------------------------
 // helpers

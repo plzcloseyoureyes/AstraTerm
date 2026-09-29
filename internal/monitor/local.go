@@ -19,16 +19,16 @@ import (
 	"github.com/shirou/gopsutil/v4/net"
 	"github.com/shirou/gopsutil/v4/process"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
-// localState caches the NexTerm host's static description.
+// localState caches the Termstead host's static description.
 type localState struct {
 	once sync.Once
 	host *hostInfo
 }
 
-// localHost describes the NexTerm host (MON-6), computed once.
+// localHost describes the Termstead host (MON-6), computed once.
 func (s *Service) localHost() *hostInfo {
 	s.local.once.Do(func() { s.local.host = buildLocalHost() })
 	return s.local.host
@@ -89,7 +89,7 @@ func prettyLocalOS(hi *host.InfoStat) string {
 
 // ---- sampler --------------------------------------------------------------------------------------------------------
 
-// localSource samples the NexTerm host in-process with gopsutil (monitoring of local shell sessions).
+// localSource samples the Termstead host in-process with gopsutil (monitoring of local shell sessions).
 type localSource struct{ s *Service }
 
 func (l *localSource) run(ctx context.Context, emit func(*Stats), fail func(state, msg string)) {
@@ -123,7 +123,7 @@ func (l *localSource) run(ctx context.Context, emit func(*Stats), fail func(stat
 
 var monoStart = time.Now()
 
-// sampleLocal reads the NexTerm host's counters.
+// sampleLocal reads the Termstead host's counters.
 func sampleLocal(ctx context.Context) (*rawSample, error) {
 	now := time.Now()
 	s := &rawSample{at: now, clock: time.Since(monoStart).Seconds()}
@@ -159,7 +159,7 @@ func sampleLocal(ctx context.Context) (*rawSample, error) {
 	return s, nil
 }
 
-// localMem reads the NexTerm host's memory: used = total − available (like `free`), refined per OS by localMemory.
+// localMem reads the Termstead host's memory: used = total − available (like `free`), refined per OS by localMemory.
 func localMem(ctx context.Context) MemStats {
 	var m MemStats
 	if vm, err := mem.VirtualMemoryWithContext(ctx); err == nil {
@@ -190,7 +190,7 @@ func ticksOf(t cpu.TimesStat) cpuTicks {
 // localDisks lists local filesystems; each usage call is bounded so a stuck mount cannot block the sampler.
 func localDisks(ctx context.Context) []DiskStats {
 	// all=true: gopsutil's "physical only" mode (Linux) drops nodev filesystems (overlay) and every bind mount — inside
-	// a container (NexTerm deployed with Docker) that is every filesystem. Pseudo, network and container-runtime
+	// a container (Termstead deployed with Docker) that is every filesystem. Pseudo, network and container-runtime
 	// mounts are filtered here instead (before any statfs: a hung network mount must not be touched), duplicates merged
 	// by mergeLocalDisks.
 	parts, err := disk.PartitionsWithContext(ctx, true)
@@ -224,7 +224,7 @@ const macDataVolume = "/System/Volumes/Data"
 // apfsContainerRE extracts the container disk of an APFS volume device (/dev/disk3s1s1, /dev/disk3s5 → disk3).
 var apfsContainerRE = regexp.MustCompile(`^/dev/(disk\d+)s\d+`)
 
-// mergeLocalDisks merges the filesystems of the NexTerm host that are one volume: bind mounts of a device and
+// mergeLocalDisks merges the filesystems of the Termstead host that are one volume: bind mounts of a device and
 // identical numbers keep the shortest mount path; the APFS volumes of one container (which all report the container's
 // space) become the Data volume — user files live there, so the disk-usage drill-down starts somewhere useful and the
 // bar reads like the remote macOS sampler's. The primary volume comes first ("/", the Mac's Data volume, C:).
@@ -431,7 +431,7 @@ type SystemInfo struct {
 	} `json:"server"`
 }
 
-// LocalDisk is one mounted filesystem of the NexTerm host.
+// LocalDisk is one mounted filesystem of the Termstead host.
 type LocalDisk struct {
 	Mount   string  `json:"mount"`
 	Device  string  `json:"device"`
@@ -442,7 +442,7 @@ type LocalDisk struct {
 	Percent float64 `json:"percent"`
 }
 
-// LocalIface is one network interface of the NexTerm host.
+// LocalIface is one network interface of the Termstead host.
 type LocalIface struct {
 	Name    string   `json:"name"`
 	MTU     int      `json:"mtu"`
@@ -455,7 +455,7 @@ type LocalIface struct {
 	Virtual bool     `json:"virtual,omitempty"`
 }
 
-// LocalUser is a logged-in user session of the NexTerm host.
+// LocalUser is a logged-in user session of the Termstead host.
 type LocalUser struct {
 	User     string `json:"user"`
 	Terminal string `json:"terminal,omitempty"`

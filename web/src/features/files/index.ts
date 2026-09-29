@@ -133,7 +133,7 @@ registerSettingsSection({
   icon: FolderSync,
   order: 20,
   group: 'files',
-  keywords: ['sftp', 'ssh-browser', 'files', 'upload', 'download', 'transfer', 'hidden files', 'partial uploads', 'nexterm-part', 'follow', 'folder', 'double-click', 'conflict', 'overwrite'],
+  keywords: ['sftp', 'ssh-browser', 'files', 'upload', 'download', 'transfer', 'hidden files', 'partial uploads', 'termstead-part', 'follow', 'folder', 'double-click', 'conflict', 'overwrite'],
   component: lazy(() => import('./SettingsSection')),
 })
 
@@ -179,7 +179,7 @@ registerCommand<{ path?: string } | undefined>({
   category: 'Files',
   icon: HardDrive,
   keywords: ['browse', 'file manager', 'host'],
-  description: 'Browse the files of the computer running NexTerm',
+  description: 'Browse the files of the computer running Termstead',
   run: ({ args }) => {
     openFilesTab({ kind: 'local' }, { path: argString(args, 'path'), title: 'Local files' })
   },

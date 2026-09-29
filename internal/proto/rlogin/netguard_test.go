@@ -11,12 +11,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/netguard"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/netguard"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // SEC-7: direct (non-routed) rlogin / rsh dials of a restricted user are vetted by netguard.
@@ -30,7 +30,7 @@ var (
 	root  = &model.User{ID: "u-admin", Username: "admin", Role: model.RoleAdmin}
 )
 
-// loopbackService is a loopback-only listener of the NexTerm host that counts the connections reaching it.
+// loopbackService is a loopback-only listener of the Termstead host that counts the connections reaching it.
 func loopbackService(t *testing.T) (port int, accepted *atomic.Int32) {
 	t.Helper()
 	ln, err := net.Listen("tcp", "127.0.0.1:0")

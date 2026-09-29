@@ -15,7 +15,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/config"
+	"github.com/termstead/termstead/internal/config"
 )
 
 // tlsConfig builds the server TLS configuration from --tls-cert/--tls-key or a generated self-signed certificate.
@@ -59,7 +59,7 @@ func selfSignedCert(dir, listen string) (tls.Certificate, error) {
 	}
 	tmpl := &x509.Certificate{
 		SerialNumber:          serial,
-		Subject:               pkix.Name{CommonName: "NexTerm self-signed", Organization: []string{"NexTerm"}},
+		Subject:               pkix.Name{CommonName: "Termstead self-signed", Organization: []string{"Termstead"}},
 		NotBefore:             time.Now().Add(-time.Hour),
 		NotAfter:              time.Now().Add(397 * 24 * time.Hour),
 		KeyUsage:              x509.KeyUsageDigitalSignature,

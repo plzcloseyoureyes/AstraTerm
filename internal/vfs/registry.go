@@ -17,15 +17,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/events"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/netguard"
-	"github.com/nexterm/nexterm/internal/sshx"
-	"github.com/nexterm/nexterm/internal/store"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/events"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/netguard"
+	"github.com/termstead/termstead/internal/sshx"
+	"github.com/termstead/termstead/internal/store"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // DefaultIdleTimeout closes handles that were not used for this long (and are not pinned by a transfer).
@@ -529,7 +529,7 @@ func capsFor(fsys FS, driver string, execOK bool) Capabilities {
 // ---- local --------------------------------------------------------------------------------------------------------
 
 // localRootEnv jails the local file system in server mode (overrides the global setting files.localRoot).
-const localRootEnv = "NEXTERM_LOCAL_FS_ROOT"
+const localRootEnv = "TERMSTEAD_LOCAL_FS_ROOT"
 
 func (r *Registry) openLocal(ctx context.Context, user *model.User) (*Handle, error) {
 	server := r.d != nil && r.d.Cfg != nil && r.d.Cfg.IsServer()
@@ -553,7 +553,7 @@ func (r *Registry) openLocal(ctx context.Context, user *model.User) (*Handle, er
 	return h, nil
 }
 
-// localRoot is the jail of the local file system in server mode: $NEXTERM_LOCAL_FS_ROOT, else the global setting
+// localRoot is the jail of the local file system in server mode: $TERMSTEAD_LOCAL_FS_ROOT, else the global setting
 // files.localRoot, else <data dir>/files.
 func (r *Registry) localRoot(ctx context.Context) string {
 	if v := strings.TrimSpace(os.Getenv(localRootEnv)); v != "" {
@@ -570,7 +570,7 @@ func (r *Registry) localRoot(ctx context.Context) string {
 	if r.d != nil && r.d.Cfg != nil {
 		return r.d.Cfg.Path("files")
 	}
-	return filepath.Join(os.TempDir(), "nexterm-files")
+	return filepath.Join(os.TempDir(), "termstead-files")
 }
 
 // ---- helpers: dialing, prompts, secrets ---------------------------------------------------------------------------
@@ -798,5 +798,5 @@ func (r *Registry) tmpDir() string {
 	if r.d != nil && r.d.Cfg != nil && r.d.Cfg.DataDir != "" {
 		return r.d.Cfg.TmpDir()
 	}
-	return filepath.Join(os.TempDir(), "nexterm-tmp")
+	return filepath.Join(os.TempDir(), "termstead-tmp")
 }

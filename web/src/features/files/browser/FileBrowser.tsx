@@ -383,7 +383,7 @@ export function FileBrowser(props: FileBrowserProps) {
         title="This folder is empty"
         description={
           concealed.partial > 0
-            ? `Drop files or folders here to upload them. ${countOf(concealed.partial, 'unfinished upload')} (.nexterm-part) ${concealed.partial === 1 ? 'is' : 'are'} hidden.`
+            ? `Drop files or folders here to upload them. ${countOf(concealed.partial, 'unfinished upload')} (.termstead-part) ${concealed.partial === 1 ? 'is' : 'are'} hidden.`
             : 'Drop files or folders here to upload them.'
         }
         action={
@@ -417,7 +417,7 @@ export function FileBrowser(props: FileBrowserProps) {
       data-path={path ?? undefined}
       data-pending={pending ?? undefined}
       // Files dropped anywhere else in the view (location bar gaps, toolbar, status line, footer) go to the folder
-      // shown — never to the browser, which would open the file instead of NexTerm.
+      // shown — never to the browser, which would open the file instead of Termstead.
       onDragOver={(e) => {
         if (path && !props.inert) acceptDrag(e, ctx, path)
       }}

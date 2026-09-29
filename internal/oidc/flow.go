@@ -18,10 +18,10 @@ import (
 	"github.com/labstack/echo/v5"
 	"golang.org/x/oauth2"
 
-	"github.com/nexterm/nexterm/internal/auth"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/store"
+	"github.com/termstead/termstead/internal/auth"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/store"
 )
 
 // flow is a pending authorization-code flow, bound to the browser that started it by a cookie.
@@ -139,7 +139,7 @@ func (s *Service) handleLink(c *echo.Context) error {
 
 var usernameStrip = regexp.MustCompile(`[^A-Za-z0-9._@-]+`)
 
-// sanitizeUsername maps a claim value onto NexTerm's user-name rules.
+// sanitizeUsername maps a claim value onto Termstead's user-name rules.
 func sanitizeUsername(v string) string {
 	v = usernameStrip.ReplaceAllString(strings.TrimSpace(v), "")
 	v = strings.TrimLeft(v, "._@-")
@@ -411,7 +411,7 @@ func (s *Service) linkCandidate(ctx context.Context, p *ProviderConfig, username
 	}
 	name := sanitizeUsername(usernameClaim)
 	if name == "" || name != strings.TrimSpace(usernameClaim) {
-		return "", nil // the claim is not a valid NexTerm user name as is: no fuzzy matches
+		return "", nil // the claim is not a valid Termstead user name as is: no fuzzy matches
 	}
 	u, err := s.d.Store.Users.GetByUsername(ctx, name)
 	if errors.Is(err, model.ErrNotFound) {

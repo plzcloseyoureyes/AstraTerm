@@ -17,8 +17,8 @@ import (
 	gooidc "github.com/coreos/go-oidc/v3/oidc"
 	"github.com/coreos/go-oidc/v3/oidc/oidctest"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/server/servertest"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/server/servertest"
 )
 
 const adminPass = "correct horse battery"
@@ -67,7 +67,7 @@ func (f *fakeIdP) authorize(w http.ResponseWriter, r *http.Request) {
 	code := "code-" + q.Get("state")
 	f.codes[code] = codeGrant{challenge: q.Get("code_challenge"), nonce: q.Get("nonce"), redirect: q.Get("redirect_uri")}
 	f.mu.Unlock()
-	if q.Get("code_challenge_method") != "S256" || q.Get("response_type") != "code" || q.Get("client_id") != "nexterm" {
+	if q.Get("code_challenge_method") != "S256" || q.Get("response_type") != "code" || q.Get("client_id") != "termstead" {
 		http.Error(w, "bad authorization request", 400)
 		return
 	}
@@ -85,7 +85,7 @@ func (f *fakeIdP) token(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		id, secret = r.PostForm.Get("client_id"), r.PostForm.Get("client_secret")
 	}
-	if id != "nexterm" || secret != "s3cret" {
+	if id != "termstead" || secret != "s3cret" {
 		http.Error(w, `{"error":"invalid_client"}`, 401)
 		return
 	}
@@ -104,7 +104,7 @@ func (f *fakeIdP) token(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, `{"error":"invalid_grant"}`, 400)
 		return
 	}
-	claims["iss"], claims["aud"], claims["exp"], claims["iat"], claims["nonce"] = f.srv.URL, "nexterm", time.Now().Add(time.Hour).Unix(), time.Now().Unix(), g.nonce
+	claims["iss"], claims["aud"], claims["exp"], claims["iat"], claims["nonce"] = f.srv.URL, "termstead", time.Now().Add(time.Hour).Unix(), time.Now().Unix(), g.nonce
 	if bad {
 		claims["nonce"] = "something-else"
 	}
@@ -128,7 +128,7 @@ func ssoLogin(t *testing.T, c *servertest.Client, path string) *url.URL {
 }
 
 func setupProvider(t *testing.T, admin *servertest.Client, idp *fakeIdP, extra map[string]any) {
-	body := map[string]any{"name": "Corp SSO", "id": "corp", "enabled": true, "issuer": idp.srv.URL, "clientId": "nexterm",
+	body := map[string]any{"name": "Corp SSO", "id": "corp", "enabled": true, "issuer": idp.srv.URL, "clientId": "termstead",
 		"clientSecret": "s3cret", "autoProvision": true, "adminGroups": []string{"ops"}, "syncRole": true}
 	for k, v := range extra {
 		body[k] = v

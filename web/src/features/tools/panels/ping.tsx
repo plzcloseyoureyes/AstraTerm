@@ -1,5 +1,5 @@
 /*
- * Ping (TOOL-8): ICMP echo from the NexTerm host (unprivileged where the OS allows it, TCP-connect fallback), a
+ * Ping (TOOL-8): ICMP echo from the Termstead host (unprivileged where the OS allows it, TCP-connect fallback), a
  * TCP-connect "ping" to any port, or the remote host's own ping via a saved SSH connection. Latency graph + log.
  */
 import * as React from 'react'

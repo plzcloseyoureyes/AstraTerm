@@ -1,4 +1,4 @@
-// Package servertest spins up a complete in-process NexTerm server (temp data dir, httptest listener) for
+// Package servertest spins up a complete in-process Termstead server (temp data dir, httptest listener) for
 // integration tests of any module:
 //
 //	env := servertest.New(t)
@@ -20,11 +20,11 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/nexterm/nexterm/internal/auth"
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/server"
-	"github.com/nexterm/nexterm/internal/vault"
+	"github.com/termstead/termstead/internal/auth"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/server"
+	"github.com/termstead/termstead/internal/vault"
 )
 
 var fastOnce sync.Once
@@ -89,7 +89,7 @@ func (w testWriter) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
-// Client is an HTTP client with its own cookie jar. CSRF controls whether the X-NexTerm header is sent; Bearer, when
+// Client is an HTTP client with its own cookie jar. CSRF controls whether the X-Termstead header is sent; Bearer, when
 // set, is sent as an Authorization header.
 type Client struct {
 	Env    *Env

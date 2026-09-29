@@ -3,7 +3,7 @@ package importer
 import (
 	"strings"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Remmina .remmina importer (IMP-2). Each file is an INI with a `[remmina]` section; several files may be

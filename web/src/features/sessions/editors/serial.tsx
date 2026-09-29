@@ -1,5 +1,5 @@
 /*
- * Serial console editor (PROTO-10, CC-18). Ports are listed from GET /api/serial/ports (host ports of the NexTerm
+ * Serial console editor (PROTO-10, CC-18). Ports are listed from GET /api/serial/ports (host ports of the Termstead
  * machine, refreshable after plugging a device in); any device path can still be typed. Auto-baud probes the port.
  */
 import { useState } from 'react'
@@ -35,7 +35,7 @@ export function SerialEditor({ value, onChange }: ProtocolEditorProps) {
   return (
     <div className="grid gap-5">
       {mode === 'server' && !isAdmin && (
-        <EditorNote tone="warning">In server mode, serial ports of the NexTerm host are available to administrators only.</EditorNote>
+        <EditorNote tone="warning">In server mode, serial ports of the Termstead host are available to administrators only.</EditorNote>
       )}
       <OptionSection title="Port">
         <div className="grid gap-1">
@@ -49,8 +49,8 @@ export function SerialEditor({ value, onChange }: ProtocolEditorProps) {
             suggestions={suggestions}
             loading={ports.isFetching}
             onOpen={() => void ports.refetch()}
-            emptyText={ports.isError ? 'Port list unavailable — type the device name' : 'No serial ports detected on the NexTerm host'}
-            hint="Ports of the machine running NexTerm."
+            emptyText={ports.isError ? 'Port list unavailable — type the device name' : 'No serial ports detected on the Termstead host'}
+            hint="Ports of the machine running Termstead."
           />
           <Button
             type="button"
@@ -190,7 +190,7 @@ defineProtocol({
   defaultPort: 0,
   group: 'terminal',
   order: 50,
-  description: 'Serial console (COM / tty ports of the NexTerm host)',
+  description: 'Serial console (COM / tty ports of the Termstead host)',
   component: SerialEditor,
   profile: { host: 'hidden', port: false, username: false, auth: 'none', kind: 'terminal', network: false },
   validate: validateSerial,

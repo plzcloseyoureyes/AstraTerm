@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/nexterm/nexterm/internal/vnc/anontls/anontlstest"
+	"github.com/termstead/termstead/internal/vnc/anontls/anontlstest"
 )
 
 // TestAgainstIndependentServer runs every suite against anontlstest, a server written independently of this

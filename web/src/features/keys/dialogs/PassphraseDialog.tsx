@@ -1,6 +1,6 @@
 /*
  * Passphrase of a stored key: add / change / remove it (the stored key is re-encrypted), remember it in the vault
- * (no prompt when the key is used) or forget the remembered one (NexTerm asks each time).
+ * (no prompt when the key is used) or forget the remembered one (Termstead asks each time).
  */
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
@@ -101,8 +101,8 @@ export default function PassphraseDialog({ keyId, onClose }: { keyId: string; on
               {k.hasPassphrase
                 ? k.passphraseSaved
                   ? 'The key is protected by a passphrase that is remembered in the vault.'
-                  : 'The key is protected by a passphrase; NexTerm asks for it when the key is used.'
-                : 'The key has no passphrase (the NexTerm vault still encrypts it at rest).'}
+                  : 'The key is protected by a passphrase; Termstead asks for it when the key is used.'
+                : 'The key has no passphrase (the Termstead vault still encrypts it at rest).'}
             </DialogDescription>
           </DialogHeader>
           <DialogBody className="grid gap-4">
@@ -110,7 +110,7 @@ export default function PassphraseDialog({ keyId, onClose }: { keyId: string; on
               <RadioGroup value={action} onValueChange={(v) => setChoice(v as Action)} aria-label="Action">
                 <RadioField value="change" label="Change the passphrase" />
                 {!k.passphraseSaved && <RadioField value="remember" label="Remember the passphrase in the vault" description="Logins and the agent no longer ask for it." />}
-                {k.passphraseSaved && <RadioField value="forget" label="Forget the remembered passphrase" description="NexTerm will ask for it whenever the key is used." />}
+                {k.passphraseSaved && <RadioField value="forget" label="Forget the remembered passphrase" description="Termstead will ask for it whenever the key is used." />}
                 <RadioField value="remove" label="Remove the passphrase" />
               </RadioGroup>
             )}

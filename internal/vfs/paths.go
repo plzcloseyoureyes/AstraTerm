@@ -12,7 +12,7 @@ import (
 const maxPathLen = 4096
 
 // partSuffix is appended to upload targets while data is being received (atomic rename on completion).
-const partSuffix = ".nexterm-part"
+const partSuffix = ".termstead-part"
 
 // cleanPath validates and normalizes an API path: it must be valid UTF-8 without NUL bytes; "~" and "~/x" are relative
 // to home, other relative paths are resolved against home; the result is absolute and clean.

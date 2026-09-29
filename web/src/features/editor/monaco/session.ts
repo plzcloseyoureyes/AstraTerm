@@ -361,18 +361,18 @@ export class EditorSession {
     const run = (id: string) => () => void runCommand(id, tab)
     const ed = this.editor
     const actions: Monaco.editor.IActionDescriptor[] = [
-      { id: 'nexterm.save', label: 'File: Save', run: run('editor.save'), contextMenuGroupId: '9_nexterm', contextMenuOrder: 1 },
-      { id: 'nexterm.saveAs', label: 'File: Save As…', run: run('editor.saveAs') },
-      { id: 'nexterm.reload', label: 'File: Reload from Disk', run: run('editor.reload') },
-      { id: 'nexterm.compare', label: 'File: Compare with Saved Version', run: run('editor.compareWithSaved') },
-      { id: 'nexterm.exportHtml', label: 'File: Export as HTML…', run: run('editor.exportHtml') },
-      { id: 'nexterm.toggleWordWrap', label: 'View: Toggle Word Wrap', run: run('editor.toggleWordWrap') },
-      { id: 'nexterm.toggleWhitespace', label: 'View: Toggle Render Whitespace', run: run('editor.toggleWhitespace') },
-      { id: 'nexterm.toggleMinimap', label: 'View: Toggle Minimap', run: run('editor.toggleMinimap') },
-      { id: 'nexterm.toggleVim', label: 'Preferences: Toggle Vim Mode', run: run('editor.toggleVim') },
-      { id: 'nexterm.toggleReadOnly', label: 'File: Toggle Read-Only', run: run('editor.toggleReadOnly') },
-      { id: 'nexterm.detectIndentation', label: 'Indentation: Detect from Content', run: () => void this.detectIndentation() },
-      { id: 'nexterm.palette', label: 'NexTerm: Show All Commands', run: () => void runCommand('palette.open') },
+      { id: 'termstead.save', label: 'File: Save', run: run('editor.save'), contextMenuGroupId: '9_termstead', contextMenuOrder: 1 },
+      { id: 'termstead.saveAs', label: 'File: Save As…', run: run('editor.saveAs') },
+      { id: 'termstead.reload', label: 'File: Reload from Disk', run: run('editor.reload') },
+      { id: 'termstead.compare', label: 'File: Compare with Saved Version', run: run('editor.compareWithSaved') },
+      { id: 'termstead.exportHtml', label: 'File: Export as HTML…', run: run('editor.exportHtml') },
+      { id: 'termstead.toggleWordWrap', label: 'View: Toggle Word Wrap', run: run('editor.toggleWordWrap') },
+      { id: 'termstead.toggleWhitespace', label: 'View: Toggle Render Whitespace', run: run('editor.toggleWhitespace') },
+      { id: 'termstead.toggleMinimap', label: 'View: Toggle Minimap', run: run('editor.toggleMinimap') },
+      { id: 'termstead.toggleVim', label: 'Preferences: Toggle Vim Mode', run: run('editor.toggleVim') },
+      { id: 'termstead.toggleReadOnly', label: 'File: Toggle Read-Only', run: run('editor.toggleReadOnly') },
+      { id: 'termstead.detectIndentation', label: 'Indentation: Detect from Content', run: () => void this.detectIndentation() },
+      { id: 'termstead.palette', label: 'Termstead: Show All Commands', run: () => void runCommand('palette.open') },
     ]
     const subs = actions.map((a) => ed.addAction(a))
     this.disposers.push(() => subs.forEach((d) => d.dispose()))
@@ -620,7 +620,7 @@ export class EditorSession {
     if (!edits.length) return
     this.editor.pushUndoStop()
     this.editor.executeEdits(
-      'nexterm.convertIndentation',
+      'termstead.convertIndentation',
       edits.map((e) => ({ range: { startLineNumber: e.line, startColumn: 1, endLineNumber: e.line, endColumn: e.length + 1 }, text: e.insert })),
     )
     this.editor.pushUndoStop()
@@ -707,12 +707,12 @@ export class EditorSession {
 
   undo(): void {
     this.editor.focus()
-    this.editor.trigger('nexterm', 'undo', null)
+    this.editor.trigger('termstead', 'undo', null)
   }
 
   redo(): void {
     this.editor.focus()
-    this.editor.trigger('nexterm', 'redo', null)
+    this.editor.trigger('termstead', 'redo', null)
   }
 
   revealLine(line: number, col = 1): void {

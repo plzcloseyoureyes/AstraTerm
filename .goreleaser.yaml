@@ -1,13 +1,13 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 #
-# Release pipeline for NexTerm (docs/RELEASING.md). Mirrors `make release` / scripts/release/dist: same platforms,
+# Release pipeline for Termstead (docs/RELEASING.md). Mirrors `make release` / scripts/release/dist: same platforms,
 # flags, archive names and contents. The web UI is NOT built here: the release workflow (or `make web`) builds it once
 # into internal/webui/dist before GoReleaser runs, and every binary embeds that same build.
 #
 # Local dry run (nothing is published):  make snapshot   (or: goreleaser release --snapshot --clean)
 version: 2
 
-project_name: nexterm
+project_name: termstead
 
 before:
   hooks:
@@ -15,9 +15,9 @@ before:
     - go mod verify
 
 builds:
-  - id: nexterm
-    main: ./cmd/nexterm
-    binary: nexterm
+  - id: termstead
+    main: ./cmd/termstead
+    binary: termstead
     env:
       - CGO_ENABLED=0
     flags:
@@ -40,8 +40,8 @@ builds:
         goarch: arm
 
 archives:
-  - id: nexterm
-    ids: [nexterm]
+  - id: termstead
+    ids: [termstead]
     formats: [tar.gz]
     format_overrides:
       - goos: windows
@@ -95,13 +95,13 @@ release:
   draft: true
   replace_existing_draft: true
   prerelease: auto
-  name_template: "NexTerm {{ .Tag }}"
+  name_template: "Termstead {{ .Tag }}"
   footer: |
     ## Verify the download
 
     ```sh
     sha256sum --ignore-missing -c SHA256SUMS        # macOS: shasum -a 256 --ignore-missing -c SHA256SUMS
-    gh attestation verify nexterm_{{ .Version }}_linux_amd64.tar.gz --repo {{ envOrDefault "GITHUB_REPOSITORY" "OWNER/nexterm" }}
+    gh attestation verify termstead_{{ .Version }}_linux_amd64.tar.gz --repo {{ envOrDefault "GITHUB_REPOSITORY" "OWNER/termstead" }}
     ```
 
     Third-party licenses: THIRD_PARTY_NOTICES.md inside every archive.

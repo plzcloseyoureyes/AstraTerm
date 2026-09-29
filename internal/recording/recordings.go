@@ -18,8 +18,8 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // RecordingItem is a recordings row as listed by GET /api/recordings (model.Recording plus derived fields).
@@ -27,7 +27,7 @@ type RecordingItem struct {
 	model.Recording
 	// Live: the session is still writing this recording / log.
 	Live bool `json:"live"`
-	// Interrupted: never finished (NexTerm stopped before the session ended); size is the file's current size.
+	// Interrupted: never finished (Termstead stopped before the session ended); size is the file's current size.
 	Interrupted    bool   `json:"interrupted,omitempty"`
 	DurationMs     int64  `json:"durationMs,omitempty"`
 	ConnectionName string `json:"connectionName,omitempty"`
@@ -378,7 +378,7 @@ func (s *Service) handleUsage(c *echo.Context) error {
 
 // ---- file ---------------------------------------------------------------------------------------------------------
 
-// safePath verifies that a recording path lies inside NexTerm's recordings or logs directory and is a regular file.
+// safePath verifies that a recording path lies inside Termstead's recordings or logs directory and is a regular file.
 func (s *Service) safePath(p string) (string, error) {
 	if s.d.Cfg == nil || p == "" {
 		return "", errGone

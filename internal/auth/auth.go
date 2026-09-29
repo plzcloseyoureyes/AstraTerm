@@ -20,15 +20,15 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/store"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/store"
 )
 
 // Session cookie and lifetimes.
 const (
-	CookieName        = "nexterm_session"
+	CookieName        = "termstead_session"
 	SessionTTL        = 7 * 24 * time.Hour  // sliding
 	RememberTTL       = 30 * 24 * time.Hour // sliding, persistent cookie
 	touchInterval     = time.Minute

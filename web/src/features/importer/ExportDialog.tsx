@@ -29,8 +29,8 @@ const ALL = '__all__'
 const FORMATS: { value: ExportFormat; label: string; description: string; secrets: boolean }[] = [
   {
     value: 'json',
-    label: 'NexTerm JSON',
-    description: 'Full fidelity — folders, sessions, identities, snippets. Re-importable in NexTerm.',
+    label: 'Termstead JSON',
+    description: 'Full fidelity — folders, sessions, identities, snippets. Re-importable in Termstead.',
     secrets: true,
   },
   { value: 'csv', label: 'CSV', description: 'A spreadsheet of sessions (Termius-compatible columns). No secrets.', secrets: false },

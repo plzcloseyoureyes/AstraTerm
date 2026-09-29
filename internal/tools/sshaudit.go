@@ -16,7 +16,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 type sshAuditRequest struct {
@@ -150,7 +150,7 @@ func hostKeyFingerprints(ctx context.Context, guard *netGuard, addr string, offe
 		}
 		var key ssh.PublicKey
 		cfg := &ssh.ClientConfig{
-			User:              "nexterm-audit",
+			User:              "termstead-audit",
 			HostKeyAlgorithms: []string{p.algo},
 			Timeout:           timeout,
 			HostKeyCallback: func(_ string, _ net.Addr, k ssh.PublicKey) error {
@@ -229,7 +229,7 @@ func sshHandshake(conn net.Conn) (string, *kexInit, error) {
 	if !strings.HasPrefix(banner, "SSH-2.0") && !strings.HasPrefix(banner, "SSH-1.99") {
 		return banner, nil, fmt.Errorf("unsupported protocol: %s", banner)
 	}
-	if _, err := conn.Write([]byte("SSH-2.0-NexTerm_audit\r\n")); err != nil {
+	if _, err := conn.Write([]byte("SSH-2.0-Termstead_audit\r\n")); err != nil {
 		return banner, nil, err
 	}
 	// Read binary packets until we see KEXINIT (msg type 20), skipping others.

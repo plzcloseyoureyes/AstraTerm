@@ -369,7 +369,7 @@ function RecordingRow({ item, showOwner, selected, onSelect }: { item: Recording
             </Badge>
           )}
           {item.interrupted && (
-            <Tooltip content="NexTerm stopped before this session ended; the file ends where it stopped.">
+            <Tooltip content="Termstead stopped before this session ended; the file ends where it stopped.">
               <Badge variant="warning" className="shrink-0">
                 Interrupted
               </Badge>

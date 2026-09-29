@@ -23,7 +23,7 @@ import (
 
 // engine is a minimal Docker Engine API client (RESEARCH §3.16). It talks HTTP over a caller-supplied transport
 // (unix socket, Windows named pipe, TCP, or an SSH-forwarded socket) and supports the container list, exec
-// create/start(hijack)/resize, logs streaming and start/stop/restart actions NexTerm needs. Unversioned API paths
+// create/start(hijack)/resize, logs streaming and start/stop/restart actions Termstead needs. Unversioned API paths
 // are used so the daemon maps them to its current version (Docker and Podman both accept this).
 type engine struct {
 	client *http.Client

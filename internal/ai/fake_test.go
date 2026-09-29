@@ -12,7 +12,7 @@ import (
 )
 
 // FakeProvider is a local httptest server speaking the Anthropic Messages API or the OpenAI chat/completions API with
-// SSE streaming. It records every request so tests can assert on headers and on what would have left NexTerm. No
+// SSE streaming. It records every request so tests can assert on headers and on what would have left Termstead. No
 // real (paid) API is ever contacted.
 type FakeProvider struct {
 	*httptest.Server

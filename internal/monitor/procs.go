@@ -15,7 +15,7 @@ import (
 	"github.com/shirou/gopsutil/v4/mem"
 	"github.com/shirou/gopsutil/v4/process"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 // Process is one row of a process list: a JSON superset of model.Process (SPEC §6.0). CPU is a percentage of one core
@@ -448,7 +448,7 @@ func winNice(prio int) int {
 	return -20
 }
 
-// localWindowsProcesses lists the processes of a Windows NexTerm host natively (gopsutil).
+// localWindowsProcesses lists the processes of a Windows Termstead host natively (gopsutil).
 func localWindowsProcesses(ctx context.Context, now time.Time) ([]Process, *procState, error) {
 	list, err := process.ProcessesWithContext(ctx)
 	if err != nil {
@@ -508,7 +508,7 @@ func (s *Service) kill(ctx context.Context, t *target, pid int, sig string, sudo
 		return httpx.BadRequest("refusing to signal PID 0 or 1")
 	}
 	if t.local && pid == os.Getpid() {
-		return httpx.Forbidden("refusing to signal the NexTerm server itself")
+		return httpx.Forbidden("refusing to signal the Termstead server itself")
 	}
 	sig, err := normalizeSignal(sig)
 	if err != nil {

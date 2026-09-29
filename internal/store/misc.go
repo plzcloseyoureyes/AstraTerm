@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // ---- settings -----------------------------------------------------------------------------------------------------

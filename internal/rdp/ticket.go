@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Tickets authorize one viewer connection: POST /api/sessions/{id}/rdp-ticket mints a random token bound

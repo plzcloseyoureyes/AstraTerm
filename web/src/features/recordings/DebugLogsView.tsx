@@ -163,7 +163,7 @@ export default function DebugLogsView({ tabId }: TabProps) {
         <div className="flex shrink-0 items-center gap-2 border-b bg-muted/40 px-3 py-1 text-sm text-muted-foreground">
           {!meta.enabled
             ? 'Log capture is switched off.'
-            : 'Only part of NexTerm’s log is captured (components that start after the recording module); the process log has everything.'}
+            : 'Only part of Termstead’s log is captured (components that start after the recording module); the process log has everything.'}
           {!meta.enabled && (
             <Button size="xs" variant="ghost" onClick={() => void runCommand('recordings.open', { tab: 'storage' })}>
               Settings

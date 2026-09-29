@@ -1,8 +1,8 @@
 /*
  * Live monitoring feeds. Components call useMonitorFeed(sessionId, active): the store keeps one ref-counted
- * `{type:'subscribe', topic:'monitor', sessionId}` per session while at least one consumer is active and a NexTerm
+ * `{type:'subscribe', topic:'monitor', sessionId}` per session while at least one consumer is active and a Termstead
  * window is visible (the remote exec channel counts toward the server's MaxSessions, RESEARCH §3.21), and records the
- * samples plus a 10-minute history for charts and sparklines. 'local' is the NexTerm host itself.
+ * samples plus a 10-minute history for charts and sparklines. 'local' is the Termstead host itself.
  */
 import { useEffect } from 'react'
 import { create } from 'zustand'

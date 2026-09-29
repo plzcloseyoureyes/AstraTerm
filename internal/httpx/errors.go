@@ -9,7 +9,7 @@ import (
 
 	"github.com/labstack/echo/v5"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // HTTPError is an error with an HTTP status and a stable machine code, rendered as {"error": msg, "code": code}.

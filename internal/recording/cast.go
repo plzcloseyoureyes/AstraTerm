@@ -13,12 +13,12 @@ import (
 	"unicode/utf8"
 )
 
-// asciicast v2 / v3 reading and writing (REC-2). v3 (what NexTerm records): a header line
+// asciicast v2 / v3 reading and writing (REC-2). v3 (what Termstead records): a header line
 // {"version":3,"term":{"cols","rows","type"},"timestamp",...} followed by [interval, code, data] events whose first
 // element is the time since the previous event. v2: {"version":2,"width","height","timestamp",...} and [time, code,
 // data] with absolute times.
 
-// castHeader is the union of the v2 and v3 header fields NexTerm reads.
+// castHeader is the union of the v2 and v3 header fields Termstead reads.
 type castHeader struct {
 	Version       int             `json:"version"`
 	Term          *castTerm       `json:"term,omitempty"`

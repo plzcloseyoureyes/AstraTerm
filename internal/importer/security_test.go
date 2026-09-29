@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/model"
 )
 
 func httpStatus(err error) int {
@@ -92,16 +92,16 @@ func zipOf(t *testing.T, files map[string][]byte, order ...string) []byte {
 func TestUnzipBackupHardening(t *testing.T) {
 	db := append([]byte(backupMagicSQLite), make([]byte, 100)...)
 	// Well-formed.
-	if gotDB, key, err := unzipBackup(zipOf(t, map[string][]byte{"nexterm.db": db, "system.key": []byte("k")}, "nexterm.db", "system.key")); err != nil || len(gotDB) != len(db) || string(key) != "k" {
+	if gotDB, key, err := unzipBackup(zipOf(t, map[string][]byte{"termstead.db": db, "system.key": []byte("k")}, "termstead.db", "system.key")); err != nil || len(gotDB) != len(db) || string(key) != "k" {
 		t.Fatalf("valid archive: %v", err)
 	}
 	cases := map[string][]byte{
-		"unexpected entry":  zipOf(t, map[string][]byte{"nexterm.db": db, "../../etc/passwd": []byte("x")}, "nexterm.db", "../../etc/passwd"),
-		"nested db":         zipOf(t, map[string][]byte{"a/nexterm.db": db}, "a/nexterm.db"),
+		"unexpected entry":  zipOf(t, map[string][]byte{"termstead.db": db, "../../etc/passwd": []byte("x")}, "termstead.db", "../../etc/passwd"),
+		"nested db":         zipOf(t, map[string][]byte{"a/termstead.db": db}, "a/termstead.db"),
 		"missing db":        zipOf(t, map[string][]byte{"system.key": []byte("k")}, "system.key"),
-		"oversized key":     zipOf(t, map[string][]byte{"nexterm.db": db, "system.key": bytes.Repeat([]byte("k"), maxSystemKeyBytes+1)}, "nexterm.db", "system.key"),
+		"oversized key":     zipOf(t, map[string][]byte{"termstead.db": db, "system.key": bytes.Repeat([]byte("k"), maxSystemKeyBytes+1)}, "termstead.db", "system.key"),
 		"not a zip":         []byte("PK\x03\x04garbage"),
-		"too many entries":  zipOf(t, map[string][]byte{"nexterm.db": db, "a": nil, "b": nil, "c": nil, "d": nil}, "nexterm.db", "a", "b", "c", "d"),
+		"too many entries":  zipOf(t, map[string][]byte{"termstead.db": db, "a": nil, "b": nil, "c": nil, "d": nil}, "termstead.db", "a", "b", "c", "d"),
 		"duplicate entries": dupZip(t, db),
 	}
 	for name, archive := range cases {
@@ -111,12 +111,12 @@ func TestUnzipBackupHardening(t *testing.T) {
 	}
 }
 
-// dupZip builds an archive containing nexterm.db twice.
+// dupZip builds an archive containing termstead.db twice.
 func dupZip(t *testing.T, db []byte) []byte {
 	var buf bytes.Buffer
 	zw := zip.NewWriter(&buf)
 	for i := 0; i < 2; i++ {
-		w, _ := zw.Create("nexterm.db")
+		w, _ := zw.Create("termstead.db")
 		_, _ = w.Write(db)
 	}
 	_ = zw.Close()
@@ -133,7 +133,7 @@ func TestUnzipBackupLyingHeaderIsNotTruncated(t *testing.T) {
 	for _, f := range []struct {
 		name string
 		data []byte
-	}{{"nexterm.db", db}, {"system.key", big}} {
+	}{{"termstead.db", db}, {"system.key", big}} {
 		w, _ := zw.CreateHeader(&zip.FileHeader{Name: f.name, Method: zip.Deflate})
 		_, _ = w.Write(f.data)
 	}
@@ -148,7 +148,7 @@ func TestUnzipBackupLyingHeaderIsNotTruncated(t *testing.T) {
 }
 
 func TestPlaintextJSONSecretsIgnored(t *testing.T) {
-	doc := `{"format":"nexterm-export","version":1,"connections":[{"id":"c1","name":"x","protocol":"ssh","host":"x.example.com","secrets":{"password":"plain"}}],
+	doc := `{"format":"termstead-export","version":1,"connections":[{"id":"c1","name":"x","protocol":"ssh","host":"x.example.com","secrets":{"password":"plain"}}],
 	"keys":[{"id":"k1","name":"k","privateKey":"-----BEGIN OPENSSH PRIVATE KEY-----\nAAAA\n-----END OPENSSH PRIVATE KEY-----"}],
 	"identities":[{"id":"i1","name":"id","secrets":{"password":"plain2"}}]}`
 	p, err := parseSource(fmtJSON, []byte(doc), previewOptions{})
@@ -164,7 +164,7 @@ func TestPlaintextJSONSecretsIgnored(t *testing.T) {
 }
 
 func TestEncryptedJSONSecretsAccepted(t *testing.T) {
-	doc := `{"format":"nexterm-export","version":1,"connections":[{"id":"c1","name":"x","protocol":"ssh","host":"x.example.com","secrets":{"password":"s3cret","bad name!":"v"}}]}`
+	doc := `{"format":"termstead-export","version":1,"connections":[{"id":"c1","name":"x","protocol":"ssh","host":"x.example.com","secrets":{"password":"s3cret","bad name!":"v"}}]}`
 	env, err := encrypt([]byte(doc), "export passphrase", payloadExport)
 	if err != nil {
 		t.Fatal(err)
@@ -183,7 +183,7 @@ func TestEncryptedJSONSecretsAccepted(t *testing.T) {
 }
 
 func TestJSONOptionReferencesRemapped(t *testing.T) {
-	doc := `{"format":"nexterm-export","version":1,"connections":[
+	doc := `{"format":"termstead-export","version":1,"connections":[
 	 {"id":"aaaaaaaaaaaaaaaaaaaa","name":"bastion","protocol":"ssh","host":"b.example.com"},
 	 {"id":"bbbbbbbbbbbbbbbbbbbb","name":"app","protocol":"ssh","host":"app.internal","options":{"jumpHosts":["aaaaaaaaaaaaaaaaaaaa","ops@edge.example.com:2022","cccccccccccccccccccc"],"_managedBy":"ssh-config"}},
 	 {"id":"dddddddddddddddddddd","name":"desk","protocol":"vnc","host":"desk.internal","options":{"sshTunnelVia":"aaaaaaaaaaaaaaaaaaaa"}}]}`
@@ -341,7 +341,7 @@ func TestCSVDelimiterSniffAndURIPassword(t *testing.T) {
 }
 
 func TestSanitizeRejectsBadEntries(t *testing.T) {
-	src := `{"format":"nexterm-export","version":1,"connections":[
+	src := `{"format":"termstead-export","version":1,"connections":[
 	 {"name":"bad host","protocol":"ssh","host":"a b"},
 	 {"name":"bad proto","protocol":"SSH; rm -rf","host":"h"},
 	 {"name":"n\nl","protocol":"ssh","host":"ok.example.com","port":70000,"authMethod":"magic","color":"` + strings.Repeat("x", 100) + `","icon":"https://evil/x.png","tags":["a","a","b"]}]}`

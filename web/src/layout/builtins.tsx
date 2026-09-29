@@ -174,7 +174,7 @@ registerCommand({
 })
 registerCommand({
   id: 'app.about',
-  title: 'About NexTerm',
+  title: 'About Termstead',
   category: 'Help',
   icon: Info,
   run: () => setAboutOpen(true),
@@ -729,7 +729,7 @@ registerMenu({
     { label: 'Keyboard shortcuts', icon: Keyboard, command: 'help.shortcuts' },
     { label: 'Home', command: 'app.home' },
     { type: 'separator' },
-    { label: 'About NexTerm', icon: Info, command: 'app.about' },
+    { label: 'About Termstead', icon: Info, command: 'app.about' },
   ],
 })
 
@@ -812,7 +812,7 @@ registerRibbonButton({
     { label: 'Keyboard shortcuts', icon: Keyboard, command: 'help.shortcuts' },
     { label: 'Home', command: 'app.home' },
     { type: 'separator' },
-    { label: 'About NexTerm', icon: Info, command: 'app.about' },
+    { label: 'About Termstead', icon: Info, command: 'app.about' },
   ],
 })
 
@@ -824,7 +824,7 @@ function EventsStatusItem() {
   const status = useEventsStore((s) => s.status)
   const failures = useEventsStore((s) => s.failures)
   if (status === 'open') {
-    return <StatusBarItem icon={Wifi} tone="muted" tooltip="Connected to the NexTerm server (live updates)" aria-label="Server connected" />
+    return <StatusBarItem icon={Wifi} tone="muted" tooltip="Connected to the Termstead server (live updates)" aria-label="Server connected" />
   }
   const connecting = status === 'connecting'
   return (
@@ -897,8 +897,8 @@ function VaultStatusItem() {
 function VersionItem() {
   const version = useAppVersion()
   return (
-    <StatusBarItem tone="muted" tooltip="About NexTerm" onClick={() => setAboutOpen(true)} aria-label="About NexTerm">
-      {version ? `v${version.replace(/^v/, '')}` : 'NexTerm'}
+    <StatusBarItem tone="muted" tooltip="About Termstead" onClick={() => setAboutOpen(true)} aria-label="About Termstead">
+      {version ? `v${version.replace(/^v/, '')}` : 'Termstead'}
     </StatusBarItem>
   )
 }

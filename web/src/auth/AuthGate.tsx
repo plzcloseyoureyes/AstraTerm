@@ -82,7 +82,7 @@ function ServerUnreachable() {
           <ServerOff className="size-5" />
         </div>
         <div className="grid gap-1">
-          <h1 className="text-lg font-semibold">Cannot reach the NexTerm server</h1>
+          <h1 className="text-lg font-semibold">Cannot reach the Termstead server</h1>
           <p className="text-sm text-muted-foreground">{error ?? 'The server did not respond.'}</p>
         </div>
         <Button onClick={() => void retryAuth()}>
@@ -158,7 +158,7 @@ export function AuthGate() {
   return (
     <>
       {content}
-      <Splash visible={booting} label={status === 'authenticated' ? 'Loading your workspace…' : 'Starting NexTerm…'} />
+      <Splash visible={booting} label={status === 'authenticated' ? 'Loading your workspace…' : 'Starting Termstead…'} />
     </>
   )
 }

@@ -1,4 +1,4 @@
-// Package server assembles NexTerm: it builds the core services (store, vault, events, audit), installs the HTTP
+// Package server assembles Termstead: it builds the core services (store, vault, events, audit), installs the HTTP
 // middleware and authentication, mounts every module, serves the embedded SPA and runs the HTTP(S) server with
 // graceful shutdown.
 package server
@@ -21,25 +21,25 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/pkg/browser"
 
-	"github.com/nexterm/nexterm/internal/app"
-	"github.com/nexterm/nexterm/internal/audit"
-	"github.com/nexterm/nexterm/internal/auth"
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/core"
-	"github.com/nexterm/nexterm/internal/events"
-	"github.com/nexterm/nexterm/internal/httpx"
-	"github.com/nexterm/nexterm/internal/importer"
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/recording"
-	"github.com/nexterm/nexterm/internal/servers"
-	"github.com/nexterm/nexterm/internal/sshx"
-	"github.com/nexterm/nexterm/internal/store"
-	"github.com/nexterm/nexterm/internal/term"
-	"github.com/nexterm/nexterm/internal/vault"
-	"github.com/nexterm/nexterm/internal/webui"
+	"github.com/termstead/termstead/internal/app"
+	"github.com/termstead/termstead/internal/audit"
+	"github.com/termstead/termstead/internal/auth"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/core"
+	"github.com/termstead/termstead/internal/events"
+	"github.com/termstead/termstead/internal/httpx"
+	"github.com/termstead/termstead/internal/importer"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/recording"
+	"github.com/termstead/termstead/internal/servers"
+	"github.com/termstead/termstead/internal/sshx"
+	"github.com/termstead/termstead/internal/store"
+	"github.com/termstead/termstead/internal/term"
+	"github.com/termstead/termstead/internal/vault"
+	"github.com/termstead/termstead/internal/webui"
 )
 
-// Server is a fully wired NexTerm instance.
+// Server is a fully wired Termstead instance.
 type Server struct {
 	Cfg  *config.Config
 	Deps *app.Deps
@@ -188,7 +188,7 @@ func (s *Server) Close() error {
 // shutdownSweepTimeout bounds how long Close waits for sessions to finish closing.
 const shutdownSweepTimeout = 10 * time.Second
 
-// Run starts NexTerm and blocks until ctx is cancelled (graceful shutdown) or the listener fails. The startup banner
+// Run starts Termstead and blocks until ctx is cancelled (graceful shutdown) or the listener fails. The startup banner
 // goes to out.
 func Run(ctx context.Context, cfg *config.Config, log *slog.Logger, out io.Writer) error {
 	slog.SetDefault(log)
@@ -201,7 +201,7 @@ func Run(ctx context.Context, cfg *config.Config, log *slog.Logger, out io.Write
 	ln, err := net.Listen("tcp", cfg.Listen)
 	if err != nil {
 		if errors.Is(err, syscall.EADDRINUSE) {
-			return fmt.Errorf("cannot listen on %s: address already in use (is NexTerm already running? use --listen to pick another port)", cfg.Listen)
+			return fmt.Errorf("cannot listen on %s: address already in use (is Termstead already running? use --listen to pick another port)", cfg.Listen)
 		}
 		return fmt.Errorf("listen %s: %w", cfg.Listen, err)
 	}
@@ -234,7 +234,7 @@ func Run(ctx context.Context, cfg *config.Config, log *slog.Logger, out io.Write
 	} else if tok := s.Auth.LaunchToken(); tok != "" {
 		openURL = u + "?launch=" + url.QueryEscape(tok)
 	}
-	fmt.Fprintf(out, "NexTerm %s (%s mode)\n  URL:      %s\n", cfg.Version, cfg.Mode, openURL)
+	fmt.Fprintf(out, "Termstead %s (%s mode)\n  URL:      %s\n", cfg.Version, cfg.Mode, openURL)
 	for i, a := range alsoAt {
 		label := "          "
 		if i == 0 {

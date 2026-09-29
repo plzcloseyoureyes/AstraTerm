@@ -1,7 +1,7 @@
 /*
  * Terminal plugin "ai.assist" (TOOL-11, TOOL-12):
  *   - Ctrl+I (Cmd+I on macOS) opens the command bar for this terminal. Plain Ctrl+<key> belongs to the shell in
- *     NexTerm, so the plugin claims the key itself — only while the assistant is available (else Ctrl+I stays Tab).
+ *     Termstead, so the plugin claims the key itself — only while the assistant is available (else Ctrl+I stays Tab).
  *   - `# find files over 1GB` + Enter at a prompt: the shell treats the line as a comment (harmless) and the command
  *     bar opens with a suggestion for it.
  *   - Failed commands get a small, calm "Explain · Fix" chip next to their output: exit codes from OSC 133 shell

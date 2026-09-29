@@ -16,7 +16,7 @@ import (
 
 	"github.com/charmbracelet/x/xpty"
 
-	"github.com/nexterm/nexterm/internal/model"
+	"github.com/termstead/termstead/internal/model"
 )
 
 // Real shells behind a PTY: the injected line must be invisible, the folder reported and followed, keystrokes
@@ -166,7 +166,7 @@ func TestShellIntegrationRealShells(t *testing.T) {
 
 // Full-screen programs (alternate screen) and pagers are never typed into, however long they run.
 func TestShellIntegrationNeverTypesIntoFullScreenPrograms(t *testing.T) {
-	for _, prog := range []string{"vim -u NONE -N /tmp/nexterm-si-test.txt", "less /etc/hosts"} {
+	for _, prog := range []string{"vim -u NONE -N /tmp/termstead-si-test.txt", "less /etc/hosts"} {
 		bin := strings.Fields(prog)[0]
 		if _, err := exec.LookPath(bin); err != nil {
 			continue
@@ -196,5 +196,5 @@ func TestShellIntegrationNeverTypesIntoFullScreenPrograms(t *testing.T) {
 			siWait(t, "filter done", func() bool { return filterDone(s) })
 		})
 	}
-	os.Remove("/tmp/nexterm-si-test.txt")
+	os.Remove("/tmp/termstead-si-test.txt")
 }

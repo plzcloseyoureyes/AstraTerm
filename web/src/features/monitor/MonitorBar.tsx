@@ -2,7 +2,7 @@
  * The remote monitoring bar (MON-1): the strip under an SSH tab — host, CPU, RAM, disk of /, network ↓↑,
  * users, uptime, load — rendered in the status bar for the ACTIVE tab's session (SSH, and local shells when enabled).
  * Items turn orange / red above the warning / critical thresholds; hovering shows details; clicking opens the monitor
- * tab on the matching panel. Sampling runs only while the bar is shown and a NexTerm window is visible.
+ * tab on the matching panel. Sampling runs only while the bar is shown and a Termstead window is visible.
  */
 import { useEffect, useLayoutEffect, useRef, useState, type Ref, type RefObject } from 'react'
 import type * as React from 'react'

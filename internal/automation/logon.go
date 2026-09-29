@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/model"
-	"github.com/nexterm/nexterm/internal/term"
+	"github.com/termstead/termstead/internal/model"
+	"github.com/termstead/termstead/internal/term"
 )
 
 // Logon actions (AUTO-8): connection.options.logonActions is an ordered list of expect/send steps executed by the

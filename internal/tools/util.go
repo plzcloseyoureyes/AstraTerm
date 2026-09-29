@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/nexterm/nexterm/internal/httpx"
+	"github.com/termstead/termstead/internal/httpx"
 )
 
 // ms converts a duration to milliseconds rounded to three decimals (µs precision) for JSON.

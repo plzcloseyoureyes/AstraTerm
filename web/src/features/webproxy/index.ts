@@ -1,12 +1,12 @@
 /*
  * Web proxy feature (RESEARCH PROTO-28 "Browser" sessions, TUN-8 "open forwarded web services", PROTO-20 Xpra):
- * 'web' tabs showing HTTP(S) services reached from the NexTerm host or through SSH, the saved 'web' session type
+ * 'web' tabs showing HTTP(S) services reached from the Termstead host or through SSH, the saved 'web' session type
  * (editor + opener), X11 applications through Xpra, and the dialogs / menus around them.
  *
  * Commands (category "Web"):
  *   webproxy.open {connectionId?|sessionId?|tunnelId?, host?, port?, scheme?, path?, url?, title?, insecureTls?, dialog?}
  *                  complete targets open directly (tools, tunnels, monitor), otherwise the prefilled dialog
- *   webproxy.browser                 open any address reachable from the NexTerm host
+ *   webproxy.browser                 open any address reachable from the Termstead host
  *   webproxy.xpra {connectionId?|sessionId?, command?, mode?}   run an X11 application via Xpra
  *   webproxy.manage                  the user's open proxies
  *   webproxy.back|forward|reload|home|zoomIn|zoomOut|zoomReset|openExternal|focusAddress   the active web tab
@@ -78,13 +78,13 @@ registerCommand<OpenArgs>({
   category: CATEGORY,
   icon: Globe,
   keywords: ['browser', 'http', 'url', 'proxy', 'forwarded web service', 'grafana', 'jupyter'],
-  description: 'Open an HTTP(S) service in a tab, from the NexTerm host or through SSH',
+  description: 'Open an HTTP(S) service in a tab, from the Termstead host or through SSH',
   run: ({ args }) => runOpenCommand(args),
 })
 
 registerCommand({
   id: 'webproxy.browser',
-  title: 'Browser: open address from the NexTerm host…',
+  title: 'Browser: open address from the Termstead host…',
   category: CATEGORY,
   icon: Globe,
   keywords: ['browser', 'url', 'web'],
@@ -154,7 +154,7 @@ const webMenu = (): MenuItem[] => [
   { label: 'Web proxies…', icon: Network, command: 'webproxy.manage' },
 ]
 
-registerRibbonButton({ id: 'browser', label: 'Browser', icon: Globe, order: 85, command: 'webproxy.open', menu: webMenu, tooltip: 'Web pages and X11 apps through NexTerm' })
+registerRibbonButton({ id: 'browser', label: 'Browser', icon: Globe, order: 85, command: 'webproxy.open', menu: webMenu, tooltip: 'Web pages and X11 apps through Termstead' })
 
 registerMenu({ menu: 'tools', order: 140, items: webMenu })
 

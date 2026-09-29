@@ -16,7 +16,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/netguard"
+	"github.com/termstead/termstead/internal/netguard"
 )
 
 // dialTimeout bounds how long a client connection waits for the SSH link and the destination.
@@ -39,20 +39,20 @@ type execer interface {
 	Exec(ctx context.Context, cmd string) (stdout, stderr []byte, exitCode int, err error)
 }
 
-// linkProvider hands a live link to forwards whose listener lives on the NexTerm host, waiting for (or, on demand,
+// linkProvider hands a live link to forwards whose listener lives on the Termstead host, waiting for (or, on demand,
 // triggering) the SSH connection.
 type linkProvider interface {
 	linkFor(ctx context.Context) (link, error)
 }
 
-// forward is the data plane of one forwarding spec: the listener (on the NexTerm host, or on the SSH server through a
+// forward is the data plane of one forwarding spec: the listener (on the Termstead host, or on the SSH server through a
 // link) and the per-connection relays. It never dials SSH itself; the supervisor owns the link.
 type forward struct {
 	sp    *spec
 	st    *stats
 	log   *slog.Logger
 	links linkProvider
-	// localDial reaches destinations from the NexTerm host (remote and remote-dynamic forwards).
+	// localDial reaches destinations from the Termstead host (remote and remote-dynamic forwards).
 	localDial func(ctx context.Context, network, addr string) (net.Conn, error)
 
 	ctx    context.Context
@@ -61,7 +61,7 @@ type forward struct {
 	proxy  *proxy
 
 	mu     sync.Mutex
-	ln     net.Listener    // listener on the NexTerm host
+	ln     net.Listener    // listener on the Termstead host
 	rln    *remoteListener // current listener on the SSH server
 	conns  map[net.Conn]struct{}
 	closed bool
@@ -105,7 +105,7 @@ func newForward(parent context.Context, sp *spec, st *stats, log *slog.Logger, l
 	f := &forward{sp: sp, st: st, log: log, links: links, ctx: ctx, cancel: cancel, conns: map[net.Conn]struct{}{}}
 	f.localDial = func(ctx context.Context, network, addr string) (net.Conn, error) {
 		// The owner's destination guard vets the concrete address (SEC-7): remote forwards and reverse SOCKS
-		// clients must not reach the NexTerm host's own services or other users' listeners.
+		// clients must not reach the Termstead host's own services or other users' listeners.
 		var g *netguard.Guard
 		if sp.guard != nil {
 			g = sp.guard()
@@ -122,12 +122,12 @@ func newForward(parent context.Context, sp *spec, st *stats, log *slog.Logger, l
 	return f
 }
 
-// reverseProxyDial reaches destinations requested by reverse SOCKS clients (on the SSH server) from the NexTerm host,
-// except NexTerm's own port: those clients are outside NexTerm's trust boundary.
+// reverseProxyDial reaches destinations requested by reverse SOCKS clients (on the SSH server) from the Termstead host,
+// except Termstead's own port: those clients are outside Termstead's trust boundary.
 func (f *forward) reverseProxyDial(ctx context.Context, network, addr string) (net.Conn, error) {
 	if f.sp.selfPort > 0 {
 		if _, port, err := net.SplitHostPort(addr); err == nil && port == strconv.Itoa(f.sp.selfPort) {
-			return nil, fmt.Errorf("refusing to connect to %s: this is NexTerm's own port", addr)
+			return nil, fmt.Errorf("refusing to connect to %s: this is Termstead's own port", addr)
 		}
 	}
 	return f.hostDial(ctx, network, addr)
@@ -146,7 +146,7 @@ func (f *forward) sshDial(ctx context.Context, network, addr string) (net.Conn, 
 	return f.trackUpstream(c)
 }
 
-// hostDial opens a connection from the NexTerm host (remote and remote-dynamic forwards).
+// hostDial opens a connection from the Termstead host (remote and remote-dynamic forwards).
 func (f *forward) hostDial(ctx context.Context, network, addr string) (net.Conn, error) {
 	c, err := f.localDial(ctx, network, addr)
 	if err != nil {
@@ -211,9 +211,9 @@ func (c *trackedConn) Close() error {
 
 func (c *trackedConn) CloseWrite() error { return closeWrite(c.Conn) }
 
-// ---- listener on the NexTerm host (local, dynamic) ----------------------------------------------------------------
+// ---- listener on the Termstead host (local, dynamic) ----------------------------------------------------------------
 
-// listenLocal opens the forward's listener on the NexTerm host and starts accepting. Errors are typed API errors
+// listenLocal opens the forward's listener on the Termstead host and starts accepting. Errors are typed API errors
 // (address in use, permission denied…).
 func (f *forward) listenLocal() error {
 	network, addr := f.sp.localListenAddr()
@@ -262,7 +262,7 @@ func (f *forward) boundLocalLabel(a net.Addr) string {
 }
 
 // listenUnixLocal listens on a Unix socket, replacing a stale socket file (one nobody listens on) and restricting
-// the socket to the NexTerm user.
+// the socket to the Termstead user.
 func listenUnixLocal(path string) (net.Listener, error) {
 	ln, err := net.Listen("unix", path)
 	if err != nil && isAddrInUse(err) {

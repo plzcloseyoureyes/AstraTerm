@@ -12,13 +12,13 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/nexterm/nexterm/internal/auth"
+	"github.com/termstead/termstead/internal/auth"
 )
 
 func testEnv(t *testing.T) *env {
 	t.Helper()
 	dir := t.TempDir()
-	return &env{home: dir, dataDir: filepath.Join(dir, "data"), defaultRoot: filepath.Join(dir, "NexTermShare"),
+	return &env{home: dir, dataDir: filepath.Join(dir, "data"), defaultRoot: filepath.Join(dir, "TermsteadShare"),
 		nexHost: "127.0.0.1", nexPort: 7822}
 }
 
@@ -43,16 +43,16 @@ func TestNormalizeBind(t *testing.T) {
 func TestCommonValidate(t *testing.T) {
 	e := testEnv(t)
 	c := Common{BindAddress: "", Port: 7822}
-	if err := c.validate(e, true); err == nil || !strings.Contains(err.Error(), "NexTerm's own port") {
+	if err := c.validate(e, true); err == nil || !strings.Contains(err.Error(), "Termstead's own port") {
 		t.Fatalf("own port accepted: %v", err)
 	}
 	c = Common{BindAddress: "0.0.0.0", Port: 7822}
 	if err := c.validate(e, true); err == nil {
-		t.Fatal("wildcard bind of NexTerm's port accepted")
+		t.Fatal("wildcard bind of Termstead's port accepted")
 	}
 	c = Common{BindAddress: "127.0.0.1", Port: 7822}
 	if err := c.validate(e, false); err != nil {
-		t.Fatalf("UDP on NexTerm's port refused: %v", err)
+		t.Fatalf("UDP on Termstead's port refused: %v", err)
 	}
 	for _, p := range []int{0, -1, 70000} {
 		c = Common{Port: p}

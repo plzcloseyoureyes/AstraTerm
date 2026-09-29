@@ -1,6 +1,6 @@
 /*
  * Mosh session editor (PROTO-13): bootstraps mosh-server over SSH (all SSH options apply), then talks to it over UDP
- * with NexTerm's built-in client (no local installation needed) or an installed mosh-client.
+ * with Termstead's built-in client (no local installation needed) or an installed mosh-client.
  */
 import { Radio } from 'lucide-react'
 import type { ProtocolEditorProps } from '@/app/registry'
@@ -16,7 +16,7 @@ export function MoshEditor(props: ProtocolEditorProps) {
     <div className="grid gap-5">
       <EditorNote>
         SSH only starts mosh-server; the session then runs over UDP, so the server&apos;s UDP ports (60000–61000 unless set below)
-        must be reachable from the NexTerm host directly — jump hosts and proxies carry only the SSH part. mosh-server must be
+        must be reachable from the Termstead host directly — jump hosts and proxies carry only the SSH part. mosh-server must be
         installed on the remote host.
       </EditorNote>
       <OptionSection title="Mosh">
@@ -37,7 +37,7 @@ export function MoshEditor(props: ProtocolEditorProps) {
           defaultLabel="Built-in (default)"
           options={[
             { value: 'builtin', label: 'Built-in' },
-            { value: 'system', label: 'Installed mosh-client (NexTerm host)' },
+            { value: 'system', label: 'Installed mosh-client (Termstead host)' },
           ]}
         />
         <SelectOption

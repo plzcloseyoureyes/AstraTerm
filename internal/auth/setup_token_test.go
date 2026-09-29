@@ -3,8 +3,8 @@ package auth_test
 import (
 	"testing"
 
-	"github.com/nexterm/nexterm/internal/config"
-	"github.com/nexterm/nexterm/internal/server/servertest"
+	"github.com/termstead/termstead/internal/config"
+	"github.com/termstead/termstead/internal/server/servertest"
 )
 
 // In server mode (and on non-loopback binds) the first administrator can only be created with the one-time setup

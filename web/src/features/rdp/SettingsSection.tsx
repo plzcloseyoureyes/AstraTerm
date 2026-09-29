@@ -69,7 +69,7 @@ export default function RdpSettingsSection() {
       <SettingsGroup title="Recordings">
         <SettingRow
           label="Session recordings"
-          description='Connections with "Record sessions" are recorded by NexTerm when they use the guacd engine.'
+          description='Connections with "Record sessions" are recorded by Termstead when they use the guacd engine.'
         >
           <Button size="sm" variant="secondary" onClick={() => openRecordings()}>
             <Film /> Open recordings
@@ -238,7 +238,7 @@ function EngineAdmin() {
               save({ guacdDataPath: v || null }, 'Data directory saved')
             }}
           >
-            <Input inputSize="sm" className="font-mono" value={dataPath} onChange={(e) => setDataPath(e.target.value)} placeholder="/tmp/nexterm" aria-label="guacd data directory" />
+            <Input inputSize="sm" className="font-mono" value={dataPath} onChange={(e) => setDataPath(e.target.value)} placeholder="/tmp/termstead" aria-label="guacd data directory" />
             <Button size="sm" type="submit" variant="secondary" disabled={dataPath.trim() === (global.guacdDataPath ?? '')}>
               Save
             </Button>
@@ -289,12 +289,12 @@ function Sidecar({ st, onChanged }: { st?: GuacdStatusInfo; onChanged: () => voi
   return (
     <SettingsGroup
       title="guacd sidecar (Docker)"
-      description={`Runs ${sc?.image ?? 'guacamole/guacd'} in a local Docker container published on ${sc?.address ?? '127.0.0.1:4822'} and makes it this server's guacd.${mode === 'server' ? ' The container runs on the NexTerm server host.' : ''}`}
+      description={`Runs ${sc?.image ?? 'guacamole/guacd'} in a local Docker container published on ${sc?.address ?? '127.0.0.1:4822'} and makes it this server's guacd.${mode === 'server' ? ' The container runs on the Termstead server host.' : ''}`}
     >
       <SettingRow
         label={
           <span className="flex items-center gap-2">
-            <Container className="size-4 text-muted-foreground" /> {sc?.container ?? 'nexterm-guacd'}
+            <Container className="size-4 text-muted-foreground" /> {sc?.container ?? 'termstead-guacd'}
           </span>
         }
         description={
