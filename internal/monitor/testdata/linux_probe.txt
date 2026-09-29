@@ -1,0 +1,21 @@
+@@OS Linux
+@@HOSTNAME ssh1
+@@KERNEL 6.8.0-117-generic
+@@ARCH aarch64
+@@RELEASE
+NAME="Alpine Linux"
+ID=alpine
+VERSION_ID=3.24.2
+PRETTY_NAME="Alpine Linux v3.24"
+HOME_URL="https://alpinelinux.org/"
+BUG_REPORT_URL="https://gitlab.alpinelinux.org/alpine/aports/-/issues"
+@@CPUINFO
+CPU implementer	: 0x61
+CPU part	: 0x000
+@@DTMODEL
+
+@@NCPU
+2
+@@VIRT
+@@TOOLS sudo=/usr/bin/sudo systemctl= journalctl= ss= lsof=/usr/bin/lsof sockstat=
+@@END

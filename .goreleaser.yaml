@@ -1,0 +1,109 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+#
+# Release pipeline for NexTerm (docs/RELEASING.md). Mirrors `make release` / scripts/release/dist: same platforms,
+# flags, archive names and contents. The web UI is NOT built here: the release workflow (or `make web`) builds it once
+# into internal/webui/dist before GoReleaser runs, and every binary embeds that same build.
+#
+# Local dry run (nothing is published):  make snapshot   (or: goreleaser release --snapshot --clean)
+version: 2
+
+project_name: nexterm
+
+before:
+  hooks:
+    - sh -c 'test -f internal/webui/dist/index.html || { echo "internal/webui/dist has no index.html - run make web first" >&2; exit 1; }'
+    - go mod verify
+
+builds:
+  - id: nexterm
+    main: ./cmd/nexterm
+    binary: nexterm
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version=v{{ .Version }} -X main.commit={{ .FullCommit }} -X main.date={{ .CommitDate }}
+    # Reproducible: binary mtimes come from the commit, not the build machine's clock.
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    goos: [darwin, linux, windows, freebsd]
+    goarch: [amd64, arm64, arm]
+    goarm: ["7"]
+    ignore:
+      - goos: freebsd
+        goarch: arm64
+      - goos: freebsd
+        goarch: arm
+      - goos: darwin
+        goarch: arm
+      - goos: windows
+        goarch: arm
+
+archives:
+  - id: nexterm
+    ids: [nexterm]
+    formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}"
+    wrap_in_directory: true
+    # Fixed owner and time stamps: archives are byte-identical for the same commit, toolchain and UI build.
+    builds_info:
+      owner: root
+      group: root
+      mode: 0755
+      mtime: "{{ .CommitDate }}"
+    files:
+      - src: README.md
+        info: &docinfo
+          owner: root
+          group: root
+          mode: 0644
+          mtime: "{{ .CommitDate }}"
+      - src: LICENSE*
+        info: *docinfo
+      - src: CHANGELOG.md
+        info: *docinfo
+      - src: THIRD_PARTY_NOTICES.md
+        info: *docinfo
+
+checksum:
+  name_template: SHA256SUMS
+  algorithm: sha256
+
+# One SPDX SBOM per archive (needs syft on PATH; the release workflow installs it).
+sboms:
+  - artifacts: archive
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-SNAPSHOT-{{ .ShortCommit }}"
+
+# Release notes come from CHANGELOG.md (the workflow passes --release-notes); this is the fallback.
+changelog:
+  use: git
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - "^ci:"
+
+release:
+  # The workflow creates a draft: review the notes and assets, then publish it by hand.
+  draft: true
+  replace_existing_draft: true
+  prerelease: auto
+  name_template: "NexTerm {{ .Tag }}"
+  footer: |
+    ## Verify the download
+
+    ```sh
+    sha256sum --ignore-missing -c SHA256SUMS        # macOS: shasum -a 256 --ignore-missing -c SHA256SUMS
+    gh attestation verify nexterm_{{ .Version }}_linux_amd64.tar.gz --repo {{ envOrDefault "GITHUB_REPOSITORY" "OWNER/nexterm" }}
+    ```
+
+    Third-party licenses: THIRD_PARTY_NOTICES.md inside every archive.
+
+report_sizes: true

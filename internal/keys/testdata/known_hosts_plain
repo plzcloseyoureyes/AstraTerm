@@ -1,0 +1,2 @@
+host.example.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLceNlPFWGv6nktB1VWWmVJS5iM5f4NAQrR6Nsq2SrngOzHtYMw4I9LlpgEIw8ngDrCWZ7wM4CZ+hVG+mlLFVgI=
+[other.example.com]:2222 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILqihflQoW4kmKW5bpKqEcseojKUYbeNrHJaUqIpvuGk

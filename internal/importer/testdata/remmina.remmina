@@ -1,0 +1,16 @@
+[remmina]
+name=App Server
+protocol=SSH
+server=app.example.com:2022
+username=deploy
+group=Prod/App
+ssh_privatekey=/home/me/.ssh/id_ed25519
+
+[remmina]
+name=Windows Box
+protocol=RDP
+server=10.0.0.20
+username=Administrator
+domain=CORP
+resolution=1920x1080
+group=Prod/Windows

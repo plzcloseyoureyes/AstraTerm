@@ -1,0 +1,65 @@
+name: Bug report
+description: Something does not work as documented.
+labels: [bug, triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a problem.
+        **Security vulnerabilities must not be reported here** — follow [SECURITY.md](../blob/main/SECURITY.md) instead.
+        Remove host names, IP addresses, user names, keys and tokens from anything you paste.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open a new SSH session to …
+        2. …
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: NexTerm version
+      description: Output of `nexterm version` (all lines).
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Run mode
+      options:
+        - Desktop (default)
+        - Server (--mode server)
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system and architecture of the machine running NexTerm
+      placeholder: e.g. macOS 26 arm64, Ubuntu 24.04 amd64, Windows 11 arm64
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: e.g. Chrome 140, Firefox 143, Safari 26
+  - type: input
+    id: area
+    attributes:
+      label: Area / protocol
+      placeholder: e.g. SSH terminal, SFTP browser, RDP, tunnels, import, server mode login
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Relevant server output (run with `--log-level debug`) and browser console errors. Redact secrets.
+      render: text

@@ -1,0 +1,11 @@
+/bin/
+/dist/
+/web/node_modules/
+/internal/webui/dist/*
+!/internal/webui/dist/.keep
+*.db
+*.db-wal
+*.db-shm
+/.nexterm-data/
+.DS_Store
+/web/tsconfig.tsbuildinfo

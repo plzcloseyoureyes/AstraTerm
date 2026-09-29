@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mrng:Connections xmlns:mrng="http://mremoteng.org" Name="Connections" Export="false" ConfVersion="2.6">
+    <Node Name="Datacenter" Type="Container" Expanded="true">
+        <Node Name="app01" Type="Connection" Descr="app server" Protocol="SSH2" Hostname="app01.example.com" Port="22" Username="root" Domain="" />
+        <Node Name="rdp-jump" Type="Connection" Protocol="RDP" Hostname="10.2.2.2" Port="3389" Username="admin" Domain="CORP" />
+    </Node>
+    <Node Name="vnc-lab" Type="Connection" Protocol="VNC" Hostname="lab.example.com" Port="5900" Username="" />
+</mrng:Connections>

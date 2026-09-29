@@ -1,0 +1,5 @@
+Groups,Label,Tags,Hostname/IP,Protocol,Port,Username,Password
+Prod/EU,web-eu,web prod,10.0.0.1,ssh,22,deploy,hunter2
+Prod/US,db-us,database,db.example.com,ssh,2200,dba,
+Lab,switch,,192.168.0.2,telnet,23,admin,
+,uri-host,,ssh://ops@jump.example.com:2022,,,,

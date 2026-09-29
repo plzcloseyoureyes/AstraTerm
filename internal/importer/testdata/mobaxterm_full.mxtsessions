@@ -1,0 +1,44 @@
+[Bookmarks]
+SubRep=
+ImgNum=42
+Reference Session= #109#0%localhost%22%<default>%%-1%-1%%%%%0%0%0%%%-1%0%0%0%%1080%%0%0%1%%0%%%%0%-1%-1%0%%%0%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+docker-host=;  logout#196#0%docker.example.com%22%root%%-1%-1%docker ps%%%%0%0%0%%%-1%0%0%0%%1080%%0%0%1%%0%%%%0%-1%0%0%%%0%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0#Build box __DIEZE__1#255
+
+[Bookmarks_1]
+SubRep=Production
+ImgNum=41
+web1= #109#0%web1.example.com%2222%deploy%%-1%-1%tmux new -A -s main%%%%-1%0%0%_CurrentDrive_:\Users\me\keys\web.ppk%%-1%0%0%0%%1080%%0%0%2%%0%%%%0%-1%-1%-1%%%0%#MobaFont%12%0%0%-1%13%236,236,236%0,0,0%180,180,192%4%-1%-1%%vt220%-1%0%0,0,0%54,54,54%255,96,96%255,128,128%96,255,96%128,255,128%255,255,54%255,255,128%96,96,255%128,128,255%255,54,255%255,128,255%54,255,255%128,255,255%236,236,236%255,255,255%80%24%0%1%-1%<custom macro>%12:2:0:uptime__PIPE__%0%1%-1%0%1001111111110000000000,x2,1,,,,,R,S,Any,0,5000#0#Primary web server#16711680
+db1= #109#0%10.0.0.9%22%dbadmin%%0%0%%gw1.example.com__PIPE__gw2.example.com%22__PIPE__2222%u1__PIPE__jumpuser%0%0%0%%__PIPE___CurrentDrive_:\keys\gw2.ppk%-1%0%0%2%socks.example.com%1080%sockuser%0%0%1%%0%%%%0%-1%-1%0%%%0%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+local-cmd-proxy= #109#0%internal.example.com%22%ops%%-1%-1%%%%%0%0%0%%%-1%0%0%5%%1080%%0%0%1%nc -X connect -x proxy:3128 __PERCENT__host __PERCENT__port%0%%%%0%-1%-1%0%%%0%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+ssh-proxy= #109#0%behind.example.com%22%ops%%-1%-1%%%%%0%0%0%%%-1%0%0%6%bastion.example.com%2022%hopper%0%0%1%%0%%%%0%-1%-1%0%%%0%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+
+[Bookmarks_2]
+SubRep=Production\Network\Core\Edge
+ImgNum=41
+switch1= #116#1%192.168.1.2%2323%operator%%%%%%%%%%%%%%%%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+rsh-box= #100#2%legacy.example.com%oper%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+ftp-site= #130#6%ftp.example.com%2121%ftpuser%%%%%%%%%%%%%%%%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+
+[Bookmarks_3]
+SubRep=Windows
+ImgNum=41
+win01= #91#4%win01.corp.example%3390%CORP\alice%-1%0%-1%0%-1%0%11%-1%C:\Tools\start.cmd%gw.example.com%2200%jump%1%0%_CurrentDrive_:\keys\gw.ppk%0%%-1%-1%0%-1%-1%-1%0%4%0%0%100100111000,2,rdgw.corp.example,CORP\gwuser,0,2#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+win02= #91#4%win02.corp.example%3389%bob%%%%%%%%%%gw.example.com%2200%jump%0%%%-1%%%%%%%%%0%%%100000100000,0,,,0,0#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+console= #128#5%vnc.example.com%5901%0%-1%hop1.example.com__PIPE__hop2.example.com%22__PIPE__2022%u1__PIPE__u2%%-1%0%-1%%2%socks.example.com%1081%proxyuser%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+backup= #140#7%files.example.com%2022%backup%-1%-1%/srv/backup%0%0%_CurrentDrive_:\keys\backup.ppk%4%proxy.example.com%1085%puser%Sup3rS3cret!%C:\local%-1#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+console-serial= #131#8%0%1009600%3%0%0%1%2%COM2  (USB Serial (COM2))#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+roamer= #145#12%mosh.example.com%2222%mobile%%%_CurrentDrive_:\keys\mosh.ppk%%%%%%%%%%%%%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+Café été= #109#0%cafe.example.com%22%élise%%-1%-1%%%%%0%0%0%%%-1%0%0%0%%1080%%0%0%1%%0%%%%0%-1%-1%0%%%0%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+empty-host= #109#0%%22%%%-1%-1%%%%%0%0%0%%%-1%0%0%0%%1080%%0%0%1%%0%%%%0%-1%-1%0%%%0%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+localsh= #97#10%0%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+files= #84#9%C:\Users\me\Desktop%0%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+xdmcp= #88#3%%0%-1%0%0%0%localhost%7100%1%0%1%0%657%336%0%0#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+portal= #313#11%https://portal.example.com%-1%-1%-1%-1%-1%-1%-1%0%0%3#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+bucket= #343#13%s3.amazonaws.com%%AKIAEXAMPLE%%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+ubuntu-wsl= #151#14%Ubuntu%#MobaFont%10%0%0%-1%15%236,236,236%30,30,30%180,180,192%0%-1%0%%xterm%-1%0%_Std_Colors_0_%80%24%0%1%-1%<none>%%0%0%-1%0%#0# #-1
+
+[SSH_Hostkeys]
+ssh-ed25519@22:ssh1.example.com=0x432611571b77faced0940e35a9903245fdbc83c796a3593833252968fa85833a,0x4a0c2b3892703aee1bda6028ccea87fc6da98404d02a254cc4f523b7eae559f0
+rsa2@2222:legacy.example.com=0x10001,0xc68229d82efd95b40f61e09177c2b523e2abcb8e5fcbb43294c193ebc2dbf5d61480a5bfa2abc2266305fcf7865225b109d26a31d2a718cfc00a37791c0822b2010641d2eedd24bddf3cf41b81533e3ea3a0bce26e32d9fa3a090e09a4c25340704f0e5a74f232ced3e20e60e0099cd90954cc51730765cfd1c8cf96c3192a5c5229393b01b2174456a193dc7034ab6ba1c02152687be3b91798495143dfb444568f87c8f21916b16a00bb6004208d9920d773db4c0ab171aa7312a7b9e51a560b4046e13343766bb15ed1f3ad36941b37aa3d4fdb0fcfc643dd0a2623e49d7dbc84d70aea149fe24347d2d5f357923dbcfce8bbd710fab61f97c30a3be403d7
+ecdsa-sha2-nistp256@22:10.0.0.9=nistp256,0xa0e8c95c1c1c0f7882ea615d696c243a738e3c9d9627dad3a9d89899056f24fa,0x3ac636f75eb80f785c3e9c803dea00a413e8abad5fc9ca38c87cda74482c934f
+

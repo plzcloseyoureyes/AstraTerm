@@ -1,0 +1,25 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\SimonTatham\PuTTY\Sessions\Prod%20Web]
+"HostName"="web1.example.com"
+"PortNumber"=dword:00000016
+"Protocol"="ssh"
+"UserName"="deploy"
+"Compression"=dword:00000001
+"PublicKeyFile"="C:\\keys\\id_rsa.ppk"
+"ProxyMethod"=dword:00000002
+"ProxyHost"="socks.example.com"
+"ProxyPort"=dword:00000438
+"PortForwardings"="L5900=localhost:5900,D1080"
+"Folder"="Production\\Web"
+
+[HKEY_CURRENT_USER\Software\SimonTatham\PuTTY\Sessions\Legacy%20Telnet]
+"HostName"="10.1.2.3"
+"PortNumber"=dword:00000017
+"Protocol"="telnet"
+"UserName"=""
+
+[HKEY_CURRENT_USER\Software\SimonTatham\PuTTY\Sessions\SerialConsole]
+"Protocol"="serial"
+"SerialLine"="COM4"
+"SerialSpeed"=dword:0001C200

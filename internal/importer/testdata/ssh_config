@@ -1,0 +1,28 @@
+# Global defaults
+Host *
+    ServerAliveInterval 30
+    Compression yes
+
+Host bastion
+    HostName bastion.example.com
+    User jump
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519
+
+Host web1 web2
+    HostName %h.example.com
+    User deploy
+    ProxyJump bastion
+    ForwardAgent yes
+    LocalForward 8080 localhost:80
+    DynamicForward 1080
+    SetEnv FOO=bar
+
+Host db-*
+    HostName should-not-import.example.com
+
+Host secure
+    HostName secure.example.com
+    Ciphers aes256-gcm@openssh.com,chacha20-poly1305@openssh.com
+    RemoteCommand tmux attach
+    RequestTTY yes

@@ -1,0 +1,112 @@
+@@S
+@@UPTIME
+76013.39 149477.95
+@@LOAD
+0.27 0.45 0.35 1/747 1161
+@@CPU
+cpu  93985 4 89579 14947795 2299 0 5397 0 0 0
+cpu0 46704 1 44730 7473315 927 0 4034 0 0 0
+cpu1 47281 2 44848 7474479 1371 0 1363 0 0 0
+@@MEM
+MemTotal:        2006672 kB
+MemFree:           54860 kB
+MemAvailable:    1187948 kB
+Buffers:           35720 kB
+Cached:          1100612 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Shmem:             18508 kB
+SReclaimable:     105632 kB
+@@NET
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+    lo:    2984      39    0    0    0     0          0         0     2984      39    0    0    0     0       0          0
+  eth0: 338048668   16642    0    0    0     0          0         0  2710453   19916    0    0    0     0       0          0
+@@DISKIO
+ 253       0 vda 7912 4618 1054658 4239 13001 18726 278621 22498 0 15890 30250 1936 0 38584105 1066 5170 2444
+ 253       1 vda1 7549 4037 1032447 4200 12966 18639 278304 22487 0 26749 27723 1914 0 36648488 1035 0 0
+ 253      15 vda15 135 566 8916 19 1 0 1 0 0 21 24 1 0 186617 4 0 0
+ 259       0 vda16 181 15 11583 15 34 87 316 10 0 44 52 21 0 1749000 26 0 0
+ 253      16 vdb 22055 23275 3196006 6167 58762 170316 13228272 63468 0 22464 79220 932 0 204277504 550 14948 9034
+ 253      17 vdb1 21941 23275 3191590 6156 58762 170316 13228272 63468 0 41962 70175 932 0 204277504 550 0 0
+ 253      32 vdc 347 0 42916 99 0 0 0 0 0 90 99 0 0 0 0 0 0
+@@FD
+2496	0	9223372036854775807
+@@HOST
+ssh1
+@@VNET
+eth0
+lo
+@@MOUNTS
+overlay	/
+ext4	/config
+ext4	/etc/resolv.conf
+ext4	/etc/hostname
+ext4	/etc/hosts
+@@DF
+Filesystem     1024-blocks    Used Available Capacity Mounted on
+overlay          102624184 6592816  90772208       7% /
+/dev/vdb1        102624184 6592816  90772208       7% /config
+/dev/vdb1        102624184 6592816  90772208       7% /etc/resolv.conf
+/dev/vdb1        102624184 6592816  90772208       7% /etc/hostname
+/dev/vdb1        102624184 6592816  90772208       7% /etc/hosts
+@@USERS
+0
+@@PROCS 20
+@@E
+@@S
+@@UPTIME
+76014.40 149479.94
+@@LOAD
+0.27 0.45 0.35 1/747 1179
+@@CPU
+cpu  93987 4 89581 14947995 2299 0 5397 0 0 0
+cpu0 46705 1 44732 7473414 927 0 4034 0 0 0
+cpu1 47282 2 44849 7474580 1371 0 1363 0 0 0
+@@MEM
+MemTotal:        2006672 kB
+MemFree:           51372 kB
+MemAvailable:    1184476 kB
+Buffers:           35720 kB
+Cached:          1100644 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Shmem:             18508 kB
+SReclaimable:     105632 kB
+@@NET
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+    lo:    2984      39    0    0    0     0          0         0     2984      39    0    0    0     0       0          0
+  eth0: 338049394   16653    0    0    0     0          0         0  2715077   19940    0    0    0     0       0          0
+@@DISKIO
+ 253       0 vda 7912 4618 1054658 4239 13001 18726 278621 22498 0 15890 30250 1936 0 38584105 1066 5170 2444
+ 253       1 vda1 7549 4037 1032447 4200 12966 18639 278304 22487 0 26749 27723 1914 0 36648488 1035 0 0
+ 253      15 vda15 135 566 8916 19 1 0 1 0 0 21 24 1 0 186617 4 0 0
+ 259       0 vda16 181 15 11583 15 34 87 316 10 0 44 52 21 0 1749000 26 0 0
+ 253      16 vdb 22055 23275 3196006 6167 58766 170317 13228312 63470 0 22464 79222 932 0 204277504 550 14948 9034
+ 253      17 vdb1 21941 23275 3191590 6156 58766 170317 13228312 63470 0 41963 70177 932 0 204277504 550 0 0
+ 253      32 vdc 347 0 42916 99 0 0 0 0 0 90 99 0 0 0 0 0 0
+@@FD
+2496	0	9223372036854775807
+@@HOST
+ssh1
+@@VNET
+eth0
+lo
+@@MOUNTS
+overlay	/
+ext4	/config
+ext4	/etc/resolv.conf
+ext4	/etc/hostname
+ext4	/etc/hosts
+@@DF
+Filesystem     1024-blocks    Used Available Capacity Mounted on
+overlay          102624184 6592816  90772208       7% /
+/dev/vdb1        102624184 6592816  90772208       7% /config
+/dev/vdb1        102624184 6592816  90772208       7% /etc/resolv.conf
+/dev/vdb1        102624184 6592816  90772208       7% /etc/hostname
+/dev/vdb1        102624184 6592816  90772208       7% /etc/hosts
+@@USERS
+0
+@@PROCS 20
+@@E

@@ -1,0 +1,4 @@
+# Fixtures: OpenSSH 9.6 ssh-keygen and OpenSSL 3.6 outputs (passphrase "testpass");
+# putty_*.ppk are genuine puttygen outputs from github.com/kayrus/putty tests (passphrase "testkey").
+# openssh_*_{chacha,aes256gcm,aes128gcm,3des}: ssh-keygen 9.6 -Z <cipher> (passphrase "testpass").
+# puttygen084_*.ppk: PuTTY 0.84 puttygen outputs (passphrase "testkey"; the _plain file is unencrypted).

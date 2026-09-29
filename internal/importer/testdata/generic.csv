@@ -1,0 +1,3 @@
+name;host;port;user;type;folder;notes
+Router A;192.168.1.1;22;admin;ssh;Network/Core;core router
+Old VNC;10.0.5.5;5900;;vnc;Legacy;needs upgrade

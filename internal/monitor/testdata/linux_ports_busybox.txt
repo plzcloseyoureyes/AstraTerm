@@ -1,0 +1,26 @@
+@@NETSTAT
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 127.0.0.11:46263        0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:2222            0.0.0.0:*               LISTEN      237/ssh_host_rsa_ke
+tcp        0      0 :::2222                 :::*                    LISTEN      237/ssh_host_rsa_ke
+udp        0      0 127.0.0.11:51318        0.0.0.0:*                           -
+@@COMM
+1 s6-svscan
+237 sshd.pam
+@@PROC
+##F tcp
+  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
+   0: 0B00007F:B4B7 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 637350 2 0000000000000000 100 0 0 10 0                    
+   1: 00000000:08AE 00000000:0000 0A 00000000:00000000 00:00000000 00000000  1000        0 640178 1 0000000000000000 100 0 0 10 0                    
+   2: 0A0013AC:08AE 010013AC:E382 01 00000000:00000000 02:000AFC79 00000000  1000        0 1146375 4 0000000000000000 20 4 19 10 -1                  
+   3: 0A0013AC:08AE 010013AC:8540 01 00000000:00000000 02:000AD188 00000000  1000        0 1143738 2 0000000000000000 20 4 31 10 -1                  
+##F tcp6
+  sl  local_address                         remote_address                        st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode
+   0: 00000000000000000000000000000000:08AE 00000000000000000000000000000000:0000 0A 00000000:00000000 00:00000000 00000000  1000        0 640179 1 0000000000000000 100 0 0 10 0
+##F udp
+   sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode ref pointer drops            
+  983: 0B00007F:C876 00000000:0000 07 00000000:00000000 00:00000000 00000000     0        0 637349 2 0000000000000000 0        
+##F udp6
+  sl  local_address                         remote_address                        st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode ref pointer drops
+@@END

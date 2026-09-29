@@ -1,0 +1,34 @@
+# Dependency update PRs. Minor/patch bumps are grouped per ecosystem; a cooldown gives new releases a few days
+# before they are proposed (supply-chain hygiene). After an update lands, regenerate THIRD_PARTY_NOTICES.md
+# (`make notices`) — CI warns when it is stale and the release workflow refuses to release with stale notices.
+version: 2
+updates:
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      go-minor-patch:
+        update-types: [minor, patch]
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: npm
+    directory: /web
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      npm-minor-patch:
+        update-types: [minor, patch]
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns: ["*"]

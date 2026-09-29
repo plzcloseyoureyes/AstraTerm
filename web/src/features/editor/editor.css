@@ -1,0 +1,188 @@
+/*
+ * Editor feature styles (loaded with the lazy editor chunk). Monaco's colours come from the generated theme
+ * (monaco/theme.ts); these rules give its widgets NexTerm's shapes: radii, shadows, the UI font for chrome, the mono
+ * font for code.
+ */
+
+.nx-editor .monaco-editor,
+.nx-merge .monaco-editor,
+.nx-merge .monaco-diff-editor {
+  --nx-widget-radius: var(--radius);
+  outline: none;
+}
+.nx-editor .monaco-editor .margin,
+.nx-merge .monaco-editor .margin {
+  border-right: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+}
+.nx-merge .monaco-diff-editor .monaco-editor .margin {
+  border-right: 0;
+}
+
+/* Floating widgets: find / replace, suggest, hover, parameter hints, rename, peek, command palette. */
+.monaco-editor .find-widget {
+  border-radius: 0 0 var(--radius) var(--radius);
+  box-shadow: var(--shadow-popover) !important;
+  font-family: var(--font-sans);
+}
+.monaco-editor .find-widget .monaco-inputbox,
+.monaco-editor .rename-box .rename-input {
+  border-radius: calc(var(--radius) - 2px);
+}
+.monaco-editor .find-widget .button,
+.monaco-editor .find-widget .monaco-custom-toggle {
+  border-radius: calc(var(--radius) - 3px);
+}
+.monaco-editor .suggest-widget,
+.monaco-editor .suggest-details-container,
+.monaco-editor .monaco-hover,
+.monaco-editor .parameter-hints-widget,
+.monaco-editor .rename-box,
+.monaco-editor .quick-input-widget {
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-popover) !important;
+  overflow: hidden;
+}
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row {
+  border-radius: calc(var(--radius) - 3px);
+}
+.monaco-editor .monaco-hover,
+.monaco-editor .parameter-hints-widget,
+.monaco-editor .quick-input-widget,
+.monaco-editor .rename-box {
+  font-family: var(--font-sans);
+}
+.monaco-editor .monaco-hover code,
+.monaco-editor .suggest-details code {
+  font-family: var(--font-mono);
+}
+.monaco-editor .quick-input-widget .monaco-inputbox {
+  border-radius: calc(var(--radius) - 2px);
+}
+.monaco-editor .peekview-widget {
+  border-radius: calc(var(--radius) - 2px);
+}
+.monaco-editor .sticky-widget {
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+}
+/*
+ * Popup layer (monaco/services.ts): context menus, dropdowns, hovers and action lists of every editor in this window.
+ * The layer itself lets clicks through; what Monaco puts in it does not.
+ */
+.nx-monaco-layer > * {
+  pointer-events: auto;
+}
+.nx-monaco-layer .monaco-hover,
+.nx-monaco-layer .workbench-hover {
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-popover) !important;
+  font-family: var(--font-sans);
+}
+.nx-monaco-layer .context-view.monaco-menu-container {
+  font-family: var(--font-sans);
+}
+.nx-monaco-layer .context-view.monaco-menu-container > .monaco-scrollable-element {
+  border: 1px solid var(--border);
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-popover);
+}
+/* Diff overview ruler: the visible range reads as a quiet scrollbar thumb, not a grey slab. */
+.nx-merge .monaco-diff-editor .diffViewport {
+  background: color-mix(in oklab, var(--scrollbar-thumb) 35%, transparent) !important;
+}
+.nx-merge .monaco-diff-editor .diffViewport:hover {
+  background: color-mix(in oklab, var(--scrollbar-thumb-hover) 55%, transparent) !important;
+}
+
+/* Diff gutter between the two sides: the copy arrows read as buttons of the app. */
+.nx-merge .monaco-diff-editor .gutter .gutterItem .buttons .action-label {
+  border-radius: calc(var(--radius) - 3px);
+}
+
+/* Folded regions and the "…" placeholder read as part of the text, not as a VS Code badge. */
+.monaco-editor .inline-folded::after {
+  border-radius: 3px;
+}
+
+/* Diff: collapsed unchanged regions look like our quiet muted strips. */
+.nx-merge .monaco-diff-editor .diff-hidden-lines .center {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+}
+
+/*
+ * Monaco's diff editor sets an explicit `visibility: visible` on its two editors (it hides them only behind the
+ * accessible diff viewer). That would show them through the `visibility: hidden` dockview gives inactive tabs, on top
+ * of the active one: inherit instead.
+ */
+.nx-merge .monaco-diff-editor [style*="visibility: visible"] {
+  visibility: inherit !important;
+}
+
+/* Merge / diff pane layout: fill the tab. */
+.nx-merge {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+/* Vim mode line and ":" command line (monaco-vim) inside the tab's status bar. */
+.nx-vim-status {
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  color: var(--foreground);
+}
+.nx-vim-status > span + span:not(:empty) {
+  margin-left: 1ch;
+}
+.nx-vim-status .vim-notification {
+  color: var(--warning);
+}
+.nx-vim-status input {
+  min-width: 16ch;
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  outline: none;
+}
+
+/* Hex editor */
+.nx-hex {
+  font-family: var(--nx-editor-font, var(--font-mono));
+  font-variant-numeric: tabular-nums;
+}
+.nx-hex-cell {
+  display: inline-block;
+  text-align: center;
+  border-radius: 2px;
+}
+.nx-hex-cell[data-sel] {
+  background: color-mix(in oklab, var(--primary) 26%, transparent);
+}
+.nx-hex-cell[data-mod] {
+  color: var(--destructive);
+  font-weight: 600;
+}
+.nx-hex-cell[data-match] {
+  background: color-mix(in oklab, var(--warning) 35%, transparent);
+}
+.nx-hex-cell[data-cursor] {
+  outline: 1.5px solid var(--primary);
+  outline-offset: -1px;
+}
+.nx-hex:not(:focus-within) .nx-hex-cell[data-cursor] {
+  outline-color: color-mix(in oklab, var(--muted-foreground) 70%, transparent);
+}
+.nx-hex-cell[data-cursor][data-pane-active] {
+  background: color-mix(in oklab, var(--primary) 40%, transparent);
+}
+.nx-hex-cell[data-zero] {
+  color: color-mix(in oklab, var(--muted-foreground) 70%, transparent);
+}
+.nx-hex-cell[data-np] {
+  color: color-mix(in oklab, var(--muted-foreground) 60%, transparent);
+}

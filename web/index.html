@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#15181d" />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="description" content="NexTerm — SSH, SFTP, RDP, VNC and more in your browser." />
+    <title>NexTerm</title>
+    <!-- Theme, accent and scale before the first paint (no dark→light flash); see public/boot.js. -->
+    <script src="/boot.js"></script>
+  </head>
+  <body>
+    <!-- Static splash, identical to the React one (src/auth/AuthGate.tsx, .nx-splash in src/index.css): React's first
+         render replaces it without a visible change. -->
+    <div id="root"><div class="nx-splash" aria-hidden="true"><svg viewBox="0 0 64 64" class="nx-splash-mark"><rect width="64" height="64" rx="14" fill="var(--primary)"></rect><path d="M16 22l12 10-12 10" stroke="var(--primary-foreground)" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><path d="M32 44h16" stroke="var(--primary-foreground)" stroke-width="5" stroke-linecap="round"></path></svg><div class="nx-splash-status"></div></div></div>
+    <noscript>NexTerm needs JavaScript enabled.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE VanDyke SYSTEM "config.dtd">
+<VanDyke version="4.0">
+    <key name="Sessions">
+        <key name="Default">
+            <string name="Protocol Name">SSH2</string>
+        </key>
+        <key name="Routers">
+            <key name="edge-01">
+                <string name="Hostname">edge01.example.com</string>
+                <string name="Protocol Name">SSH2</string>
+                <dword name="[SSH2] Port">00000016</dword>
+                <string name="Username">netadmin</string>
+                <string name="Description">edge router</string>
+            </key>
+        </key>
+        <key name="legacy-telnet">
+            <string name="Hostname">10.9.9.9</string>
+            <string name="Protocol Name">Telnet</string>
+            <dword name="[Telnet] Port">00000017</dword>
+        </key>
+    </key>
+</VanDyke>

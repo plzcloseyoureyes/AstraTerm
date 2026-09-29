@@ -1,0 +1,490 @@
+/*
+ * NexTerm design system — Tailwind 4 CSS-first tokens.
+ *
+ * Theme model: semantic tokens are plain CSS variables on :root (light) and .dark (dark, the default); <html> gets the
+ * `dark` class from src/lib/theme.ts ('dark' | 'light' | 'system'). Runtime knobs set on <html> by theme.ts:
+ *   --primary / --primary-foreground / --ring   accent colour (Settings → Appearance)
+ *   --ui-scale                                  UI zoom (html font-size = 16px × scale; everything is rem based)
+ *   --spacing                                   density (comfortable 0.25rem, compact 0.2rem)
+ *
+ * Type scale is tuned for a dense IDE look: text-base = 13px, text-sm = 12px, text-xs = 11px, text-2xs = 10px.
+ */
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --ui-scale: 1;
+  --radius: 0.375rem;
+
+  --background: oklch(0.985 0.002 250);
+  --foreground: oklch(0.22 0.012 255);
+  --panel: oklch(1 0 0);
+  --panel-foreground: var(--foreground);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--foreground);
+  --muted: oklch(0.955 0.004 250);
+  --muted-foreground: oklch(0.5 0.014 255);
+  --accent: oklch(0.935 0.007 250);
+  --accent-foreground: oklch(0.2 0.012 255);
+  --secondary: oklch(0.945 0.005 250);
+  --secondary-foreground: oklch(0.24 0.012 255);
+  --primary: oklch(0.55 0.19 252);
+  --primary-foreground: oklch(0.99 0 0);
+  --border: oklch(0.9 0.005 250);
+  --input: oklch(0.86 0.006 250);
+  --ring: var(--primary);
+  --destructive: oklch(0.56 0.21 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  /* Semantic colours are also used as text (status bar, badges, tool results): each keeps ≥ 4.5:1 on white and
+     ≥ 4.5:1 on the status bar / muted surfaces (success 4.9, warning 4.7, info 4.7 on --statusbar). */
+  --success: oklch(0.5 0.135 150);
+  --success-foreground: oklch(0.99 0 0);
+  --warning: oklch(0.53 0.125 65);
+  --warning-foreground: oklch(0.99 0 0);
+  --info: oklch(0.51 0.13 235);
+  --info-foreground: oklch(0.99 0 0);
+
+  --sidebar: oklch(0.965 0.004 250);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-accent: oklch(0.925 0.008 250);
+  --sidebar-border: var(--border);
+  --rail: oklch(0.945 0.005 250);
+  --toolbar: oklch(0.975 0.003 250);
+  --tabbar: oklch(0.955 0.004 250);
+  --statusbar: oklch(0.95 0.005 250);
+  --statusbar-foreground: oklch(0.42 0.014 255);
+
+  --scrollbar-thumb: oklch(0.8 0.008 250);
+  --scrollbar-thumb-hover: oklch(0.7 0.01 250);
+  --shadow-color: oklch(0.3 0.02 255 / 0.18);
+  --overlay: oklch(0.2 0.01 255 / 0.35);
+  /* Around remote screens (RDP / VNC canvases, recording players): a quiet neutral, darker than the UI so the
+     remote picture reads as its own surface; fullscreen always uses black. */
+  --remote-backdrop: oklch(0.3 0.006 258);
+  --remote-backdrop-fullscreen: oklch(0 0 0);
+
+  color-scheme: light;
+}
+
+.dark {
+  --background: oklch(0.18 0.009 258);
+  --foreground: oklch(0.92 0.006 250);
+  --panel: oklch(0.195 0.009 258);
+  --panel-foreground: var(--foreground);
+  --card: oklch(0.215 0.009 258);
+  --card-foreground: var(--foreground);
+  --popover: oklch(0.225 0.01 258);
+  --popover-foreground: var(--foreground);
+  --muted: oklch(0.245 0.01 258);
+  --muted-foreground: oklch(0.68 0.012 255);
+  --accent: oklch(0.28 0.012 258);
+  --accent-foreground: oklch(0.96 0.004 250);
+  --secondary: oklch(0.265 0.011 258);
+  --secondary-foreground: oklch(0.92 0.006 250);
+  --primary: oklch(0.62 0.18 252);
+  --primary-foreground: oklch(0.99 0 0);
+  --border: oklch(0.29 0.01 258);
+  --input: oklch(0.33 0.011 258);
+  --ring: var(--primary);
+  --destructive: oklch(0.63 0.2 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --success: oklch(0.72 0.16 152);
+  --success-foreground: oklch(0.18 0.03 152);
+  --warning: oklch(0.8 0.15 78);
+  --warning-foreground: oklch(0.2 0.04 78);
+  --info: oklch(0.72 0.13 235);
+  --info-foreground: oklch(0.18 0.03 235);
+
+  --sidebar: oklch(0.165 0.009 258);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-accent: oklch(0.255 0.012 258);
+  --sidebar-border: oklch(0.255 0.01 258);
+  --rail: oklch(0.15 0.009 258);
+  --toolbar: oklch(0.2 0.01 258);
+  --tabbar: oklch(0.17 0.009 258);
+  --statusbar: oklch(0.155 0.009 258);
+  --statusbar-foreground: oklch(0.72 0.012 255);
+
+  --scrollbar-thumb: oklch(0.36 0.012 258);
+  --scrollbar-thumb-hover: oklch(0.46 0.014 258);
+  --shadow-color: oklch(0 0 0 / 0.5);
+  --overlay: oklch(0.08 0.01 258 / 0.6);
+  --remote-backdrop: oklch(0.16 0.004 260);
+  --remote-backdrop-fullscreen: oklch(0 0 0);
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-panel: var(--panel);
+  --color-panel-foreground: var(--panel-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-rail: var(--rail);
+  --color-toolbar: var(--toolbar);
+  --color-tabbar: var(--tabbar);
+  --color-statusbar: var(--statusbar);
+  --color-statusbar-foreground: var(--statusbar-foreground);
+  --color-overlay: var(--overlay);
+  --color-remote-backdrop: var(--remote-backdrop);
+  --color-remote-backdrop-fullscreen: var(--remote-backdrop-fullscreen);
+
+  --radius-xs: calc(var(--radius) - 3px);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+
+  --shadow-popover: 0 8px 28px -6px var(--shadow-color), 0 2px 6px -2px var(--shadow-color);
+}
+
+@theme {
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --text-2xs: 0.625rem;
+  --text-2xs--line-height: 0.875rem;
+  --text-xs: 0.6875rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.75rem;
+  --text-sm--line-height: 1.125rem;
+  --text-base: 0.8125rem;
+  --text-base--line-height: 1.25rem;
+  --text-md: 0.875rem;
+  --text-md--line-height: 1.375rem;
+  --text-lg: 1rem;
+  --text-lg--line-height: 1.5rem;
+  --text-xl: 1.125rem;
+  --text-xl--line-height: 1.625rem;
+  --text-2xl: 1.375rem;
+  --text-2xl--line-height: 1.875rem;
+  --text-3xl: 1.75rem;
+  --text-3xl--line-height: 2.25rem;
+
+  /* Motion (docs/UX.md "Motion & feedback"): nothing oscillates — no pulse, breathe, blink, ping, bounce or heartbeat.
+     Tailwind's looping animations are removed from the theme so their classes do not exist; the only continuous motion
+     left is the slow, smooth rotation of the spinner ring for an explicit long wait (components/ui/spinner). Status is
+     steady colour + shape (components/ui/status-dot); indeterminate progress is a still bar. One-shot enter / exit
+     transitions (tw-animate-css animate-in / animate-out, 120–200 ms) stay. Enforced by lint-ui. */
+  --animate-pulse: initial;
+  --animate-ping: initial;
+  --animate-bounce: initial;
+  --animate-caret-blink: initial;
+  --animate-spin: spin 1.2s linear infinite;
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+}
+
+@layer base {
+  html {
+    font-size: calc(16px * var(--ui-scale));
+    -webkit-text-size-adjust: 100%;
+    height: 100%;
+  }
+  body {
+    height: 100%;
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+  }
+  #root {
+    height: 100%;
+    /* The shell never scrolls as a document: clip (not hidden — a clip box cannot be scrolled by focus()). */
+    overflow: clip;
+  }
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border);
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--primary) 35%, transparent);
+  }
+  /* Zero blinking extends to the text caret: a steady caret in every field (CSS UI 4 `caret-animation`; browsers
+     without it ignore the declaration and keep their native blink). */
+  html,
+  input,
+  textarea,
+  [contenteditable] {
+    caret-animation: manual;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 1px;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: default;
+  }
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: var(--font-mono);
+  }
+
+  /* Thin, theme-aware scrollbars. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+  }
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  /* Reduced motion: one-shot animations end at once (their animationend still fires, which Radix exit animations wait
+     for), looping ones (the spinner) stop after that single instant cycle — a still ring instead of a ring re-drawn at a
+     random angle every frame — and there are no transitions at all. (A 0.01ms transition-duration here would turn every
+     style change into a transition: a `visibility: hidden` then lands a frame late, so a closing / replaced view stays
+     on screen for that frame — and for a whole long task when one follows, e.g. opening a new tab.) */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0s !important;
+      transition-delay: 0s !important;
+    }
+  }
+}
+
+@layer utilities {
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * Dockview theme ("dockview-theme-nexterm"): maps dockview's variables onto the design tokens.
+ * Tab height 30px (scaled with the UI), active tab gets an accent underline (rendered by our tab component).
+ * ---------------------------------------------------------------------------------------------------------------- */
+.dockview-theme-nexterm {
+  --dv-paneview-active-outline-color: var(--ring);
+  --dv-tabs-and-actions-container-font-size: var(--text-sm);
+  --dv-tabs-and-actions-container-height: 1.875rem;
+  --dv-drag-over-background-color: color-mix(in oklab, var(--primary) 16%, transparent);
+  --dv-drag-over-border-color: var(--primary);
+  --dv-drag-over-border: 1px solid color-mix(in oklab, var(--primary) 70%, transparent);
+  --dv-edge-dock-indicator-color: var(--primary);
+  --dv-tabs-container-scrollbar-color: var(--scrollbar-thumb);
+  --dv-icon-hover-background-color: var(--accent);
+  --dv-floating-box-shadow: 0 16px 48px -8px var(--shadow-color), 0 4px 12px -4px var(--shadow-color);
+  --dv-floating-border: 1px solid var(--border);
+  --dv-overlay-z-index: 40;
+  --dv-tab-font-size: inherit;
+  --dv-border-radius: 0px;
+  --dv-tab-margin: 0;
+  --dv-sash-color: transparent;
+  --dv-active-sash-color: color-mix(in oklab, var(--primary) 70%, transparent);
+  --dv-active-sash-transition-duration: 0.1s;
+  --dv-active-sash-transition-delay: 0.3s;
+  --dv-spacing-padding: 0px;
+  --dv-tab-border-radius: 0px;
+  --dv-sash-border-radius: 0px;
+  --dv-dropdown-border-radius: var(--radius);
+  --dv-tab-close-icon-size: inherit;
+  --dv-floating-group-border: 1px solid var(--border);
+  --dv-floating-group-dragging-opacity: 0.6;
+  --dv-floating-titlebar-height: 0.875rem;
+  --dv-floating-titlebar-background-color: var(--tabbar);
+  --dv-floating-titlebar-border-bottom: 1px solid var(--border);
+  --dv-tab-group-color-grey: #6b7280;
+  --dv-tab-group-color-blue: #3b82f6;
+  --dv-tab-group-color-red: #ef4444;
+  --dv-tab-group-color-yellow: #eab308;
+  --dv-tab-group-color-green: #22c55e;
+  --dv-tab-group-color-pink: #ec4899;
+  --dv-tab-group-color-purple: #a855f7;
+  --dv-tab-group-color-cyan: #06b6d4;
+  --dv-tab-group-color-orange: #f97316;
+  --dv-tab-group-chip-padding: 2px 8px;
+  --dv-tab-group-chip-border-radius: 6px;
+  --dv-tab-group-chip-font-size: 11px;
+  --dv-tab-group-line-height: 2px;
+  --dv-tab-group-line-opacity: 0.6;
+
+  --dv-group-view-background-color: var(--panel);
+  --dv-tabs-and-actions-container-background-color: var(--tabbar);
+  --dv-activegroup-visiblepanel-tab-background-color: var(--panel);
+  --dv-activegroup-hiddenpanel-tab-background-color: var(--tabbar);
+  --dv-inactivegroup-visiblepanel-tab-background-color: var(--panel);
+  --dv-inactivegroup-hiddenpanel-tab-background-color: var(--tabbar);
+  --dv-tab-divider-color: var(--border);
+  --dv-activegroup-visiblepanel-tab-color: var(--foreground);
+  --dv-activegroup-hiddenpanel-tab-color: var(--muted-foreground);
+  --dv-inactivegroup-visiblepanel-tab-color: color-mix(in oklab, var(--foreground) 78%, transparent);
+  --dv-inactivegroup-hiddenpanel-tab-color: color-mix(in oklab, var(--muted-foreground) 80%, transparent);
+  --dv-separator-border: var(--border);
+  --dv-paneview-header-border-color: var(--border);
+  --dv-scrollbar-background-color: var(--scrollbar-thumb);
+  font-family: var(--font-sans);
+}
+
+/*
+ * dockview only positions a render overlay (renderer "always") while its panel is visible; a hidden panel keeps the
+ * overlay in the DOM without top/left, so it falls back to its static position *below* the grid. That made the whole
+ * document taller than the viewport, and the next focus() scrolled the entire shell up (body has overflow:hidden, so
+ * the user could not scroll back). Anchor overlays at the origin; visible ones get inline geometry from dockview.
+ */
+.dockview-theme-nexterm .dv-render-overlay {
+  top: 0;
+  left: 0;
+}
+
+.dockview-theme-nexterm .dv-tab {
+  padding: 0;
+}
+.dockview-theme-nexterm .dv-tabs-and-actions-container {
+  border-bottom: 1px solid var(--border);
+}
+.dockview-theme-nexterm .dv-groupview > .dv-tabs-and-actions-container .dv-tab:last-child {
+  box-shadow: 1px 0 0 var(--dv-tab-divider-color);
+}
+/* Accent underline for the active tab (element rendered inside our tab component). */
+.dockview-theme-nexterm .nx-tab-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: transparent;
+  pointer-events: none;
+  z-index: 6;
+}
+.dockview-theme-nexterm .dv-tab.dv-active-tab .nx-tab-indicator {
+  background: color-mix(in oklab, var(--muted-foreground) 55%, transparent);
+}
+.dockview-theme-nexterm .dv-active-group .dv-tab.dv-active-tab .nx-tab-indicator {
+  background: var(--primary);
+}
+.dockview-theme-nexterm .dv-tab.dv-active-tab {
+  /* Active tab visually merges with the panel below. */
+  box-shadow: inset 0 -1px 0 var(--panel);
+}
+.dockview-theme-nexterm .dv-tabs-overflow-dropdown-default {
+  color: var(--muted-foreground);
+}
+/* Phones: the group header's "all tabs" sheet (layout/workspace/TabsSheet) replaces dockview's overflow chip, which
+   had to squeeze the active tab's title to fit ("Tunn ⌄ 3"). */
+@media (max-width: 767px) {
+  .dockview-theme-nexterm .dv-tabs-overflow-dropdown-default {
+    display: none;
+  }
+}
+.dockview-theme-nexterm .dv-context-menu,
+.dockview-theme-nexterm .dv-tabs-overflow-container {
+  background: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-popover);
+}
+.dockview-theme-nexterm .dv-resize-container {
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.dockview-theme-nexterm .dv-watermark {
+  height: 100%;
+}
+
+/* Boot splash: rendered statically by index.html and then by AuthGate (same markup, so React's first render changes
+   nothing on screen). A still mark — no pulsing — and a status row whose spinner/label only appear after 300 ms
+   (Delayed); it fades out once over 150 ms when the first screen is ready. */
+.nx-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: var(--background);
+  color: var(--muted-foreground);
+  transition: opacity 150ms ease-out;
+}
+.nx-splash[data-leaving] {
+  opacity: 0;
+  pointer-events: none;
+}
+.nx-splash-mark {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+.nx-splash-status {
+  display: flex;
+  height: 1.25rem;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--text-sm);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nx-splash {
+    transition: none;
+  }
+}

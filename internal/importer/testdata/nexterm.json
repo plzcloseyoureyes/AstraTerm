@@ -1,0 +1,22 @@
+{
+  "format": "nexterm-export",
+  "version": 1,
+  "includesSecrets": false,
+  "folders": [
+    { "id": "fA", "name": "Cloud" },
+    { "id": "fB", "parentId": "fA", "name": "AWS" }
+  ],
+  "connections": [
+    { "id": "c1", "folderId": "fB", "name": "bastion", "protocol": "ssh", "host": "bastion.aws.example.com", "port": 22, "username": "ec2-user", "authMethod": "key", "keyId": "k1", "tags": ["aws","prod"], "secretKeys": ["password"] },
+    { "id": "c2", "name": "home-nas", "protocol": "sftp", "host": "nas.local", "port": 22, "username": "admin", "options": {"initialPath": "/volume1"} }
+  ],
+  "identities": [
+    { "id": "id1", "name": "AWS default", "username": "ec2-user", "keyId": "k1" }
+  ],
+  "keys": [
+    { "id": "k1", "name": "aws-key", "type": "ed25519", "publicKey": "ssh-ed25519 AAAA...", "fingerprint": "SHA256:xxx" }
+  ],
+  "snippets": [
+    { "name": "df", "content": "df -h", "sendMode": "execute", "folder": "ops" }
+  ]
+}
