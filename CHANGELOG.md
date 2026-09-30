@@ -8,9 +8,12 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
-## [0.1.0] - 2026-09-30
+## [0.1.1] - 2026-09-30
 
 First public release: an organized, self-hosted remote-management workspace, as a server and a desktop app.
+
+v0.1.0 was tagged but never published: its Windows desktop app sent the remote-monitoring scripts with Windows line
+endings, which broke monitoring of Linux, macOS and BSD hosts. That is fixed here.
 
 ### Added
 
@@ -56,5 +59,5 @@ First public release: an organized, self-hosted remote-management workspace, as 
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/plzcloseyoureyes/AstraTerm/releases/tag/v0.1.0
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/plzcloseyoureyes/AstraTerm/releases/tag/v0.1.1
