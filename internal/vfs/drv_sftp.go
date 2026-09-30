@@ -268,7 +268,7 @@ func sftpEntry(p string, fi os.FileInfo) *Entry {
 	e := &Entry{Name: fi.Name(), Path: p, Size: fi.Size(), Mtime: fi.ModTime().UTC()}
 	if st, ok := fi.Sys().(*sftp.FileStat); ok && st != nil {
 		e.Mode = st.Mode
-		e.UID, e.GID = intPtr(int(st.UID)), intPtr(int(st.GID))
+		e.UID, e.GID = new(int(st.UID)), new(int(st.GID))
 		e.Mtime = time.Unix(int64(st.Mtime), 0).UTC()
 	} else {
 		e.Mode = goModeToPOSIX(fi.Mode())

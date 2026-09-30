@@ -19,7 +19,7 @@ type RdpModule = typeof import('@devolutions/iron-remote-desktop-rdp')
 let loading: Promise<RdpModule> | null = null
 
 /** Load the web component and the WASM backend once per page. */
-export function loadIronRdp(): Promise<RdpModule> {
+function loadIronRdp(): Promise<RdpModule> {
   if (!loading) {
     loading = (async () => {
       await import('@devolutions/iron-remote-desktop') // defines <iron-remote-desktop>
@@ -74,7 +74,7 @@ function isIronError(e: unknown): e is IronError {
 }
 
 /** Turn an IronRDP failure into a readable EngineError. */
-export function describeIronError(e: unknown): EngineError {
+function describeIronError(e: unknown): EngineError {
   if (!isIronError(e)) return new EngineError(e instanceof Error ? e.message : String(e))
   let detail = ''
   try {
@@ -127,7 +127,7 @@ function firstLine(s: string): string {
 }
 
 /** Drop IronRDP's internal source locations ("[CredSSP @ …/connector.rs:107]", "[decode error @ …]") from a message. */
-export function cleanDetail(s: string): string {
+function cleanDetail(s: string): string {
   return s
     .replace(/\[([^\]@]*?)\s*@\s*[^\]]*\]\s*/g, (_, what: string) => (what.trim() ? `${what.trim()}: ` : ''))
     .replace(/(\b[\w ]+): \1: /g, '$1: ')

@@ -59,7 +59,7 @@ type oscScanner struct {
 
 // Scan feeds data (which starts at absolute offset base) through the state machine and calls emit for every event.
 func (sc *oscScanner) Scan(data []byte, base int64, emit func(oscEvent)) {
-	for i := 0; i < len(data); i++ {
+	for i := range data {
 		b := data[i]
 		switch sc.state {
 		case scGround:

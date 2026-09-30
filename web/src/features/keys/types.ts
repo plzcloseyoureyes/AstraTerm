@@ -6,7 +6,7 @@ import type { SSHKey } from '@/api/types'
 
 export type GeneratedKeyType = 'ed25519' | 'rsa' | 'ecdsa'
 
-export type CertificateStatus = 'valid' | 'expired' | 'not_yet_valid'
+type CertificateStatus = 'valid' | 'expired' | 'not_yet_valid'
 
 export interface CertificateInfo {
   type: 'user' | 'host'
@@ -28,7 +28,7 @@ export interface CertificateInfo {
   status: CertificateStatus
 }
 
-export interface KeyUsage {
+interface KeyUsage {
   connections: number
   identities: number
 }
@@ -93,8 +93,8 @@ export interface InspectResult {
   existingKeyName?: string
 }
 
-export type PrivateFormat = 'openssh' | 'ppk' | 'pem' | 'pkcs8'
-export type PublicFormat = 'public' | 'rfc4716'
+type PrivateFormat = 'openssh' | 'ppk' | 'pem' | 'pkcs8'
+type PublicFormat = 'public' | 'rfc4716'
 export type ExportFormat = PrivateFormat | PublicFormat
 
 export interface ExportResult {
@@ -179,7 +179,7 @@ export interface HostKeyMarker {
   createdAt: string
 }
 
-export interface KnownHostsLineError {
+interface KnownHostsLineError {
   line: number
   error: string
 }

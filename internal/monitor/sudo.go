@@ -89,7 +89,7 @@ func (s *Service) sudoAuth(ctx context.Context, t *target) (string, error) {
 		}
 	}
 	msg := ""
-	for attempt := 0; attempt < 3; attempt++ {
+	for range 3 {
 		pw, save, err := s.askSudo(ctx, t, msg)
 		if err != nil {
 			return "", err

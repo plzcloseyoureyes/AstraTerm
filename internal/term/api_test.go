@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
@@ -27,12 +28,7 @@ type eventLog struct {
 func (e *eventLog) has(pred func(map[string]any) bool) bool {
 	e.mu.Lock()
 	defer e.mu.Unlock()
-	for _, ev := range e.events {
-		if pred(ev) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(e.events, pred)
 }
 
 func listenEvents(t *testing.T, env *servertest.Env, c *servertest.Client) *eventLog {

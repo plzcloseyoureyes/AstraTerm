@@ -353,8 +353,7 @@ func errorText(err error) string {
 	if err == nil {
 		return ""
 	}
-	var he *httpx.HTTPError
-	if errors.As(err, &he) {
+	if he, ok := errors.AsType[*httpx.HTTPError](err); ok {
 		if he.Status >= 500 {
 			return "internal error"
 		}

@@ -119,8 +119,7 @@ func (e *scriptEnv) result(err error) error {
 			return context.Canceled
 		}
 	}
-	var ie *goja.InterruptedError
-	if errors.As(err, &ie) {
+	if ie, ok := errors.AsType[*goja.InterruptedError](err); ok {
 		switch v := ie.Value().(type) {
 		case exitSignal:
 			if v.code == 0 {
@@ -135,12 +134,10 @@ func (e *scriptEnv) result(err error) error {
 		}
 		return errors.New("the script was interrupted")
 	}
-	var so *goja.StackOverflowError
-	if errors.As(err, &so) {
+	if _, ok := errors.AsType[*goja.StackOverflowError](err); ok {
 		return errors.New("stack overflow (too much recursion)")
 	}
-	var ex *goja.Exception
-	if errors.As(err, &ex) {
+	if ex, ok := errors.AsType[*goja.Exception](err); ok {
 		msg := ex.Error()
 		if len(msg) > 2000 {
 			msg = msg[:2000] + "…"
@@ -202,13 +199,7 @@ func argMillis(call goja.FunctionCall, i int, def time.Duration) time.Duration {
 	if isNullish(v) {
 		return def
 	}
-	ms := v.ToInteger()
-	if ms < 0 {
-		ms = 0
-	}
-	if ms > int64(maxScriptTimeout/time.Millisecond) {
-		ms = int64(maxScriptTimeout / time.Millisecond)
-	}
+	ms := min(max(v.ToInteger(), 0), int64(maxScriptTimeout/time.Millisecond))
 	return time.Duration(ms) * time.Millisecond
 }
 
@@ -243,10 +234,7 @@ func optMillis(o *goja.Object, key string, def time.Duration) time.Duration {
 	if isNullish(v) {
 		return def
 	}
-	ms := v.ToInteger()
-	if ms < 0 {
-		ms = 0
-	}
+	ms := max(v.ToInteger(), 0)
 	return min(time.Duration(ms)*time.Millisecond, maxScriptTimeout)
 }
 
@@ -283,7 +271,7 @@ func (e *scriptEnv) patterns(v goja.Value) []*regexp.Regexp {
 			e.throw("TypeError", "expect() takes 1 to 64 patterns")
 		}
 		out := make([]*regexp.Regexp, 0, n)
-		for i := 0; i < n; i++ {
+		for i := range n {
 			out = append(out, e.pattern(obj.Get(strconv.Itoa(i))))
 		}
 		return out

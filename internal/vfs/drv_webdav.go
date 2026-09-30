@@ -44,10 +44,8 @@ func davErr(err error, p string) error {
 	if err == nil {
 		return nil
 	}
-	var pe *os.PathError
-	if errors.As(err, &pe) {
-		var se gowebdav.StatusError
-		if errors.As(pe.Err, &se) {
+	if pe, ok := errors.AsType[*os.PathError](err); ok {
+		if se, ok := errors.AsType[gowebdav.StatusError](pe.Err); ok {
 			switch se.Status {
 			case http.StatusNotFound, http.StatusGone:
 				return &os.PathError{Op: pe.Op, Path: p, Err: fs.ErrNotExist}

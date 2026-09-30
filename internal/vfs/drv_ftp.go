@@ -199,10 +199,14 @@ func (f *ftpFS) connect(ctx context.Context) (*ftpConn, error) {
 	}
 }
 
+// ftpLoginError classifies only server replies: matching the text of dial errors would turn e.g. a blocked
+// "127.0.0.1:5300" into a login failure.
 func ftpLoginError(err error) error {
-	msg := strings.ToLower(err.Error())
-	if strings.Contains(msg, "530") || strings.Contains(msg, "login") || strings.Contains(msg, "password") {
-		return fmt.Errorf("FTP login failed: %s: %w", cleanMsg(err.Error()), fs.ErrPermission)
+	if te, ok := errors.AsType[*textproto.Error](err); ok {
+		msg := strings.ToLower(te.Msg)
+		if te.Code == ftp.StatusNotLoggedIn || strings.Contains(msg, "login") || strings.Contains(msg, "password") {
+			return fmt.Errorf("FTP login failed: %s: %w", cleanMsg(err.Error()), fs.ErrPermission)
+		}
 	}
 	return fmt.Errorf("FTP connection failed: %w", err)
 }

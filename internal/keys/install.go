@@ -68,8 +68,7 @@ func installPublicKey(ctx context.Context, cl *sshx.Client, pub ssh.PublicKey, l
 			relabelSELinux(ctx, cl, sc)
 			return o.res, nil
 		}
-		var pe *installError
-		if errors.As(o.err, &pe) {
+		if _, ok := errors.AsType[*installError](o.err); ok {
 			return nil, o.err // a definite problem (not a missing SFTP subsystem): do not retry over the shell
 		}
 		return nil, fmt.Errorf("SFTP: %w", o.err)

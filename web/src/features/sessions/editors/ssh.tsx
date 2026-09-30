@@ -7,7 +7,7 @@ import type { ProtocolEditorProps } from '@/app/registry'
 import { defineProtocol } from './define'
 import { SshCommonOptions, validateSshCommon } from './ssh-common'
 
-export function SshEditor(props: ProtocolEditorProps) {
+function SshEditor(props: ProtocolEditorProps) {
   return <SshCommonOptions {...props} variant="ssh" />
 }
 

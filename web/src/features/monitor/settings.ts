@@ -2,10 +2,9 @@
  * Settings section `monitor` (defineSettings: only changed keys are stored) and the small public state other features
  * read — e.g. the SFTP panel's "Remote monitoring" checkbox:
  *
- *   import { useMonitorBarShown, setMonitorBarEnabled } from '@/features/monitor/settings'
+ *   import { setMonitorBarEnabled } from '@/features/monitor/settings'
  *   runCommand('monitor.toggleBar')                          // global on / off (or {enabled: boolean})
  *   runCommand('monitor.toggleBar', {sessionId, enabled})    // per session, like the SFTP panel's checkbox
- *   useMonitorBarShown(sessionId)                            // effective state for one session
  *   commands.get('monitor.toggleBar')?.checked?.()           // global state (extra `checked` on the definition)
  */
 import { create } from 'zustand'
@@ -133,7 +132,7 @@ export function setMonitorBarForSession(sessionId: string, enabled: boolean): vo
 }
 
 /** Forget the choice of a session (it closed). */
-export function forgetMonitorBarForSession(sessionId: string): void {
+function forgetMonitorBarForSession(sessionId: string): void {
   if (sessionId in stored) {
     const { [sessionId]: _drop, ...rest } = stored
     stored = rest
@@ -156,14 +155,4 @@ export function getMonitorBarOverride(sessionId: string): boolean | undefined {
 
 export function useMonitorBarOverride(sessionId: string | undefined): boolean | undefined {
   return useBarOverrides((s) => (sessionId ? s.bySession[sessionId] : undefined))
-}
-
-/**
- * React: is the bar shown for a session? A per-session choice wins, else the global setting and the connection's
- * `monitoring` option (evaluated by the bar itself).
- */
-export function useMonitorBarShown(sessionId: string | undefined): boolean {
-  const override = useMonitorBarOverride(sessionId)
-  const global = useMonitorBarEnabled()
-  return override ?? global
 }

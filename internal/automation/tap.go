@@ -182,7 +182,7 @@ func (t *tap) seed(src outputSource) {
 	}
 	var data []byte
 	var end int64 = -1
-	for try := 0; try < 3; try++ {
+	for range 3 {
 		_, h0 := src.Offsets()
 		snap := src.Scrollback()
 		_, h1 := src.Offsets()

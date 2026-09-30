@@ -111,8 +111,7 @@ func buildPreview(ctx context.Context, d *app.Deps, user *model.User, p *parsed)
 		if err == nil {
 			pub = signer.PublicKey()
 		} else {
-			var np *sshx.NeedsPassphraseError
-			if errors.As(err, &np) {
+			if np, ok := errors.AsType[*sshx.NeedsPassphraseError](err); ok {
 				pk.Encrypted, pub = true, np.PublicKey
 			}
 		}

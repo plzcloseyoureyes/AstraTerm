@@ -16,6 +16,7 @@ import (
 	"context"
 	"errors"
 	"log/slog"
+	"maps"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -340,9 +341,7 @@ func (p *pendingSecrets) put(sessionID, connID, userID string, values map[string
 		cur = &pendingSecret{connID: connID, userID: userID, values: map[string]string{}}
 		p.m[sessionID] = cur
 	}
-	for k, v := range values {
-		cur.values[k] = v
-	}
+	maps.Copy(cur.values, values)
 	cur.expires = time.Now().Add(pendingSecretTTL)
 }
 

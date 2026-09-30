@@ -6,13 +6,13 @@
 const DRIVE = /^[A-Za-z]:\//
 
 /** The root of a path: "/" or "C:/". */
-export function rootOf(p: string): string {
+function rootOf(p: string): string {
   const n = p.replace(/\\/g, '/')
   if (DRIVE.test(n)) return n.slice(0, 3)
   return '/'
 }
 
-export function isAbsolute(p: string): boolean {
+function isAbsolute(p: string): boolean {
   const n = p.replace(/\\/g, '/')
   return n.startsWith('/') || DRIVE.test(n)
 }

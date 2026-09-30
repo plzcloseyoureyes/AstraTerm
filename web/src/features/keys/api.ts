@@ -2,7 +2,7 @@
  * REST + react-query layer of the keys feature (internal/keys). Query keys extend the core factory: ['keys', …]
  * (so invalidations also refresh the session editor's key picker), ['known-hosts', …] and ['agent', …].
  */
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { api, seg } from '@/api/client'
 import { queryClient } from '@/api/queryClient'
 import { queryKeys } from '@/api/queryKeys'
@@ -39,8 +39,7 @@ export const keysQK = {
 
 // ---- keys -------------------------------------------------------------------------------------------------------------
 
-export const listKeys = () => api.get<StoredKey[]>('/api/keys')
-export const generateKey = (req: GenerateRequest) => api.post<StoredKey>('/api/keys/generate', { ...req, store: true })
+const listKeys = () => api.get<StoredKey[]>('/api/keys')
 export const generateDraft = (req: GenerateRequest) => api.post<KeyDraft>('/api/keys/generate', { ...req, store: false })
 export const storeDraft = (draftId: string, body: { name?: string; rememberPassphrase?: boolean }) =>
   api.post<StoredKey>(`/api/keys/drafts/${seg(draftId)}/store`, body)
@@ -67,23 +66,17 @@ export function invalidateKeys(qc = queryClient): void {
   void qc.invalidateQueries({ queryKey: keysQK.agent })
 }
 
-export function useKeyMutation<V, R>(fn: (v: V) => Promise<R>) {
-  const qc = useQueryClient()
-  return useMutation({ mutationFn: fn, onSettled: () => invalidateKeys(qc) })
-}
-
 // ---- known hosts ------------------------------------------------------------------------------------------------------
 
-export const listKnownHosts = () => api.get<KnownHost[]>('/api/known-hosts')
+const listKnownHosts = () => api.get<KnownHost[]>('/api/known-hosts')
 export const addKnownHost = (body: { host: string; port?: number; publicKey: string; comment?: string; replace?: boolean }) =>
   api.post<KnownHost>('/api/known-hosts', body)
-export const deleteKnownHost = (id: string) => api.del<void>(`/api/known-hosts/${seg(id)}`)
 export const bulkDeleteKnownHosts = (ids: string[]) => api.post<{ deleted: number }>('/api/known-hosts/bulk-delete', { ids })
 export const importKnownHosts = (body: { text?: string; source?: 'system'; format?: 'auto' | 'openssh' | 'putty'; onConflict?: KnownHostsConflict }) =>
   api.post<KnownHostsImportResult>('/api/known-hosts/import', body)
 export const exportKnownHostsText = (hashed: boolean) =>
   api.get<string>('/api/known-hosts/export', { query: { hashed: hashed ? 1 : undefined }, as: 'text' })
-export const listMarkers = () => api.get<HostKeyMarker[]>('/api/known-hosts/markers')
+const listMarkers = () => api.get<HostKeyMarker[]>('/api/known-hosts/markers')
 export const addMarker = (body: { marker: string; hosts: string; publicKey?: string; keyId?: string; comment?: string }) =>
   api.post<HostKeyMarker>('/api/known-hosts/markers', body)
 export const deleteMarker = (id: string) => api.del<void>(`/api/known-hosts/markers/${seg(id)}`)
@@ -103,7 +96,7 @@ export function invalidateKnownHosts(): void {
 // ---- agent ------------------------------------------------------------------------------------------------------------
 
 export const agentStatus = () => api.get<AgentStatus>('/api/agent/status')
-export const agentKeys = () => api.get<AgentKey[]>('/api/agent/keys')
+const agentKeys = () => api.get<AgentKey[]>('/api/agent/keys')
 export const startAgent = () => api.post<AgentStatus>('/api/agent/start')
 export const stopAgent = () => api.post<void>('/api/agent/stop')
 export const reloadAgent = () => api.post<void>('/api/agent/reload')

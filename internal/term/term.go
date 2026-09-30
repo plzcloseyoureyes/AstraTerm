@@ -108,8 +108,7 @@ func Permanent(err error) error {
 	if err == nil {
 		return nil
 	}
-	var pe *permanentError
-	if errors.As(err, &pe) {
+	if _, ok := errors.AsType[*permanentError](err); ok {
 		return err
 	}
 	return &permanentError{err: err}

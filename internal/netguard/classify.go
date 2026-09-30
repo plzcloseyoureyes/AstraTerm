@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"net/netip"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -172,12 +173,7 @@ func (e *env) isSelf(a netip.Addr, port int) bool {
 	if e.listenWildcard {
 		return a.IsLoopback() || e.isHostAddr(a)
 	}
-	for _, l := range e.listenIPs {
-		if l == a {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(e.listenIPs, a)
 }
 
 // check decides whether a restricted user may connect to a:port (port ≤ 0 = unknown: port rules are skipped).

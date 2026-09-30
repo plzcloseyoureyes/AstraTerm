@@ -111,8 +111,7 @@ func open(ctx context.Context, c *core.Core, req term.OpenRequest) (term.Backend
 		cancel()
 		if err != nil {
 			netConn.Close()
-			var cv *tls.CertificateVerificationError
-			if errors.As(err, &cv) {
+			if _, ok := errors.AsType[*tls.CertificateVerificationError](err); ok {
 				// A certificate the user has to decide about: retrying cannot help.
 				return nil, term.Permanent(fmt.Errorf("telnet: TLS certificate of %s rejected: %w", addr, err))
 			}

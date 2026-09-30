@@ -63,7 +63,7 @@ function report(what: string) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 /** Patch one connection with an optimistic cache update (secrets are never merged into the cache). */
-export async function patchConnection(id: string, patch: ConnectionPatch): Promise<Connection | undefined> {
+async function patchConnection(id: string, patch: ConnectionPatch): Promise<Connection | undefined> {
   const { secrets: _secrets, ...visible } = patch
   try {
     const updated = await mutateConnections(
@@ -307,7 +307,7 @@ export async function newFolderIn(parentId: string | null): Promise<void> {
 // ---------------------------------------------------------------------------------------------------------------------
 
 /** POSIX shell quoting for copy-pasteable commands. */
-export function shellQuote(s: string): string {
+function shellQuote(s: string): string {
   if (s === '') return "''"
   return /^[A-Za-z0-9_@%+=:,./-]+$/.test(s) ? s : `'${s.replace(/'/g, `'\\''`)}'`
 }

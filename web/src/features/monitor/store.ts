@@ -12,7 +12,7 @@ import { monitorSettings } from './settings'
 import type { FeedState, MonitorEvent, Stats } from './types'
 
 /** One history point (percentages 0–100, rates in bytes/s). */
-export interface Sample {
+interface Sample {
   t: number
   cpu: number
   user: number
@@ -44,7 +44,7 @@ interface MonitorStore {
   feeds: Record<string, FeedEntry>
 }
 
-export const useMonitorStore = create<MonitorStore>(() => ({ feeds: {} }))
+const useMonitorStore = create<MonitorStore>(() => ({ feeds: {} }))
 
 const HISTORY_MS = 10 * 60_000
 
@@ -167,7 +167,7 @@ function reconcile(): void {
 }
 
 /** Hold a monitoring subscription for a session (or 'local'); returns the release function. */
-export function acquireFeed(sessionId: string): () => void {
+function acquireFeed(sessionId: string): () => void {
   install()
   refs.set(sessionId, (refs.get(sessionId) ?? 0) + 1)
   reconcile()
@@ -189,9 +189,4 @@ export function useMonitorFeed(sessionId: string | undefined | null, active = tr
     return acquireFeed(sessionId)
   }, [sessionId, active])
   return useMonitorStore((s) => (sessionId ? s.feeds[sessionId] : undefined))
-}
-
-/** Latest entry without subscribing (menus, commands). */
-export function getFeed(sessionId: string): FeedEntry | undefined {
-  return useMonitorStore.getState().feeds[sessionId]
 }

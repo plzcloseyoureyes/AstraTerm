@@ -219,8 +219,7 @@ func TestHandshakeARD(t *testing.T) {
 	// ARD only, wrong password.
 	srv.Types = []byte{vnctest.SecARD}
 	_, err = handshakeTo(t, addr, &handshakeConfig{creds: &testCreds{user: "alice", pass: "nope"}})
-	var ae *authError
-	if !errors.As(err, &ae) {
+	if _, ok := errors.AsType[*authError](err); !ok {
 		t.Fatalf("expected auth failure, got %v", err)
 	}
 }
@@ -360,7 +359,6 @@ func TestHandshakeWeakGroup(t *testing.T) {
 }
 
 func TestHandshakeRequirePolicy(t *testing.T) {
-	var er *encryptionRequiredError
 	for _, c := range []struct {
 		name string
 		srv  *vnctest.Server
@@ -375,7 +373,7 @@ func TestHandshakeRequirePolicy(t *testing.T) {
 	} {
 		_, err := handshakeTo(t, startFake(t, c.srv), &handshakeConfig{creds: &testCreds{user: "u", pass: "pw"},
 			policy: encRequire, allowPassthrough: true})
-		if !errors.As(err, &er) {
+		if _, ok := errors.AsType[*encryptionRequiredError](err); !ok {
 			t.Fatalf("%s: expected encryption required, got %v", c.name, err)
 		}
 	}

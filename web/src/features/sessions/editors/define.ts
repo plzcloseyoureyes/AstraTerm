@@ -83,7 +83,7 @@ export function getProtocolSpec(protocol: string | undefined | null): ProtocolSp
 }
 
 /** Profile used for protocols registered by other modules without a spec here. */
-export const DEFAULT_PROFILE: ProtocolProfile = {
+const DEFAULT_PROFILE: ProtocolProfile = {
   host: 'required',
   port: true,
   username: true,

@@ -16,7 +16,7 @@ import { getFsHandle } from './fsHandles'
 import { collectDrop, planUpload, withSlowToast } from './upload'
 import type { FsContext } from './types'
 
-export const INTERNAL_MIME = 'application/x-astraterm-files'
+const INTERNAL_MIME = 'application/x-astraterm-files'
 
 interface ActiveDrag {
   viewId: string
@@ -26,10 +26,6 @@ interface ActiveDrag {
 }
 
 let activeDrag: ActiveDrag | null = null
-
-export function getInternalDrag(): ActiveDrag | null {
-  return activeDrag
-}
 
 /** Start dragging rows out of a view. */
 export function startInternalDrag(e: React.DragEvent, drag: ActiveDrag): void {
@@ -77,7 +73,7 @@ export function dropModeFor(e: React.DragEvent | DragEvent, target: FsContext): 
 }
 
 /** Can the dragged rows be dropped into `dir` of `target`? (Not onto themselves / into their own subtree.) */
-export function canDropInto(target: FsContext, dir: string): boolean {
+function canDropInto(target: FsContext, dir: string): boolean {
   const drag = activeDrag
   if (!drag) return true
   if (drag.ctx.key !== target.key) return true

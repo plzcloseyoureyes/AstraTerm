@@ -15,7 +15,7 @@ import { isDarkTheme, onThemeChange } from '@/lib/theme'
 import { BUNDLED_FONT_FAMILY, effectiveTerminalSettings, terminalSettings } from '@/features/terminal/settings'
 import { resolveScheme, toXtermTheme } from '@/features/terminal/themes'
 
-export type ViewerTransport = 'connecting' | 'open' | 'reconnecting' | 'closed'
+type ViewerTransport = 'connecting' | 'open' | 'reconnecting' | 'closed'
 
 export interface ViewerStatus {
   transport: ViewerTransport

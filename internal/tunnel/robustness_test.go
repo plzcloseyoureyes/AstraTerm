@@ -146,7 +146,7 @@ func dataPlaneGoroutines() int {
 	buf := make([]byte, 16<<20)
 	buf = buf[:runtime.Stack(buf, true)]
 	n := 0
-	for _, g := range strings.Split(string(buf), "\n\n") {
+	for g := range strings.SplitSeq(string(buf), "\n\n") {
 		if strings.Contains(g, "internal/tunnel.(*forward)") || strings.Contains(g, "internal/tunnel.relay") ||
 			strings.Contains(g, "internal/tunnel.(*proxy)") || strings.Contains(g, "things-go/go-socks5") {
 			n++
@@ -180,7 +180,7 @@ func TestSocksManyConcurrentConnectionsAndCleanTeardown(t *testing.T) {
 		failed  atomic.Int32
 		connect = make(chan struct{}, 32) // bounded connect burst: a kernel accept queue is only 128 deep on macOS
 	)
-	for i := 0; i < n; i++ {
+	for i := range n {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
@@ -373,7 +373,7 @@ func TestRestartRemoteForwardOnFixedPort(t *testing.T) {
 	l.Close()
 	v := h.createTunnel(alice, Input{Name: "r", Type: "remote", ConnectionID: conn.ID, BindPort: fixed, DestHost: "127.0.0.1", DestPort: webPort})
 	h.startTunnel(alice, v.ID)
-	for i := 0; i < 5; i++ {
+	for i := range 5 {
 		h.must(alice, "POST", "/api/tunnels/"+v.ID+"/restart", nil, nil, http.StatusOK)
 		st := h.waitStatus(v.ID, func(s Status) bool {
 			return (s.State == model.TunnelRunning && s.Connected) || s.State == model.TunnelError
@@ -403,7 +403,7 @@ func TestMaxConnsLimit(t *testing.T) {
 			c.Close()
 		}
 	}()
-	for i := 0; i < 25; i++ {
+	for range 25 {
 		c, err := net.Dial("tcp", st.LocalAddr)
 		if err != nil {
 			t.Fatal(err)

@@ -9,6 +9,7 @@ import (
 	"errors"
 	"io"
 	"net"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -125,8 +126,7 @@ func (v *vncConn) closeStatus(t *testing.T) (websocket.StatusCode, string) {
 	for {
 		_, _, err := v.ws.Read(ctx)
 		if err != nil {
-			var ce websocket.CloseError
-			if errors.As(err, &ce) {
+			if ce, ok := errors.AsType[websocket.CloseError](err); ok {
 				return ce.Code, ce.Reason
 			}
 			t.Fatalf("socket ended without a close frame: %v", err)
@@ -488,12 +488,7 @@ func portOf(addr string) int {
 }
 
 func containsStr(list []string, s string) bool {
-	for _, v := range list {
-		if v == s {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(list, s)
 }
 
 // dialVNCQuery dials /ws/vnc/:id with a query string (e.g. "allow=unencrypted").

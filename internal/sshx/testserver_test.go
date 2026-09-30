@@ -362,7 +362,7 @@ func (s *sshServer) runShell(ch ssh.Channel) {
 				return
 			}
 			if cmd == "flood" {
-				for i := 0; i < 2000; i++ {
+				for i := range 2000 {
 					fmt.Fprintf(ch, "line %05d %s\r\n", i, strings.Repeat("x", 100))
 				}
 			}

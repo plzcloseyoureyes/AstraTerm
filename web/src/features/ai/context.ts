@@ -14,7 +14,7 @@ import { aiSettings } from './settings'
 import type { ChatContextPayload, ContextChip, SessionInfo } from './types'
 
 /** Rendered text of the last `lines` lines of a terminal (up to the cursor), trailing blank lines removed. */
-export function terminalTail(term: Terminal, lines: number): string {
+function terminalTail(term: Terminal, lines: number): string {
   const buf = term.buffer.active
   const end = buf.baseY + buf.cursorY
   // Start at the beginning of a wrapped line: a secret cut in half at the range start would escape exact-value
@@ -95,7 +95,7 @@ function handleFor(tabId?: string, sessionId?: string): TerminalHandle | undefin
 }
 
 /** Describe the target host of a terminal. */
-export async function sessionInfoFor(tabId?: string, sessionId?: string): Promise<SessionInfo | undefined> {
+async function sessionInfoFor(tabId?: string, sessionId?: string): Promise<SessionInfo | undefined> {
   const h = handleFor(tabId, sessionId)
   const sid = sessionId ?? h?.sessionId
   if (!h && !sid) return undefined
@@ -164,7 +164,7 @@ const LANG_BY_EXT: Record<string, string> = {
   service: 'ini', dockerfile: 'dockerfile', nginx: 'nginx',
 }
 
-export function languageOf(path: string): string | undefined {
+function languageOf(path: string): string | undefined {
   const base = path.split('/').pop()?.toLowerCase() ?? ''
   if (base === 'dockerfile') return 'dockerfile'
   const ext = base.includes('.') ? base.split('.').pop()! : ''

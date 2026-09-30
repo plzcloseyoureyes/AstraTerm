@@ -127,7 +127,7 @@ func goComponents() ([]*component, error) {
 		if err != nil {
 			return nil, fmt.Errorf("go list (%s): %w", p, err)
 		}
-		for _, line := range strings.Split(strings.TrimSpace(string(b)), "\n") {
+		for line := range strings.SplitSeq(strings.TrimSpace(string(b)), "\n") {
 			mod, ver, ok := strings.Cut(line, " ")
 			if !ok || slices.Contains(seen[mod], p) {
 				continue

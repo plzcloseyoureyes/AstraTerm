@@ -16,7 +16,7 @@ import { CONTAINER_SHELLS } from './docker'
 
 const errText = (e: unknown, fallback: string) => (e instanceof Error && e.message ? e.message : fallback)
 
-export function KubeEditor({ value, onChange }: ProtocolEditorProps) {
+function KubeEditor({ value, onChange }: ProtocolEditorProps) {
   const features = useServerFeatures()
   const p = { value, onChange }
   const context = optString(value, 'context').trim()

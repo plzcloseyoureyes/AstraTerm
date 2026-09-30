@@ -46,10 +46,10 @@ func parseMAC(s string) ([]byte, error) {
 // optional 6-byte SecureOn password.
 func buildMagicPacket(mac, secureOn []byte) []byte {
 	pkt := make([]byte, 0, 6+16*6+len(secureOn))
-	for i := 0; i < 6; i++ {
+	for range 6 {
 		pkt = append(pkt, 0xFF)
 	}
-	for i := 0; i < 16; i++ {
+	for range 16 {
 		pkt = append(pkt, mac...)
 	}
 	return append(pkt, secureOn...)

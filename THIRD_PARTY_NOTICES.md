@@ -14,10 +14,10 @@ license; the license texts shipped by each component are reproduced in [License 
 | 0BSD | 0 | 1 |
 | Apache-2.0 | 38 | 6 |
 | BSD-2-Clause | 4 | 0 |
-| BSD-3-Clause | 28 | 2 |
+| BSD-3-Clause | 28 | 1 |
 | BSD-3-Clause AND MIT | 2 | 0 |
-| ISC | 3 | 11 |
-| MIT | 53 | 312 |
+| ISC | 3 | 3 |
+| MIT | 53 | 297 |
 | MIT OR Apache-2.0 | 0 | 2 |
 | MPL-2.0 | 2 | 1 |
 | OFL-1.1 | 0 | 2 |
@@ -217,7 +217,6 @@ Production dependencies from `web/package-lock.json`, bundled (minified) into th
 | @codemirror/language-data | 6.5.2 | MIT |  |
 | @codemirror/legacy-modes | 6.5.4 | MIT |  |
 | @codemirror/lint | 6.9.7 | MIT |  |
-| @codemirror/merge | 6.12.2 | MIT |  |
 | @codemirror/search | 6.7.2 | MIT |  |
 | @codemirror/state | 6.7.6 | MIT |  |
 | @codemirror/theme-one-dark | 6.1.3 | MIT |  |
@@ -318,8 +317,6 @@ Production dependencies from `web/package-lock.json`, bundled (minified) into th
 | @radix-ui/react-use-size | 1.1.4 | MIT |  |
 | @radix-ui/react-visually-hidden | 1.2.11 | MIT |  |
 | @radix-ui/rect | 1.1.3 | MIT |  |
-| @replit/codemirror-vim | 6.4.0 | MIT |  |
-| @replit/codemirror-vim-core | 0.1.0 | MIT |  |
 | @simplewebauthn/browser | 14.0.0 | MIT |  |
 | @solid-primitives/refs | 1.1.4 | MIT |  |
 | @solid-primitives/transition-group | 1.1.2 | MIT |  |
@@ -333,12 +330,6 @@ Production dependencies from `web/package-lock.json`, bundled (minified) into th
 | @tanstack/store | 0.11.1 | MIT |  |
 | @tanstack/table-core | 9.2.4 | MIT |  |
 | @tanstack/virtual-core | 3.17.11 | MIT |  |
-| @types/d3-color | 3.1.3 | MIT |  |
-| @types/d3-drag | 3.0.7 | MIT |  |
-| @types/d3-interpolate | 3.0.4 | MIT |  |
-| @types/d3-selection | 3.0.12 | MIT |  |
-| @types/d3-transition | 3.0.9 | MIT |  |
-| @types/d3-zoom | 3.0.8 | MIT |  |
 | @types/debug | 4.1.13 | MIT |  |
 | @types/estree | 1.0.9 | MIT |  |
 | @types/estree-jsx | 1.0.5 | MIT |  |
@@ -363,8 +354,6 @@ Production dependencies from `web/package-lock.json`, bundled (minified) into th
 | @xterm/addon-web-links | 0.12.0 | MIT |  |
 | @xterm/addon-webgl | 0.19.0 | MIT |  |
 | @xterm/xterm | 6.0.0 | MIT |  |
-| @xyflow/react | 12.12.0 | MIT |  |
-| @xyflow/system | 0.0.83 | MIT |  |
 | aria-hidden | 1.2.6 | MIT |  |
 | asciinema-player | 3.17.0 | Apache-2.0 |  |
 | bail | 2.0.2 | MIT |  |
@@ -374,7 +363,6 @@ Production dependencies from `web/package-lock.json`, bundled (minified) into th
 | character-entities-legacy | 3.0.0 | MIT |  |
 | character-reference-invalid | 2.0.1 | MIT |  |
 | class-variance-authority | 0.7.1 | Apache-2.0 |  |
-| classcat | 5.0.5 | MIT |  |
 | clsx | 2.1.1 | MIT |  |
 | cmdk | 1.1.1 | MIT |  |
 | codemirror | 6.0.2 | MIT |  |
@@ -382,15 +370,6 @@ Production dependencies from `web/package-lock.json`, bundled (minified) into th
 | crc-32 | 1.2.2 | Apache-2.0 |  |
 | crelt | 1.0.7 | MIT |  |
 | csstype | 3.2.3 | MIT |  |
-| d3-color | 3.1.0 | ISC |  |
-| d3-dispatch | 3.0.1 | ISC |  |
-| d3-drag | 3.0.0 | ISC |  |
-| d3-ease | 3.0.1 | BSD-3-Clause |  |
-| d3-interpolate | 3.0.1 | ISC |  |
-| d3-selection | 3.0.0 | ISC |  |
-| d3-timer | 3.0.1 | ISC |  |
-| d3-transition | 3.0.1 | ISC |  |
-| d3-zoom | 3.0.0 | ISC |  |
 | date-fns | 4.4.0 | MIT |  |
 | debug | 4.4.3 | MIT |  |
 | decode-named-character-reference | 1.3.0 | MIT |  |
@@ -469,7 +448,6 @@ Production dependencies from `web/package-lock.json`, bundled (minified) into th
 | monaco-editor | 0.57.0 | MIT |  |
 | monaco-vim | 0.4.4 | MIT |  |
 | ms | 2.1.3 | MIT |  |
-| papaparse | 5.7.0 | MIT |  |
 | parse-entities | 4.0.2 | MIT |  |
 | property-information | 7.2.0 | MIT |  |
 | qrcode.react | 4.2.0 | ISC |  |
@@ -514,7 +492,6 @@ Production dependencies from `web/package-lock.json`, bundled (minified) into th
 | unist-util-visit | 5.1.0 | MIT |  |
 | unist-util-visit-parents | 6.0.2 | MIT |  |
 | uplot | 1.6.32 | MIT |  |
-| uplot-react | 1.2.4 | MIT |  |
 | use-callback-ref | 1.3.3 | MIT |  |
 | use-sidecar | 1.1.3 | MIT |  |
 | use-sync-external-store | 1.7.0 | MIT |  |
@@ -524,7 +501,6 @@ Production dependencies from `web/package-lock.json`, bundled (minified) into th
 | w3c-keyname | 2.2.8 | MIT |  |
 | zmodem.js | 0.1.10 | Apache-2.0 |  |
 | zod | 4.6.5 | MIT |  |
-| zustand | 4.5.7 | MIT |  |
 | zustand | 5.0.15 | MIT |  |
 | zwitch | 2.0.4 | MIT |  |
 
@@ -5202,34 +5178,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### @codemirror/merge 6.12.2
-
-From `LICENSE`:
-
-```text
-MIT License
-
-Copyright (C) 2018-2022 by Marijn Haverbeke <marijn@haverbeke.berlin> and others
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-```
-
 ### @dnd-kit/accessibility 3.1.1, @dnd-kit/core 6.3.1, @dnd-kit/sortable 10.0.0, @dnd-kit/utilities 3.2.2
 
 From `LICENSE`:
@@ -5806,34 +5754,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### @replit/codemirror-vim 6.4.0, @replit/codemirror-vim-core 0.1.0
-
-From `LICENSE`:
-
-```text
-MIT License
-
-Copyright (C) 2018-2021 by Marijn Haverbeke <marijnh@gmail.com> and others
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-```
-
 ### @simplewebauthn/browser 14.0.0
 
 From `LICENSE.md`:
@@ -5999,7 +5919,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### @types/d3-color 3.1.3, @types/d3-drag 3.0.7, @types/d3-interpolate 3.0.4, @types/d3-selection 3.0.12, @types/d3-transition 3.0.9, @types/d3-zoom 3.0.8, @types/debug 4.1.13, @types/estree 1.0.9, @types/estree-jsx 1.0.5, @types/hast 3.0.5, @types/mdast 4.0.4, @types/ms 2.1.0, @types/react 19.3.0, @types/react-dom 19.3.0, @types/trusted-types 2.0.7, @types/unist 2.0.11, @types/unist 3.0.3
+### @types/debug 4.1.13, @types/estree 1.0.9, @types/estree-jsx 1.0.5, @types/hast 3.0.5, @types/mdast 4.0.4, @types/ms 2.1.0, @types/react 19.3.0, @types/react-dom 19.3.0, @types/trusted-types 2.0.7, @types/unist 2.0.11, @types/unist 3.0.3
 
 From `LICENSE`:
 
@@ -6231,34 +6151,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-```
-
-### @xyflow/react 12.12.0, @xyflow/system 0.0.83
-
-From `LICENSE`:
-
-```text
-MIT License
-
-Copyright (c) 2019-2025 webkid GmbH
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 ```
 
 ### aria-hidden 1.2.6, react-remove-scroll 2.7.2, react-style-singleton 2.2.3, use-callback-ref 1.3.3, use-sidecar 1.1.3
@@ -6723,20 +6615,6 @@ Apache License
    limitations under the License.
 ```
 
-### classcat 5.0.5
-
-From `LICENSE.md`:
-
-```text
-Copyright © Jorge Bucaran <<https://jorgebucaran.com>>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-```
-
 ### clsx 2.1.1
 
 From `license`:
@@ -7068,81 +6946,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-```
-
-### d3-color 3.1.0
-
-From `LICENSE`:
-
-```text
-Copyright 2010-2022 Mike Bostock
-
-Permission to use, copy, modify, and/or distribute this software for any purpose
-with or without fee is hereby granted, provided that the above copyright notice
-and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
-OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
-THIS SOFTWARE.
-```
-
-### d3-dispatch 3.0.1, d3-drag 3.0.0, d3-interpolate 3.0.1, d3-selection 3.0.0, d3-timer 3.0.1, d3-transition 3.0.1, d3-zoom 3.0.0
-
-From `LICENSE`:
-
-```text
-Copyright 2010-2021 Mike Bostock
-
-Permission to use, copy, modify, and/or distribute this software for any purpose
-with or without fee is hereby granted, provided that the above copyright notice
-and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
-OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
-THIS SOFTWARE.
-```
-
-### d3-ease 3.0.1
-
-From `LICENSE`:
-
-```text
-Copyright 2010-2021 Mike Bostock
-Copyright 2001 Robert Penner
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-* Neither the name of the author nor the names of contributors may be used to
-  endorse or promote products derived from this software without specific prior
-  written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 
 ### date-fns 4.4.0
@@ -9206,33 +9009,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### papaparse 5.7.0
-
-From `LICENSE`:
-
-```text
-The MIT License (MIT)
-
-Copyright (c) 2015 Matthew Holt
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-```
-
 ### parse-entities 4.0.2, property-information 7.2.0
 
 From `license`:
@@ -9911,35 +9687,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-```
-
-### uplot-react 1.2.4
-
-From `LICENSE`:
-
-```text
-Copyright (c) 2021-present Sergey Kalinichev
-
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
 ### vite 8.3.1
@@ -12325,7 +12072,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### zustand 4.5.7, zustand 5.0.15
+### zustand 5.0.15
 
 From `LICENSE`:
 

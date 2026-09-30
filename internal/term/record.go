@@ -80,10 +80,7 @@ func (r *castRecorder) event(code string, data string) {
 		return
 	}
 	now := time.Now()
-	interval := now.Sub(r.last)
-	if interval < 0 {
-		interval = 0
-	}
+	interval := max(now.Sub(r.last), 0)
 	r.last = now
 	r.encBuf.Reset()
 	_ = r.enc.Encode(data) // strings always encode; invalid UTF-8 becomes U+FFFD

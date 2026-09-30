@@ -9,7 +9,7 @@ import { isHandleGone, isNotFound } from './api'
 import type { FileStat } from './filestat'
 import { watchBanner, type BannerState } from './tabstate'
 
-export const WATCH_INTERVAL_MS = 5000
+const WATCH_INTERVAL_MS = 5000
 
 export interface RemoteWatchOptions {
   /** Watch at all (settings.editor.watchRemote, a document is open). */

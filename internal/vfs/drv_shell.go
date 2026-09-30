@@ -135,7 +135,7 @@ func (s *shellFS) listStat(ctx context.Context, dir string) ([]*Entry, error) {
 		return nil, shellError(stderr, code, "list")
 	}
 	var entries []*Entry
-	for _, line := range strings.Split(out.String(), "\n") {
+	for line := range strings.SplitSeq(out.String(), "\n") {
 		if line == "" {
 			continue
 		}
@@ -160,7 +160,7 @@ func (s *shellFS) listLS(ctx context.Context, dir string) ([]*Entry, error) {
 	}
 	now := time.Now()
 	var entries []*Entry
-	for _, line := range strings.Split(string(out), "\n") {
+	for line := range strings.SplitSeq(string(out), "\n") {
 		e, ok := parseLSLine(line, now)
 		if !ok || e.Name == "." || e.Name == ".." {
 			continue
@@ -209,7 +209,7 @@ func parseLSLine(line string, now time.Time) (*Entry, bool) {
 		idx += j + len(f[k])
 	}
 	name := strings.TrimPrefix(line[idx:], " ")
-	e := &Entry{Mode: mode, Size: size, Mtime: mt, UID: intPtr(uid), GID: intPtr(gid)}
+	e := &Entry{Mode: mode, Size: size, Mtime: mt, UID: new(uid), GID: new(gid)}
 	e.Type = typeFromMode(mode)
 	if e.Type == "symlink" {
 		if n, t, ok := strings.Cut(name, " -> "); ok {
@@ -242,7 +242,7 @@ func parsePermString(s string) (uint32, bool) {
 		return 0, false
 	}
 	bits := []uint32{0o400, 0o200, 0o100, 0o040, 0o020, 0o010, 0o004, 0o002, 0o001}
-	for i := 0; i < 9; i++ {
+	for i := range 9 {
 		c := s[i+1]
 		switch c {
 		case '-':
@@ -332,8 +332,7 @@ func (s *shellFS) statOne(ctx context.Context, p string, follow bool) (*Entry, e
 }
 
 func unwrapPathErr(err error) error {
-	var pe *os.PathError
-	if errors.As(err, &pe) {
+	if pe, ok := errors.AsType[*os.PathError](err); ok {
 		return pe.Err
 	}
 	return err
@@ -399,8 +398,7 @@ func (s *shellFS) start(ctx context.Context, cmd string, wantStdin bool) (*execS
 func (st *execStream) wait(timeout time.Duration) error {
 	select {
 	case err := <-st.waitErr:
-		var ee *ssh.ExitError
-		if errors.As(err, &ee) {
+		if ee, ok := errors.AsType[*ssh.ExitError](err); ok {
 			return shellError(st.stderr.Bytes(), ee.ExitStatus(), "command")
 		}
 		return err
@@ -804,7 +802,7 @@ func (s *shellFS) statMany(ctx context.Context, paths []string) []*Entry {
 			q[i] = shq(p)
 		}
 		res, _ := s.run(ctx, "stat -c "+shq(statFormat)+" -- "+strings.Join(q, " ")+" 2>/dev/null; true")
-		for _, line := range strings.Split(string(res), "\n") {
+		for line := range strings.SplitSeq(string(res), "\n") {
 			if e, err := parseStatLine(line); err == nil {
 				out = append(out, e)
 			}

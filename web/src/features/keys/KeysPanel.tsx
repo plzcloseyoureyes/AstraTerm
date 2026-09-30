@@ -223,7 +223,7 @@ function KeyRow({ k, selected, onSelect }: { k: StoredKey; selected: boolean; on
   )
 }
 
-export function KeyMenu({ k, trigger }: { k: StoredKey; trigger?: ReactNode }) {
+function KeyMenu({ k, trigger }: { k: StoredKey; trigger?: ReactNode }) {
   const excluded = keysSettings.useValue('agentExclude')
   return (
     <DropdownMenu>

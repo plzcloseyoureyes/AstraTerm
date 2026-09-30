@@ -192,7 +192,7 @@ export function isCustomImageIcon(icon: string | undefined | null): icon is stri
 }
 
 /** Built-in icon component for a stored value, if it is one. */
-export function builtinIcon(icon: string | undefined | null): IconType | undefined {
+function builtinIcon(icon: string | undefined | null): IconType | undefined {
   if (!icon || !icon.startsWith(LUCIDE_PREFIX)) return undefined
   return CATALOG[icon.slice(LUCIDE_PREFIX.length)]
 }

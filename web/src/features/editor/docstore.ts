@@ -143,12 +143,6 @@ export async function putDoc(rec: Omit<DocRecord, 'updatedAt'> & { updatedAt?: n
   }
 }
 
-/** Merge fields into a document (creating it when missing). */
-export async function patchDoc(id: string, patch: Partial<Omit<DocRecord, 'id'>>): Promise<void> {
-  const cur = await getDoc(id)
-  await putDoc({ ...(cur ?? { id }), ...patch, id, updatedAt: Date.now() })
-}
-
 export async function deleteDoc(id: string): Promise<void> {
   pending.delete(key(id))
   memory.delete(key(id))

@@ -92,13 +92,10 @@ func (s *syslogStore) resize(size int) {
 	if size == len(s.ring) || size <= 0 {
 		return
 	}
-	keep := s.n
-	if keep > size {
-		keep = size
-	}
+	keep := min(s.n, size)
 	ring := make([]SyslogMessage, size)
 	var bytes int64
-	for i := 0; i < keep; i++ {
+	for i := range keep {
 		ring[i] = s.ring[(s.start+s.n-keep+i)%len(s.ring)]
 		bytes += syslogMsgSize(&ring[i])
 	}
@@ -586,7 +583,7 @@ func (s *syslogService) serveUDP() {
 		}
 		s.in.stats.bytesIn.Add(int64(n))
 		src := remoteIP(addr.String())
-		for _, line := range bytes.Split(buf[:n], []byte{'\n'}) {
+		for line := range bytes.SplitSeq(buf[:n], []byte{'\n'}) {
 			if len(bytes.TrimSpace(line)) > 0 {
 				s.accept(line, src, "udp")
 			}
@@ -619,12 +616,10 @@ func (s *syslogService) serveTCP() {
 			_ = conn.Close()
 			continue
 		}
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
+		s.wg.Go(func() {
 			defer func() { <-s.sem }()
 			s.serveConn(conn)
-		}()
+		})
 	}
 }
 

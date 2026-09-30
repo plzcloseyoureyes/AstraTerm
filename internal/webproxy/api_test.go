@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -74,7 +75,7 @@ func newUpstream(t *testing.T) *upstream {
 		w.Header().Set("Content-Encoding", "gzip")
 		zw := gzip.NewWriter(w)
 		fmt.Fprint(zw, "<!doctype html><html><head><title>Big</title></head><body>")
-		for i := 0; i < 5000; i++ {
+		for i := range 5000 {
 			fmt.Fprintf(zw, "<p>line %d</p>", i)
 		}
 		fmt.Fprint(zw, "</body></html>")
@@ -146,9 +147,7 @@ func (b *browser) get(rawURL string, hdr http.Header) (*http.Response, string) {
 	}
 	req, _ := http.NewRequest("GET", b.env.URL(u.RequestURI()), nil)
 	req.Host = u.Host
-	for k, v := range hdr {
-		req.Header[k] = v
-	}
+	maps.Copy(req.Header, hdr)
 	resp, err := b.client.Do(req)
 	if err != nil {
 		b.t.Fatal(err)

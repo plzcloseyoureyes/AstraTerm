@@ -70,8 +70,7 @@ func open(ctx context.Context, d *app.Deps, c *core.Core, req term.OpenRequest) 
 			cancel()
 			if herr != nil {
 				nc.Close()
-				var cv *tls.CertificateVerificationError
-				if errors.As(herr, &cv) {
+				if _, ok := errors.AsType[*tls.CertificateVerificationError](herr); ok {
 					return nil, term.Permanent(fmt.Errorf("raw: TLS certificate of %s rejected: %w", addr, herr))
 				}
 				return nil, fmt.Errorf("raw: TLS handshake with %s failed: %w", addr, herr)

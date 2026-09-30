@@ -44,7 +44,7 @@ function open(sessionId: string, panel: MonitorPanel) {
 }
 
 /** Session shown by the active dock tab (`params.sessionId`, or a monitor tab's target), if it can be monitored. */
-export function useActiveMonitorTarget(): { sessionId: string; protocol: string } | undefined {
+function useActiveMonitorTarget(): { sessionId: string; protocol: string } | undefined {
   const tab = useActiveTab()
   const s = monitorSettings.use()
   const sessionId = tabTarget(tab)

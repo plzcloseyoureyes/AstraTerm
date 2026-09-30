@@ -117,7 +117,7 @@ func newHarness(t *testing.T, mode string) *harness {
 		_ = sessions.Wait(wctx)
 		time.Sleep(100 * time.Millisecond) // let viewers finish their last store writes
 		st.Close()
-		for i := 0; i < 20; i++ {
+		for range 20 {
 			if err := os.RemoveAll(dataDir); err == nil {
 				return
 			}

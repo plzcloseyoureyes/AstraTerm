@@ -91,8 +91,7 @@ func s3Err(err error, p string) error {
 	if errors.As(err, &nsk) || errors.As(err, &nf) || errors.As(err, &nsb) {
 		return &os.PathError{Op: "s3", Path: p, Err: fs.ErrNotExist}
 	}
-	var ae smithy.APIError
-	if errors.As(err, &ae) {
+	if ae, ok := errors.AsType[smithy.APIError](err); ok {
 		switch ae.ErrorCode() {
 		case "NoSuchKey", "NotFound", "NoSuchBucket", "NoSuchUpload":
 			return &os.PathError{Op: "s3", Path: p, Err: fs.ErrNotExist}

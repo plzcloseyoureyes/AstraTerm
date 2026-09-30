@@ -12,7 +12,6 @@ import type {
   ServiceAction,
   ServiceList,
   SSHInfo,
-  Stats,
   SystemInfo,
   TargetId,
 } from './types'
@@ -30,23 +29,22 @@ export const monitorKeys = {
   systemInfo: ['monitor', 'local', 'system-info'] as const,
 }
 
-export const getHost = (id: TargetId) => api.get<HostInfo>(`${base(id)}/host`)
-export const getSnapshot = (id: TargetId) => api.get<Stats>(`${base(id)}/snapshot`)
-export const getProcesses = (id: TargetId, signal?: AbortSignal) => api.get<ProcessInfo[]>(`${base(id)}/processes`, { signal })
+const getHost = (id: TargetId) => api.get<HostInfo>(`${base(id)}/host`)
+const getProcesses = (id: TargetId, signal?: AbortSignal) => api.get<ProcessInfo[]>(`${base(id)}/processes`, { signal })
 export const killProcess = (id: TargetId, pid: number, signal: string, sudo = false) =>
   api.post<void>(`${base(id)}/kill`, { pid, signal, sudo })
 export const reniceProcess = (id: TargetId, pid: number, nice: number, sudo = false) =>
   api.post<void>(`${base(id)}/renice`, { pid, nice, sudo })
-export const getServices = (id: TargetId) => api.get<ServiceList>(`${base(id)}/services`)
+const getServices = (id: TargetId) => api.get<ServiceList>(`${base(id)}/services`)
 export const serviceAction = (id: TargetId, name: string, action: ServiceAction, sudo = false) =>
   api.post<void>(`${base(id)}/services/${seg(name)}/${action}`, { sudo })
 export const getServiceLogs = (id: TargetId, name: string, lines = 200, sudo = false) =>
   api.get<{ lines: string[] }>(`${base(id)}/services/${seg(name)}/logs`, { query: { lines, sudo: sudo ? 1 : undefined } })
-export const getPorts = (id: TargetId, sudo = false) => api.get<ListeningPort[]>(`${base(id)}/ports`, { query: { sudo: sudo ? 1 : undefined } })
-export const getDiskUsage = (id: TargetId, path: string, sudo = false) =>
+const getPorts = (id: TargetId, sudo = false) => api.get<ListeningPort[]>(`${base(id)}/ports`, { query: { sudo: sudo ? 1 : undefined } })
+const getDiskUsage = (id: TargetId, path: string, sudo = false) =>
   api.get<DiskUsage>(`${base(id)}/du`, { query: { path, sudo: sudo ? 1 : undefined } })
 export const getSSHInfo = (id: TargetId) => api.get<SSHInfo>(`${base(id)}/ssh-info`)
-export const getSystemInfo = () => api.get<SystemInfo>('/api/monitor/local')
+const getSystemInfo = () => api.get<SystemInfo>('/api/monitor/local')
 
 /** WebSocket URL of the log follower. */
 export function tailUrl(id: TargetId, opts: { paths?: string[]; journal?: boolean; unit?: string; lines?: number; sudo?: boolean }): string {

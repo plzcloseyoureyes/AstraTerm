@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"maps"
 	"net/http"
 	"regexp"
 	"strings"
@@ -111,9 +112,7 @@ func loadGuardConfig(ctx context.Context, st *store.Store, userID string) guardC
 	for _, scope := range []string{store.ScopeGlobal, userID} {
 		var sec map[string]json.RawMessage
 		if ok, err := st.Settings.GetJSON(ctx, scope, "automation", &sec); err == nil && ok {
-			for k, v := range sec {
-				merged[k] = v
-			}
+			maps.Copy(merged, sec)
 		}
 	}
 	var b bool
@@ -146,8 +145,8 @@ func commandLines(text string) []string {
 	var out []string
 	var cur strings.Builder
 	for _, l := range splitLines(text) {
-		if strings.HasSuffix(l, `\`) {
-			cur.WriteString(strings.TrimSuffix(l, `\`))
+		if before, ok := strings.CutSuffix(l, `\`); ok {
+			cur.WriteString(before)
 			cur.WriteByte(' ')
 			continue
 		}
@@ -250,8 +249,7 @@ func (e *dangerError) Error() string { return "the text contains a potentially d
 
 // asDanger answers a dangerError with the 409 body (ok = true when it did).
 func asDanger(c *echo.Context, err error) (bool, error) {
-	var de *dangerError
-	if errors.As(err, &de) {
+	if de, ok := errors.AsType[*dangerError](err); ok {
 		return true, refuseDangerous(c, de.matches)
 	}
 	return false, err

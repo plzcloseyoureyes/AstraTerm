@@ -63,7 +63,7 @@ export function describePlace(source: FsSource, sessions: RuntimeSession[] | und
   }
 }
 
-export function usePlace(source: FsSource | null): PlaceInfo | null {
+function usePlace(source: FsSource | null): PlaceInfo | null {
   const sessions = useSessions()
   const conns = useConnections()
   return useMemo(() => (source ? describePlace(source, sessions.data, conns.data) : null), [source, sessions.data, conns.data])

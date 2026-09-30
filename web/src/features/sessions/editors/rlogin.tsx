@@ -12,7 +12,7 @@ function isRsh(value: Connection): boolean {
   return optString(value, 'variant') === 'rsh'
 }
 
-export function RloginEditor({ value, onChange }: ProtocolEditorProps) {
+function RloginEditor({ value, onChange }: ProtocolEditorProps) {
   const p = { value, onChange }
   const rsh = isRsh(value)
   return (

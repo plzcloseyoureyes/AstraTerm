@@ -45,7 +45,7 @@ const STATUS_STYLE: Record<RunningStatus, { dot: string; label: string }> = {
 }
 
 /** Live-session dot (SM-1 "open-session green dot"): click jumps to the session's tab. */
-export function RunningIndicator({ sessions, className }: { sessions: readonly RuntimeSession[]; className?: string }) {
+function RunningIndicator({ sessions, className }: { sessions: readonly RuntimeSession[]; className?: string }) {
   const live = sessions.length ? runningStatus(sessions) : 'disconnected'
   // A session that connects quickly goes straight to green; a short reconnect keeps the previous colour.
   const status = useSteadyStatus(live, (x) => x === 'connecting')

@@ -629,7 +629,7 @@ func (l *lazySigner) unlock() (ssh.Signer, error) {
 	}
 	a := l.a
 	msg := fmt.Sprintf("Key %q (%s) is encrypted.", l.name, ssh.FingerprintSHA256(l.pub))
-	for attempt := 0; attempt < maxPasswordAttempts; attempt++ {
+	for attempt := range maxPasswordAttempts {
 		if attempt > 0 {
 			msg = "Incorrect passphrase, please try again."
 		}
@@ -651,8 +651,7 @@ func (l *lazySigner) unlock() (ssh.Signer, error) {
 		}
 		s, err := ParsePrivateKey(l.pem, resp.Values[0])
 		if err != nil {
-			var np *NeedsPassphraseError
-			if errors.As(err, &np) {
+			if _, ok := errors.AsType[*NeedsPassphraseError](err); ok {
 				continue
 			}
 			l.err = err

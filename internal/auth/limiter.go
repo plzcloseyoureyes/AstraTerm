@@ -54,14 +54,8 @@ func (l *limiter) fail(key string, threshold int) {
 	e.fails++
 	e.last = now
 	if e.fails >= threshold {
-		shift := e.fails - threshold
-		if shift > 20 {
-			shift = 20
-		}
-		d := time.Second << shift
-		if d > l.maxLock {
-			d = l.maxLock
-		}
+		shift := min(e.fails-threshold, 20)
+		d := min(time.Second<<shift, l.maxLock)
 		e.lockedUntil = now.Add(d)
 	}
 }

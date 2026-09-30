@@ -197,13 +197,13 @@ type uriHost struct {
 // parseURIHost splits a "scheme://[user[:password]@]host[:port][/path]" address; ok is false when s is a plain host.
 // A password in the user info is never kept (hadPassword reports it).
 func parseURIHost(s string) (uriHost, bool) {
-	i := strings.Index(s, "://")
-	if i < 0 {
+	before, after, ok := strings.Cut(s, "://")
+	if !ok {
 		return uriHost{}, false
 	}
 	var u uriHost
-	u.proto = parseProtocolName(s[:i])
-	rest := s[i+3:]
+	u.proto = parseProtocolName(before)
+	rest := after
 	if slash := strings.IndexAny(rest, "/?#"); slash >= 0 {
 		rest = rest[:slash]
 	}

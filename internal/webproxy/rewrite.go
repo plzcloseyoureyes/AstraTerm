@@ -79,7 +79,7 @@ func filterCookies(h http.Header) {
 	}
 	var keep []string
 	for _, v := range vals {
-		for _, part := range strings.Split(v, ";") {
+		for part := range strings.SplitSeq(v, ";") {
 			part = strings.TrimSpace(part)
 			if part == "" {
 				continue
@@ -392,9 +392,9 @@ func fixCSPHeaders(h http.Header, nonce string) {
 // fixCSP rewrites one header value (possibly several comma-separated policies).
 func fixCSP(v, nonce string, dropFrameAncestors bool) string {
 	var policies []string
-	for _, pol := range strings.Split(v, ",") {
+	for pol := range strings.SplitSeq(v, ",") {
 		var dirs []string
-		for _, d := range strings.Split(pol, ";") {
+		for d := range strings.SplitSeq(pol, ";") {
 			f := strings.Fields(d)
 			if len(f) == 0 {
 				continue
@@ -628,11 +628,11 @@ func isTLSError(err error) bool {
 
 func tlsReason(err error) string {
 	s := err.Error()
-	if i := strings.Index(s, "x509: "); i >= 0 {
-		return s[i+len("x509: "):]
+	if _, after, ok := strings.Cut(s, "x509: "); ok {
+		return after
 	}
-	if i := strings.Index(s, "tls: "); i >= 0 {
-		return s[i+len("tls: "):]
+	if _, after, ok := strings.Cut(s, "tls: "); ok {
+		return after
 	}
 	return s
 }

@@ -239,8 +239,7 @@ func exitStatus(cmd *exec.Cmd, err error) int {
 		}
 		return ps.ExitCode()
 	}
-	var ee *exec.ExitError
-	if errors.As(err, &ee) {
+	if ee, ok := errors.AsType[*exec.ExitError](err); ok {
 		return ee.ExitCode()
 	}
 	if err != nil {

@@ -95,7 +95,7 @@ func parsePRI(s string) (int, string, bool) {
 // parse5424 parses "TIMESTAMP HOSTNAME APP-NAME PROCID MSGID STRUCTURED-DATA [MSG]" (after "<PRI>1 ").
 func parse5424(m *SyslogMessage, s string) bool {
 	fields := make([]string, 0, 5)
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		sp := strings.IndexByte(s, ' ')
 		if sp <= 0 {
 			return false

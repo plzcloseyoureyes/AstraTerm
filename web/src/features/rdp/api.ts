@@ -28,7 +28,7 @@ export const launchNativeConnection = (connectionId: string) =>
   api.post<LaunchNativeResult>(`/api/connections/${seg(connectionId)}/launch-native`)
 export const launchNativeSession = (sessionId: string) => api.post<LaunchNativeResult>(`/api/sessions/${seg(sessionId)}/launch-native`)
 
-export const getGuacdStatus = () => api.get<GuacdStatusInfo>('/api/guacd/status')
+const getGuacdStatus = () => api.get<GuacdStatusInfo>('/api/guacd/status')
 export const sidecarAction = (action: 'start' | 'stop') => api.post<JobStarted>('/api/guacd/sidecar', { action })
 
 export function useGuacdStatus(enabled = true, refetchInterval: number | false = false) {
@@ -36,7 +36,7 @@ export function useGuacdStatus(enabled = true, refetchInterval: number | false =
 }
 
 /** Recorded guacd sessions: the caller's, or everybody's (administrators, all = true). */
-export const listRecordings = (all: boolean) => api.get<RdpRecording[]>(`/api/rdp/recordings${all ? '?all=1' : ''}`)
+const listRecordings = (all: boolean) => api.get<RdpRecording[]>(`/api/rdp/recordings${all ? '?all=1' : ''}`)
 export const deleteRecording = (id: string) => api.del(`/api/rdp/recordings/${seg(id)}`)
 export const recordingFileUrl = (id: string) => apiUrl(`/api/rdp/recordings/${seg(id)}/file`)
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"maps"
 	"net/http"
 	"runtime"
 	"sort"
@@ -109,13 +110,9 @@ func (s *agentService) keysOf(ctx context.Context, u *model.User) ([]agentKeyVie
 	r.mu.Lock()
 	locked := r.locked
 	unloaded := map[string]bool{}
-	for k, v := range r.unloaded {
-		unloaded[k] = v
-	}
+	maps.Copy(unloaded, r.unloaded)
 	unlocked := map[string]*cachedSigner{}
-	for k, v := range r.cache {
-		unlocked[k] = v
-	}
+	maps.Copy(unlocked, r.cache)
 	r.mu.Unlock()
 	t := now()
 	out := []agentKeyView{}

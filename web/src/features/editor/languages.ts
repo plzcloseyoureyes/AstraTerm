@@ -21,7 +21,7 @@ export interface LanguageInfo {
 export const PLAIN_TEXT = 'Plain Text'
 export const PLAIN_ID = 'plaintext'
 
-export const LANGUAGES: readonly LanguageInfo[] = [
+const LANGUAGES: readonly LanguageInfo[] = [
   { id: PLAIN_ID, name: PLAIN_TEXT, ext: ['.txt', '.text', '.log'], aliases: ['text', 'plain', 'none', 'pgp'] },
   { id: 'abap', name: 'ABAP', ext: ['.abap'] },
   { id: 'apex', name: 'Apex', ext: ['.cls'] },
@@ -229,10 +229,6 @@ export function findLanguage(name: string | null | undefined): LanguageInfo | nu
   return byKey.get(n) ?? byKey.get(n.replace(/\s+/g, ' ')) ?? null
 }
 
-export function languageById(id: string | null | undefined): LanguageInfo | null {
-  return id ? (byId.get(id) ?? null) : null
-}
-
 /** Display name of a Monaco language id (the id itself for languages outside the table). */
 export function languageName(id: string | null | undefined): string {
   if (!id) return PLAIN_TEXT
@@ -305,7 +301,7 @@ const SHEBANG: [RegExp, string][] = [
 ]
 
 /** Language of a "#!" first line (null when it is not a shebang or names no known interpreter). */
-export function fromShebang(firstLine: string): LanguageInfo | null {
+function fromShebang(firstLine: string): LanguageInfo | null {
   if (!firstLine.startsWith('#!')) return null
   const parts = firstLine.slice(2).trim().split(/\s+/)
   let prog = parts[0]?.split('/').pop() ?? ''

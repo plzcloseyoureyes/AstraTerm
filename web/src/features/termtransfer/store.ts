@@ -22,7 +22,7 @@ export interface DangerRequest {
   resolve: (ok: boolean) => void
 }
 
-export interface SendDialogState {
+interface SendDialogState {
   open: boolean
   tabId?: string
   /** File chosen before the dialog opened (drop on the dialog / command args). */

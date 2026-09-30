@@ -73,7 +73,7 @@ export function isClipboardDirection(v: unknown): v is ClipboardDirection {
   return v === 'both' || v === 'to-remote' || v === 'from-remote' || v === 'none'
 }
 
-export function clipboardAllowed(d: ClipboardDirection | undefined): ClipboardAllowed {
+function clipboardAllowed(d: ClipboardDirection | undefined): ClipboardAllowed {
   switch (d) {
     case 'to-remote':
       return { toRemote: true, fromRemote: false }

@@ -43,7 +43,7 @@ export const sessionsSettings = defineSettings<SessionsSettings>('sessions', {
   connectAllConfirm: 5,
 })
 
-export const MAX_QUICK_HISTORY = 30
+const MAX_QUICK_HISTORY = 30
 
 /** Remember a (sanitised) quick-connect string. */
 export function rememberQuickConnect(text: string): void {

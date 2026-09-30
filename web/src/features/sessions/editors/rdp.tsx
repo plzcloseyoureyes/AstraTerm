@@ -55,7 +55,7 @@ function timezoneSuggestions(): ComboSuggestion[] {
   }
 }
 
-export function RdpEditor({ value, onChange }: ProtocolEditorProps) {
+function RdpEditor({ value, onChange }: ProtocolEditorProps) {
   const features = useServerFeatures()
   const p = { value, onChange }
   const zones = useMemo(timezoneSuggestions, [])

@@ -80,7 +80,7 @@ func startDockerLab(t *testing.T) *dockerLab {
 	if err != nil {
 		t.Fatalf("docker port: %v %s", err, out)
 	}
-	line := strings.Split(out, "\n")[0]
+	line, _, _ := strings.Cut(out, "\n")
 	fmt.Sscanf(line[strings.LastIndex(line, ":")+1:], "%d", &lab.jumpPort)
 	lab.waitBanner(t)
 	// The image disables TCP forwarding by default; enable it on the jump host.

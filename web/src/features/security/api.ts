@@ -59,8 +59,8 @@ export function useMe(enabled = true) {
 
 // --- passkeys ----------------------------------------------------------------------------------------------------------
 
-export const listPasskeys = () => api.get<Passkey[]>('/api/auth/webauthn/credentials')
-export const passkeyStatus = () => api.get<PasskeyStatus>('/api/auth/webauthn/status')
+const listPasskeys = () => api.get<Passkey[]>('/api/auth/webauthn/credentials')
+const passkeyStatus = () => api.get<PasskeyStatus>('/api/auth/webauthn/status')
 export const renamePasskey = (id: string, name: string) => api.patch<Passkey>(`/api/auth/webauthn/credentials/${seg(id)}`, { name })
 export const deletePasskey = (id: string, password?: string) =>
   api.del<void>(`/api/auth/webauthn/credentials/${seg(id)}`, password ? { password } : undefined)
@@ -96,7 +96,7 @@ export const enrollTotpEnable = (mfaToken: string, code: string) =>
 
 // --- SSO identities ---------------------------------------------------------------------------------------------------------
 
-export const listIdentities = () => api.get<SsoIdentity[]>('/api/auth/oidc/identities')
+const listIdentities = () => api.get<SsoIdentity[]>('/api/auth/oidc/identities')
 export const unlinkIdentity = (id: string) => api.del<void>(`/api/auth/oidc/identities/${seg(id)}`)
 
 export function useIdentities(enabled = true) {
@@ -165,7 +165,7 @@ export function useGuacd(enabled: boolean) {
 
 const AUDIT_PAGE = 100
 
-export const searchAudit = (f: AuditFilter, before?: number) =>
+const searchAudit = (f: AuditFilter, before?: number) =>
   api.get<AuditSearchResponse>('/api/admin/audit/search', {
     query: { ...f, q: f.q || undefined, userId: f.userId || undefined, action: f.action || undefined, limit: AUDIT_PAGE, before },
   })
@@ -184,7 +184,7 @@ export function useAuditSearch(f: AuditFilter, enabled: boolean) {
 
 // --- admin: network policy (netguard module; may be absent) --------------------------------------------------------------------
 
-export const getNetworkPolicy = () => api.get<NetworkPolicyView>('/api/admin/network-policy')
+const getNetworkPolicy = () => api.get<NetworkPolicyView>('/api/admin/network-policy')
 export const putNetworkPolicy = (p: Partial<NetworkPolicy>) => api.put<NetworkPolicyView>('/api/admin/network-policy', p)
 export const testNetworkPolicy = (req: { host: string; port: number; userId?: string; policy?: NetworkPolicy }) =>
   api.post<NetworkTestResult>('/api/admin/network-policy/test', req)

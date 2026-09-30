@@ -16,6 +16,7 @@ import (
 	"io"
 	"io/fs"
 	"log/slog"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -516,8 +517,7 @@ func (j *job) fileError(rel string, err error) {
 	j.info.FailedFiles++
 	if len(j.info.Errors) < maxErrors {
 		msg := err.Error()
-		var he *httpx.HTTPError
-		if errors.As(vfs.FSError(err, ""), &he) {
+		if he, ok := errors.AsType[*httpx.HTTPError](vfs.FSError(err, "")); ok {
 			msg = he.Message
 		}
 		j.info.Errors = append(j.info.Errors, rel+": "+msg)
@@ -602,8 +602,7 @@ func (j *job) finish(err error) {
 }
 
 func errMessage(err error) string {
-	var he *httpx.HTTPError
-	if errors.As(vfs.FSError(err, ""), &he) {
+	if he, ok := errors.AsType[*httpx.HTTPError](vfs.FSError(err, "")); ok {
 		return he.Message
 	}
 	return err.Error()
@@ -662,8 +661,8 @@ func (j *job) execute() error {
 		}
 	}
 	// Move: remove the emptied source folders, deepest first.
-	for i := len(dirsToRemove) - 1; i >= 0; i-- {
-		_ = sfs.Remove(ctx, dirsToRemove[i])
+	for _, d := range slices.Backward(dirsToRemove) {
+		_ = sfs.Remove(ctx, d)
 	}
 	return nil
 }

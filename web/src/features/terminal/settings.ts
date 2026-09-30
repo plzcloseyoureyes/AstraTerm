@@ -8,16 +8,16 @@ import { isMac } from '@/lib/utils'
 import { defineSettings } from '@/stores/settings'
 import type { TerminalScheme } from './types'
 
-export type BellStyle = 'none' | 'visual' | 'sound' | 'both'
-export type RightClickAction = 'menu' | 'paste' | 'copy-or-paste'
-export type Osc52Policy = 'off' | 'write' | 'read-write'
-export type TitleMode = 'session' | 'osc' | 'both'
-export type CursorStyle = 'block' | 'underline' | 'bar'
-export type CursorInactiveStyle = 'outline' | 'block' | 'bar' | 'underline' | 'none'
-export type RendererPreference = 'auto' | 'dom'
-export type LinkModifier = 'none' | 'mod'
-export type CloseOnExit = 'never' | 'clean' | 'always'
-export type FontWeightSetting = 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'
+type BellStyle = 'none' | 'visual' | 'sound' | 'both'
+type RightClickAction = 'menu' | 'paste' | 'copy-or-paste'
+type Osc52Policy = 'off' | 'write' | 'read-write'
+type TitleMode = 'session' | 'osc' | 'both'
+type CursorStyle = 'block' | 'underline' | 'bar'
+type CursorInactiveStyle = 'outline' | 'block' | 'bar' | 'underline' | 'none'
+type RendererPreference = 'auto' | 'dom'
+type LinkModifier = 'none' | 'mod'
+type CloseOnExit = 'never' | 'clean' | 'always'
+type FontWeightSetting = 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'
 
 export const BUNDLED_FONT_FAMILY = '"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace'
 
@@ -252,7 +252,7 @@ function sanitizeValue<K extends keyof TerminalSettings>(key: K, value: unknown)
 }
 
 /** Clean a whole settings object (stored values may come from older versions or hand edits). */
-export function sanitizeTerminalSettings(raw: TerminalSettings): TerminalSettings {
+function sanitizeTerminalSettings(raw: TerminalSettings): TerminalSettings {
   const out = { ...TERMINAL_DEFAULTS }
   for (const key of Object.keys(TERMINAL_DEFAULTS) as (keyof TerminalSettings)[]) {
     const v = sanitizeValue(key, raw[key])
@@ -268,7 +268,7 @@ function isSchemeLike(s: unknown): s is TerminalScheme {
 }
 
 /** Keys a connection may override through `options.terminal` (everything except the scheme library itself). */
-export const OVERRIDABLE_KEYS = (Object.keys(TERMINAL_DEFAULTS) as (keyof TerminalSettings)[]).filter(
+const OVERRIDABLE_KEYS = (Object.keys(TERMINAL_DEFAULTS) as (keyof TerminalSettings)[]).filter(
   (k) => k !== 'customSchemes' && k !== 'passthroughKeys',
 )
 

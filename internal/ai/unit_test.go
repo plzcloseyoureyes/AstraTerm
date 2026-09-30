@@ -266,7 +266,7 @@ func TestCleanMessages(t *testing.T) {
 	}
 	big := strings.Repeat("x", 90_000)
 	var long []Message
-	for i := 0; i < 8; i++ {
+	for range 8 {
 		long = append(long, Message{Role: "user", Content: big}, Message{Role: "assistant", Content: big})
 	}
 	long = append(long, Message{Role: "user", Content: "last"})
@@ -287,7 +287,7 @@ func TestLimiter(t *testing.T) {
 	l := newLimiter()
 	now := time.Date(2026, 9, 28, 23, 59, 0, 0, time.UTC)
 	l.now = func() time.Time { return now }
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		if err := l.allow("u", 3, 5); err != nil {
 			t.Fatal(err)
 		}
@@ -299,7 +299,7 @@ func TestLimiter(t *testing.T) {
 		t.Fatal("limits must be per user")
 	}
 	now = now.Add(61 * time.Second) // next day, window slid
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		if err := l.allow("u", 3, 4); err != nil {
 			t.Fatal(err)
 		}

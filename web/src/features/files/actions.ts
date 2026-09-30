@@ -55,10 +55,6 @@ export function prefetchDir(fsId: string, dir: string): void {
   })
 }
 
-export function invalidateAll(ctx: FsContext): void {
-  void queryClient.invalidateQueries({ queryKey: fsKeys.lists(ctx.handle.id) })
-}
-
 function realEntries(entries: FileEntry[]): FileEntry[] {
   return entries.filter((e) => e.name !== '..')
 }
@@ -78,7 +74,7 @@ async function listNames(ctx: FsContext, dir: string): Promise<{ names: Set<stri
 }
 
 /** SPEC §6.0 POST /api/fs body that reopens this file system (other features keep it to survive a reload). */
-export function openRequestOf(ctx: FsContext): FsOpenRequest | undefined {
+function openRequestOf(ctx: FsContext): FsOpenRequest | undefined {
   switch (ctx.source.kind) {
     case 'session':
       return { sessionId: ctx.source.sessionId }
@@ -173,19 +169,6 @@ export async function renameEntry(ctx: FsContext, entry: FileEntry, newName: str
     reportError(`Could not rename “${entry.name}”`, e)
     return null
   }
-}
-
-export async function renameWithDialog(ctx: FsContext, entry: FileEntry, reveal?: RevealFn): Promise<void> {
-  const name = await prompt({
-    title: `Rename “${entry.name}”`,
-    label: 'New name',
-    defaultValue: entry.name,
-    confirmLabel: 'Rename',
-    validate: (v) => validateName(v),
-  })
-  if (name == null) return
-  const to = await renameEntry(ctx, entry, name)
-  if (to) reveal?.(to)
 }
 
 export async function deleteEntries(ctx: FsContext, entries: FileEntry[]): Promise<boolean> {
@@ -486,7 +469,7 @@ export async function copyNames(entries: FileEntry[]): Promise<void> {
 }
 
 /** scp://user@host:port/path (or file:// for the local host). */
-export function scpUrl(ctx: FsContext, path: string): string {
+function scpUrl(ctx: FsContext, path: string): string {
   if (ctx.source.kind === 'local' || ctx.handle.kind === 'local') return `file://${encodePathForUrl(path)}`
   const h = ctx.host
   if (!h?.host) return path

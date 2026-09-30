@@ -8,11 +8,13 @@ import (
 	"encoding/base64"
 	"errors"
 	"log/slog"
+	"maps"
 	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/netip"
 	"net/url"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -248,9 +250,7 @@ func (p *Proxy) info() Info {
 	var extra map[string]any
 	if len(p.extra) > 0 {
 		extra = make(map[string]any, len(p.extra))
-		for k, v := range p.extra {
-			extra[k] = v
-		}
+		maps.Copy(extra, p.extra)
 	}
 	p.mu.Unlock()
 	return Info{
@@ -376,10 +376,8 @@ func (p *Proxy) addUIOrigin(o string) {
 	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	for _, x := range p.uiOrigins {
-		if x == o {
-			return
-		}
+	if slices.Contains(p.uiOrigins, o) {
+		return
 	}
 	if len(p.uiOrigins) >= 8 {
 		p.uiOrigins = p.uiOrigins[1:]

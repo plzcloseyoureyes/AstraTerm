@@ -10,7 +10,7 @@
  * escape injection, homographs, curl|sh...) and obviously destructive commands. It is a speed bump, not a sandbox.
  */
 
-export type PasteSeverity = 'danger' | 'warning' | 'info'
+type PasteSeverity = 'danger' | 'warning' | 'info'
 
 export interface PasteWarning {
   id: string

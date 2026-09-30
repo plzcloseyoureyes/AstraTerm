@@ -97,7 +97,7 @@ interface SecurityLevel {
  * One unambiguous verdict per connection. "Encrypted" is only said when the server was authenticated (X.509);
  * anonymous TLS is encrypted but unverified; weak TLS and every unencrypted form say so in words, not just colour.
  */
-export function securityLevel(info: VncInfo): SecurityLevel {
+function securityLevel(info: VncInfo): SecurityLevel {
   if (!info.encrypted || !info.tls) {
     if (info.passwordCleartext) {
       return { label: 'Not encrypted — the password was sent in clear text', short: 'Not encrypted', tone: 'text-destructive', Icon: LockOpen }
@@ -121,7 +121,7 @@ export function securityLevel(info: VncInfo): SecurityLevel {
   }
 }
 
-export function SecurityBadge({
+function SecurityBadge({
   info,
   connected,
   size,

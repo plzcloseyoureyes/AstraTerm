@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"maps"
 	"math"
 	"strconv"
 	"strings"
@@ -269,9 +270,7 @@ func cloneValue(v any) any {
 		return append([]string(nil), t...)
 	case map[string]string:
 		m := make(map[string]string, len(t))
-		for k, e := range t {
-			m[k] = e
-		}
+		maps.Copy(m, t)
 		return m
 	}
 	return v

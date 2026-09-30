@@ -185,8 +185,8 @@ func resolveDiscoverPath(path string) ([]byte, string, error) {
 	if !allowed {
 		return nil, "", badRequest("that file is not one of the discovered import sources")
 	}
-	if strings.HasPrefix(clean, registryPrefix) {
-		data, f, ok := readRegistrySource(strings.TrimPrefix(clean, registryPrefix))
+	if after, ok := strings.CutPrefix(clean, registryPrefix); ok {
+		data, f, ok := readRegistrySource(after)
 		if !ok {
 			return nil, "", badRequest("could not read " + clean)
 		}

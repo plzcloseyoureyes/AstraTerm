@@ -3,10 +3,10 @@
  * (switching tools) and later show the same results — or a still-running job — again.
  */
 import { useCallback, useMemo } from 'react'
-import { cancelTool, resetTool, runTool, useToolJobs, type JobStatus, type ToolJobState } from './jobs'
+import { cancelTool, resetTool, runTool, useToolJobs, type ToolJobState } from './jobs'
 import type { ToolRow } from './types'
 
-export type { JobStatus, ToolJobState }
+export type { ToolJobState }
 
 const EMPTY: ToolJobState = { status: 'idle', rows: [], latest: {}, keyed: {} }
 

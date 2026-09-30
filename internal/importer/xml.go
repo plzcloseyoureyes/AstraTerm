@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"io"
+	"maps"
 	"strconv"
 	"strings"
 	"unicode/utf8"
@@ -102,9 +103,7 @@ func parseMRemoteNG(content []byte) (*parsed, error) {
 // mrngEffective applies mRemoteNG inheritance: a value whose Inherit<Name>="true" comes from the parent container.
 func mrngEffective(own, parent map[string]string) map[string]string {
 	eff := make(map[string]string, len(own))
-	for k, v := range own {
-		eff[k] = v
-	}
+	maps.Copy(eff, own)
 	for k, v := range own {
 		if strings.HasPrefix(k, "inherit") && strings.EqualFold(v, "true") {
 			name := strings.TrimPrefix(k, "inherit")

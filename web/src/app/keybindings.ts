@@ -24,7 +24,7 @@ export { eventToKeybinding, formatKeybinding, normalizeKeybinding } from '@/lib/
 type Scope = 'owner' | 'input' | 'terminal' | 'other'
 
 /** Elements whose keyboard shortcuts win over the app's (see CommandDef.essential). */
-export const KEYBOARD_OWNER_SELECTOR = '[data-keyboard-owner], .monaco-editor'
+const KEYBOARD_OWNER_SELECTOR = '[data-keyboard-owner], .monaco-editor'
 
 interface Compiled {
   commandId: string
@@ -48,7 +48,7 @@ function isTerminalControlKey(e: KeyboardEvent): boolean {
   return e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey && (e.key.length === 1 || e.code.startsWith('Key'))
 }
 
-export function scopeOf(target: EventTarget | null): Scope {
+function scopeOf(target: EventTarget | null): Scope {
   if (target instanceof Element && target.closest(KEYBOARD_OWNER_SELECTOR)) return 'owner'
   if (target instanceof Element && target.closest('.xterm, [data-terminal]')) return 'terminal'
   return isEditableTarget(target) ? 'input' : 'other'

@@ -357,7 +357,7 @@ func (e *engine) execResize(ctx context.Context, execID string, h, w int) error 
 // execExitCode returns the exit status of a finished exec (-1 when unknown). The attach stream can end a moment
 // before the daemon records the exit, so a still-running exec is polled briefly.
 func (e *engine) execExitCode(ctx context.Context, execID string) int {
-	for attempt := 0; attempt < 10; attempt++ {
+	for range 10 {
 		code, running, ok := e.execInspect(ctx, execID)
 		if !ok {
 			return -1

@@ -16,7 +16,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { copyText, cn, formatDuration } from '@/lib/utils'
 import type { JobStatus, ToolJobState } from './jobs'
 import { clearHistory, useToolHistory } from './history'
-import type { ToolRow, ToolRun } from './types'
+import type { ToolRun } from './types'
 
 // ---- layout ----------------------------------------------------------------------------------------------------------
 
@@ -112,7 +112,7 @@ export function RunControls({
   )
 }
 
-export function StatusBadge({ status }: { status: JobStatus }) {
+function StatusBadge({ status }: { status: JobStatus }) {
   switch (status) {
     case 'starting':
     case 'running':
@@ -328,21 +328,21 @@ export function CopyButton({ value, label = 'Copy', size = 'xs', title }: { valu
  * One CSV field: quoted when needed, and prefixed with ' when it starts like a spreadsheet formula (=, +, -, @, tab,
  * CR) — banners and remote data are attacker-controlled and must not execute when the export is opened in Excel.
  */
-export function csvField(v: string): string {
+function csvField(v: string): string {
   let s = v
   if (/^[=+\-@\t\r]/.test(s) && !/^-?\d+(\.\d+)?$/.test(s)) s = "'" + s
   if (/[",\n\r]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"'
   return s
 }
 
-export function toCSV<T>(columns: Column<T>[], rows: T[]): string {
+function toCSV<T>(columns: Column<T>[], rows: T[]): string {
   const cols = columns.filter((c) => c.csv)
   const head = cols.map((c) => csvField(typeof c.header === 'string' ? c.header : c.key)).join(',')
   const body = rows.map((r) => cols.map((c) => csvField(c.csv!(r))).join(',')).join('\r\n')
   return head + '\r\n' + body + '\r\n'
 }
 
-export function downloadText(filename: string, text: string, type = 'text/plain'): void {
+function downloadText(filename: string, text: string, type = 'text/plain'): void {
   try {
     const blob = new Blob([text], { type })
     const url = URL.createObjectURL(blob)
@@ -482,12 +482,6 @@ export function RecentRuns({ tool, onPick }: { tool: string; onPick: (run: ToolR
 
 export const str = (v: unknown): string => (v == null ? '' : String(v))
 export const num = (v: unknown): number | undefined => (typeof v === 'number' && Number.isFinite(v) ? v : undefined)
-
-/** Last row of a kind in a row list. */
-export function lastOfKind(rows: ToolRow[], kind: string): ToolRow | undefined {
-  for (let i = rows.length - 1; i >= 0; i--) if (rows[i].kind === kind) return rows[i]
-  return undefined
-}
 
 /** Format bits per second (1 Gbit/s = 10^9). */
 export function formatBits(bps: number | undefined): string {

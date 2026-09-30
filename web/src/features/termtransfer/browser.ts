@@ -139,7 +139,7 @@ export function deliverDownload(blob: Blob, name: string, doc: Document = docume
 // ---------------------------------------------------------------------------------------------------------------------
 
 /** A local file with its path relative to what the user picked / dropped ("dir/sub/name.txt"). */
-export interface LocalItem {
+interface LocalItem {
   file: File
   relPath: string
 }
@@ -175,7 +175,7 @@ export function pickFiles(doc: Document = document, opts: { multiple?: boolean; 
   })
 }
 
-export function selectionFromList(list: FileList | readonly File[] | null): LocalSelection {
+function selectionFromList(list: FileList | readonly File[] | null): LocalSelection {
   const files: LocalItem[] = []
   const dirs = new Set<string>()
   for (const f of Array.from(list ?? [])) {

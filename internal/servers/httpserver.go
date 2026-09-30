@@ -84,13 +84,11 @@ func (s *httpService) start() error {
 			return ctx
 		},
 	}
-	s.wg.Add(1)
-	go func() {
-		defer s.wg.Done()
+	s.wg.Go(func() {
 		if err := s.srv.Serve(ln); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			s.in.failed(err)
 		}
-	}()
+	})
 	return nil
 }
 
@@ -441,13 +439,14 @@ func (s *httpService) serveListing(rq *httpRequest, p string) {
 	}
 	// Breadcrumbs.
 	page.Crumbs = []crumb{{Name: "/", Href: "/"}}
-	acc := "/"
-	for _, seg := range strings.Split(strings.Trim(p, "/"), "/") {
+	var acc strings.Builder
+	acc.WriteString("/")
+	for seg := range strings.SplitSeq(strings.Trim(p, "/"), "/") {
 		if seg == "" {
 			continue
 		}
-		acc += url.PathEscape(seg) + "/"
-		page.Crumbs = append(page.Crumbs, crumb{Name: seg, Href: acc})
+		acc.WriteString(url.PathEscape(seg) + "/")
+		page.Crumbs = append(page.Crumbs, crumb{Name: seg, Href: acc.String()})
 	}
 	if p != "/" {
 		page.Parent = "../"
@@ -686,8 +685,7 @@ func (s *httpService) handlePart(part *multipart.Part, dir string, limit int64, 
 			if errors.Is(err, errTooLarge) {
 				return fmt.Sprintf("%s exceeds the %d MB limit", name, s.cfg.MaxUploadMB)
 			}
-			var mbe *http.MaxBytesError
-			if errors.As(err, &mbe) {
+			if _, ok := errors.AsType[*http.MaxBytesError](err); ok {
 				return fmt.Sprintf("the upload exceeds the %d MB limit", s.cfg.MaxUploadMB)
 			}
 			return "cannot store " + name

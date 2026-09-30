@@ -20,7 +20,7 @@ export interface DetectRequest {
   sessionId?: string
 }
 
-export interface ForwardsRequest {
+interface ForwardsRequest {
   key: number
   connectionId: string
 }

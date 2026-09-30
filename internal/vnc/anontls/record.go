@@ -216,7 +216,7 @@ func paddingLen(payload []byte) (toRemove int, good byte) {
 	fits := uint(len(payload)-1) - uint(pad) // high bit clear ⇔ pad <= len-1
 	good = byte(int32(^fits) >> 31)
 	check := min(256, len(payload))
-	for i := 0; i < check; i++ {
+	for i := range check {
 		inPad := byte(int32(^(uint(pad) - uint(i))) >> 31) // 0xff when i <= pad
 		b := payload[len(payload)-1-i]
 		good &^= inPad & (pad ^ b)

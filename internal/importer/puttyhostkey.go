@@ -49,7 +49,7 @@ func puttyHostKey(kind, portStr, host, value string) (*pknownHost, error) {
 	}
 	var nums []*big.Int
 	curve := ""
-	for _, part := range strings.Split(value, ",") {
+	for part := range strings.SplitSeq(value, ",") {
 		part = strings.TrimSpace(part)
 		if strings.HasPrefix(part, "nistp") {
 			curve = part

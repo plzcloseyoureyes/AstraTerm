@@ -50,11 +50,6 @@ export function closeFilesDialog(id: number): void {
   useFilesDialogs.setState((s) => ({ stack: s.stack.filter((x) => x.id !== id) }))
 }
 
-/** Replace a dialog's data (e.g. the preview moving to the next image). */
-export function updateFilesDialog(id: number, patch: Partial<FilesDialog>): void {
-  useFilesDialogs.setState((s) => ({ stack: s.stack.map((x) => (x.id === id ? ({ ...x, ...patch } as OpenDialog) : x)) }))
-}
-
 /**
  * Ask what to do with items that already exist at the destination. Resolves the chosen policy, or null (cancel).
  */
@@ -74,9 +69,4 @@ export function askConflict(names: string[], destLabel: string, verb: 'upload' |
       },
     })
   })
-}
-
-export function closeAllFilesDialogs(): void {
-  for (const d of useFilesDialogs.getState().stack) if (d.kind === 'conflict') d.resolve(null)
-  useFilesDialogs.setState({ stack: [] })
 }

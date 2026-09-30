@@ -19,7 +19,7 @@ export interface AiUiSettings {
   chatModel: string
 }
 
-export const AI_UI_DEFAULTS: AiUiSettings = {
+const AI_UI_DEFAULTS: AiUiSettings = {
   hashTrigger: true,
   offerOnError: true,
   errorHeuristics: true,

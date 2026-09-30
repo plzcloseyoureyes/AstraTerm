@@ -71,7 +71,7 @@ function focusedEditor(): Monaco.editor.ICodeEditor | null {
 const layers = new WeakMap<Document, HTMLElement>()
 
 /** The body-level popup layer of a window (created on first use). */
-export function popupLayer(doc: Document = document): HTMLElement {
+function popupLayer(doc: Document = document): HTMLElement {
   let el = layers.get(doc)
   if (!el || !el.isConnected) {
     el = doc.createElement('div')

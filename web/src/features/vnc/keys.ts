@@ -39,7 +39,7 @@ export const K = {
 } satisfies Record<string, Key>
 
 /** F1..F12 */
-export function fKey(n: number): Key {
+function fKey(n: number): Key {
   return { keysym: 0xffbe + (n - 1), code: `F${n}` }
 }
 
@@ -101,7 +101,7 @@ export function findCombo(id: string): Combo | undefined {
  * Keysym for a character typed as text: Latin-1 maps directly, control characters to their keys, everything else to
  * the Unicode keysym range (0x01000000 + code point) that X servers and TigerVNC accept.
  */
-export function charKey(ch: string): Key | null {
+function charKey(ch: string): Key | null {
   const cp = ch.codePointAt(0)
   if (cp === undefined) return null
   switch (ch) {

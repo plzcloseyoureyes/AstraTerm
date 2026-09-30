@@ -5,7 +5,7 @@
  * in whitespace.
  */
 
-export interface LineSpan {
+interface LineSpan {
   startLineNumber: number
   /** Exclusive; equal to the start for an empty span (insertion point). */
   endLineNumberExclusive: number

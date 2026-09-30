@@ -59,7 +59,7 @@ function historyKey(): string | null {
   return id ? `astraterm:ai:intents:v1:${id}` : null
 }
 
-export function intentHistory(): string[] {
+function intentHistory(): string[] {
   const key = historyKey()
   const h = key ? storage.get<string[]>(key, []) : []
   return Array.isArray(h) ? h.filter((x) => typeof x === 'string') : []

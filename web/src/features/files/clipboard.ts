@@ -14,7 +14,7 @@ export interface FileClipboard {
   at: number
 }
 
-export const useFileClipboard = create<{ clip: FileClipboard | null }>(() => ({ clip: null }))
+const useFileClipboard = create<{ clip: FileClipboard | null }>(() => ({ clip: null }))
 
 export function setFileClipboard(op: 'copy' | 'cut', ctx: FsContext, entries: FileEntry[], dir: string): void {
   const list = entries.filter((e) => e.name !== '..')

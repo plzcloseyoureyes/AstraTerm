@@ -104,8 +104,7 @@ func resolveOne(ctx context.Context, host string, ipv6 bool) (net.IP, error) {
 
 // dnsErrText shortens resolver errors ("lookup x on 1.2.3.4:53: no such host" → "no such host").
 func dnsErrText(err error) string {
-	var de *net.DNSError
-	if errors.As(err, &de) {
+	if de, ok := errors.AsType[*net.DNSError](err); ok {
 		if de.IsNotFound {
 			return "no such host"
 		}

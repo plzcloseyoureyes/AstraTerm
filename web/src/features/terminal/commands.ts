@@ -26,7 +26,7 @@ import { registerCommand, registerMenu } from '@/app/registry'
 import { getKeybindings, runCommand } from '@/app/commands'
 import { claimKeys } from '@/app/keybindings'
 import { isMac } from '@/lib/utils'
-import { closeTab, useWorkspaceStore } from '@/stores/workspace'
+import { closeTab } from '@/stores/workspace'
 import { getFocusedTabTerminal, listTerminals } from './bus'
 import { toggleMultiExec, useMultiExecStore } from './multiexec'
 import { attachSession, duplicateSession, openLocalShell } from './open'
@@ -390,9 +390,3 @@ claimKeys((e) => {
   if (isNativePasteCombo(e) && getKeybindings('terminal.paste').some((b) => matches(e, b))) return true
   return false
 })
-
-/** True while the active dock tab is a terminal (for other modules' `when` predicates). */
-export function isTerminalActive(): boolean {
-  const id = useWorkspaceStore.getState().activeTabId
-  return !!id && !!getFocusedTabTerminal()
-}

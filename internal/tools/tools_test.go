@@ -97,11 +97,11 @@ func TestSinkBatchesInOrderAndCloses(t *testing.T) {
 	c := &collector{}
 	s := c.sink()
 	var wg sync.WaitGroup
-	for g := 0; g < 8; g++ {
+	for g := range 8 {
 		wg.Add(1)
 		go func(g int) {
 			defer wg.Done()
-			for i := 0; i < 500; i++ {
+			for i := range 500 {
 				s.add(row{"kind": "n", "g": g, "i": i})
 			}
 		}(g)
@@ -146,7 +146,7 @@ func TestJobSlots(t *testing.T) {
 	h := newHandler(nil, nil)
 	u := &model.User{ID: "a"}
 	var releases []func()
-	for i := 0; i < maxJobsPerUser; i++ {
+	for i := range maxJobsPerUser {
 		rel, err := h.acquireSlot(u, toolPing, 0)
 		if err != nil {
 			t.Fatalf("slot %d: %v", i, err)
@@ -352,7 +352,7 @@ func TestParseMACAndMagicPacket(t *testing.T) {
 	if len(pkt) != 6+16*6 {
 		t.Fatalf("magic packet length %d", len(pkt))
 	}
-	for i := 0; i < 6; i++ {
+	for i := range 6 {
 		if pkt[i] != 0xFF || pkt[6+i] != mac[i] || pkt[6+15*6+i] != mac[i] {
 			t.Fatal("magic packet layout wrong")
 		}

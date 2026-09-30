@@ -26,7 +26,7 @@ import type { ButtonBar, QuickButton } from '../types'
 import { cssColor } from '../highlight/rules'
 import { openAutomationTab } from '../tab/open'
 
-export function barApplies(bar: ButtonBar, session: RuntimeSession | undefined, conn: Connection | undefined): boolean {
+function barApplies(bar: ButtonBar, session: RuntimeSession | undefined, conn: Connection | undefined): boolean {
   if (bar.protocols?.length && !(session && bar.protocols.includes(session.protocol))) return false
   if (bar.connectionIds?.length && !(session?.connectionId && bar.connectionIds.includes(session.connectionId))) return false
   if (bar.tags?.length) {
@@ -41,7 +41,7 @@ async function cached<T>(key: readonly unknown[], fetcher: () => Promise<T>): Pr
 }
 
 /** Run a quick button. */
-export async function runButton(b: QuickButton): Promise<void> {
+async function runButton(b: QuickButton): Promise<void> {
   const target = b.target ?? 'active'
   try {
     switch (b.action) {

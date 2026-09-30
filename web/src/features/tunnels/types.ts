@@ -56,7 +56,7 @@ export interface TunnelStatusEx extends TunnelStatus {
   warning?: string
 }
 
-export interface ConnRef {
+interface ConnRef {
   id: string
   name: string
   protocol: string
@@ -89,7 +89,7 @@ export interface TunnelInput {
   secrets?: Record<string, string>
 }
 
-export type TunnelChange = 'created' | 'updated' | 'deleted'
+type TunnelChange = 'created' | 'updated' | 'deleted'
 
 export interface TunnelEvent {
   type: 'tunnel'

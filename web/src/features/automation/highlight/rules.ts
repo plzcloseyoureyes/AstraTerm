@@ -160,8 +160,6 @@ export const RULE_SETS: RuleSet[] = [
   },
 ]
 
-export const DEFAULT_SET_IDS = ['errors', 'warnings', 'success', 'ipv4', 'ipv6', 'mac', 'url', 'datetime']
-
 export const ANSI_COLORS: { id: string; label: string }[] = [
   { id: 'red', label: 'Red' },
   { id: 'brightRed', label: 'Bright red' },

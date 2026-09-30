@@ -197,8 +197,7 @@ func (v *viewer) run() {
 	if err != nil {
 		code, msg, st := v.classify(err)
 		endState, endMsg = st, msg
-		var ie *insecureError
-		if errors.As(err, &ie) {
+		if ie, ok := errors.AsType[*insecureError](err); ok {
 			v.m.setConfirm(v.s.ID, ie.info())
 		}
 		v.setClose(code, msg)

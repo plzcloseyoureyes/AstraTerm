@@ -1,7 +1,7 @@
 import { defineSettings } from '@/stores/settings'
 import type { EditorSettings } from './types'
 
-export const EDITOR_DEFAULTS: EditorSettings = {
+const EDITOR_DEFAULTS: EditorSettings = {
   fontSize: 13,
   fontFamily: '',
   tabSize: 4,

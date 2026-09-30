@@ -41,7 +41,7 @@ registerTabKind({
 registerOverlay({ id: 'security', component: SecurityOverlay })
 registerOverlay({ id: 'security.lock', component: LockPasskeyOverlay, keepMountedWhileLocked: true, order: 1000 })
 
-export function openSecurity(section?: SecuritySection): void {
+function openSecurity(section?: SecuritySection): void {
   openTab<SecurityTabParams>({ kind: 'security', params: { section: section ?? 'account' } })
 }
 

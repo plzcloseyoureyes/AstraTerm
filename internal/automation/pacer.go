@@ -112,9 +112,7 @@ func (m *Module) sendPacedAll(ctx context.Context, ids []string, text string, p 
 	var mu sync.Mutex
 	failed := 0
 	for _, id := range ids {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			total, err := m.sendPaced(ctx, id, text, p, func(done, total int) {
 				emit(progressEvent{Kind: "progress", SessionID: id, Done: done, Total: total})
 			}, func(msg string) {
@@ -128,7 +126,7 @@ func (m *Module) sendPacedAll(ctx context.Context, ids []string, text string, p 
 				mu.Unlock()
 			}
 			emit(ev)
-		}()
+		})
 	}
 	wg.Wait()
 	if err := ctx.Err(); err != nil {

@@ -87,7 +87,7 @@ function sourceDetail(src: DiffSource | undefined): string {
   return 'Text'
 }
 
-export function diffTitle(p: DiffTabParams | undefined): string {
+function diffTitle(p: DiffTabParams | undefined): string {
   if (!p?.left && !p?.right) return 'Text diff'
   return `${sourceLabel(p?.left)} ↔ ${sourceLabel(p?.right)}`
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"maps"
 	"net/http"
 	"strings"
 	"sync"
@@ -248,9 +249,7 @@ func (m *Module) executeBatch(ctx context.Context, user *model.User, run *Run, i
 		if runCtx.Err() != nil {
 			break
 		}
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			defer func() { <-sem }()
 			mu.Lock()
 			res := results[i]
@@ -275,7 +274,7 @@ func (m *Module) executeBatch(ctx context.Context, user *model.User, run *Run, i
 			}
 			mu.Unlock()
 			emit(batchEvent{Kind: "host", Result: &res, TS: time.Now().UTC()})
-		}()
+		})
 	}
 	wg.Wait()
 
@@ -511,9 +510,7 @@ func (m *Module) scriptOnHost(ctx context.Context, user *model.User, conn *model
 		logf(level, text)
 	}
 	vars := map[string]string{}
-	for k, v := range p.Variables {
-		vars[k] = v
-	}
+	maps.Copy(vars, p.Variables)
 	vars["connectionId"], vars["connectionName"], vars["host"] = conn.ID, conn.Name, conn.Host
 	err = m.execScript(ctx, user, scriptParams{name: p.script.Name, program: prg, vars: vars, session: s,
 		timeout: time.Until(deadlineOf(ctx)), logf: hostLog})

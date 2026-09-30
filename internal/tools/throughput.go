@@ -176,7 +176,7 @@ func iperfCookie() []byte {
 	const alphabet = "abcdefghijklmnopqrstuvwxyz234567"
 	b := make([]byte, iperfCookieSize)
 	_, _ = rand.Read(b[:iperfCookieSize-1])
-	for i := 0; i < iperfCookieSize-1; i++ {
+	for i := range iperfCookieSize - 1 {
 		b[i] = alphabet[int(b[i])%len(alphabet)]
 	}
 	b[iperfCookieSize-1] = 0

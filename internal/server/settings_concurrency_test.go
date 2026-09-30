@@ -20,14 +20,12 @@ func TestSettingsConcurrentPatchesDoNotLoseUpdates(t *testing.T) {
 		var wg sync.WaitGroup
 		errs := make(chan error, n)
 		for i := range n {
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
+			wg.Go(func() {
 				body := map[string]any{"race": map[string]any{fmt.Sprintf("k%02d", i): i}}
 				if code := admin.JSON("PUT", scope, body, nil); code != 200 {
 					errs <- fmt.Errorf("PUT %s #%d: status %d", scope, i, code)
 				}
-			}()
+			})
 		}
 		wg.Wait()
 		close(errs)

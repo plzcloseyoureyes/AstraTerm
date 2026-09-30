@@ -109,8 +109,7 @@ func (h *handler) start(c *echo.Context) error {
 	}
 	st, err := s.start(c.Request().Context())
 	if err != nil {
-		var se *startError
-		if errors.As(err, &se) {
+		if se, ok := errors.AsType[*startError](err); ok {
 			return se.httpError()
 		}
 		return err
@@ -139,8 +138,7 @@ func (h *handler) restart(c *echo.Context) error {
 	}
 	st, err := s.restart(c.Request().Context())
 	if err != nil {
-		var se *startError
-		if errors.As(err, &se) {
+		if se, ok := errors.AsType[*startError](err); ok {
 			return se.httpError()
 		}
 		return err

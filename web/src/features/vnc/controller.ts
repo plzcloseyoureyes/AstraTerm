@@ -29,7 +29,7 @@ type RFBCtor = typeof RFB
 let noVNC: Promise<RFBCtor> | null = null
 
 /** Lazy-load noVNC (≈60 KB gz, own chunk). */
-export function loadNoVNC(): Promise<RFBCtor> {
+function loadNoVNC(): Promise<RFBCtor> {
   if (!noVNC) {
     noVNC = import('@novnc/novnc')
       .then((m) => m.default)
@@ -41,7 +41,7 @@ export function loadNoVNC(): Promise<RFBCtor> {
   return noVNC
 }
 
-export type VncPhase =
+type VncPhase =
   | 'loading'
   | 'connecting'
   | 'connected'

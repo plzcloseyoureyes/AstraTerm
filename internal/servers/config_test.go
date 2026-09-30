@@ -22,8 +22,6 @@ func testEnv(t *testing.T) *env {
 		nexHost: "127.0.0.1", nexPort: 7822}
 }
 
-func strp(s string) *string { return &s }
-
 func TestNormalizeBind(t *testing.T) {
 	cases := map[string]string{"": "127.0.0.1", "localhost": "127.0.0.1", "*": "0.0.0.0", "0.0.0.0": "0.0.0.0",
 		"::": "::", "[::1]": "::1", "::ffff:10.0.0.1": "10.0.0.1", " 192.168.1.5 ": "192.168.1.5"}
@@ -107,7 +105,6 @@ func TestValidateUsers(t *testing.T) {
 		{{Username: "k", PublicKeys: []string{"ssh-ed25519 notbase64"}}},         // bad key
 	}
 	for i, l := range bad {
-		l := l
 		if err := validateUsers(&l, true, true); err == nil {
 			t.Errorf("case %d accepted: %+v", i, l)
 		}
@@ -123,10 +120,10 @@ func TestApplyUserInput(t *testing.T) {
 	prevHash, _ := auth.HashPassword("old-password")
 	prev := []User{{ID: "u1", Username: "alice", PasswordHash: prevHash}, {ID: "u2", Username: "bob", PasswordHash: prevHash}}
 	next := []User{
-		{ID: "u1", Username: "alice-renamed"},                                    // keeps the hash (by id)
-		{Username: "bob", PasswordHash: "$argon2id$forged"},                      // matched by name, forged hash ignored
-		{Username: "carol", Password: strp("new-secret")},                        // new password
-		{ID: "u9", Username: "dave", Password: strp(""), PublicKeys: []string{}}, // removed password
+		{ID: "u1", Username: "alice-renamed"},                                   // keeps the hash (by id)
+		{Username: "bob", PasswordHash: "$argon2id$forged"},                     // matched by name, forged hash ignored
+		{Username: "carol", Password: new("new-secret")},                        // new password
+		{ID: "u9", Username: "dave", Password: new(""), PublicKeys: []string{}}, // removed password
 	}
 	if err := applyUserInput(next, prev); err != nil {
 		t.Fatal(err)
@@ -140,7 +137,7 @@ func TestApplyUserInput(t *testing.T) {
 	if next[3].PasswordHash != "" {
 		t.Fatal("empty password did not remove the hash")
 	}
-	if err := applyUserInput([]User{{Username: "x", Password: strp("abc")}}, nil); err == nil {
+	if err := applyUserInput([]User{{Username: "x", Password: new("abc")}}, nil); err == nil {
 		t.Fatal("short password accepted")
 	}
 }

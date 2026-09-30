@@ -125,7 +125,7 @@ func TestParserSplitAnywhere(t *testing.T) {
 
 	rng := rand.New(rand.NewPCG(1, 2))
 	stream := serverStream()
-	for trial := 0; trial < 200; trial++ {
+	for trial := range 200 {
 		b, rc := newTestBackend(settings{negotiate: true, termType: "xterm", cols: 90, rows: 30})
 		var out []byte
 		for rest := stream; len(rest) > 0; {

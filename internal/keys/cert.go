@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/binary"
 	"fmt"
+	"maps"
 	"net/netip"
 	"slices"
 	"sort"
@@ -68,9 +69,7 @@ func describeCert(cert *ssh.Certificate, now time.Time) *certInfo {
 	if cert.Signature != nil {
 		info.SignatureType = cert.Signature.Format
 	}
-	for k, v := range cert.CriticalOptions {
-		info.CriticalOptions[k] = v
-	}
+	maps.Copy(info.CriticalOptions, cert.CriticalOptions)
 	for k := range cert.Extensions {
 		info.Extensions = append(info.Extensions, k)
 	}
@@ -294,7 +293,7 @@ func buildCertificate(req *signRequest, subject ssh.PublicKey, now time.Time) (*
 			if v == "" {
 				continue
 			}
-			for _, part := range strings.Split(v, ",") {
+			for part := range strings.SplitSeq(v, ",") {
 				part = strings.TrimSpace(part)
 				if _, err := netip.ParsePrefix(part); err != nil {
 					if _, err := netip.ParseAddr(part); err != nil {

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"maps"
 	"net/http"
 	"net/http/httptest"
 	"net/netip"
@@ -305,9 +306,7 @@ func TestRouterPolicies(t *testing.T) {
 		if as != "" {
 			h["X-As"] = as
 		}
-		for k, v := range hdr {
-			h[k] = v
-		}
+		maps.Copy(h, hdr)
 		return serve(r, method, path, h, "").Code
 	}
 	csrf := map[string]string{CSRFHeader: "1"}

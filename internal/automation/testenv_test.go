@@ -2,6 +2,7 @@ package automation
 
 import (
 	"context"
+	"maps"
 	"net"
 	"os"
 	"strconv"
@@ -61,9 +62,7 @@ var errStopProbe error = probeErr{}
 func (h *harness) sshConn(u *model.User, name string, options map[string]any) *model.Connection {
 	h.t.Helper()
 	opts := model.Options{"useAgent": false}
-	for k, v := range options {
-		opts[k] = v
-	}
+	maps.Copy(opts, options)
 	c := &model.Connection{OwnerID: u.ID, Name: name, Protocol: model.ProtoSSH, Host: "127.0.0.1", Port: 22022,
 		Username: "test", AuthMethod: model.AuthPassword, Options: opts, Tags: []string{}}
 	enc, err := h.d.Vault.SealJSON(map[string]string{"password": "test", "sudoPassword": "test"})

@@ -19,12 +19,12 @@ export const aiKeys = {
 }
 
 export const getStatus = () => api.get<AiStatus>('/api/ai/status')
-export const getConfig = (scope: 'global' | 'user') => api.get<AiConfigView>('/api/ai/config', { query: { scope } })
+const getConfig = (scope: 'global' | 'user') => api.get<AiConfigView>('/api/ai/config', { query: { scope } })
 export const putConfig = (body: AiConfig & { scope: 'global' | 'user'; apiKey?: string; reset?: boolean }) =>
   api.put<AiConfigView>('/api/ai/config', body)
 export const testConfig = (body: AiConfig & { scope: 'global' | 'user'; apiKey?: string }) =>
   api.post<{ ok: boolean; latencyMs: number; model: string; reply?: string }>('/api/ai/test', body)
-export const listModels = (scope?: 'global' | 'user') =>
+const listModels = (scope?: 'global' | 'user') =>
   api.get<{ models: AiModel[]; source: 'provider' | 'builtin'; error?: string }>('/api/ai/models', { query: { scope } })
 
 export function useAiConfig(scope: 'global' | 'user', enabled = true) {

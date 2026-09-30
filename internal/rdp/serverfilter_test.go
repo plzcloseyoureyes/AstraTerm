@@ -130,7 +130,7 @@ func (s *screen) apply(r bitmapRect, strideFromRect bool) error {
 		if y > r.bottom && !strideFromRect || y >= s.h {
 			continue
 		}
-		for x := 0; x < cx; x++ {
+		for x := range cx {
 			copy(s.pix[((y*s.w)+r.left+x)*ps:], src[x*ps:(x+1)*ps])
 		}
 	}

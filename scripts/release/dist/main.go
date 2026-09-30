@@ -73,7 +73,7 @@ func main() {
 	ldflags := fmt.Sprintf("-s -w -X main.version=%s -X main.commit=%s -X main.date=%s",
 		*version, commit, date.Format(time.RFC3339))
 	var archives []string
-	for _, p := range strings.Split(*plats, ",") {
+	for p := range strings.SplitSeq(*plats, ",") {
 		parts := strings.Split(strings.TrimSpace(p), "/")
 		if len(parts) < 2 || len(parts) > 3 {
 			fail(fmt.Errorf("bad platform %q", p))

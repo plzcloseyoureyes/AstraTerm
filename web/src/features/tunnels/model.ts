@@ -87,13 +87,8 @@ export function isLoopbackHost(h: string | undefined): boolean {
   return v === 'localhost' || v === '::1' || /^127\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(v)
 }
 
-export function isWildcardHost(h: string | undefined): boolean {
-  const v = (h ?? '').trim()
-  return v === '*' || v === '0.0.0.0' || v === '::' || v === '[::]'
-}
-
 /** The listen side of a tunnel (bound address when running). */
-export function listenLabel(t: TunnelEx): string {
+function listenLabel(t: TunnelEx): string {
   const k = kindOf(t)
   const bound = KINDS[k].listenOn === 'host' ? t.status.localAddr : t.status.remoteAddr
   if (bound && t.status.state !== 'stopped') return bound
@@ -102,7 +97,7 @@ export function listenLabel(t: TunnelEx): string {
 }
 
 /** The destination side of a tunnel. */
-export function destLabel(t: { type: TunnelType; options?: TunnelOptions; destHost?: string; destPort?: number }): string {
+function destLabel(t: { type: TunnelType; options?: TunnelOptions; destHost?: string; destPort?: number }): string {
   const k = kindOf(t)
   if (isProxyKind(k)) return k === 'dynamic' ? 'any host (via SSH server)' : 'any host (via this machine)'
   if (t.options?.destSocket) return t.options.destSocket
@@ -160,7 +155,7 @@ export function connectionRoute(c: Connection | undefined, all: readonly Connect
 // --- well-known destinations (TUN-6 presets, DOCKER_HOST) ------------------------------------------------------------
 
 /** Docker API sockets (Docker Engine, Podman's Docker-compatible service). */
-export function isDockerSocket(path: string | undefined): boolean {
+function isDockerSocket(path: string | undefined): boolean {
   return !!path && /(^|\/)(docker|podman)\.sock$/.test(path.trim())
 }
 
@@ -588,7 +583,7 @@ export function validateDraft(d: TunnelDraft, storedPassword: boolean): DraftErr
 }
 
 /** An allowed-clients list that limits who may connect: not empty, and no entry admits every address (/0). */
-export function restrictiveAllowList(list: readonly string[]): boolean {
+function restrictiveAllowList(list: readonly string[]): boolean {
   const entries = list.map((a) => a.trim()).filter(Boolean)
   return entries.length > 0 && !entries.some((a) => /\/0+$/.test(a))
 }

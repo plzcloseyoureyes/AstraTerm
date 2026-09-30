@@ -12,11 +12,11 @@ export const vncKeys = {
 }
 
 export const getVncInfo = (sessionId: string) => api.get<VncInfo>(`/api/sessions/${seg(sessionId)}/vnc-info`)
-export const listListeners = () => api.get<VncListener[]>('/api/vnc/listen')
-export const startListener = (req: StartListenerRequest) => api.post<VncListener>('/api/vnc/listen', req)
-export const stopListener = (id: string) => api.del<void>(`/api/vnc/listen/${seg(id)}`)
-export const listTrustedCerts = () => api.get<TrustedCert[]>('/api/vnc/certs')
-export const deleteTrustedCert = (id: string) => api.del<void>(`/api/vnc/certs/${seg(id)}`)
+const listListeners = () => api.get<VncListener[]>('/api/vnc/listen')
+const startListener = (req: StartListenerRequest) => api.post<VncListener>('/api/vnc/listen', req)
+const stopListener = (id: string) => api.del<void>(`/api/vnc/listen/${seg(id)}`)
+const listTrustedCerts = () => api.get<TrustedCert[]>('/api/vnc/certs')
+const deleteTrustedCert = (id: string) => api.del<void>(`/api/vnc/certs/${seg(id)}`)
 
 export function useVncInfo(sessionId: string | undefined, enabled = true) {
   return useQuery({

@@ -100,7 +100,7 @@ func TestLockoutIPv6AndNoResetOnSuccess(t *testing.T) {
 	db := newUserDB([]User{{Username: "guest", PasswordHash: h}, {Username: "admin", PasswordHash: h}}, &counters{})
 	db.sleepFn = nil
 	var err error
-	for i := 0; i < failMax; i++ {
+	for i := range failMax {
 		_, err = db.checkPassword("2001:db8:1:2::"+strconv.Itoa(i+1), "admin", "guess")
 	}
 	if !errors.Is(err, errTooManyFails) {
@@ -110,7 +110,7 @@ func TestLockoutIPv6AndNoResetOnSuccess(t *testing.T) {
 		t.Fatal("block does not cover exactly the /64")
 	}
 	// Interleaving successful guest logins does not reset the count.
-	for i := 0; i < failMax-1; i++ {
+	for i := range failMax - 1 {
 		if _, err := db.checkPassword("198.51.100.1", "admin", "guess"); !errors.Is(err, errBadCredentials) {
 			t.Fatalf("attempt %d: %v", i, err)
 		}
@@ -175,7 +175,7 @@ func TestSyslogMemoryBudget(t *testing.T) {
 	st := newSyslogStore(m)
 	st.maxBytes = 1 << 20
 	big := strings.Repeat("x", 60<<10)
-	for i := 0; i < 100; i++ {
+	for i := range 100 {
 		msg := parseSyslog([]byte("<14>"+big), time.Now())
 		msg.Source = "192.0.2." + strconv.Itoa(i%250)
 		st.add(msg, len(big))
@@ -203,7 +203,7 @@ func TestSyslogMemoryBudget(t *testing.T) {
 			t.Fatal("clear kept message memory")
 		}
 	}
-	for i := 0; i < syslogMaxSources+500; i++ {
+	for i := range syslogMaxSources + 500 {
 		msg := parseSyslog([]byte("<14>spoofed"), time.Now())
 		msg.Source = "10." + strconv.Itoa(i>>16&255) + "." + strconv.Itoa(i>>8&255) + "." + strconv.Itoa(i&255)
 		st.add(msg, 11)

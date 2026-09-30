@@ -90,7 +90,7 @@ export interface CommandResult {
   parsed: boolean
 }
 
-export interface StreamMeta {
+interface StreamMeta {
   provider: string
   model: string
   mode: AiMode

@@ -24,14 +24,14 @@ import {
 import type { Protocol } from '@/api/types'
 import { protocolEditors, type IconType } from './registry'
 
-export interface ProtocolInfo {
+interface ProtocolInfo {
   label: string
   icon: IconType
   defaultPort: number
   group: 'terminal' | 'files' | 'graphical' | 'other'
 }
 
-export const PROTOCOL_INFO: Record<Protocol, ProtocolInfo> = {
+const PROTOCOL_INFO: Record<Protocol, ProtocolInfo> = {
   ssh: { label: 'SSH', icon: Terminal, defaultPort: 22, group: 'terminal' },
   telnet: { label: 'Telnet', icon: Cable, defaultPort: 23, group: 'terminal' },
   rlogin: { label: 'Rlogin', icon: Cable, defaultPort: 513, group: 'terminal' },

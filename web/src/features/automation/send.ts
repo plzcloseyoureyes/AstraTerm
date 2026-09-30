@@ -93,7 +93,7 @@ async function deliver(t: Target, data: string): Promise<boolean> {
 }
 
 /** The bytes a snippet sends in a terminal: execute = Enter at the end; paste keeps the text for editing. */
-export function snippetPayload(text: string, mode: Snippet['sendMode'], bracketed: boolean): string {
+function snippetPayload(text: string, mode: Snippet['sendMode'], bracketed: boolean): string {
   const clean = text.replace(BRACKET_MARKERS, '')
   const body = clean.replace(/\r\n?/g, '\n')
   const multiline = body.replace(/\n$/, '').includes('\n')
@@ -136,17 +136,17 @@ export async function collectVariables(snippet: Pick<Snippet, 'id' | 'name' | 'c
   return values
 }
 
-export type GuardDecision = 'clean' | 'confirmed' | 'cancel'
+type GuardDecision = 'clean' | 'confirmed' | 'cancel'
 
 /** Run the guard on text for targets: nothing found, the user confirmed, or the user cancelled. */
-export async function guardDecision(texts: string[], targets: Target[]): Promise<GuardDecision> {
+async function guardDecision(texts: string[], targets: Target[]): Promise<GuardDecision> {
   const matches = checkDangerous(texts.join('\n'))
   if (!matches.length) return 'clean'
   return (await askDangerous(matches, targets.map((t) => t.title))) ? 'confirmed' : 'cancel'
 }
 
 /** Guard text for targets; resolves true when it may be sent. */
-export async function guardOk(texts: string[], targets: Target[]): Promise<boolean> {
+async function guardOk(texts: string[], targets: Target[]): Promise<boolean> {
   return (await guardDecision(texts, targets)) !== 'cancel'
 }
 

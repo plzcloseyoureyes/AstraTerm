@@ -37,7 +37,7 @@ export function closeSecurityDialogs(): void {
 }
 
 /** Ask the user to confirm their identity (password or passkey). Resolves true once verified. */
-export function requestReauth(reason?: string): Promise<boolean> {
+function requestReauth(reason?: string): Promise<boolean> {
   return new Promise((resolve) => {
     const prev = useSecurityDialogs.getState().reauth
     prev?.resolve(false)
@@ -51,7 +51,7 @@ export function finishReauth(ok: boolean): void {
   r?.resolve(ok)
 }
 
-export function isReauthRequired(err: unknown): boolean {
+function isReauthRequired(err: unknown): boolean {
   return isApiError(err) && err.code === 'reauth_required'
 }
 

@@ -751,8 +751,7 @@ func truncate(s string, n int) string {
 
 // rootCause strips *PathError wrappers so messages do not repeat the path.
 func rootCause(err error) error {
-	var pe *os.PathError
-	if errors.As(err, &pe) {
+	if pe, ok := errors.AsType[*os.PathError](err); ok {
 		return pe.Err
 	}
 	return err

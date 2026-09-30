@@ -64,7 +64,7 @@ func parseKnownHostsSource(content []byte) (*parsed, error) {
 			return
 		}
 		comment := truncate(strings.TrimSpace(strings.Join(fields[3:], " ")), 200)
-		for _, h := range strings.Split(hostField, ",") {
+		for h := range strings.SplitSeq(hostField, ",") {
 			host, port, ok := splitKnownHostName(h)
 			if !ok {
 				patterns++

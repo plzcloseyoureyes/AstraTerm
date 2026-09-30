@@ -80,8 +80,7 @@ func (s *Service) sshFor(ctx context.Context, user *model.User, t xpraTarget) (*
 
 // sshError keeps typed errors and turns connection failures into a 422 with their message.
 func sshError(err error) error {
-	var he *httpx.HTTPError
-	if errors.As(err, &he) {
+	if _, ok := errors.AsType[*httpx.HTTPError](err); ok {
 		return err
 	}
 	var coded interface{ ErrorCode() string }
@@ -104,7 +103,7 @@ func (s *Service) xpraCheck(ctx context.Context, c *sshx.Client) (XpraCheck, err
 			"or the packages from xpra.org) to run X11 applications in the browser."
 		return res, nil
 	}
-	for _, line := range strings.Split(string(out), "\n") {
+	for line := range strings.SplitSeq(string(out), "\n") {
 		k, v, _ := strings.Cut(strings.TrimSpace(line), "=")
 		switch k {
 		case "path":

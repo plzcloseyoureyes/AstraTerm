@@ -453,7 +453,7 @@ func TestWhoisLocalServer(t *testing.T) {
 		l, _ := bufio.NewReader(c).ReadString('\n')
 		if strings.TrimSpace(l) == "big.test" {
 			chunk := strings.Repeat("x", 64*1024)
-			for i := 0; i < 40; i++ { // 2.5 MiB: must be cut at 1 MiB
+			for range 40 { // 2.5 MiB: must be cut at 1 MiB
 				if _, err := io.WriteString(c, chunk); err != nil {
 					return
 				}
@@ -495,7 +495,7 @@ func TestWOLLoopback(t *testing.T) {
 	if sum := c.byKind("summary"); len(sum) != 1 || sum[0]["packets"] != 2 || sum[0]["secureOn"] != true {
 		t.Fatalf("wol summary = %v", c.all())
 	}
-	for i := 0; i < 2; i++ {
+	for range 2 {
 		select {
 		case n := <-got:
 			if n != 108 {

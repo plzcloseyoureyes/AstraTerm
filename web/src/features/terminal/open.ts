@@ -41,11 +41,9 @@ export interface OpenOptions {
 }
 
 /** Protocols browsed in a file manager tab instead of a runtime session. */
-export const FILE_PROTOCOLS: readonly Protocol[] = ['sftp', 'ftp', 's3']
-/** Graphical protocols (session kind vnc / rdp, tab kind of the same name). */
-export const GRAPHICAL_PROTOCOLS: readonly Protocol[] = ['vnc', 'rdp']
+const FILE_PROTOCOLS: readonly Protocol[] = ['sftp', 'ftp', 's3']
 
-export function isFileProtocol(p: string | undefined): boolean {
+function isFileProtocol(p: string | undefined): boolean {
   return !!p && (FILE_PROTOCOLS as readonly string[]).includes(p)
 }
 
@@ -141,7 +139,7 @@ async function resolveConnection(connOrId: Connection | string): Promise<Connect
 }
 
 /** Quick spec safe to persist in tab params (no password / secrets). */
-export function sanitizeQuick(q: Partial<Connection> & { password?: string }): QuickSpec {
+function sanitizeQuick(q: Partial<Connection> & { password?: string }): QuickSpec {
   const out: QuickSpec = {}
   if (q.name) out.name = q.name
   if (q.protocol) out.protocol = q.protocol

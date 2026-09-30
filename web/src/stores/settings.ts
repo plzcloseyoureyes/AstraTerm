@@ -39,7 +39,7 @@ const FLUSH_DELAY = 400
  * RFC 7396 merge patch turning `prev` into `next`: keys missing from `next` become null, nested objects are diffed,
  * everything else is replaced. Returns undefined when nothing changed.
  */
-export function mergePatchDiff(prev: unknown, next: unknown): unknown {
+function mergePatchDiff(prev: unknown, next: unknown): unknown {
   if (next === undefined || next === null) return prev === undefined || prev === null ? undefined : null
   if (!isPlainObject(next) || !isPlainObject(prev)) return jsonEqual(prev, next) ? undefined : next
   const out: Record<string, unknown> = {}
@@ -141,7 +141,7 @@ export function resetSettingsStore(): void {
 }
 
 /** Raw write of a whole section value (prefer defineSettings(...).set). */
-export function setSettingsSection(section: string, value: unknown): void {
+function setSettingsSection(section: string, value: unknown): void {
   const prev = useSettingsStore.getState().values[section]
   if (jsonEqual(prev, value)) return
   useSettingsStore.setState((s) => ({ values: { ...s.values, [section]: value } }))
@@ -177,11 +177,6 @@ export interface SettingsSection<T extends object> {
 }
 
 const registeredDefaults = new Map<string, object>()
-
-/** All sections declared so far with their defaults (used by the raw settings view / export). */
-export function getDeclaredSettingsSections(): ReadonlyMap<string, object> {
-  return registeredDefaults
-}
 
 function mergeSection<T extends object>(defaults: T, raw: unknown): T {
   if (!isPlainObject(raw)) return { ...defaults }

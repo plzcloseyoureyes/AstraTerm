@@ -54,13 +54,13 @@ export interface DirHandleLike {
   keys(): AsyncIterable<string>
 }
 
-export interface FileHandleLike {
+interface FileHandleLike {
   readonly kind: 'file'
   readonly name: string
   createWritable(opts?: { keepExistingData?: boolean }): Promise<WritableLike>
 }
 
-export interface WritableLike {
+interface WritableLike {
   write(data: Uint8Array): Promise<void>
   close(): Promise<void>
   abort(reason?: unknown): Promise<void>
@@ -209,7 +209,7 @@ export class FolderTarget implements SaveTarget {
 const SEGMENT_BYTES = 8 * 1024 * 1024
 
 /** Largest single file kept in memory for a browser download. */
-export const MAX_DOWNLOAD_BYTES = 2 * 1024 * 1024 * 1024
+const MAX_DOWNLOAD_BYTES = 2 * 1024 * 1024 * 1024
 
 export type Deliver = (blob: Blob, name: string) => void
 

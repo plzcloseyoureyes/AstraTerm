@@ -520,9 +520,8 @@ func (s *Service) allowIP(ip string) bool {
 
 // ceremonyError turns a go-webauthn verification failure into a client error (details logged, never secrets).
 func (s *Service) ceremonyError(kind string, err error) error {
-	var pe *protocol.Error
 	msg := "the passkey could not be verified"
-	if errors.As(err, &pe) {
+	if pe, ok := errors.AsType[*protocol.Error](err); ok {
 		s.log.Info("passkey ceremony failed", "kind", kind, "type", pe.Type, "details", pe.Details, "info", pe.DevInfo)
 		if pe.Details != "" {
 			msg += ": " + pe.Details

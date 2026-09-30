@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, seg } from './client'
-import { optimisticList, removeByIds, upsertById } from './optimistic'
+import { optimisticList, upsertById } from './optimistic'
 import { queryKeys } from './queryKeys'
 import type { Identity, IdentityInput } from './types'
 
-export const listIdentities = () => api.get<Identity[]>('/api/identities')
-export const createIdentity = (input: IdentityInput) => api.post<Identity>('/api/identities', input)
-export const updateIdentity = (id: string, patch: Partial<IdentityInput>) => api.patch<Identity>(`/api/identities/${seg(id)}`, patch)
+const listIdentities = () => api.get<Identity[]>('/api/identities')
+const createIdentity = (input: IdentityInput) => api.post<Identity>('/api/identities', input)
+const updateIdentity = (id: string, patch: Partial<IdentityInput>) => api.patch<Identity>(`/api/identities/${seg(id)}`, patch)
 export const deleteIdentity = (id: string) => api.del<void>(`/api/identities/${seg(id)}`)
 
 export function useIdentities(enabled = true) {
@@ -33,13 +33,5 @@ export function useUpdateIdentity() {
         return { ...i, ...rest }
       }),
     ),
-  })
-}
-
-export function useDeleteIdentity() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: deleteIdentity,
-    ...optimisticList<Identity, string>(qc, queryKeys.identities, (items, id) => removeByIds(items, id), [queryKeys.connections]),
   })
 }

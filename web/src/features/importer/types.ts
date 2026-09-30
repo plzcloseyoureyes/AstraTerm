@@ -29,7 +29,7 @@ export interface PreviewOptions {
   charset?: string
 }
 
-export interface PreviewFolder {
+interface PreviewFolder {
   id: string
   parentId: string
   name: string
@@ -62,7 +62,7 @@ export interface PreviewConnection {
   warnings?: string[]
 }
 
-export interface PreviewKey {
+interface PreviewKey {
   id: string
   name: string
   type?: string
@@ -72,7 +72,7 @@ export interface PreviewKey {
   duplicate: boolean
 }
 
-export interface PreviewKnownHost {
+interface PreviewKnownHost {
   host: string
   port: number
   keyType: string
@@ -83,14 +83,14 @@ export interface PreviewKnownHost {
   conflict: boolean
 }
 
-export interface DuplicateRef {
+interface DuplicateRef {
   id: string
   name: string
   existingId: string
   existingName: string
 }
 
-export interface PreviewCounts {
+interface PreviewCounts {
   folders: number
   connections: number
   keys: number

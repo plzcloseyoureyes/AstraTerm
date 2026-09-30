@@ -20,7 +20,7 @@ import { dirname, normalizePath } from '../paths'
 import { filesSettings } from '../settings'
 
 export type TransferState = 'queued' | 'running' | 'done' | 'error' | 'canceled'
-export type TransferKind = 'upload' | 'download' | 'copy' | 'move'
+type TransferKind = 'upload' | 'download' | 'copy' | 'move'
 
 export interface TransferView {
   id: string
@@ -126,7 +126,7 @@ const toasted = new Set<string>()
 let loading: Promise<void> | null = null
 
 /** Load GET /api/transfers once (and after the events socket reconnects). */
-export function ensureServerTransfers(force = false): Promise<void> {
+function ensureServerTransfers(force = false): Promise<void> {
   if (loading && !force) return loading
   if (useTransfersStore.getState().serverLoaded && !force) return Promise.resolve()
   loading = transfersApi
@@ -331,7 +331,7 @@ function monotonic(v: TransferView): TransferView {
 }
 
 /** Every transfer, newest first. */
-export function transferViews(s: Pick<TransfersStore, 'server' | 'local'> = useTransfersStore.getState()): TransferView[] {
+function transferViews(s: Pick<TransfersStore, 'server' | 'local'> = useTransfersStore.getState()): TransferView[] {
   const out: TransferView[] = [...Object.values(s.local), ...Object.values(s.server).map(serverView)].map(monotonic)
   out.sort((a, b) => b.createdAt - a.createdAt)
   return out

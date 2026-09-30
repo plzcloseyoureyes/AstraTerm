@@ -216,7 +216,7 @@ func asInterrupted(err error, target **goja.InterruptedError) bool {
 func TestLogThrottleAndLimiters(t *testing.T) {
 	th := newLogThrottle()
 	sent, notices := 0, 0
-	for i := 0; i < 5000; i++ {
+	for range 5000 {
 		ok, notice := th.allow()
 		if ok {
 			sent++

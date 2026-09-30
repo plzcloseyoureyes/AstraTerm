@@ -28,7 +28,7 @@ registerTabKind<AdminTabParams>({
 const isAdmin = () => useAuthStore.getState().user?.role === 'admin'
 const SECTIONS: AdminSection[] = ['users', 'authentication', 'audit', 'network', 'system']
 
-export function openAdmin(section?: AdminSection): void {
+function openAdmin(section?: AdminSection): void {
   openTab<AdminTabParams>({ kind: 'admin', params: { section: section ?? 'users' } })
 }
 

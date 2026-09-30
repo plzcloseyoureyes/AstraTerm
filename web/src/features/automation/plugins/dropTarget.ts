@@ -13,8 +13,8 @@ import { playMacroOnSessions } from '../macros/play'
 import { sendSnippet, targetForSession } from '../send'
 import type { Macro } from '../types'
 
-export const SNIPPET_MIME = 'application/x-astraterm-snippet'
-export const MACRO_MIME = 'application/x-astraterm-macro'
+const SNIPPET_MIME = 'application/x-astraterm-snippet'
+const MACRO_MIME = 'application/x-astraterm-macro'
 
 /** Start dragging a snippet / macro (sidebar rows). */
 export function startLibraryDrag(e: React.DragEvent, kind: 'snippet' | 'macro', id: string, label: string): void {

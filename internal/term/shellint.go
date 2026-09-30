@@ -369,7 +369,7 @@ func (a *altScanner) scan(data []byte, alt *bool) {
 				a.st = asGround
 			case b >= 0x40 && b <= 0x7e:
 				if a.private && !a.inter && !a.overflw && (b == 'h' || b == 'l') {
-					for _, p := range bytes.Split(a.params[:a.n], []byte{';'}) {
+					for p := range bytes.SplitSeq(a.params[:a.n], []byte{';'}) {
 						switch string(p) {
 						case "1049", "1047", "47":
 							*alt = b == 'h'
@@ -1139,7 +1139,7 @@ func (t *tokenizer) reset() {
 }
 
 func (t *tokenizer) feed(data []byte, emit func(token)) {
-	for i := 0; i < len(data); i++ {
+	for i := range data {
 		b := data[i]
 		if t.state == tzGround {
 			switch {

@@ -4,7 +4,7 @@
  */
 
 /** Serial flow-control modes (connection option `flowControl`). */
-export type SerialFlowControl = 'none' | 'rtscts' | 'xonxoff' | 'dsrdtr'
+type SerialFlowControl = 'none' | 'rtscts' | 'xonxoff' | 'dsrdtr'
 
 /** Modem status + output lines of a live serial session (GET /api/sessions/:id/serial/status). */
 export interface SerialStatus {
@@ -20,7 +20,7 @@ export interface SerialStatus {
 }
 
 /** One auto-baud probe attempt. */
-export interface AutoBaudAttempt {
+interface AutoBaudAttempt {
   baud: number
   score: number
   bytes: number

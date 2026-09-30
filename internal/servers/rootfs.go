@@ -8,6 +8,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -191,10 +192,8 @@ func (r *rootFS) Symlink(target, link string) error {
 	if t == "" || l == "." || path.IsAbs(t) || filepath.IsAbs(target) || !filepath.IsLocal(filepath.FromSlash(t)) {
 		return errPerm("symlink", link)
 	}
-	for _, seg := range strings.Split(t, "/") {
-		if seg == ".." {
-			return errPerm("symlink", link)
-		}
+	if slices.Contains(strings.Split(t, "/"), "..") {
+		return errPerm("symlink", link)
 	}
 	return r.root.Symlink(filepath.FromSlash(t), l)
 }

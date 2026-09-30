@@ -389,7 +389,7 @@ func validHostName(h string) bool {
 	if _, err := netip.ParseAddr(h); err == nil {
 		return true
 	}
-	for _, label := range strings.Split(h, ".") {
+	for label := range strings.SplitSeq(h, ".") {
 		if label == "" || len(label) > 63 {
 			return false
 		}

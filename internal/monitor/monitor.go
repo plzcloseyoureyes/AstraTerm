@@ -200,8 +200,7 @@ func (s *Service) resolveTarget(ctx context.Context, user *model.User, id string
 		host, err := s.hostFor(ctx, client, r)
 		if err != nil {
 			release()
-			var ue *unavailableError
-			if errors.As(err, &ue) {
+			if ue, ok := errors.AsType[*unavailableError](err); ok {
 				return nil, httpx.NewError(http.StatusUnprocessableEntity, "monitor_unavailable", ue.msg)
 			}
 			return nil, err

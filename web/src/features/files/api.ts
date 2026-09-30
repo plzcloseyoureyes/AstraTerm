@@ -20,10 +20,6 @@ export const fsKeys = {
   read: (fsId: string, path: string, maxBytes: number) => ['fs', fsId, 'read', path, maxBytes] as const,
 }
 
-export const transferKeys = {
-  all: ['transfers'] as const,
-}
-
 export type ChecksumAlgo = 'md5' | 'sha1' | 'sha256' | 'sha512'
 
 export interface SearchResult {
@@ -223,10 +219,6 @@ export function isPermissionDenied(err: unknown): boolean {
   if (!isApiError(err)) return false
   if (err.status === 403 && err.code !== 'csrf') return true
   return /permission denied|access denied|EACCES|EPERM/i.test(err.message)
-}
-
-export function isNotFound(err: unknown): boolean {
-  return isApiError(err) && err.status === 404 && !isHandleGone(err)
 }
 
 export function isConflict(err: unknown): boolean {

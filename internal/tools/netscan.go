@@ -3,6 +3,7 @@ package tools
 import (
 	"context"
 	"fmt"
+	"maps"
 	"math/rand/v2"
 	"net"
 	"runtime"
@@ -198,21 +199,17 @@ func runNetscan(ctx context.Context, req *netscanRequest, targets []string, port
 			return
 		}
 		// Names are looked up off the probe path so slow resolvers do not hold probe slots.
-		nameWG.Add(1)
-		go func() {
-			defer nameWG.Done()
+		nameWG.Go(func() {
 			if err := nameSem.Acquire(ctx, 1); err != nil {
 				out.add(r)
 				return
 			}
 			defer nameSem.Release(1)
 			if h.ip != nil {
-				for k, v := range lookupHostNames(ctx, h.ip, !via) {
-					r[k] = v
-				}
+				maps.Copy(r, lookupHostNames(ctx, h.ip, !via))
 			}
 			out.add(r)
-		}()
+		})
 	}
 
 	sem := semaphore.NewWeighted(int64(conc))
@@ -277,7 +274,7 @@ probe:
 // probePort TCP-connects to ip:port: open, or refused (an RST — or a gateway reporting "connection refused" —
 // proves the host is up even if the port is closed).
 func probePort(ctx context.Context, dial dialFunc, addr string, port int, timeout time.Duration, via bool) (open, refused bool) {
-	for attempt := 0; attempt < 5; attempt++ {
+	for attempt := range 5 {
 		cctx, cancel := context.WithTimeout(ctx, timeout)
 		conn, err := dial(cctx, "tcp", net.JoinHostPort(addr, strconv.Itoa(port)))
 		cancel()
@@ -402,8 +399,6 @@ func icmpSweep(ctx context.Context, ips []net.IP, timeout time.Duration) map[str
 	mu.Lock()
 	defer mu.Unlock()
 	out := make(map[string]time.Duration, len(alive))
-	for k, v := range alive {
-		out[k] = v
-	}
+	maps.Copy(out, alive)
 	return out
 }

@@ -508,8 +508,7 @@ func (s *Service) preflight(ctx context.Context, rt *route) error {
 
 // upstreamError converts a dial error into an API error (4xx so its message reaches the client).
 func upstreamError(err error, t Target) error {
-	var he *httpx.HTTPError
-	if errors.As(err, &he) {
+	if _, ok := errors.AsType[*httpx.HTTPError](err); ok {
 		return err
 	}
 	code, msg := classifyDialErr(err, t)
@@ -518,8 +517,7 @@ func upstreamError(err error, t Target) error {
 
 // classifyDialErr returns a code and message for a failed upstream connection.
 func classifyDialErr(err error, t Target) (code, msg string) {
-	var de *dialError
-	if errors.As(err, &de) {
+	if de, ok := errors.AsType[*dialError](err); ok {
 		return de.code, de.msg
 	}
 	if be, ok := netguard.IsBlocked(err); ok {

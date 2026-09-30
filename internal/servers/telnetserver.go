@@ -68,9 +68,7 @@ func (s *telnetService) start() error {
 	s.in.addrs = []string{raw.Addr().String()}
 	s.in.url = serverURL("telnet", s.cfg.BindAddress, raw.Addr().(*net.TCPAddr).Port, "")
 	s.ln = &trackingListener{Listener: raw, set: s.in.clients}
-	s.wg.Add(1)
-	go func() {
-		defer s.wg.Done()
+	s.wg.Go(func() {
 		for {
 			conn, err := s.ln.Accept()
 			if err != nil {
@@ -79,13 +77,11 @@ func (s *telnetService) start() error {
 				}
 				return
 			}
-			s.wg.Add(1)
-			go func() {
-				defer s.wg.Done()
+			s.wg.Go(func() {
 				s.serve(conn)
-			}()
+			})
 		}
-	}()
+	})
 	return nil
 }
 

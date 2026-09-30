@@ -2,7 +2,7 @@
  * REST client of the automation module (internal/automation): snippets & macros (SPEC §6.0), scripts, triggers,
  * schedules, run history, secret injection, paced sends and helpers. React-query hooks share the keys below.
  */
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { api, isApiError, seg } from '@/api/client'
 import { events } from '@/lib/events'
 import { queryKeys } from '@/api/queryKeys'
@@ -77,17 +77,6 @@ export const getSecretKeys = (sessionId: string) => api.get<SecretKeys>(`/api/se
 export const injectSecret = (sessionId: string, key: string, enter = true) =>
   api.post<void>(`/api/sessions/${seg(sessionId)}/inject-secret`, { key, enter })
 
-export function useSecretKeys(sessionId: string | undefined, enabled = true) {
-  return useQuery({
-    queryKey: autoKeys.secretKeys(sessionId ?? ''),
-    queryFn: () => getSecretKeys(sessionId!),
-    enabled: !!sessionId && enabled,
-    staleTime: 60_000,
-    retry: false,
-    placeholderData: undefined, // another session's secrets must never show under this one
-  })
-}
-
 export interface PacedSendRequest {
   sessionIds: string[]
   text: string
@@ -101,11 +90,9 @@ export interface PacedSendRequest {
 }
 
 export const pacedSend = (req: PacedSendRequest) => api.post<JobStarted>('/api/automation/send', req)
-export const guardCheck = (text: string, typed = false) =>
-  api.post<{ enabled: boolean; matches: DangerMatch[] }>('/api/automation/guard/check', { text, typed })
 export const regexTest = (pattern: string, caseSensitive: boolean, text = '') =>
   api.post<RegexTestResult>('/api/automation/regex/test', { pattern, caseSensitive, text })
-export const getCapabilities = () => api.get<Capabilities>('/api/automation/capabilities')
+const getCapabilities = () => api.get<Capabilities>('/api/automation/capabilities')
 
 export function useCapabilities() {
   return useQuery({ queryKey: autoKeys.capabilities, queryFn: getCapabilities, staleTime: 60_000 })
@@ -131,13 +118,11 @@ export interface ScriptRunRequest {
   timeoutSec?: number
 }
 
-export const listScripts = () => api.get<Script[]>('/api/scripts')
-export const getScript = (id: string) => api.get<Script>(`/api/scripts/${seg(id)}`)
+const listScripts = () => api.get<Script[]>('/api/scripts')
 export const createScript = (s: ScriptInput) => api.post<Script>('/api/scripts', s)
 export const updateScript = (id: string, s: ScriptInput) => api.patch<Script>(`/api/scripts/${seg(id)}`, s)
 export const deleteScript = (id: string) => api.del<void>(`/api/scripts/${seg(id)}`)
 export const runScript = (id: string, req: ScriptRunRequest) => api.post<JobStartedWithRun>(`/api/scripts/${seg(id)}/run`, req)
-export const runAdhocScript = (req: ScriptRunRequest) => api.post<JobStartedWithRun>('/api/scripts/run', req)
 
 export function useScripts(enabled = true) {
   return useQuery({ queryKey: autoKeys.scripts, queryFn: listScripts, enabled, staleTime: 30_000 })
@@ -145,11 +130,11 @@ export function useScripts(enabled = true) {
 
 // ---- triggers -------------------------------------------------------------------------------------------------------
 
-export const listTriggers = () => api.get<Trigger[]>('/api/automation/triggers')
+const listTriggers = () => api.get<Trigger[]>('/api/automation/triggers')
 export const createTrigger = (t: TriggerInput) => api.post<Trigger>('/api/automation/triggers', t)
 export const updateTrigger = (id: string, t: TriggerInput) => api.patch<Trigger>(`/api/automation/triggers/${seg(id)}`, t)
 export const deleteTrigger = (id: string) => api.del<void>(`/api/automation/triggers/${seg(id)}`)
-export const listTriggerLog = (triggerId?: string, limit = 200) =>
+const listTriggerLog = (triggerId?: string, limit = 200) =>
   api.get<TriggerLogEntry[]>('/api/automation/trigger-log', { query: { triggerId, limit } })
 export const clearTriggerLog = () => api.del<void>('/api/automation/trigger-log')
 
@@ -174,7 +159,7 @@ export type ScheduleInput = Partial<Pick<Schedule, 'name' | 'enabled' | 'spec' |
 }
 
 export const startBatch = (req: BatchRequest) => api.post<JobStartedWithRun>('/api/automation/batch', req)
-export const listSchedules = () => api.get<Schedule[]>('/api/automation/schedules')
+const listSchedules = () => api.get<Schedule[]>('/api/automation/schedules')
 export const createSchedule = (s: ScheduleInput) => api.post<Schedule>('/api/automation/schedules', s)
 export const updateSchedule = (id: string, s: ScheduleInput) => api.patch<Schedule>(`/api/automation/schedules/${seg(id)}`, s)
 export const deleteSchedule = (id: string) => api.del<void>(`/api/automation/schedules/${seg(id)}`)
@@ -182,9 +167,9 @@ export const runScheduleNow = (id: string) => api.post<JobStartedWithRun>(`/api/
 export const previewSchedule = (spec: string, count = 5) =>
   api.get<SchedulePreview>('/api/automation/schedules/preview', { query: { spec, count } })
 
-export const listRuns = (filter: { kind?: string; refId?: string; origin?: string; limit?: number; before?: string } = {}) =>
+const listRuns = (filter: { kind?: string; refId?: string; origin?: string; limit?: number; before?: string } = {}) =>
   api.get<Run[]>('/api/automation/runs', { query: filter })
-export const getRun = (id: string) => api.get<Run>(`/api/automation/runs/${seg(id)}`)
+const getRun = (id: string) => api.get<Run>(`/api/automation/runs/${seg(id)}`)
 export const deleteRun = (id: string) => api.del<void>(`/api/automation/runs/${seg(id)}`)
 export const clearRuns = () => api.del<void>('/api/automation/runs')
 
@@ -202,17 +187,6 @@ export function useRun(id: string | undefined) {
 }
 
 // ---- generic mutation helper ----------------------------------------------------------------------------------------
-
-/** A mutation that invalidates the given query keys when it settles. */
-export function useInvalidatingMutation<A, R>(fn: (arg: A) => Promise<R>, keys: readonly (readonly unknown[])[]) {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: fn,
-    onSettled: () => {
-      for (const k of keys) void qc.invalidateQueries({ queryKey: k })
-    },
-  })
-}
 
 // ---- job events -----------------------------------------------------------------------------------------------------
 

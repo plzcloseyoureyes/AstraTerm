@@ -9,7 +9,7 @@ import { editorSettings } from './settings'
 
 const MiB = 1024 * 1024
 
-export interface LocalDocMeta {
+interface LocalDocMeta {
   name: string
   encoding?: string
   bom?: boolean

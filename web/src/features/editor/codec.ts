@@ -116,10 +116,6 @@ export function encodingLabel(id: string, bom: boolean): string {
   return bom ? `${base} with BOM` : base
 }
 
-export function hasBomSupport(id: string): boolean {
-  return id === 'utf-8' || id === 'utf-16le' || id === 'utf-16be'
-}
-
 export interface Decoded {
   text: string
   bom: boolean
@@ -233,16 +229,6 @@ export function encodeText(text: string, encoding: string, bom: boolean): Uint8A
   return out
 }
 
-/** Would `text` survive a round trip through `encoding`? Returns the first offending index or -1. */
-export function findUnencodable(text: string, encoding: string): number {
-  try {
-    encodeText(text, encoding, false)
-    return -1
-  } catch (err) {
-    return err instanceof EncodeError ? Math.max(0, err.index) : 0
-  }
-}
-
 /**
  * Would saving `text` with `encoding` write exactly `bytes` back? False when decoding replaced bytes (invalid UTF-8,
  * undefined code page bytes...) or the encoding cannot be written; unchanged documents must never alter a file.
@@ -259,7 +245,7 @@ export function roundTrips(bytes: Uint8Array, text: string, encoding: string, bo
   return true
 }
 
-export function isValidUtf8(bytes: Uint8Array): boolean {
+function isValidUtf8(bytes: Uint8Array): boolean {
   try {
     new TextDecoder('utf-8', { fatal: true }).decode(bytes)
     return true

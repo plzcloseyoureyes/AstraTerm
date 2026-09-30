@@ -18,7 +18,7 @@ export const HEX_MAX = 16 * MiB
 export const DEFAULT_META: TextMeta = { encoding: 'utf-8', bom: false, eol: 'lf', mixedEol: false }
 
 /** A file read into memory. */
-export type LoadedDoc =
+type LoadedDoc =
   | {
       kind: 'text'
       text: string

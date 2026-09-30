@@ -70,11 +70,6 @@ function syncBus(): void {
   }
 }
 
-/** True when the hex monitor is capturing this session. */
-export function isCapturing(sessionId: string): boolean {
-  return active.has(sessionId)
-}
-
 /** Append captured bytes. No-op unless capture is active for the session. */
 export function appendHex(sessionId: string, rx: boolean, data: Uint8Array): void {
   if (data.length === 0 || !active.has(sessionId)) return

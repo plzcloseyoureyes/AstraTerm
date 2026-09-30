@@ -31,7 +31,7 @@ func configuredList(opts model.Options, key string, supported, insecure []string
 	}
 	var entries []string
 	for _, e := range opts.Strings(key) {
-		for _, part := range strings.Split(e, ",") {
+		for part := range strings.SplitSeq(e, ",") {
 			if part = strings.TrimSpace(part); part != "" {
 				entries = append(entries, part)
 			}

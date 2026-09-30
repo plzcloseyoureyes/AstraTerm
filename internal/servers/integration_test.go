@@ -812,7 +812,7 @@ func TestTFTPServer(t *testing.T) {
 		t.Fatal(err)
 	}
 	var got []byte
-	for i := 0; i < 50; i++ {
+	for range 50 {
 		if got, _ = os.ReadFile(filepath.Join(root, "sub", "fw.bin")); bytes.Equal(got, payload) {
 			break
 		}
@@ -1176,7 +1176,7 @@ func TestTFTPSinglePort(t *testing.T) {
 	}
 	port := freePort(t, "udp")
 	h.configure(u, KindTFTP, map[string]any{"root": root, "port": port, "singlePort": true, "timeoutSec": 1, "retries": 2})
-	for round := 0; round < 2; round++ { // the port is released on stop: a restart binds it again
+	for round := range 2 { // the port is released on stop: a restart binds it again
 		h.start(u, KindTFTP)
 		c, err := tftp.NewClient("127.0.0.1:" + strconv.Itoa(port))
 		if err != nil {

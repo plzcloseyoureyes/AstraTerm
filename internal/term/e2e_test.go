@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -346,11 +347,9 @@ func (tm *e2eTerm) waitState(state string) {
 	deadline := time.Now().Add(30 * time.Second)
 	for time.Now().Before(deadline) {
 		tm.mu.Lock()
-		for _, s := range tm.states {
-			if s == state {
-				tm.mu.Unlock()
-				return
-			}
+		if slices.Contains(tm.states, state) {
+			tm.mu.Unlock()
+			return
 		}
 		tm.mu.Unlock()
 		time.Sleep(50 * time.Millisecond)

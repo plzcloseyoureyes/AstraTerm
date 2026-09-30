@@ -8,7 +8,7 @@ export type ServerKindEx = 'http' | 'ftp' | 'sftp' | 'tftp' | 'telnet' | 'syslog
 
 export type ServerState = 'stopped' | 'starting' | 'running' | 'stopping' | 'error'
 
-export interface ServerStats {
+interface ServerStats {
   connections: number
   bytesIn: number
   bytesOut: number
@@ -44,75 +44,7 @@ export interface ServerUser {
   readOnly?: boolean
 }
 
-export interface CommonConfig {
-  bindAddress: string
-  port: number
-  autoStart: boolean
-  stopAfterSec: number
-}
-
-export interface HTTPConfig extends CommonConfig {
-  root: string
-  listing: boolean
-  readOnly: boolean
-  upload: boolean
-  maxUploadMB: number
-  requireAuth: boolean
-  users: ServerUser[]
-  tls: boolean
-}
-
 export type FTPTLSMode = 'off' | 'optional' | 'required' | 'implicit'
-
-export interface FTPConfig extends CommonConfig {
-  root: string
-  readOnly: boolean
-  anonymous: boolean
-  anonymousWrite: boolean
-  users: ServerUser[]
-  passivePortMin: number
-  passivePortMax: number
-  publicHost: string
-  tls: FTPTLSMode
-  idleTimeoutSec: number
-}
-
-export interface SFTPConfig extends CommonConfig {
-  root: string
-  readOnly: boolean
-  users: ServerUser[]
-  shell: boolean
-  shellCommand: string
-  idleTimeoutSec: number
-}
-
-export interface TFTPConfig extends CommonConfig {
-  root: string
-  readOnly: boolean
-  blockSize: number
-  timeoutSec: number
-  retries: number
-  singlePort: boolean
-}
-
-export interface TelnetConfig extends CommonConfig {
-  users: ServerUser[]
-  shellCommand: string
-  workingDir: string
-  idleTimeoutSec: number
-}
-
-export interface SyslogConfig extends CommonConfig {
-  udp: boolean
-  tcp: boolean
-  bufferSize: number
-  logToFile: boolean
-  logDir: string
-  retentionDays: number
-  maxFileMB: number
-}
-
-export type AnyServerConfig = HTTPConfig | FTPConfig | SFTPConfig | TFTPConfig | TelnetConfig | SyslogConfig
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
@@ -140,7 +72,7 @@ export interface ServerClient {
   bytesOut: number
 }
 
-export interface HostInterface {
+interface HostInterface {
   name: string
   addresses: string[]
   up: boolean

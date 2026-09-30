@@ -298,7 +298,7 @@ func decodeProcAddr(s string) (string, int, bool) {
 		ip = net.IPv4(byte(v), byte(v>>8), byte(v>>16), byte(v>>24))
 	case 32:
 		ip = make(net.IP, 16)
-		for w := 0; w < 4; w++ {
+		for w := range 4 {
 			v, err := strconv.ParseUint(hexAddr[w*8:w*8+8], 16, 32)
 			if err != nil {
 				return "", 0, false

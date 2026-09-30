@@ -39,7 +39,7 @@ const TOKENS = [
 ] as const
 
 type Token = (typeof TOKENS)[number]
-export type TokenColors = Record<Token, Rgba>
+type TokenColors = Record<Token, Rgba>
 
 let canvasCtx: CanvasRenderingContext2D | null | undefined
 
@@ -68,7 +68,7 @@ const FALLBACK: Record<'dark' | 'light', Partial<Record<Token, string>>> = {
  * apply; var() references are already substituted). Read as strings — never through a probe element's computed
  * `color`, which the app's colour transitions would report mid-animation.
  */
-export function readTokens(doc: Document = document): TokenColors {
+function readTokens(doc: Document = document): TokenColors {
   const dark = doc.documentElement.classList.contains('dark') || isDarkTheme()
   const cs = getComputedStyle(doc.documentElement)
   const out = {} as TokenColors
@@ -83,7 +83,7 @@ export function readTokens(doc: Document = document): TokenColors {
 }
 
 /** Theme data for the given tokens. */
-export function buildTheme(t: TokenColors, dark: boolean): Monaco.editor.IStandaloneThemeData {
+function buildTheme(t: TokenColors, dark: boolean): Monaco.editor.IStandaloneThemeData {
   const hx = (c: Rgba, a = 1) => toHex(c, a)
   const over = (c: Rgba, amount: number, bg: Rgba = t.panel) => toHex(mix(c, bg, amount))
   const pal = PALETTE[dark ? 'dark' : 'light']
@@ -324,7 +324,7 @@ export function buildTheme(t: TokenColors, dark: boolean): Monaco.editor.IStanda
 }
 
 /** Theme data for the current UI. */
-export function currentTheme(): { data: Monaco.editor.IStandaloneThemeData; key: string; dark: boolean } {
+function currentTheme(): { data: Monaco.editor.IStandaloneThemeData; key: string; dark: boolean } {
   const dark = isDarkTheme()
   const tokens = readTokens()
   // luminance guards a stale class: the panel colour decides whether the editor is dark

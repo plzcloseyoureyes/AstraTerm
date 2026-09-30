@@ -46,10 +46,6 @@ const KIND_ICON: Record<FileKind, { icon: LucideIcon; tint: string }> = {
   other: { icon: File, tint: 'text-muted-foreground' },
 }
 
-export function kindIcon(kind: FileKind): { icon: LucideIcon; tint: string } {
-  return KIND_ICON[kind]
-}
-
 /** Icon of a list entry (the ".." row gets an "up" arrow). */
 export function FileIcon({ entry, parent, className }: { entry: FileEntry; parent?: boolean; className?: string }) {
   if (parent) return <CornerLeftUp className={cn('size-4 shrink-0 text-muted-foreground', className)} aria-hidden />

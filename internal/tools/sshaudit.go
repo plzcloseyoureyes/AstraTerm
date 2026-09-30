@@ -213,7 +213,7 @@ func sshHandshake(conn net.Conn) (string, *kexInit, error) {
 	r := bufio.NewReaderSize(conn, 4096)
 	// Read the server identification line (RFC 4253 §4.2: other lines may precede it).
 	var banner string
-	for i := 0; i < 50; i++ {
+	for range 50 {
 		line, err := readLineCRLF(r, maxSSHBannerLine)
 		if err != nil {
 			return "", nil, fmt.Errorf("reading banner: %w", err)
@@ -233,7 +233,7 @@ func sshHandshake(conn net.Conn) (string, *kexInit, error) {
 		return banner, nil, err
 	}
 	// Read binary packets until we see KEXINIT (msg type 20), skipping others.
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		payload, err := readPacket(r)
 		if err != nil {
 			return banner, nil, err
@@ -292,7 +292,7 @@ func parseKexInit(payload []byte) (*kexInit, error) {
 	}
 	p := payload[17:] // skip msg type (1) + cookie (16)
 	lists := make([][]string, 0, 10)
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		nl, rest, err := readNameList(p)
 		if err != nil {
 			return nil, err
@@ -323,7 +323,7 @@ func readNameList(p []byte) ([]string, []byte, error) {
 		return nil, rest, nil
 	}
 	var out []string
-	for _, name := range strings.Split(s, ",") {
+	for name := range strings.SplitSeq(s, ",") {
 		if name = sanitizeBanner([]byte(name)); name != "" && len(out) < 256 {
 			out = append(out, name)
 		}

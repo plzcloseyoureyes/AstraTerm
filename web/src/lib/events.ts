@@ -5,17 +5,16 @@
  *   events.on('session.updated', ev => ...)        typed listener → unsubscribe fn  ('*' via onAny)
  *   events.send({type: 'ping'})                    returns false when the socket is not open
  *   events.subscribe('monitor', {sessionId})       ref-counted topic subscription, re-sent after every reconnect
- *   useEventsStatus() / useEvent(type, cb)         React helpers
  *
  * Reconnects with exponential backoff + jitter (0.5s → 15s), immediately on `online` / tab becoming visible, and
  * detects dead connections with an application-level ping every 25s (no traffic for 70s → reconnect).
  */
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { create } from 'zustand'
 import { wsUrl } from '@/api/client'
 import type { ClientEvent, ServerEvent, ServerEventOf, ServerEventType } from '@/api/types'
 
-export type EventsStatus = 'idle' | 'connecting' | 'open' | 'closed'
+type EventsStatus = 'idle' | 'connecting' | 'open' | 'closed'
 
 interface EventsState {
   status: EventsStatus
@@ -29,10 +28,6 @@ interface EventsState {
 }
 
 export const useEventsStore = create<EventsState>(() => ({ status: 'idle', failures: 0 }))
-
-export function useEventsStatus(): EventsStatus {
-  return useEventsStore((s) => s.status)
-}
 
 type Listener = (ev: ServerEvent) => void
 
@@ -284,18 +279,6 @@ function subKey(topic: string, params: Record<string, unknown>): string {
 }
 
 export const events = new EventsSocket()
-
-/** Subscribe a component to one event type for its lifetime; the latest `cb` is always used. */
-export function useEvent<T extends ServerEventType>(type: T, cb: (ev: ServerEventOf<T>) => void, enabled = true): void {
-  const ref = useRef(cb)
-  useLayoutEffect(() => {
-    ref.current = cb
-  })
-  useEffect(() => {
-    if (!enabled) return
-    return events.on(type, (ev) => ref.current(ev))
-  }, [type, enabled])
-}
 
 /** Hold a ref-counted events topic subscription while mounted (e.g. `useEventsTopic('monitor', {sessionId})`). */
 export function useEventsTopic(topic: string | null | undefined, params: Record<string, unknown> = {}): void {

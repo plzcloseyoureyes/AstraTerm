@@ -90,9 +90,7 @@ func (s *tftpService) start() error {
 		// (still capped by BlockSize when set).
 		s.srv.SetBlockSizeNegotiation(false)
 	}
-	s.wg.Add(1)
-	go func() {
-		defer s.wg.Done()
+	s.wg.Go(func() {
 		err := s.srv.Serve(serveConn)
 		if s.in.ctx.Err() == nil {
 			if err == nil {
@@ -100,7 +98,7 @@ func (s *tftpService) start() error {
 			}
 			s.in.failed(err)
 		}
-	}()
+	})
 	return nil
 }
 

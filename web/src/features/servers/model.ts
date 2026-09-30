@@ -145,7 +145,7 @@ export function isLoopbackBind(bind: string | undefined): boolean {
 }
 
 /** Host shown in examples: the URL's host when running, else the bind address. */
-export function exampleHost(st: ServerStatusEx): string {
+function exampleHost(st: ServerStatusEx): string {
   if (st.url) {
     try {
       const u = new URL(st.url.replace(/^(sftp|tftp|telnet|syslog|ftpes|ftps):/, 'http:'))

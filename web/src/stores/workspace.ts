@@ -1131,7 +1131,6 @@ export const useSavedWorkspaces = (): SavedWorkspace[] => workspacesSettings.use
 export const useTabs = () => useWorkspaceStore((s) => s.tabs)
 export const useActiveTabId = () => useWorkspaceStore((s) => s.activeTabId)
 export const useClosedTabs = () => useWorkspaceStore((s) => s.closed)
-export const useWorkspaceReady = () => useWorkspaceStore((s) => s.ready)
 export const useSpaces = () => useWorkspaceStore((s) => s.spaces)
 export const useActiveSpaceId = () => useWorkspaceStore((s) => s.activeSpaceId)
 
@@ -1142,11 +1141,6 @@ export function useActiveTab(): TabInfo | undefined {
 const EMPTY_STATE: TabState = Object.freeze({})
 export function useTabState(tabId: string): TabState {
   return useWorkspaceStore((s) => s.tabStates[tabId] ?? EMPTY_STATE)
-}
-
-/** Subscribe to a dock panel's title (for components rendered inside the tab). */
-export function usePanelTitle(tabId: string): string | undefined {
-  return useWorkspaceStore((s) => s.tabs.find((t) => t.id === tabId)?.title)
 }
 
 /** Whether a tab is on screen: the visible pane content of the active space (or floating / popped out there). */
@@ -1174,35 +1168,4 @@ export function useIsTabVisible(tabId: string): boolean {
   )
   const get = () => isTabVisible(tabId)
   return useSyncExternalStore(subscribe, get, get)
-}
-
-/** Convenience namespace. */
-export const workspace = {
-  openTab,
-  closeTab,
-  closeTabs,
-  closeOtherTabs,
-  closeTabsToRight,
-  focusTab,
-  renameTab,
-  setTabTitle,
-  updateTabParams,
-  getTabParams,
-  setTabState,
-  activeTab,
-  listTabs,
-  findTabs,
-  duplicateTab,
-  splitActive,
-  arrangeLayout,
-  popout,
-  float,
-  dockTab,
-  maximize: toggleMaximize,
-  cycleTab,
-  activateTabIndex,
-  reopenClosed,
-  saveWorkspace,
-  restoreWorkspace,
-  deleteWorkspace,
 }

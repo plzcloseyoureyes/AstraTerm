@@ -34,7 +34,7 @@ const AWS_REGIONS: ComboSuggestion[] = [
   'auto',
 ].map((value) => ({ value, description: value === 'auto' ? 'Cloudflare R2' : undefined }))
 
-export function S3Editor({ value, onChange }: ProtocolEditorProps) {
+function S3Editor({ value, onChange }: ProtocolEditorProps) {
   const p = { value, onChange }
   return (
     <div className="grid gap-5">

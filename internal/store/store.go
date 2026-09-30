@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 	"os"
 	"sort"
 	"strings"
@@ -187,9 +188,7 @@ func (s *Store) Migrate(ctx context.Context) error {
 		keys = append(keys, k)
 	}
 	pending := make(map[migrationKey]string, len(registry))
-	for k, v := range registry {
-		pending[k] = v
-	}
+	maps.Copy(pending, registry)
 	regMu.Unlock()
 
 	sort.Slice(keys, func(i, j int) bool {

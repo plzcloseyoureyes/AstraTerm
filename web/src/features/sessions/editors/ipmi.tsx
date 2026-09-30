@@ -11,7 +11,7 @@ import { IpmiPowerPanel } from '@/features/protocols/IpmiPowerDialog'
 import { defineProtocol } from './define'
 import { EditorNote, NumberOption, OptionSection, SelectOption, optString } from './fields'
 
-export function IpmiEditor({ value, onChange, mode }: ProtocolEditorProps) {
+function IpmiEditor({ value, onChange, mode }: ProtocolEditorProps) {
   const p = { value, onChange }
   const lan = optString(value, 'ipmiInterface') === 'lan'
   const [showPower, setShowPower] = useState(false)

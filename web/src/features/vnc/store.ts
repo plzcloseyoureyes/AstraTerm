@@ -3,7 +3,7 @@
  * open-state of the feature's dialogs (rendered by the overlay registered in index.ts).
  */
 import { create } from 'zustand'
-import { activeTab, useWorkspaceStore } from '@/stores/workspace'
+import { activeTab } from '@/stores/workspace'
 import type { VncController } from './controller'
 
 interface TabUI {
@@ -52,13 +52,6 @@ export function activeController(): VncController | undefined {
   return t?.kind === 'vnc' ? getController(t.id) : undefined
 }
 
-export function useActiveController(): VncController | undefined {
-  const tabId = useWorkspaceStore((s) => s.activeTabId)
-  const kind = useWorkspaceStore((s) => s.tabs.find((t) => t.id === s.activeTabId)?.kind)
-  const controllers = useVncStore((s) => s.controllers)
-  return kind === 'vnc' && tabId ? controllers[tabId] : undefined
-}
-
 export function useTabUI(tabId: string): TabUI {
   return useVncStore((s) => s.ui[tabId] ?? DEFAULT_UI)
 }
@@ -82,8 +75,4 @@ export function openListeners(open = true): void {
 
 export function openRepeater(open = true): void {
   useVncStore.setState({ repeaterOpen: open })
-}
-
-export function openCerts(open = true): void {
-  useVncStore.setState({ certsOpen: open })
 }

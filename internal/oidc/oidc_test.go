@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	"maps"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -93,9 +94,7 @@ func (f *fakeIdP) token(w http.ResponseWriter, r *http.Request) {
 	g, ok := f.codes[r.PostForm.Get("code")]
 	delete(f.codes, r.PostForm.Get("code"))
 	claims := map[string]any{}
-	for k, v := range f.claims {
-		claims[k] = v
-	}
+	maps.Copy(claims, f.claims)
 	bad := f.badNonce
 	f.badNonce = false
 	f.mu.Unlock()
@@ -130,9 +129,7 @@ func ssoLogin(t *testing.T, c *servertest.Client, path string) *url.URL {
 func setupProvider(t *testing.T, admin *servertest.Client, idp *fakeIdP, extra map[string]any) {
 	body := map[string]any{"name": "Corp SSO", "id": "corp", "enabled": true, "issuer": idp.srv.URL, "clientId": "astraterm",
 		"clientSecret": "s3cret", "autoProvision": true, "adminGroups": []string{"ops"}, "syncRole": true}
-	for k, v := range extra {
-		body[k] = v
-	}
+	maps.Copy(body, extra)
 	var p map[string]any
 	if st := admin.JSON("POST", "/api/admin/oidc/providers", body, &p); st != 201 {
 		t.Fatalf("create provider: %d", st)

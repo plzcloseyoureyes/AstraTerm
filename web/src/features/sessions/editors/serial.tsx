@@ -17,11 +17,11 @@ import { autobaudSerial } from '@/features/protocols/api'
 import { defineProtocol, type ValidationErrors } from './define'
 import { ComboOption, EditorNote, LINE_ENDING_CHOICES, OptionSection, SelectOption, SwitchOption, optString, withOptions, type ComboSuggestion } from './fields'
 
-export const BAUD_RATES = [110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 230400, 460800, 921600, 1000000, 1500000, 2000000, 3000000]
+const BAUD_RATES = [110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 230400, 460800, 921600, 1000000, 1500000, 2000000, 3000000]
 
 const BAUD_SUGGESTIONS: ComboSuggestion[] = BAUD_RATES.map((b) => ({ value: String(b), description: b === 9600 ? 'default' : undefined }))
 
-export function SerialEditor({ value, onChange }: ProtocolEditorProps) {
+function SerialEditor({ value, onChange }: ProtocolEditorProps) {
   const ports = useSerialPorts(true)
   const mode = useRunMode()
   const isAdmin = useIsAdmin()

@@ -40,7 +40,7 @@ export interface MergePaneHandle {
   focusedSide(): Side
 }
 
-export interface MergeSide {
+interface MergeSide {
   /** "\n"-joined text. */
   text: string
   /** Line breaks with another sequence than the side's main line ending (mixed line endings). */

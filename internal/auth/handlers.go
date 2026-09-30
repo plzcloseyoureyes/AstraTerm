@@ -29,10 +29,7 @@ var (
 )
 
 func tooMany(d time.Duration) error {
-	sec := int(math.Ceil(d.Seconds()))
-	if sec < 1 {
-		sec = 1
-	}
+	sec := max(int(math.Ceil(d.Seconds())), 1)
 	return httpx.TooManyRequests("too many failed attempts, try again later", sec)
 }
 

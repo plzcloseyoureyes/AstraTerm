@@ -10,7 +10,7 @@ import { KeyValueOption, OptionSection, SelectOption, SwitchOption, TagsOption, 
 import type { ValidationErrors } from './define'
 
 /** Algorithm names understood by golang.org/x/crypto/ssh (suggestions only — any name is accepted). */
-export const SSH_ALGORITHMS = {
+const SSH_ALGORITHMS = {
   ciphers: [
     'aes128-gcm@openssh.com',
     'aes256-gcm@openssh.com',

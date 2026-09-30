@@ -8,6 +8,15 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+### Fixed
+
+- **FTP:** connection errors that happened to contain "530" (for example a port like 5300) were reported as a failed
+  login.
+
+### Changed
+
+- Code cleanup: modern Go 1.26 idioms, removed unused code and 9 unused npm packages.
+
 ## [0.1.3] - 2026-09-30
 
 ### Added

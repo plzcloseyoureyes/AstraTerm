@@ -222,7 +222,7 @@ func permString(mode uint32) string {
 		b[0] = 'p'
 	}
 	const rwx = "rwxrwxrwx"
-	for i := 0; i < 9; i++ {
+	for i := range 9 {
 		if mode&(1<<uint(8-i)) != 0 {
 			b[i+1] = rwx[i]
 		}
@@ -242,5 +242,3 @@ func permString(mode uint32) string {
 	special(9, 0o1000, 't', 'T')
 	return string(b)
 }
-
-func intPtr(v int) *int { return &v }

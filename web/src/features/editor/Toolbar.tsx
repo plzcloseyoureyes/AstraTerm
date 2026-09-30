@@ -73,7 +73,7 @@ function Sep({ className }: { className?: string }) {
   return <div className={cn('mx-1 h-4 w-px shrink-0 bg-border', className)} aria-hidden />
 }
 
-export interface MoreItem {
+interface MoreItem {
   label: string
   icon?: IconType
   onSelect: () => void

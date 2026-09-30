@@ -23,7 +23,7 @@ export function toBase64(text: string): string {
 }
 
 /** Base64-encode bytes (chunked: large files do not overflow the call stack). */
-export function bytesToBase64(bytes: Uint8Array): string {
+function bytesToBase64(bytes: Uint8Array): string {
   let binary = ''
   const chunk = 0x8000
   for (let i = 0; i < bytes.length; i += chunk) {

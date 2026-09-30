@@ -25,7 +25,3 @@ export function openExportDialog(opts?: { format?: ExportFormat; folderId?: stri
 export function closeImporterDialog(kind: keyof ImporterDialogs): void {
   useImporterDialogs.setState({ [kind]: null } as Partial<ImporterDialogs>)
 }
-
-export function closeAllImporterDialogs(): void {
-  useImporterDialogs.setState({ wizard: null, export: null })
-}

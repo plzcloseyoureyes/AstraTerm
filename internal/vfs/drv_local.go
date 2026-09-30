@@ -171,7 +171,7 @@ func (l *localFS) entryFromInfo(p string, fi os.FileInfo) *Entry {
 	if !ok {
 		mode = goModeToPOSIX(fi.Mode())
 	} else {
-		e.UID, e.GID = intPtr(uid), intPtr(gid)
+		e.UID, e.GID = new(uid), new(gid)
 	}
 	e.Mode = mode
 	e.Type = typeFromMode(mode)

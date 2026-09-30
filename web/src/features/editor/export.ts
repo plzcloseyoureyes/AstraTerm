@@ -7,7 +7,7 @@
 import { PALETTE, ruleIndexOf, SYNTAX_RULES } from './monaco/palette'
 
 /** Larger documents are not exported (the HTML would be several times their size). */
-export const MAX_EXPORT_CHARS = 16 * 1024 * 1024
+const MAX_EXPORT_CHARS = 16 * 1024 * 1024
 
 const ESC: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }
 export function escapeHtml(s: string): string {

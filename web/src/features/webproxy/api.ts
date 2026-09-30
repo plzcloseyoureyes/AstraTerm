@@ -5,7 +5,7 @@ import { queryClient } from '@/api/queryClient'
 import { events } from '@/lib/events'
 import type { ProxyEvent, ProxyInfo, ProxySpec, XpraCheck, XpraStartRequest } from './types'
 
-export const webproxyKeys = {
+const webproxyKeys = {
   list: ['webproxy', 'list'] as const,
   xpraCheck: (target: { connectionId?: string; sessionId?: string }) => ['webproxy', 'xpra-check', target.connectionId ?? '', target.sessionId ?? ''] as const,
 }
@@ -14,8 +14,8 @@ export const createProxy = (spec: ProxySpec & { mode?: 'path' | 'auto'; check?: 
 export const proxyEntry = (id: string, body: { path?: string; mode?: 'path' | 'auto' } = {}) =>
   api.post<ProxyInfo>(`/api/webproxy/${seg(id)}/url`, body)
 export const closeProxy = (id: string) => api.del<void>(`/api/webproxy/${seg(id)}`)
-export const listProxies = () => api.get<ProxyInfo[]>('/api/webproxy')
-export const checkXpra = (target: { connectionId?: string; sessionId?: string }) =>
+const listProxies = () => api.get<ProxyInfo[]>('/api/webproxy')
+const checkXpra = (target: { connectionId?: string; sessionId?: string }) =>
   api.get<XpraCheck>('/api/xpra/check', { query: { connectionId: target.connectionId, sessionId: target.sessionId } })
 export const startXpra = (req: XpraStartRequest) => api.post<ProxyInfo>('/api/xpra/start', req)
 

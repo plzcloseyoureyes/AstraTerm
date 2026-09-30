@@ -2,7 +2,6 @@
  * Terminal bus (SPEC §10) — how other features talk to live terminals without importing xterm:
  *
  *   sendToSession(sessionId, data)       input to one session (open terminal tab, else REST /input)
- *   broadcast(data, sessionIds?)          input to several sessions (default: every open terminal tab)
  *   getActiveTerminal() / listTerminals() TerminalHandle(s) of open terminal tabs
  *   onTerminalInput(cb) / onTerminalOutput(cb)
  *
@@ -187,14 +186,4 @@ export async function sendToSession(sessionId: string, data: string | Uint8Array
     console.warn('[terminal-bus] sendToSession failed', err)
     return false
   }
-}
-
-/**
- * Send the same input to several sessions (snippets, automation). Default targets: the sessions of every open
- * terminal tab (deduplicated). Resolves the number of sessions that accepted the data.
- */
-export async function broadcast(data: string | Uint8Array, sessionIds?: string[]): Promise<number> {
-  const targets = sessionIds?.length ? Array.from(new Set(sessionIds)) : Array.from(new Set(handleSnapshot.map((h) => h.sessionId)))
-  const results = await Promise.all(targets.map((id) => sendToSession(id, data)))
-  return results.filter(Boolean).length
 }

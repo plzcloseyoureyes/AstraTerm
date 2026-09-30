@@ -101,8 +101,7 @@ func (s *Service) collectorFor(key any) *collector {
 }
 
 func TestSubscribeValidationAndLocalFeed(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	d := &app.Deps{Ctx: ctx}
 	sessions := term.New(d)
 	s := New(d, &core.Core{Sessions: sessions})

@@ -12,6 +12,7 @@ import (
 	"math/big"
 	mathrand "math/rand/v2"
 	"net"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
@@ -412,12 +413,7 @@ func echo(s *serverConn) error {
 }
 
 func containsU16(list []uint16, v uint16) bool {
-	for _, x := range list {
-		if x == v {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(list, v)
 }
 
 // syncBuffer is a bytes.Buffer safe for concurrent use.

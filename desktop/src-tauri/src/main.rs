@@ -7,7 +7,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // no console window on Windows
 
 use std::collections::VecDeque;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
@@ -82,7 +82,8 @@ fn main_window(app: &AppHandle, origin: Origin) -> tauri::Result<WebviewWindow> 
         })
         // Stay on AstraTerm: links to anything else open in the default browser.
         .on_navigation(move |url| {
-            if nav_origin.is_app(url) || matches!(url.scheme(), "tauri" | "about" | "data" | "blob")
+            if nav_origin.is_app(url)
+                || matches!(url.scheme(), "tauri" | "about" | "data" | "blob")
                 || url.host_str() == Some("tauri.localhost")
             {
                 return true;
@@ -99,14 +100,15 @@ fn main_window(app: &AppHandle, origin: Origin) -> tauri::Result<WebviewWindow> 
             }
             static NEXT: AtomicUsize = AtomicUsize::new(1);
             let label = format!("popout-{}", NEXT.fetch_add(1, Ordering::Relaxed));
-            let built = WebviewWindowBuilder::new(&popup_app, label, WebviewUrl::External("about:blank".parse().unwrap()))
-                .window_features(features)
-                .disable_drag_drop_handler()
-                .title("AstraTerm")
-                .on_document_title_changed(|window, title| {
-                    let _ = window.set_title(&title);
-                })
-                .build();
+            let built =
+                WebviewWindowBuilder::new(&popup_app, label, WebviewUrl::External("about:blank".parse().unwrap()))
+                    .window_features(features)
+                    .disable_drag_drop_handler()
+                    .title("AstraTerm")
+                    .on_document_title_changed(|window, title| {
+                        let _ = window.set_title(&title);
+                    })
+                    .build();
             match built {
                 Ok(window) => NewWindowResponse::Create { window },
                 Err(_) => NewWindowResponse::Deny,
@@ -118,11 +120,11 @@ fn main_window(app: &AppHandle, origin: Origin) -> tauri::Result<WebviewWindow> 
                 let name = destination
                     .file_name()
                     .map(|n| n.to_string_lossy().into_owned())
-                    .or_else(|| url.path_segments().and_then(|s| s.last()).map(str::to_owned))
+                    .or_else(|| url.path_segments().and_then(|mut s| s.next_back()).map(str::to_owned))
                     .filter(|n| !n.is_empty())
                     .unwrap_or_else(|| "download".into());
                 if let Ok(dir) = webview.app_handle().path().download_dir() {
-                    *destination = unique_path(dir, &name);
+                    *destination = unique_path(&dir, &name);
                 }
             }
             true
@@ -166,7 +168,11 @@ fn start_server(app: &AppHandle, window: WebviewWindow, origin: Origin) -> tauri
                     tail.push_back(line);
                 }
                 CommandEvent::Terminated(status) => {
-                    let what = if ready { "AstraTerm stopped unexpectedly" } else { "AstraTerm could not start" };
+                    let what = if ready {
+                        "AstraTerm stopped unexpectedly"
+                    } else {
+                        "AstraTerm could not start"
+                    };
                     let log: Vec<String> = tail.iter().cloned().collect();
                     let message = format!(
                         "The AstraTerm server exited (code {}).\n\n{}",
@@ -189,7 +195,7 @@ fn start_server(app: &AppHandle, window: WebviewWindow, origin: Origin) -> tauri
 }
 
 /// dir/name, or dir/"name (2).ext" … when that file exists.
-fn unique_path(dir: PathBuf, name: &str) -> PathBuf {
+fn unique_path(dir: &Path, name: &str) -> PathBuf {
     let candidate = dir.join(name);
     if !candidate.exists() {
         return candidate;

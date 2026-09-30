@@ -304,7 +304,7 @@ func (rr replyReader) line() (string, error) {
 // lines.
 func (rr replyReader) codeReply() (int, []string, error) {
 	var lines []string
-	for i := 0; i < 200; i++ {
+	for range 200 {
 		l, err := rr.line()
 		if err != nil {
 			return 0, lines, err
@@ -375,7 +375,7 @@ func doStartTLS(conn net.Conn, proto, sni string) error {
 		if err := write("a1 STARTTLS\r\n"); err != nil {
 			return err
 		}
-		for i := 0; i < 50; i++ {
+		for range 50 {
 			l, err := rr.line()
 			if err != nil {
 				return err

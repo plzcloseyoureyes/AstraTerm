@@ -376,7 +376,7 @@ func puttyProxy(pc *pconn, v map[string]regValue, notes *[]string) []phop {
 // puttyForwards parses PuTTY's PortForwardings value: comma-separated "[4|6]L[bind:]port=host:port", "…R…", "…D[bind:]port".
 func puttyForwards(s string) []map[string]any {
 	out := []map[string]any{}
-	for _, e := range strings.Split(s, ",") {
+	for e := range strings.SplitSeq(s, ",") {
 		e = strings.TrimSpace(e)
 		if len(e) > 0 && (e[0] == '4' || e[0] == '6') { // address-family prefix
 			e = e[1:]
@@ -394,12 +394,12 @@ func puttyForwards(s string) []map[string]any {
 			}
 			continue
 		}
-		eq := strings.IndexByte(rest, '=')
-		if eq < 0 {
+		before, after, ok := strings.Cut(rest, "=")
+		if !ok {
 			continue
 		}
-		bindHost, bindPort := splitBindSpec(rest[:eq])
-		dh, dp := splitBindSpec(rest[eq+1:])
+		bindHost, bindPort := splitBindSpec(before)
+		dh, dp := splitBindSpec(after)
 		if bindPort == 0 || dh == "" || dp == 0 {
 			continue
 		}

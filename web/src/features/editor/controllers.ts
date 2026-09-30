@@ -61,10 +61,6 @@ export function getController(tabId: string | undefined | null): EditorControlle
   return tabId ? controllers.get(tabId) : undefined
 }
 
-export function listControllers(): EditorController[] {
-  return Array.from(controllers.values())
-}
-
 /** Controller of the active dock tab (when it is an editor tab). */
 export function activeController(): EditorController | undefined {
   return getController(useWorkspaceStore.getState().activeTabId)
@@ -82,7 +78,7 @@ export function isEditorTabActive(): boolean {
 // dirty state
 // ---------------------------------------------------------------------------------------------------------------------
 
-export const useDirtyStore = create<{ dirty: Record<string, true> }>(() => ({ dirty: {} }))
+const useDirtyStore = create<{ dirty: Record<string, true> }>(() => ({ dirty: {} }))
 
 export function setTabDirty(tabId: string, dirty: boolean): void {
   useDirtyStore.setState((s) => {

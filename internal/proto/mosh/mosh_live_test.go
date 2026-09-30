@@ -203,7 +203,7 @@ func TestLiveMoshManyStates(t *testing.T) {
 		return !sc.dirty && len(sc.actions) == 0
 	}
 	slow := 0
-	for i := 0; i < 1100; i++ {
+	for i := range 1100 {
 		_, _ = b.Write([]byte("x"))
 		start := time.Now()
 		time.Sleep(time.Millisecond)

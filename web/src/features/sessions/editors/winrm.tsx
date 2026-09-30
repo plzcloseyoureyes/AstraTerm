@@ -12,7 +12,7 @@ import { OptionSection, SelectOption, optBool, withOptions } from './fields'
 const HTTP_PORT = 5985
 const HTTPS_PORT = 5986
 
-export function WinrmEditor({ value, onChange }: ProtocolEditorProps) {
+function WinrmEditor({ value, onChange }: ProtocolEditorProps) {
   const p = { value, onChange }
   const https = optBool(value, 'https')
   return (

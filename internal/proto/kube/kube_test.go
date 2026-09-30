@@ -101,8 +101,7 @@ func call(t *testing.T, h echo.HandlerFunc, target string) (int, []byte) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	if err := h(c); err != nil {
-		var he *httpx.HTTPError
-		if errors.As(err, &he) {
+		if he, ok := errors.AsType[*httpx.HTTPError](err); ok {
 			return he.Status, []byte(he.Error())
 		}
 		t.Fatalf("handler error: %v", err)

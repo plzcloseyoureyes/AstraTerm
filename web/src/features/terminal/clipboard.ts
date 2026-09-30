@@ -109,7 +109,3 @@ export function removeClipboardEntry(id: number): void {
 export function clearClipboardHistory(): void {
   useClipboardHistory.setState({ entries: [] })
 }
-
-export function latestClipboardEntry(): ClipboardEntry | undefined {
-  return useClipboardHistory.getState().entries[0]
-}

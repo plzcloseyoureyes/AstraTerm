@@ -45,7 +45,7 @@ func decodeWSLList(out []byte) []string {
 	}
 	text = strings.TrimPrefix(text, "\ufeff")
 	var names []string
-	for _, line := range strings.Split(text, "\n") {
+	for line := range strings.SplitSeq(text, "\n") {
 		name := strings.TrimSpace(strings.Trim(line, "\x00\r"))
 		if name == "" || strings.ContainsAny(name, "\x00") {
 			continue

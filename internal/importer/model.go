@@ -196,7 +196,7 @@ type previewRequest struct {
 	Content string         `json:"content"`          // text, or base64 when Base64 is true
 	Base64  bool           `json:"base64,omitempty"` // Content is base64-encoded
 	Path    string         `json:"path,omitempty"`   // desktop mode: read a file returned by /import/discover instead of Content
-	Options previewOptions `json:"options,omitempty"`
+	Options previewOptions `json:"options"`
 }
 
 // previewOptions carry format hints (the CSV column mapping, a passphrase for encrypted JSON, a legacy charset).
@@ -308,7 +308,7 @@ type commitRequest struct {
 	// snippets only).
 	SelectedIDs []string       `json:"selectedIds,omitempty"`
 	Dedupe      string         `json:"dedupe,omitempty"` // skip (default) | update | duplicate
-	Options     previewOptions `json:"options,omitempty"`
+	Options     previewOptions `json:"options"`
 	ImportKeys  *bool          `json:"importKeys,omitempty"`       // desktop mode: import referenced key files (default true)
 	ImportKnown *bool          `json:"importKnownHosts,omitempty"` // import parsed host keys (default true)
 }

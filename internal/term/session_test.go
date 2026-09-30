@@ -9,6 +9,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -335,9 +336,9 @@ func (c *wsClient) input(s string) {
 }
 
 func (c *wsClient) msg(typ string) map[string]any {
-	for i := len(c.msgs) - 1; i >= 0; i-- {
-		if c.msgs[i]["type"] == typ {
-			return c.msgs[i]
+	for _, v := range slices.Backward(c.msgs) {
+		if v["type"] == typ {
+			return v
 		}
 	}
 	return nil

@@ -269,8 +269,7 @@ func (r *runner) run() {
 		case lost == nil:
 			continue
 		}
-		var rle *errRemoteListen
-		if errors.As(lost, &rle) {
+		if rle, ok := errors.AsType[*errRemoteListen](lost); ok {
 			// The remote listener was refused. On the very first start that is a configuration problem; after a
 			// reconnect the server may still hold the previous connection's listener for a while.
 			r.mu.Lock()
@@ -455,12 +454,10 @@ func permanent(err error) bool {
 	if strings.Contains(err.Error(), "no answer to the") {
 		return true
 	}
-	var he *httpx.HTTPError
-	if errors.As(err, &he) {
+	if he, ok := errors.AsType[*httpx.HTTPError](err); ok {
 		return he.Status >= 400 && he.Status < 500 && he.Status != http.StatusLocked && he.Status != http.StatusConflict
 	}
-	var me *model.Error
-	if errors.As(err, &me) {
+	if me, ok := errors.AsType[*model.Error](err); ok {
 		return me.Code == model.CodeNotFound || me.Code == model.CodeForbidden || me.Code == model.CodeBadRequest
 	}
 	return false

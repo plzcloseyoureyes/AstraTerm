@@ -31,7 +31,7 @@ export interface ServiceTarget {
 const WEB_PORTS: Record<number, 'http' | 'https'> = { 80: 'http', 81: 'http', 8000: 'http', 8008: 'http', 8080: 'http', 8081: 'http', 8888: 'http', 443: 'https', 8443: 'https', 9443: 'https' }
 
 /** What can be opened on host:port. */
-export function serviceFor(port: number): ServiceTarget | undefined {
+function serviceFor(port: number): ServiceTarget | undefined {
   if (port === 22 || port === 2222) return { label: 'SSH', scheme: 'ssh', protocol: 'ssh' }
   if (port === 23) return { label: 'Telnet', scheme: 'telnet', protocol: 'telnet' }
   if (port === 3389) return { label: 'RDP', scheme: 'rdp', protocol: 'rdp' }
@@ -47,7 +47,7 @@ function hostPart(host: string): string {
   return host.includes(':') && !host.startsWith('[') ? `[${host}]` : host
 }
 
-export async function connectTo(host: string, port: number, svc: ServiceTarget): Promise<void> {
+async function connectTo(host: string, port: number, svc: ServiceTarget): Promise<void> {
   if (svc.web) {
     if (!(await runCommand('webproxy.open', { host, port, scheme: svc.web }))) toast.error('The web proxy is not available')
     return
@@ -56,7 +56,7 @@ export async function connectTo(host: string, port: number, svc: ServiceTarget):
   if (!(await runCommand('sessions.quickConnect', `${svc.scheme}://${hostPart(host)}:${port}`))) toast.error('Quick connect is not available')
 }
 
-export async function newSession(host: string, port: number, svc: ServiceTarget, name?: string): Promise<void> {
+async function newSession(host: string, port: number, svc: ServiceTarget, name?: string): Promise<void> {
   if (!(await runCommand('sessions.new', { protocol: svc.protocol, initial: { host, port, name: name || host } }))) toast.error('The session editor is not available')
 }
 

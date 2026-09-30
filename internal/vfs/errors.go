@@ -45,8 +45,7 @@ func fsError(err error, p string) error {
 	if err == nil {
 		return nil
 	}
-	var he *httpx.HTTPError
-	if errors.As(err, &he) {
+	if _, ok := errors.AsType[*httpx.HTTPError](err); ok {
 		return err
 	}
 	if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
@@ -55,8 +54,7 @@ func fsError(err error, p string) error {
 	if errors.Is(err, term.ErrNotConnected) || errors.Is(err, term.ErrClosed) {
 		return errNotConn
 	}
-	var me *model.Error
-	if errors.As(err, &me) {
+	if _, ok := errors.AsType[*model.Error](err); ok {
 		return err
 	}
 	suffix := ""
@@ -81,8 +79,7 @@ func fsError(err error, p string) error {
 	case isDisconnect(err):
 		return httpx.NewError(http.StatusConflict, codeDisconnected, "connection lost: "+cleanMsg(err.Error()))
 	}
-	var se *sftp.StatusError
-	if errors.As(err, &se) {
+	if se, ok := errors.AsType[*sftp.StatusError](err); ok {
 		switch se.FxCode() {
 		case sftp.ErrSSHFxOpUnsupported:
 			return httpx.NewError(http.StatusBadRequest, codeNotSupported, "operation not supported by the SFTP server")
@@ -91,8 +88,7 @@ func fsError(err error, p string) error {
 		}
 		return httpx.NewError(http.StatusUnprocessableEntity, codeFSError, "operation failed"+suffix+" ("+cleanMsg(se.Error())+")")
 	}
-	var tpe *textproto.Error
-	if errors.As(err, &tpe) {
+	if tpe, ok := errors.AsType[*textproto.Error](err); ok {
 		switch tpe.Code {
 		case 550, 553:
 			msg := strings.ToLower(tpe.Msg)
@@ -195,8 +191,8 @@ func shellError(stderr []byte, code int, fallback string) error {
 }
 
 func firstLine(s string) string {
-	if i := strings.IndexByte(s, '\n'); i >= 0 {
-		return s[:i]
+	if before, _, ok := strings.Cut(s, "\n"); ok {
+		return before
 	}
 	return s
 }

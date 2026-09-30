@@ -125,7 +125,7 @@ func (t *recvErrTracer) send(ttl int) (int, error) {
 		sa = t.sockaddr(0)
 	}
 	var err error
-	for attempt := 0; attempt < 4; attempt++ {
+	for attempt := range 4 {
 		if err = unix.Sendto(t.fd, msg, 0, sa); err == nil {
 			return key, nil
 		}
@@ -168,7 +168,7 @@ func (t *recvErrTracer) recv(ctx context.Context, deadline time.Time) (traceAnsw
 
 // readReply reads a normal datagram: an echo reply (ICMP) or, rarely, a UDP answer from the destination.
 func (t *recvErrTracer) readReply() (traceAnswer, bool) {
-	for i := 0; i < 64; i++ {
+	for range 64 {
 		n, from, err := unix.Recvfrom(t.fd, t.buf, unix.MSG_DONTWAIT)
 		if err != nil {
 			if icmpErrno(err) || errors.Is(err, unix.EINTR) {
@@ -194,7 +194,7 @@ func (t *recvErrTracer) readReply() (traceAnswer, bool) {
 
 // drainErrors moves every queued ICMP error into the backlog.
 func (t *recvErrTracer) drainErrors() {
-	for i := 0; i < 256; i++ {
+	for range 256 {
 		n, oobn, _, from, err := unix.Recvmsg(t.fd, t.buf, t.oob, unix.MSG_ERRQUEUE|unix.MSG_DONTWAIT)
 		if err != nil {
 			if errors.Is(err, unix.EINTR) {

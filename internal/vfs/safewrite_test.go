@@ -51,7 +51,7 @@ func (f *flakyFS) Remove(ctx context.Context, p string) error {
 func (f *flakyFS) Lstat(ctx context.Context, p string) (*Entry, error) {
 	e, err := f.FS.Lstat(ctx, p)
 	if err == nil && f.lieUID != nil && !isTmp(p) {
-		e.UID = intPtr(*f.lieUID)
+		e.UID = new(*f.lieUID)
 	}
 	return e, err
 }

@@ -38,7 +38,7 @@ export function pct(v: number | undefined, digits?: number): string {
 }
 
 /** Part of a whole in percent (0 when unknown). */
-export function ratio(part: number | undefined, whole: number | undefined): number {
+function ratio(part: number | undefined, whole: number | undefined): number {
   if (!part || !whole || whole <= 0) return 0
   return Math.min(100, Math.max(0, (part / whole) * 100))
 }

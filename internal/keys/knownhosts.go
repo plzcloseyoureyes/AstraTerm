@@ -108,7 +108,7 @@ func parseKnownHostsLine(line string) (khEntry, error) {
 	if _, isCert := pk.(*ssh.Certificate); isCert {
 		return e, fmt.Errorf("certificates cannot be trusted directly; trust their CA with @cert-authority")
 	}
-	for _, h := range strings.Split(fields[0], ",") {
+	for h := range strings.SplitSeq(fields[0], ",") {
 		if h = strings.TrimSpace(h); h != "" {
 			if !strings.HasPrefix(h, "|") {
 				h = strings.ToLower(h)
@@ -226,7 +226,7 @@ func hashedHostMatches(entry, name string) bool {
 // pattern list: "*" and "?" wildcards, hashed entries, and "!" negations, which win when they match any of the names.
 func matchHostPatterns(patterns string, names ...string) bool {
 	matched := false
-	for _, p := range strings.Split(patterns, ",") {
+	for p := range strings.SplitSeq(patterns, ",") {
 		p = strings.TrimSpace(p)
 		if p == "" {
 			continue
@@ -294,7 +294,7 @@ func wildcardMatch(pattern, s string) bool {
 // validateHostPatterns normalizes a marker's comma-separated host pattern list.
 func validateHostPatterns(s string) (string, error) {
 	var out []string
-	for _, p := range strings.Split(s, ",") {
+	for p := range strings.SplitSeq(s, ",") {
 		p = strings.TrimSpace(p)
 		if p == "" {
 			continue
@@ -386,7 +386,7 @@ func parsePuTTYHostKeys(text string) ([]khEntry, []khLineError) {
 func puttyHostKey(kind, value string) (ssh.PublicKey, error) {
 	var nums []*big.Int
 	curve := ""
-	for _, part := range strings.Split(value, ",") {
+	for part := range strings.SplitSeq(value, ",") {
 		part = strings.TrimSpace(part)
 		if strings.HasPrefix(part, "nistp") {
 			curve = part

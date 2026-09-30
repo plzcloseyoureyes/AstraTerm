@@ -9,7 +9,7 @@ import { createElement } from 'react'
 import { api, isApiError } from '@/api/client'
 import { confirm } from '@/components/ui/dialog-host'
 
-export interface DangerMatch {
+interface DangerMatch {
   rule: string
   message: string
   severity: 'danger' | 'warning' | string

@@ -347,7 +347,7 @@ func (tr *transcriber) ctrl(b byte) {
 
 func (tr *transcriber) csi(final byte, params string) {
 	if strings.HasPrefix(params, "?") && (final == 'h' || final == 'l') {
-		for _, p := range strings.Split(params[1:], ";") {
+		for p := range strings.SplitSeq(params[1:], ";") {
 			if p == "1049" || p == "1047" || p == "47" {
 				tr.alt = final == 'h'
 			}

@@ -20,12 +20,6 @@ export function parseNodeId(nodeId: NodeId): { kind: 'root' | 'folder' | 'connec
   return { kind: 'unknown', id: nodeId }
 }
 
-/** Folder id of a parent node id (null for the root). */
-export function folderIdOfNode(nodeId: NodeId): string | null {
-  const p = parseNodeId(nodeId)
-  return p.kind === 'folder' ? p.id : null
-}
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Ordering
 // ---------------------------------------------------------------------------------------------------------------------
@@ -33,7 +27,7 @@ export function folderIdOfNode(nodeId: NodeId): string | null {
 const collator = new Intl.Collator(undefined, { sensitivity: 'base', numeric: true })
 
 /** Natural, case-insensitive name order ("web2" before "web10"). */
-export function compareNames(a: string, b: string): number {
+function compareNames(a: string, b: string): number {
   return collator.compare(a, b)
 }
 
@@ -42,7 +36,7 @@ function time(v: string | undefined): number {
   return Number.isFinite(t) ? t : 0
 }
 
-export function folderComparator(mode: SortMode): (a: Folder, b: Folder) => number {
+function folderComparator(mode: SortMode): (a: Folder, b: Folder) => number {
   if (mode === 'manual') return (a, b) => a.sortOrder - b.sortOrder || compareNames(a.name, b.name)
   return (a, b) => compareNames(a.name, b.name)
 }
@@ -201,7 +195,7 @@ export function buildTreeIndex(folderList: readonly Folder[], connectionList: re
 }
 
 /** Folder chain from the top level down to `folderId` (inclusive). */
-export function folderPath(folders: Map<string, Folder>, folderId: string | null | undefined): Folder[] {
+function folderPath(folders: Map<string, Folder>, folderId: string | null | undefined): Folder[] {
   const out: Folder[] = []
   const seen = new Set<string>()
   let cur = folderId ? folders.get(folderId) : undefined

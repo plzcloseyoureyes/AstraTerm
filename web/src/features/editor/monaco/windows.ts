@@ -127,7 +127,7 @@ function stopWatching(): void {
 }
 
 /** Keep Monaco's styles in `doc` (a pop-out window's document) in sync with the main document. */
-export function mirrorStyles(doc: Document): void {
+function mirrorStyles(doc: Document): void {
   if (doc === document || mirrors.has(doc)) return
   const m = new StyleMirror(doc)
   mirrors.set(doc, m)

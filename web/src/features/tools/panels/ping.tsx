@@ -37,7 +37,7 @@ import { useRowsOfKind, useToolJob } from '../useToolJob'
 const DEFAULTS = { host: '', mode: 'icmp' as 'icmp' | 'tcp', port: 443, count: 10, intervalMs: 1000, timeoutMs: 2000, size: 56, ipv6: false, via: '' }
 
 /** Latency over time: a line through the replies, red ticks for lost probes (last 300 samples). */
-export function LatencyChart({ replies }: { replies: ToolRow[] }) {
+function LatencyChart({ replies }: { replies: ToolRow[] }) {
   const samples = replies.slice(-300)
   const rtts = samples.map((r) => num(r.rttMs))
   const vals = rtts.filter((v): v is number => v !== undefined)

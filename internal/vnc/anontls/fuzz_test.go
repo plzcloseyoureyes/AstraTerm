@@ -48,7 +48,7 @@ func replay(t *testing.T, stream []byte) (bool, []byte) {
 	}
 	var got []byte
 	buf := make([]byte, 4096)
-	for i := 0; i < 4096; i++ {
+	for range 4096 {
 		n, err := c.Read(buf)
 		got = append(got, buf[:n]...)
 		if err != nil {

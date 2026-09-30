@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -629,8 +630,7 @@ func onlyKeys(list []string, allowed ...string) bool {
 }
 
 func jsonErrorText(err error) string {
-	var te *json.UnmarshalTypeError
-	if errors.As(err, &te) {
+	if te, ok := errors.AsType[*json.UnmarshalTypeError](err); ok {
 		if te.Field != "" {
 			return fmt.Sprintf("%s must be a %s", te.Field, te.Type)
 		}
@@ -646,11 +646,12 @@ func joinAddrs(addrs []string) string {
 	case 1:
 		return addrs[0]
 	}
-	out := addrs[0]
+	var out strings.Builder
+	out.WriteString(addrs[0])
 	for _, a := range addrs[1:] {
-		out += ", " + a
+		out.WriteString(", " + a)
 	}
-	return out
+	return out.String()
 }
 
 // classifyStartErr maps a start failure to an API error.

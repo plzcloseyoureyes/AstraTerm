@@ -92,7 +92,7 @@ func (f *fakeIperf3) serve() {
 	blk := int(f.gotParam["len"].(float64))
 	state(iperfCreateStreams)
 	var streams []net.Conn
-	for i := 0; i < parallel; i++ {
+	for range parallel {
 		c, err := f.ln.Accept()
 		if err != nil {
 			f.fail(err)

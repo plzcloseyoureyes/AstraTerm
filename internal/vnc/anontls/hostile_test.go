@@ -329,7 +329,7 @@ func TestPostHandshakeRecords(t *testing.T) {
 		name := CipherSuiteName(suite)
 		t.Run(name+"/empty records and warnings are tolerated", func(t *testing.T) {
 			c, _ := postHandshake(t, suite, func(s *serverConn) error {
-				for i := 0; i < maxUselessRecords/2; i++ {
+				for range maxUselessRecords / 2 {
 					_ = s.writeRecord(recordApplicationData, nil)
 					_ = s.writeRecord(recordAlert, []byte{alertLevelWarning, alertUserCanceled})
 				}

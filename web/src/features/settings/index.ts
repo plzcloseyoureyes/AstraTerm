@@ -23,7 +23,7 @@ registerTabKind<SettingsTabParams>({
 })
 
 /** Open the Settings tab, optionally at a section id (e.g. 'keyboard'). */
-export function openSettings(section?: string): void {
+function openSettings(section?: string): void {
   openTab<SettingsTabParams>({ kind: 'settings', params: section ? { section } : undefined })
 }
 

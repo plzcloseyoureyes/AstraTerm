@@ -157,16 +157,16 @@ func gatewayWarning(ports []RemotePort, port int) string {
 
 // splitMarker extracts the "@@method" line printed by the probe script.
 func splitMarker(out []byte) (method string, body []byte) {
-	i := bytes.Index(out, []byte("@@"))
-	if i < 0 {
+	_, after, ok := bytes.Cut(out, []byte("@@"))
+	if !ok {
 		return "", nil
 	}
-	rest := out[i+2:]
-	nl := bytes.IndexByte(rest, '\n')
-	if nl < 0 {
+	rest := after
+	before0, after0, ok0 := bytes.Cut(rest, []byte{'\n'})
+	if !ok0 {
 		return strings.TrimSpace(string(rest)), nil
 	}
-	return strings.TrimSpace(string(rest[:nl])), rest[nl+1:]
+	return strings.TrimSpace(string(before0)), after0
 }
 
 // splitAddrPort splits "host:port", "[v6]:port", "*:port", "host.port" (BSD, when dotted is set).

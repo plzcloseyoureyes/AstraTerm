@@ -222,7 +222,7 @@ func TestToolsAPIDesktop(t *testing.T) {
 
 	// Per-user job limit → 429 while eight long jobs run.
 	var ids []string
-	for i := 0; i < 8; i++ {
+	for range 8 {
 		ids = append(ids, start(t, admin, "ping", map[string]any{"host": "127.0.0.1", "mode": "tcp", "port": ln.Addr().(*net.TCPAddr).Port, "count": 1000, "intervalMs": 500}))
 	}
 	if st, code := admin.ErrorCode("POST", "/api/tools/dns", map[string]any{"name": "example.com"}); st != http.StatusTooManyRequests || code != "too_many_requests" {

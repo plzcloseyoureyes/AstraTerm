@@ -15,7 +15,7 @@ import { insertCommand, requestRun, type RunTarget } from './run'
 
 const SHELL_LANGS = new Set(['', 'sh', 'bash', 'shell', 'zsh', 'fish', 'ksh', 'console', 'shellsession', 'terminal', 'powershell', 'ps1', 'ps', 'pwsh', 'cmd', 'bat', 'batch', 'dos'])
 
-export const answerClass = cn(
+const answerClass = cn(
   'text-base leading-relaxed break-words',
   '[&_h1]:mt-3 [&_h1]:mb-1 [&_h1]:text-md [&_h1]:font-semibold [&_h2]:mt-3 [&_h2]:mb-1 [&_h2]:text-md [&_h2]:font-semibold',
   '[&_h3]:mt-2 [&_h3]:mb-1 [&_h3]:font-semibold [&_p]:my-1.5 [&_ul]:my-1.5 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:my-1.5 [&_ol]:list-decimal [&_ol]:pl-5',
@@ -53,7 +53,7 @@ function ActionButton({ label, icon: Icon, onClick, primary }: { label: string; 
   )
 }
 
-export function CodeBlock({ code, lang, target, streaming }: { code: string; lang: string; target?: RunTarget; streaming?: boolean }) {
+function CodeBlock({ code, lang, target, streaming }: { code: string; lang: string; target?: RunTarget; streaming?: boolean }) {
   const [copied, setCopied] = useState(false)
   const shell = SHELL_LANGS.has(lang.toLowerCase())
   const text = code.replace(/\n$/, '')

@@ -83,7 +83,7 @@ export interface GuacdStatusInfo extends GuacdStatus {
   sidecar?: SidecarStatus
 }
 
-export interface SidecarStatus {
+interface SidecarStatus {
   dockerAvailable: boolean
   dockerVersion?: string
   exists: boolean

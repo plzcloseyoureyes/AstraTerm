@@ -15,7 +15,7 @@ import { automationSettings } from '../settings'
 import { askDangerous } from '../store'
 
 /** The command line at the cursor (joined wrapped rows), starting at the OSC 133;B column when known. */
-export function commandAtCursor(term: Terminal, commandStart: { row: number; col: number } | null): string[] {
+function commandAtCursor(term: Terminal, commandStart: { row: number; col: number } | null): string[] {
   const buf = term.buffer.active
   let row = buf.baseY + buf.cursorY
   const rows: string[] = []
@@ -47,7 +47,7 @@ export function commandAtCursor(term: Terminal, commandStart: { row: number; col
  * removes, Ctrl-U / Ctrl-C clear, Enter submits (clears); history / cursor keys make the buffer unreliable (cleared —
  * the screen line is checked as well).
  */
-export function applyTyped(buf: string, data: string): string {
+function applyTyped(buf: string, data: string): string {
   const clean = data.replace(/\x1b\[20[01]~/g, '') // oxlint-disable-line no-control-regex
   let out = buf
   for (let i = 0; i < clean.length; i++) {

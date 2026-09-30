@@ -23,7 +23,7 @@ export interface DangerRequest {
   resolve: (ok: boolean) => void
 }
 
-export type SessionPickRequest = {
+type SessionPickRequest = {
   id: number
   title: string
   description?: string

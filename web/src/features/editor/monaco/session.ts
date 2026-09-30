@@ -90,7 +90,7 @@ export interface PrintableDoc {
 
 /** Above this size (characters) or line count the editor runs in "large file" mode. */
 export const LARGE_CHARS = 2 * 1024 * 1024
-export const LARGE_LINES = 60_000
+const LARGE_LINES = 60_000
 /** Above this size worker-backed languages (JS/TS/JSON/CSS/HTML) are coloured without their language service. */
 export const HUGE_CHARS = 6 * 1024 * 1024
 /** Dirty checks compare the text only below this size (above: Monaco's version ids decide). */
@@ -107,7 +107,7 @@ function prefersReducedMotion(): boolean {
 }
 
 /** The editor font: the user's font-family setting, else the app's monospace font (bundled JetBrains Mono). */
-export function editorFont(s: EditorSettings): string {
+function editorFont(s: EditorSettings): string {
   const custom = safeFontFamily(s.fontFamily)
   if (custom) return custom
   try {

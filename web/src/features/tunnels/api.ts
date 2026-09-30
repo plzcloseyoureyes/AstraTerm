@@ -2,7 +2,7 @@
  * Tunnels REST client (SPEC §6.0 "Tunnels" + §9 extensions), react-query hooks, and the events wiring that keeps the
  * caches live: {type:'tunnel'} status pushes and {type:'tunnel.session'} session-forward lists.
  */
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { api, seg } from '@/api/client'
 import { upsertById } from '@/api/optimistic'
 import { queryClient } from '@/api/queryClient'
@@ -30,8 +30,7 @@ export const tunnelKeys = {
 
 // --- REST ------------------------------------------------------------------------------------------------------------
 
-export const listTunnels = () => api.get<TunnelEx[]>('/api/tunnels')
-export const getTunnel = (id: string) => api.get<TunnelEx>(`/api/tunnels/${seg(id)}`)
+const listTunnels = () => api.get<TunnelEx[]>('/api/tunnels')
 export const createTunnel = (input: TunnelInput) => api.post<TunnelEx>('/api/tunnels', input)
 export const updateTunnel = (id: string, patch: Partial<TunnelInput>) => api.patch<TunnelEx>(`/api/tunnels/${seg(id)}`, patch)
 export const deleteTunnel = (id: string) => api.del<void>(`/api/tunnels/${seg(id)}`)
@@ -47,9 +46,9 @@ export const checkBind = (req: { bindHost: string; bindPort: number; bindSocket?
 export const exportTunnels = () => api.get<ExportFile>('/api/tunnels/export')
 export const importTunnels = (req: { file: unknown; defaultConnectionId?: string; dryRun?: boolean }) =>
   api.post<ImportResult>('/api/tunnels/import', req)
-export const getRemotePorts = (target: { connectionId?: string; sessionId?: string }) =>
+const getRemotePorts = (target: { connectionId?: string; sessionId?: string }) =>
   api.get<RemotePorts>('/api/tunnels/remote-ports', { query: target })
-export const listSessionForwards = (sessionId?: string) =>
+const listSessionForwards = (sessionId?: string) =>
   api.get<SessionForward[]>('/api/tunnels/session-forwards', { query: { sessionId } })
 export const addSessionForward = (sessionId: string, spec: ForwardSpec) =>
   api.post<SessionForward>('/api/tunnels/session-forwards', { sessionId, ...spec })
@@ -96,17 +95,6 @@ export function useRemotePorts(target: { connectionId?: string; sessionId?: stri
     staleTime: 0,
     gcTime: 30_000,
     retry: false,
-  })
-}
-
-export function useCreateTunnel() {
-  return useMutation({ mutationFn: createTunnel, onSuccess: putTunnel })
-}
-
-export function useUpdateTunnel() {
-  return useMutation({
-    mutationFn: ({ id, patch }: { id: string; patch: Partial<TunnelInput> }) => updateTunnel(id, patch),
-    onSuccess: putTunnel,
   })
 }
 

@@ -9,7 +9,7 @@ import { defineProtocol, type ValidationErrors } from './define'
 import { EditorNote, OptionSection, SelectOption, TextOption, optString } from './fields'
 import { SshCommonOptions, validateSshCommon } from './ssh-common'
 
-export function MoshEditor(props: ProtocolEditorProps) {
+function MoshEditor(props: ProtocolEditorProps) {
   const p = { value: props.value, onChange: props.onChange }
   const system = optString(props.value, 'moshClient') === 'system'
   return (

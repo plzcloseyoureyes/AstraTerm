@@ -14,7 +14,7 @@
  *   registerStatusItem     status bar items
  *   registerTerminalPlugin terminal add-ons (trzsz, zmodem, highlighting, triggers...)
  */
-import { useSyncExternalStore, type ComponentType, type ReactNode } from 'react'
+import { useSyncExternalStore, type ComponentType } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import type { Terminal } from '@xterm/xterm'
 import type { Connection, FileEntry, Protocol, RuntimeSession } from '@/api/types'
@@ -39,7 +39,7 @@ export interface Registry<T> {
  * `replaceable`: items that exist to be replaced (the shell's placeholders for buttons a feature owns): replacing them is
  * expected and not warned about in development.
  */
-export function createRegistry<T>(
+function createRegistry<T>(
   name: string,
   keyOf: (item: T) => string,
   orderOf?: (item: T) => number,
@@ -308,7 +308,7 @@ export interface SessionNodeContext {
   [key: string]: unknown
 }
 
-export interface TerminalContext {
+interface TerminalContext {
   tabId: string
   sessionId?: string
   session?: RuntimeSession
@@ -316,7 +316,7 @@ export interface TerminalContext {
   [key: string]: unknown
 }
 
-export interface TabContext {
+interface TabContext {
   tabId: string
   kind: string
   params: any
@@ -356,7 +356,7 @@ export interface ContextMenuContribution<K extends ContextMenuTarget = ContextMe
   group?: string
 }
 
-export const contextMenus = createRegistry<ContextMenuContribution & { id: string }>(
+const contextMenus = createRegistry<ContextMenuContribution & { id: string }>(
   'contextMenu',
   (m) => m.id,
   (m) => m.order,
@@ -565,7 +565,7 @@ export function registerTerminalPlugin(def: TerminalPluginDef): () => void {
 // file protocols → files tab). Used by features that own a protocol without a terminal backend (e.g. 'web').
 // ---------------------------------------------------------------------------------------------------------------------
 
-export interface ProtocolOpenOptions {
+interface ProtocolOpenOptions {
   position?: TabPosition
   reference?: string
   activate?: boolean
@@ -615,6 +615,3 @@ export function registerOverlay(def: OverlayDef): () => void {
 // ---------------------------------------------------------------------------------------------------------------------
 // Misc
 // ---------------------------------------------------------------------------------------------------------------------
-
-/** Render helper type for features that contribute small React fragments. */
-export type Renderable = ReactNode | (() => ReactNode)

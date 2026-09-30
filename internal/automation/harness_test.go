@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"maps"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
@@ -180,9 +181,7 @@ var shellOpts = map[string]any{"shell": "/bin/sh", "loginShell": false, "env": m
 func (h *harness) quickShell(u *model.User, extra map[string]any) model.RuntimeSession {
 	h.t.Helper()
 	quick := map[string]any{"protocol": "local", "options": shellOpts}
-	for k, v := range extra {
-		quick[k] = v
-	}
+	maps.Copy(quick, extra)
 	var rs model.RuntimeSession
 	h.must(u, "POST", "/api/sessions", map[string]any{"quick": quick, "cols": 120, "rows": 30}, &rs)
 	h.waitOutput(u, rs.ID, "nx$")
@@ -192,12 +191,8 @@ func (h *harness) quickShell(u *model.User, extra map[string]any) model.RuntimeS
 func (h *harness) savedShell(u *model.User, name string, options map[string]any, secrets map[string]string) *model.Connection {
 	h.t.Helper()
 	opts := model.Options{}
-	for k, v := range shellOpts {
-		opts[k] = v
-	}
-	for k, v := range options {
-		opts[k] = v
-	}
+	maps.Copy(opts, shellOpts)
+	maps.Copy(opts, options)
 	c := &model.Connection{OwnerID: u.ID, Name: name, Protocol: model.ProtoLocal, Options: opts, Tags: []string{}}
 	if len(secrets) > 0 {
 		enc, err := h.d.Vault.SealJSON(secrets)

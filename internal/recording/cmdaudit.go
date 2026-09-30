@@ -176,7 +176,7 @@ func (t *commandTracker) ctrl(b byte) {
 
 func (t *commandTracker) csi(final byte, params string) {
 	if strings.HasPrefix(params, "?") && (final == 'h' || final == 'l') {
-		for _, p := range strings.Split(params[1:], ";") {
+		for p := range strings.SplitSeq(params[1:], ";") {
 			switch p {
 			case "1049", "1047", "47":
 				t.alt = final == 'h'

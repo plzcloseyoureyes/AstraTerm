@@ -16,9 +16,9 @@ import { isFolderInSubtree, nextSortOrder } from './model'
 // ---------------------------------------------------------------------------------------------------------------------
 
 /** Query key under the `keys` prefix, so invalidations by the keys feature refresh the picker too. */
-export const keysPickerKey = [...queryKeys.keys, 'picker'] as const
+const keysPickerKey = [...queryKeys.keys, 'picker'] as const
 
-export interface KeysPickerData {
+interface KeysPickerData {
   available: boolean
   keys: SSHKey[]
 }
@@ -71,7 +71,7 @@ export async function patchFolders(patches: FolderPatch[]): Promise<void> {
 }
 
 /** Move/reorder connections (POST /api/connections/reorder, atomic) with an optimistic cache update. */
-export async function reorderConnectionsOptimistic(items: ReorderItem[]): Promise<void> {
+async function reorderConnectionsOptimistic(items: ReorderItem[]): Promise<void> {
   if (!items.length) return
   await queryClient.cancelQueries({ queryKey: queryKeys.connections, exact: true })
   const prev = queryClient.getQueryData<Connection[]>(queryKeys.connections)

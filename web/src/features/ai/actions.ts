@@ -50,7 +50,7 @@ export async function ensureAvailable(): Promise<boolean> {
 }
 
 /** Default chips for a new chat: the active terminal's recent output (setting). */
-export function defaultChips(): ContextChip[] {
+function defaultChips(): ContextChip[] {
   const h = getActiveTerminal()
   return h && aiSettings.get().autoAttachTerminal ? [terminalChip(h)] : []
 }

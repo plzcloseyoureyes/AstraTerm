@@ -148,10 +148,10 @@ func (s *openaiStream) Next() (Event, error) {
 		if chunk.Usage != nil {
 			s.usage = &Usage{InputTokens: chunk.Usage.PromptTokens, OutputTokens: chunk.Usage.CompletionTokens}
 		}
-		var text string
+		var text strings.Builder
 		reasoning := false
 		for _, c := range chunk.Choices {
-			text += c.Delta.Content
+			text.WriteString(c.Delta.Content)
 			if c.Delta.ReasoningContent != "" || c.Delta.Reasoning != "" {
 				reasoning = true
 			}
@@ -159,9 +159,9 @@ func (s *openaiStream) Next() (Event, error) {
 				s.finish = normalizeFinish(*c.FinishReason)
 			}
 		}
-		if text != "" {
+		if text.String() != "" {
 			s.gotAny = true
-			return Event{Type: "text", Text: text}, nil
+			return Event{Type: "text", Text: text.String()}, nil
 		}
 		if reasoning && !s.gotAny {
 			return Event{Type: "thinking"}, nil

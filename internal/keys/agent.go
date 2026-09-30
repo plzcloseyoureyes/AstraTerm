@@ -643,8 +643,7 @@ func (r *keyring) storedSigner(v *agentView, si *storedIdentity, cfg keysSetting
 	}
 	defer clear(pemBytes)
 	signer, err := sshx.ParsePrivateKey(pemBytes, pass)
-	var np *sshx.NeedsPassphraseError
-	if errors.As(err, &np) {
+	if _, ok := errors.AsType[*sshx.NeedsPassphraseError](err); ok {
 		signer, err = v.askPassphrase(si, pemBytes)
 	}
 	if err != nil {
@@ -665,7 +664,7 @@ func (v *agentView) askPassphrase(si *storedIdentity, pemBytes []byte) (ssh.Sign
 	k := si.key
 	canSave := !v.ring.svc.h.d.Vault.Locked()
 	msg := fmt.Sprintf("The key “%s” is encrypted. %s", k.Name, v.requestText(&agentTarget{stored: si}))
-	for attempt := 0; attempt < 3; attempt++ {
+	for attempt := range 3 {
 		if attempt > 0 {
 			msg = "Incorrect passphrase, please try again."
 		}
@@ -683,8 +682,7 @@ func (v *agentView) askPassphrase(si *storedIdentity, pemBytes []byte) (ssh.Sign
 			return nil, errAgentRefused
 		}
 		s, err := sshx.ParsePrivateKey(pemBytes, resp.Values[0])
-		var np *sshx.NeedsPassphraseError
-		if errors.As(err, &np) {
+		if _, ok := errors.AsType[*sshx.NeedsPassphraseError](err); ok {
 			continue
 		}
 		if err != nil {

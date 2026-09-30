@@ -1,12 +1,11 @@
 /*
  * REST client of the recordings feature (internal/recording). Keys live under ['recordings', …] (queryKeys.recordings).
  */
-import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { api, apiUrl, isApiError, seg } from '@/api/client'
 import { queryKeys } from '@/api/queryKeys'
 import type {
   AdminSession,
-  CommandRecord,
   CreateShareRequest,
   LogsResponse,
   PublicShareInfo,
@@ -18,7 +17,6 @@ import type {
   RecordingUsage,
   RetentionResult,
   SearchAllResponse,
-  SearchResponse,
   ShareView,
 } from './types'
 
@@ -53,20 +51,16 @@ function filterQuery(f: RecordingFilters, limit: number, offset = 0) {
   }
 }
 
-export const listRecordings = (f: RecordingFilters, limit = 200, offset = 0) =>
+const listRecordings = (f: RecordingFilters, limit = 200, offset = 0) =>
   api.get<RecordingList>('/api/recordings', { query: filterQuery(f, limit, offset) })
 export const getRecording = (id: string) => api.get<RecordingItem>(`/api/recordings/${seg(id)}`)
 export const deleteRecording = (id: string) => api.del<void>(`/api/recordings/${seg(id)}`)
 export const bulkDeleteRecordings = (ids: string[]) =>
   api.post<{ deleted: string[]; failed: { id: string; error: string; code?: string }[]; bytes: number }>('/api/recordings/bulk-delete', { ids })
-export const getUsage = (all: boolean) => api.get<RecordingUsage>('/api/recordings/usage', { query: { all: all ? 1 : undefined } })
-export const getPolicy = () => api.get<RecordingPolicy>('/api/recordings/policy')
+const getUsage = (all: boolean) => api.get<RecordingUsage>('/api/recordings/usage', { query: { all: all ? 1 : undefined } })
+const getPolicy = () => api.get<RecordingPolicy>('/api/recordings/policy')
 export const putPolicy = (patch: Partial<RecordingPolicy>) => api.put<RecordingPolicy>('/api/admin/recordings/policy', patch)
 export const runCleanup = (dryRun: boolean) => api.post<RetentionResult>('/api/admin/recordings/cleanup', { dryRun })
-export const searchRecording = (id: string, q: string, opts: { regex?: boolean; caseSensitive?: boolean; limit?: number } = {}) =>
-  api.get<SearchResponse>(`/api/recordings/${seg(id)}/search`, {
-    query: { q, regex: opts.regex ? 1 : undefined, case: opts.caseSensitive ? 1 : undefined, limit: opts.limit },
-  })
 export const searchAll = (q: string, f: RecordingFilters, opts: { regex?: boolean; caseSensitive?: boolean } = {}) =>
   api.get<SearchAllResponse>('/api/recordings/search', {
     query: {
@@ -90,7 +84,7 @@ export const replayUrl = (sessionId: string, minutes: number) =>
   apiUrl(`/api/sessions/${seg(sessionId)}/replay`, { minutes: Math.max(0, Math.floor(minutes)) })
 
 /** Recordings of the RDP module (404-tolerant: the module may not provide them). */
-export async function listRdpRecordings(all: boolean): Promise<RecordingItem[]> {
+async function listRdpRecordings(all: boolean): Promise<RecordingItem[]> {
   try {
     const list = await api.get<RdpRecording[]>('/api/rdp/recordings', { query: { all: all ? 1 : undefined } })
     return (list ?? []).map((r) => ({
@@ -148,17 +142,10 @@ export function usePolicy() {
   return useQuery({ queryKey: recKeys.policy, queryFn: getPolicy, staleTime: 30_000 })
 }
 
-export function useInvalidateRecordings() {
-  const qc = useQueryClient()
-  return () => qc.invalidateQueries({ queryKey: queryKeys.recordings })
-}
-
 // ---- sessions: replay, commands, shares -----------------------------------------------------------------------------
 
-export const getSessionCommands = (id: string) =>
-  api.get<{ commands: CommandRecord[]; auditing: boolean }>(`/api/sessions/${seg(id)}/commands`)
-export const listShares = (sessionId: string) => api.get<ShareView[]>(`/api/sessions/${seg(sessionId)}/shares`)
-export const listMyShares = () => api.get<ShareView[]>('/api/shares')
+const listShares = (sessionId: string) => api.get<ShareView[]>(`/api/sessions/${seg(sessionId)}/shares`)
+const listMyShares = () => api.get<ShareView[]>('/api/shares')
 export const createShare = (sessionId: string, req: CreateShareRequest) => api.post<ShareView>(`/api/sessions/${seg(sessionId)}/share`, req)
 export const revokeShare = (id: string) => api.del<void>(`/api/shares/${seg(id)}`)
 /** Pause or allow guest input of an interactive link (takes effect on open viewer sockets at once). */

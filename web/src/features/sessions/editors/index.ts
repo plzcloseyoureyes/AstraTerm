@@ -18,5 +18,3 @@ import './vnc'
 import './sftp'
 import './ftp'
 import './s3'
-
-export { getProtocolProfile, getProtocolSpec, isSshFamily, type ProtocolProfile, type ProtocolSpec } from './define'

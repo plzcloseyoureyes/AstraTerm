@@ -18,7 +18,7 @@ import { errorMessage, plural } from '@/lib/utils'
 import { reopenClosed, useWorkspaceStore } from '@/stores/workspace'
 
 /** How long a closed tab's session keeps running (and the Undo toast stays). */
-export const UNDO_MS = 6000
+const UNDO_MS = 6000
 const TOAST_ID = 'terminal-close-undo'
 
 interface Pending {
@@ -82,7 +82,7 @@ export function keepSession(sessionId: string): void {
 }
 
 /** Bring every pending tab back (re-attached to its still-running session) at its old place. */
-export async function undoAll(): Promise<void> {
+async function undoAll(): Promise<void> {
   const ids = [...pending.keys()]
   for (const id of ids) {
     clearTimeout(pending.get(id)!.timer)

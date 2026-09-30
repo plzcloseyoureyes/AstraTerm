@@ -20,10 +20,10 @@ import { EMPTY, concatBytes, indexOfBytes, latin1 } from './bytes'
 import { sanitizeFileName } from './names'
 import type { SaveFile, SaveTarget } from './save'
 
-export const TRZSZ_MAGIC = '::TRZSZ:TRANSFER:'
+const TRZSZ_MAGIC = '::TRZSZ:TRANSFER:'
 const MAGIC_BYTES = new TextEncoder().encode(TRZSZ_MAGIC)
 /** Largest data chunk the browser sends (see header). */
-export const TRZSZ_MAX_CHUNK = 1024 * 1024
+const TRZSZ_MAX_CHUNK = 1024 * 1024
 
 // ---------------------------------------------------------------------------------------------------------------------
 // library internals (runtime shape of trzsz 1.1.6)
@@ -117,7 +117,7 @@ export interface TrzszEnd {
   bytes: number
 }
 
-export interface TrzszHooks {
+interface TrzszHooks {
   /** Session arbitration: resolve false when another view answers this transfer. */
   claim(direction: 'download' | 'upload', dropped: boolean): Promise<boolean>
   /** Download destination (null = refuse the transfer). Called before anything is confirmed to the server. */
@@ -190,7 +190,7 @@ export function hasVisibleText(bytes: Uint8Array): boolean {
 }
 
 /** Visible text after the line of the last magic in `data` (a real trz / tsz prints nothing after it). */
-export function textAfterMagicLine(data: Uint8Array): boolean {
+function textAfterMagicLine(data: Uint8Array): boolean {
   const s = latin1(data, 0)
   const at = s.lastIndexOf(TRZSZ_MAGIC)
   if (at < 0) return false

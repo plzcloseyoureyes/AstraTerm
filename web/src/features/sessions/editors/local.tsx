@@ -9,7 +9,7 @@ import { useIsAdmin, useRunMode } from '@/stores/auth'
 import { defineProtocol, type ValidationErrors } from './define'
 import { ComboOption, EditorNote, KeyValueOption, OptionSection, SwitchOption, TagsOption, TextOption, validateEnv, type ComboSuggestion } from './fields'
 
-export function LocalEditor({ value, onChange }: ProtocolEditorProps) {
+function LocalEditor({ value, onChange }: ProtocolEditorProps) {
   const shells = useLocalShells(true)
   const mode = useRunMode()
   const isAdmin = useIsAdmin()

@@ -44,7 +44,7 @@ import type { TerminalTabParams } from './types'
 const kb = (id: string): string | undefined => getKeybindings(id)[0]
 
 /** Built-in terminal menu items + contributions of other features (registerContextMenu target 'terminal'). */
-export function buildTerminalMenu(ctrl: TerminalController): MenuItem[] {
+function buildTerminalMenu(ctrl: TerminalController): MenuItem[] {
   const info = ctrl.info()
   const tabId = ctrl.tabId
   const selection = ctrl.getSelection()
@@ -160,7 +160,7 @@ export function buildTerminalMenu(ctrl: TerminalController): MenuItem[] {
 }
 
 /** Built-in sections of the terminal context menu, in display order (see ContextMenuContribution.group). */
-export type TerminalMenuGroup = 'edit' | 'selection' | 'view' | 'layout' | 'session' | 'files' | 'close'
+type TerminalMenuGroup = 'edit' | 'selection' | 'view' | 'layout' | 'session' | 'files' | 'close'
 
 
 // ---------------------------------------------------------------------------------------------------------------------

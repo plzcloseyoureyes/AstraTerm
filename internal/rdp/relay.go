@@ -382,21 +382,18 @@ func (r *relay) classify(err error, t *ticket) *relayError {
 		// Refused by the destination policy (SEC-7): 403, never retried by the client.
 		return &relayError{fail: cleanPathFailure{HTTPStatus: 403}, msg: capitalize(be.Error())}
 	}
-	var neg *negotiationError
-	if errors.As(err, &neg) {
+	if neg, ok := errors.AsType[*negotiationError](err); ok {
 		return &relayError{fail: cleanPathFailure{Code: cleanPathNegotiationError, X224: neg.confirm, HTTPStatus: 502},
 			msg: "Security negotiation with " + dest + " failed: " + neg.Error()}
 	}
-	var rej *certRejectedError
-	if errors.As(err, &rej) {
+	if rej, ok := errors.AsType[*certRejectedError](err); ok {
 		return &relayError{fail: cleanPathFailure{TLSAlert: 42}, msg: capitalize(rej.msg)}
 	}
 	if errors.Is(err, context.Canceled) {
 		return &relayError{fail: cleanPathFailure{HTTPStatus: 499}, msg: "Connection canceled"}
 	}
-	var st *stageError
 	stage := ""
-	if errors.As(err, &st) {
+	if st, ok := errors.AsType[*stageError](err); ok {
 		stage = st.stage
 	}
 	if stage == "TLS handshake" {
@@ -477,8 +474,7 @@ func isTimeout(err error) bool {
 
 // tlsAlertCode extracts the alert of a TLS handshake failure ("remote error: tls: …" or an alert we sent).
 func tlsAlertCode(err error) (int, bool) {
-	var ae tls.AlertError
-	if errors.As(err, &ae) {
+	if ae, ok := errors.AsType[tls.AlertError](err); ok {
 		return int(ae), true
 	}
 	var op *net.OpError
@@ -493,8 +489,7 @@ func tlsAlertCode(err error) (int, bool) {
 
 // rootMessage returns the innermost meaningful error text.
 func rootMessage(err error) string {
-	var st *stageError
-	if errors.As(err, &st) {
+	if st, ok := errors.AsType[*stageError](err); ok {
 		err = st.err
 	}
 	msg := err.Error()

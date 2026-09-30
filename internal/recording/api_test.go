@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -172,10 +173,10 @@ func TestCommandAudit(t *testing.T) {
 		time.Sleep(200 * time.Millisecond)
 		c.MustJSON("GET", "/api/admin/audit?action=session.command&target="+s.ID, nil, &entries)
 		var got []string
-		for i := len(entries) - 1; i >= 0; i-- {
-			got = append(got, entries[i].Details["command"].(string))
-			if strings.Contains(entries[i].Details["command"].(string), "hunter2") {
-				t.Fatalf("password audited: %+v", entries[i])
+		for _, entrie := range slices.Backward(entries) {
+			got = append(got, entrie.Details["command"].(string))
+			if strings.Contains(entrie.Details["command"].(string), "hunter2") {
+				t.Fatalf("password audited: %+v", entrie)
 			}
 		}
 		want := "ls -la|sudo|git status|false"
@@ -351,7 +352,7 @@ func TestShareRateLimit(t *testing.T) {
 	anon := e.Client()
 	bad := strings.Repeat("A", 43)
 	limited := false
-	for i := 0; i < 30; i++ {
+	for range 30 {
 		st, _ := anon.ErrorCode("GET", "/api/share/"+bad, nil)
 		if st == http.StatusTooManyRequests {
 			limited = true

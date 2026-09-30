@@ -11,7 +11,7 @@ import { OptionSection, SelectOption, SwitchOption, optBool, withOptions } from 
 const PLAIN_PORT = 23
 const TLS_PORT = 992
 
-export function TelnetEditor({ value, onChange }: ProtocolEditorProps) {
+function TelnetEditor({ value, onChange }: ProtocolEditorProps) {
   const p = { value, onChange }
   const tls = optBool(value, 'tls')
   return (

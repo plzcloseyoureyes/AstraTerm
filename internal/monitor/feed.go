@@ -428,8 +428,7 @@ func (r *remoteSource) run(ctx context.Context, emit func(*Stats), fail func(sta
 			if ctx.Err() != nil || !r.client.Alive() {
 				return
 			}
-			var ue *unavailableError
-			if errors.As(err, &ue) {
+			if ue, ok := errors.AsType[*unavailableError](err); ok {
 				fail(stateUnavailable, "Remote monitoring is unavailable: "+ue.msg)
 				delay = time.Minute
 			} else {

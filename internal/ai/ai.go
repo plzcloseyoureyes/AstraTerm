@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -351,8 +352,7 @@ func (h *handler) ready(ctx context.Context, user *model.User) (*Effective, stri
 // providerErr converts a provider failure into the API error; red scrubs the message (a provider or a proxy may echo
 // the API key or parts of the request back in its error text).
 func providerErr(err error, red *Redactor) error {
-	var pe *ProviderError
-	if errors.As(err, &pe) {
+	if pe, ok := errors.AsType[*ProviderError](err); ok {
 		cp := *pe
 		cp.Message, _ = red.Redact(cp.Message)
 		return cp.httpError()
@@ -517,8 +517,7 @@ func (h *handler) models(c *echo.Context) error {
 	defer cancel()
 	list, err := h.provider(e, key, user).Models(lctx)
 	if err != nil {
-		var pe *ProviderError
-		if errors.As(err, &pe) {
+		if pe, ok := errors.AsType[*ProviderError](err); ok {
 			msg, _ := newRedactor([]string{key}, nil).Redact(pe.Error())
 			return builtin(msg)
 		}
@@ -586,8 +585,8 @@ func cleanMessages(in []Message) ([]Message, error) {
 	}
 	total := 0
 	start := len(out) - 1
-	for i := len(out) - 1; i >= 0; i-- {
-		total += len(out[i].Content)
+	for i, o := range slices.Backward(out) {
+		total += len(o.Content)
 		if total > maxHistoryChars && i < len(out)-1 {
 			break
 		}
@@ -793,8 +792,7 @@ func (h *handler) chat(c *echo.Context) error {
 				return nil
 			}
 			code, msg := "provider_error", "the answer was interrupted"
-			var pe *ProviderError
-			if errors.As(err, &pe) {
+			if pe, ok := errors.AsType[*ProviderError](err); ok {
 				code, msg = pe.code(), pe.Error()
 				msg, _ = red.Redact(msg)
 			} else if errors.Is(err, context.Canceled) {

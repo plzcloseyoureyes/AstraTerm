@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"maps"
 	"math/rand/v2"
 	"strings"
 	"sync"
@@ -286,7 +287,7 @@ func sanitizeBanner(s string) string {
 	s = strings.ToValidUTF8(s, "�")
 	s = strings.ReplaceAll(s, "\r\n", "\n")
 	var b strings.Builder
-	for _, line := range strings.Split(s, "\n") {
+	for line := range strings.SplitSeq(s, "\n") {
 		b.WriteString(stripControls(line))
 		b.WriteString("\r\n")
 	}
@@ -698,7 +699,7 @@ func (s *Session) connect(ctx context.Context, gen int) {
 				if !live {
 					return
 				}
-				for _, line := range strings.Split(strings.ReplaceAll(startup, "\r\n", "\n"), "\n") {
+				for line := range strings.SplitSeq(strings.ReplaceAll(startup, "\r\n", "\n"), "\n") {
 					_ = q.push(inputItem{data: []byte(line + "\r")})
 				}
 			})
@@ -717,9 +718,7 @@ func (s *Session) resolveForConnect(ctx context.Context) (*model.Connection, map
 	s.mu.Lock()
 	quick, conn := s.quick, s.conn.Clone()
 	remembered := make(map[string]string, len(s.secrets))
-	for k, v := range s.secrets {
-		remembered[k] = v
-	}
+	maps.Copy(remembered, s.secrets)
 	s.mu.Unlock()
 	if quick || conn == nil || conn.ID == "" || s.m.d == nil || s.m.d.Store == nil {
 		return conn, remembered, nil

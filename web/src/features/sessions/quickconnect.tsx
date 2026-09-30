@@ -30,7 +30,7 @@ async function savedConnections(): Promise<Connection[]> {
 }
 
 /** -J / ProxyJump targets must be saved SSH sessions: match by name, else by [user@]host[:port]. */
-export function resolveJumpHost(spec: string, conns: readonly Connection[]): string | undefined {
+function resolveJumpHost(spec: string, conns: readonly Connection[]): string | undefined {
   const ssh = conns.filter((c) => c.protocol === 'ssh')
   const s = spec.trim()
   const byName = ssh.find((c) => c.name.toLowerCase() === s.toLowerCase())
@@ -77,7 +77,7 @@ function showHelp(): void {
 }
 
 /** Text from command args: the raw string (ribbon) or {text}. */
-export function quickConnectText(args: unknown): string {
+function quickConnectText(args: unknown): string {
   if (typeof args === 'string') return args
   if (isPlainObject(args) && typeof args.text === 'string') return args.text
   return ''

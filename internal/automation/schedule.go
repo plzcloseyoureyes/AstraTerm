@@ -508,8 +508,7 @@ func (m *Module) runScheduleNow(c *echo.Context) error {
 		m.audit(c, nil, "automation.schedule.run", sch.ID, map[string]any{"name": sch.Name})
 		return c.JSON(http.StatusOK, jobStarted{JobID: ids.job, RunID: ids.run})
 	case err := <-errCh:
-		var he *httpx.HTTPError
-		if errors.As(err, &he) {
+		if _, ok := errors.AsType[*httpx.HTTPError](err); ok {
 			return err
 		}
 		return httpx.BadRequest(errorText(err))

@@ -54,7 +54,7 @@ function timeOf(ts: number): string {
  * Parse hex input into bytes: "01 03 00 0A", "0x01,0x02", "0103000a" or single digits separated by spaces ("1 2 3").
  * Returns null on malformed input.
  */
-export function parseHex(input: string): Uint8Array | null {
+function parseHex(input: string): Uint8Array | null {
   const out: number[] = []
   for (let tok of input.split(/[\s,;:]+/)) {
     if (tok === '') continue

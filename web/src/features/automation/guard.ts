@@ -91,7 +91,7 @@ function compileCustom(p: string): RegExp | null {
 }
 
 /** Split text into logical command lines (joining backslash continuations). */
-export function commandLines(text: string): string[] {
+function commandLines(text: string): string[] {
   const out: string[] = []
   let cur = ''
   const lines = text.replace(/\r\n?/g, '\n').split('\n')

@@ -21,7 +21,7 @@ func TestRingOffsets(t *testing.T) {
 	}
 	var all []byte
 	rnd := rand.New(rand.NewPCG(1, 2))
-	for i := 0; i < 500; i++ {
+	for i := range 500 {
 		n := rnd.IntN(700)
 		chunk := make([]byte, n)
 		for j := range chunk {

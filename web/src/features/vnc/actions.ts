@@ -29,12 +29,6 @@ function keyboardOf(doc: Document): KeyboardLock | undefined {
   return (doc.defaultView?.navigator as Navigator & { keyboard?: KeyboardLock } | undefined)?.keyboard
 }
 
-/** Is the tab's viewer the fullscreen element of its window? */
-export function isViewerFullscreen(tabId: string): boolean {
-  const el = roots.get(tabId)
-  return !!el && el.ownerDocument.fullscreenElement === el
-}
-
 /**
  * Toggle fullscreen of a VNC tab. Where supported (Chromium), the keyboard is locked so system shortcuts (Alt+Tab,
  * Win, Esc) reach the remote desktop; holding Esc leaves fullscreen.

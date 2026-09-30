@@ -233,8 +233,7 @@ func (h *handler) upload(c *echo.Context) error {
 	switch {
 	case isNative(hd.FS):
 		size, err = hd.FS.(NativeUploader).UploadChunk(ctx, target, offset, body, n, final)
-		var om errOffsetMismatch
-		if errors.As(err, &om) {
+		if om, ok := errors.AsType[errOffsetMismatch](err); ok {
 			return offsetMismatch(c, om.size)
 		}
 		if err != nil {
@@ -242,8 +241,7 @@ func (h *handler) upload(c *echo.Context) error {
 		}
 	case isStaged(hd.FS):
 		if size, err = h.stageChunk(hd, target, offset, body, n); err != nil {
-			var om errOffsetMismatch
-			if errors.As(err, &om) {
+			if om, ok := errors.AsType[errOffsetMismatch](err); ok {
 				return offsetMismatch(c, om.size)
 			}
 			return fsError(err, target)
@@ -255,8 +253,7 @@ func (h *handler) upload(c *echo.Context) error {
 		}
 	default:
 		size, err = writePart(ctx, hd.FS, target, offset, body, n, final)
-		var om errOffsetMismatch
-		if errors.As(err, &om) {
+		if om, ok := errors.AsType[errOffsetMismatch](err); ok {
 			return offsetMismatch(c, om.size)
 		}
 		if err != nil {

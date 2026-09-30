@@ -3,7 +3,7 @@
  * the terminal screen at a given time in a headless xterm ("copy text at time").
  */
 
-export type CastEventCode = 'o' | 'i' | 'r' | 'm' | 'x' | string
+type CastEventCode = 'o' | 'i' | 'r' | 'm' | 'x' | string
 
 export interface ParsedCast {
   version: 2 | 3

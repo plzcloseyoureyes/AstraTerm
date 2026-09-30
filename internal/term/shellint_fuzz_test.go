@@ -194,7 +194,7 @@ func TestEchoFilterTypingMidInjection(t *testing.T) {
 		b, s, line := injectAt(t, h, "host:~$ ", InjectOptions{})
 		echo := bashEcho(line, "host:~$ ", nil, 80)
 		var typed strings.Builder
-		for i := 0; i < 5; i++ {
+		for i := range 5 {
 			k := rnd.IntN(len(echo) + 1)
 			sendChunks(b, echo[:k], rnd)
 			echo = echo[k:]
@@ -231,7 +231,7 @@ func TestAltScreenTrackedBeyondWindow(t *testing.T) {
 	s := h.create(b, nil)
 	h.emit(b, s, []byte("host:~$ vim notes.txt\r\n\x1b[?1049h\x1b[H\x1b[2J"))
 	screen := bytes.Repeat([]byte("\x1b[H~ lorem ipsum dolor sit amet, consectetur adipiscing elit\r\n"), 600)
-	for i := 0; i < 20; i++ { // ~700 KiB of redraws
+	for range 20 { // ~700 KiB of redraws
 		h.emit(b, s, screen)
 	}
 	h.emit(b, s, []byte("\x1b[24;1H\"notes.txt\" 10L, 200C    3,5     50%"))

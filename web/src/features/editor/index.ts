@@ -72,9 +72,6 @@ import { clearRecent, listRecent } from './recent'
 import { editorSettings } from './settings'
 import type { DiffSourceInput, DiffTabParams, EditorTabParams, TextTabParams } from './types'
 
-export { openRemoteFile, newScratch, openDiff } from './open'
-export { editorSettings }
-
 const EditorTab = lazy(() => import('./EditorTab'))
 const TextTab = lazy(() => import('./TextTab'))
 const DiffTab = lazy(() => import('./DiffTab'))

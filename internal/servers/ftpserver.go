@@ -77,13 +77,11 @@ func (s *ftpService) start() error {
 		_ = raw.Close()
 		return err
 	}
-	s.wg.Add(1)
-	go func() {
-		defer s.wg.Done()
+	s.wg.Go(func() {
 		if err := s.srv.Serve(); err != nil && !errors.Is(err, net.ErrClosed) && s.in.ctx.Err() == nil {
 			s.in.failed(err)
 		}
-	}()
+	})
 	return nil
 }
 

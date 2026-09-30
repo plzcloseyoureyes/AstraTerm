@@ -30,7 +30,7 @@ export function playBell(volume = 0.15): void {
   }
 }
 
-export function notificationsSupported(): boolean {
+function notificationsSupported(): boolean {
   return typeof window !== 'undefined' && 'Notification' in window
 }
 

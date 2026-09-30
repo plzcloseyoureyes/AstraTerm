@@ -16,7 +16,7 @@ export interface TemplateVar {
   builtin?: boolean
 }
 
-export const BUILTIN_VARS = ['host', 'port', 'user', 'title', 'protocol', 'date', 'time', 'datetime', 'timestamp', 'clipboard'] as const
+const BUILTIN_VARS = ['host', 'port', 'user', 'title', 'protocol', 'date', 'time', 'datetime', 'timestamp', 'clipboard'] as const
 const BUILTINS = new Set<string>(BUILTIN_VARS)
 
 type Part = { text: string } | { v: TemplateVar }

@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, seg } from './client'
-import { optimisticList, removeByIds, upsertById } from './optimistic'
+import { optimisticList, upsertById } from './optimistic'
 import { queryKeys } from './queryKeys'
 import type { Folder, FolderInput } from './types'
 
 export const listFolders = () => api.get<Folder[]>('/api/folders')
-export const createFolder = (input: FolderInput) => api.post<Folder>('/api/folders', input)
+const createFolder = (input: FolderInput) => api.post<Folder>('/api/folders', input)
 export const updateFolder = (id: string, patch: Partial<FolderInput>) => api.patch<Folder>(`/api/folders/${seg(id)}`, patch)
 /** Deletes a folder; with recursive=true also its sub-folders and connections (else children move to the parent). */
 export const deleteFolder = (id: string, recursive = false) =>
@@ -31,19 +31,6 @@ export function useUpdateFolder() {
     mutationFn: ({ id, patch }: { id: string; patch: Partial<FolderInput> }) => updateFolder(id, patch),
     ...optimisticList<Folder, { id: string; patch: Partial<FolderInput> }>(qc, queryKeys.folders, (items, { id, patch }) =>
       items.map((f) => (f.id === id ? { ...f, ...patch } : f)),
-    ),
-  })
-}
-
-export function useDeleteFolder() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: ({ id, recursive }: { id: string; recursive?: boolean }) => deleteFolder(id, recursive),
-    ...optimisticList<Folder, { id: string; recursive?: boolean }>(
-      qc,
-      queryKeys.folders,
-      (items, { id }) => removeByIds(items, id),
-      [queryKeys.connections],
     ),
   })
 }

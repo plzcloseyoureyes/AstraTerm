@@ -94,7 +94,7 @@ export interface TerminalInfo {
   shadowedBy?: string[]
 }
 
-export type TerminalPasteMode = 'normal' | 'paced'
+type TerminalPasteMode = 'normal' | 'paced'
 
 export interface TerminalPasteOptions {
   /** Line-by-line with a delay (TERM-17 paced paste). */

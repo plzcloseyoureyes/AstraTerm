@@ -271,8 +271,7 @@ func fail(desc uint8, format string, args ...any) error {
 }
 
 func alertOf(err error) uint8 {
-	var la *localAlert
-	if errors.As(err, &la) {
+	if la, ok := errors.AsType[*localAlert](err); ok {
 		return la.desc
 	}
 	if errors.Is(err, errBadRecordMAC) {

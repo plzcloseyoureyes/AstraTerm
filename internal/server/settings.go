@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"maps"
 	"net/http"
 	"time"
 
@@ -162,9 +163,7 @@ func mergePatch(target, patch any) any {
 	}
 	out := map[string]any{}
 	if tm, ok := target.(map[string]any); ok {
-		for k, v := range tm {
-			out[k] = v
-		}
+		maps.Copy(out, tm)
 	}
 	for k, v := range pm {
 		if v == nil {

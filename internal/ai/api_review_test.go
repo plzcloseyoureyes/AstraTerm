@@ -2,6 +2,7 @@ package ai_test
 
 import (
 	"fmt"
+	"maps"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -132,9 +133,7 @@ func TestReviewConcurrentStreams(t *testing.T) {
 		req, _ := http.NewRequest("POST", env.URL("/api/ai/chat"), strings.NewReader(`{"messages":[{"role":"user","content":"hi"}]}`))
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("X-AstraTerm", "1")
-		for k, v := range admin.Header {
-			req.Header[k] = v
-		}
+		maps.Copy(req.Header, admin.Header)
 		client := &http.Client{Jar: admin.HTTP.Jar}
 		resp, err := client.Do(req)
 		if err != nil {
@@ -149,7 +148,7 @@ func TestReviewConcurrentStreams(t *testing.T) {
 		}
 		return resp.StatusCode
 	}
-	for i := 0; i < 4; i++ {
+	for i := range 4 {
 		if st := start(); st != 200 {
 			t.Fatalf("stream %d: %d", i, st)
 		}

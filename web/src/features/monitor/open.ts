@@ -14,7 +14,7 @@ import type { MonitorPanel, MonitorTabParams, SysInfoTabParams } from './types'
 export const MONITOR_KIND = 'monitor'
 export const SYSINFO_KIND = 'sysinfo'
 
-export function monitorTabId(target: string): string {
+function monitorTabId(target: string): string {
   return `monitor:${target}`
 }
 

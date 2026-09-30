@@ -249,7 +249,7 @@ func TestStripper(t *testing.T) {
 func TestTextLogTrim(t *testing.T) {
 	l := newTextLog(64)
 	var s stripper
-	for i := 0; i < 50; i++ {
+	for range 50 {
 		s.feed(l, []byte("line number xx\r\n"))
 	}
 	if len(l.buf) > 64 {
@@ -470,7 +470,7 @@ func TestExpandGroups(t *testing.T) {
 
 func TestScriptLimiter(t *testing.T) {
 	l := newScriptLimiter()
-	for i := 0; i < perUserScripts; i++ {
+	for i := range perUserScripts {
 		if !l.acquire("u") {
 			t.Fatalf("acquire %d", i)
 		}

@@ -42,7 +42,7 @@ export interface VncConfirmInfo {
   cleartext: boolean
 }
 
-export interface VncTLSInfo {
+interface VncTLSInfo {
   version: string
   cipherSuite: string
   anonymous: boolean

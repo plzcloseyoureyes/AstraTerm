@@ -57,8 +57,7 @@ func (e *evilFS) Open(ctx context.Context, p string, off int64) (io.ReadCloser, 
 }
 
 func TestMaliciousListingCannotEscapeDestination(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	log := slog.New(slog.NewTextHandler(io.Discard, nil))
 	d := &app.Deps{Ctx: ctx, Log: log, Cfg: &config.Config{Mode: config.ModeDesktop, DataDir: t.TempDir()},
 		Events: events.NewHub(ctx, log)}

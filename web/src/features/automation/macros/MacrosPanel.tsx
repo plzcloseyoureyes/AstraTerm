@@ -37,7 +37,7 @@ function useRecordingClock(): string {
   return startedAt ? formatDuration(Date.now() - startedAt) : ''
 }
 
-export function RecordingBanner() {
+function RecordingBanner() {
   const rec = useRecorder()
   const clock = useRecordingClock()
   if (!rec.recording) return null

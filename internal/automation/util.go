@@ -26,7 +26,7 @@ func cleanName(s, what string) (string, error) {
 // cleanFolder normalizes a snippet folder path: "a / b//c/" → "a/b/c".
 func cleanFolder(s string) (string, error) {
 	var parts []string
-	for _, p := range strings.Split(strings.ReplaceAll(s, "\\", "/"), "/") {
+	for p := range strings.SplitSeq(strings.ReplaceAll(s, "\\", "/"), "/") {
 		if p = strings.TrimSpace(p); p != "" {
 			parts = append(parts, p)
 		}

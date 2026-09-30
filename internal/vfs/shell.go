@@ -315,7 +315,7 @@ func execOwnerNames(ctx context.Context, x Execer, uids, gids []int) (users, gro
 		return users, groups, err
 	}
 	target := users
-	for _, line := range strings.Split(string(out), "\n") {
+	for line := range strings.SplitSeq(string(out), "\n") {
 		line = strings.TrimSpace(line)
 		if line == "::astraterm-groups::" {
 			target = groups
@@ -360,8 +360,8 @@ func parseStatLine(line string) (*Entry, error) {
 		Size:  size,
 		Mode:  uint32(mode),
 		Mtime: time.Unix(mt, 0).UTC(),
-		UID:   intPtr(uid),
-		GID:   intPtr(gid),
+		UID:   new(uid),
+		GID:   new(gid),
 	}
 	if f[5] != "" && f[5] != "UNKNOWN" && f[5] != f[3] {
 		e.Owner = f[5]

@@ -169,7 +169,7 @@ func (w *wsman) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 func (w *wsman) input(data string) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
-	for _, line := range strings.Split(strings.TrimSuffix(data, "\r\n"), "\r\n") {
+	for line := range strings.SplitSeq(strings.TrimSuffix(data, "\r\n"), "\r\n") {
 		w.stdin = append(w.stdin, line)
 		switch {
 		case strings.HasPrefix(line, "exit"):

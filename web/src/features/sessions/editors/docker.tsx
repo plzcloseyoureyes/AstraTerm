@@ -32,7 +32,7 @@ export const CONTAINER_SHELLS: ComboSuggestion[] = [
   { value: 'cmd' },
 ]
 
-export function DockerEditor({ value, onChange }: ProtocolEditorProps) {
+function DockerEditor({ value, onChange }: ProtocolEditorProps) {
   const features = useServerFeatures()
   const p = { value, onChange }
   const host = optString(value, 'dockerHost').trim()

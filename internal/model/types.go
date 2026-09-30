@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"maps"
 	"slices"
 	"sort"
 	"time"
@@ -98,9 +99,7 @@ func (c *Connection) Clone() *Connection {
 	cp.SecretsEnc = slices.Clone(c.SecretsEnc)
 	if c.Secrets != nil {
 		cp.Secrets = make(map[string]string, len(c.Secrets))
-		for k, v := range c.Secrets {
-			cp.Secrets[k] = v
-		}
+		maps.Copy(cp.Secrets, c.Secrets)
 	}
 	if c.LastUsedAt != nil {
 		t := *c.LastUsedAt

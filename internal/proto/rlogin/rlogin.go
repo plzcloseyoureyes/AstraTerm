@@ -561,8 +561,8 @@ func (b *rshBackend) Write(p []byte) (int, error) {
 	}
 	data := p
 	eof := false
-	if i := bytes.IndexByte(p, 0x04); i >= 0 {
-		data, eof = p[:i], true
+	if before, _, ok := bytes.Cut(p, []byte{0x04}); ok {
+		data, eof = before, true
 	}
 	if len(data) > 0 {
 		if _, err := b.conn.Write(b.lineMode.Translate(data)); err != nil {
@@ -643,7 +643,7 @@ func addrIP(a net.Addr) net.IP {
 func readLine(r io.Reader) (string, error) {
 	var sb strings.Builder
 	buf := make([]byte, 1)
-	for i := 0; i < 512; i++ {
+	for range 512 {
 		if _, err := r.Read(buf); err != nil {
 			return sb.String(), err
 		}

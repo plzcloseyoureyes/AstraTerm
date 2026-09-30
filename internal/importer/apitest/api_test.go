@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -206,7 +207,7 @@ func TestLargeImportNotTruncated(t *testing.T) {
 	var sb strings.Builder
 	sb.WriteString("[Bookmarks]\r\nSubRep=\r\nImgNum=42\r\n")
 	const n = 12000 // ~2.5 MiB of session lines
-	for i := 0; i < n; i++ {
+	for i := range n {
 		sb.WriteString("host")
 		sb.WriteString(itoa(i))
 		sb.WriteString("=#109#0%h")
@@ -291,12 +292,7 @@ func countFolders(folders []model.Folder, name string) int {
 }
 
 func contains(s []string, v string) bool {
-	for _, x := range s {
-		if x == v {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(s, v)
 }
 
 func userOf(t *testing.T, c *servertest.Client) *model.User {

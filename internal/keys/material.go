@@ -463,8 +463,8 @@ func parseRFC4716(s string) (ssh.PublicKey, string, error) {
 		if !inBody {
 			if cont != "" || strings.Contains(line, ":") {
 				full := cont + line
-				if strings.HasSuffix(full, "\\") {
-					cont = strings.TrimSuffix(full, "\\")
+				if before, ok := strings.CutSuffix(full, "\\"); ok {
+					cont = before
 					continue
 				}
 				cont = ""

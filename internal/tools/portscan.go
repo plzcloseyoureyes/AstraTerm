@@ -232,7 +232,7 @@ func scanPort(ctx context.Context, dial dialFunc, host, ip string, port int, tim
 	r := row{"kind": "port", "host": host, "ip": ip, "port": port, "service": serviceName(port, udp), "proto": network}
 	var conn net.Conn
 	var err error
-	for attempt := 0; attempt < 5; attempt++ {
+	for attempt := range 5 {
 		dctx, cancel := context.WithTimeout(ctx, timeout)
 		conn, err = dial(dctx, network, net.JoinHostPort(ip, strconv.Itoa(port)))
 		cancel()

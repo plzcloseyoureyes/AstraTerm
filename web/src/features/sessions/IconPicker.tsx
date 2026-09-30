@@ -33,7 +33,7 @@ function readAsDataUrl(file: File): Promise<string> {
 }
 
 /** Convert an uploaded image into a small PNG data URL (falls back to the original bytes for tiny files). */
-export async function imageFileToIcon(file: File): Promise<string> {
+async function imageFileToIcon(file: File): Promise<string> {
   const okType = /^image\/(png|jpeg|gif|webp|bmp|svg\+xml|x-icon|vnd\.microsoft\.icon)$/.test(file.type) || /\.(ico|svg|png|jpe?g|gif|webp|bmp)$/i.test(file.name)
   if (!okType) throw new Error('Choose a PNG, SVG, ICO, JPEG, GIF or WebP image')
   if (file.size > 4 * 1024 * 1024) throw new Error('The image is larger than 4 MB')

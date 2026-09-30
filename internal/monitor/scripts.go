@@ -136,7 +136,7 @@ func psQuote(s string) string {
 // (base64 of UTF-16LE).
 func psEncode(src string) string {
 	var lines []string
-	for _, l := range strings.Split(strings.ReplaceAll(src, "\r\n", "\n"), "\n") {
+	for l := range strings.SplitSeq(strings.ReplaceAll(src, "\r\n", "\n"), "\n") {
 		t := strings.TrimSpace(l)
 		if t == "" || strings.HasPrefix(t, "#") {
 			continue

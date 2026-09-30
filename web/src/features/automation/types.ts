@@ -34,7 +34,7 @@ export interface Script {
   updatedAt: string
 }
 
-export interface TriggerScope {
+interface TriggerScope {
   connectionIds?: string[]
   protocols?: string[]
   tags?: string[]
@@ -59,7 +59,7 @@ export interface TriggerAction {
   snippetId?: string
 }
 
-export interface TriggerStats {
+interface TriggerStats {
   hits: number
   lastHitAt?: string
 }
@@ -136,8 +136,8 @@ export interface Schedule {
   updatedAt: string
 }
 
-export type RunStatus = 'running' | 'ok' | 'error' | 'canceled'
-export type HostStatus = 'pending' | 'running' | 'ok' | 'error' | 'skipped'
+type RunStatus = 'running' | 'ok' | 'error' | 'canceled'
+type HostStatus = 'pending' | 'running' | 'ok' | 'error' | 'skipped'
 
 export interface HostResult {
   connectionId: string
@@ -151,7 +151,7 @@ export interface HostResult {
   durationMs: number
 }
 
-export interface RunSummary {
+interface RunSummary {
   total: number
   ok: number
   failed: number

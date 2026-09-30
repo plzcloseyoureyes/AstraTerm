@@ -128,15 +128,13 @@ func (r *Router) handleError(c *echo.Context, err error) {
 // 413 too_large; errors exposing ErrorCode() (model.Error, store errors) by code; echo errors (no route 404, 405,
 // 413, …) by status; context deadline → 504, cancellation → 499; anything else → 500 internal.
 func classify(err error) (status int, code, msg string) {
-	var he *HTTPError
-	if errors.As(err, &he) {
+	if he, ok := errors.AsType[*HTTPError](err); ok {
 		if he.Status >= 500 {
 			return he.Status, he.Code, "internal server error"
 		}
 		return he.Status, he.Code, he.Message
 	}
-	var mbe *http.MaxBytesError
-	if errors.As(err, &mbe) {
+	if _, ok := errors.AsType[*http.MaxBytesError](err); ok {
 		return http.StatusRequestEntityTooLarge, "too_large", "request body too large"
 	}
 	var coded interface{ ErrorCode() string }

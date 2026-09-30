@@ -16,8 +16,7 @@ import (
 )
 
 func httpStatus(err error) int {
-	var he *httpx.HTTPError
-	if errors.As(err, &he) {
+	if he, ok := errors.AsType[*httpx.HTTPError](err); ok {
 		return he.Status
 	}
 	return 0
@@ -115,7 +114,7 @@ func TestUnzipBackupHardening(t *testing.T) {
 func dupZip(t *testing.T, db []byte) []byte {
 	var buf bytes.Buffer
 	zw := zip.NewWriter(&buf)
-	for i := 0; i < 2; i++ {
+	for range 2 {
 		w, _ := zw.Create("astraterm.db")
 		_, _ = w.Write(db)
 	}
@@ -361,7 +360,7 @@ func TestSanitizeRejectsBadEntries(t *testing.T) {
 func TestBuilderCapIsEnforcedEarly(t *testing.T) {
 	var sb strings.Builder
 	sb.WriteString("[Bookmarks]\r\nSubRep=\r\nImgNum=42\r\n")
-	for i := 0; i < maxImportItems+50; i++ {
+	for i := range maxImportItems + 50 {
 		fmt.Fprintf(&sb, "[Bookmarks_%d]\r\nSubRep=f%d\r\nImgNum=41\r\nh%d= #109#0%%h%d.example.com%%22%%u%%\r\n", i+1, i, i, i)
 	}
 	start := time.Now()

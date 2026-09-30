@@ -45,7 +45,7 @@ func TestTicketStore(t *testing.T) {
 		t.Fatal("expired ticket accepted")
 	}
 	// Per-user bound and session revocation.
-	for i := 0; i < maxTicketsPerUser+10; i++ {
+	for range maxTicketsPerUser + 10 {
 		s.issue(&ticket{sessionID: "s2", userID: "u9", engine: engineGuacd})
 	}
 	if n := s.len(); n != maxTicketsPerUser {

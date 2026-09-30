@@ -8,6 +8,7 @@ import (
 	"crypto/rsa"
 	"errors"
 	"fmt"
+	"maps"
 	"slices"
 	"strconv"
 	"strings"
@@ -545,9 +546,8 @@ func (cm *committer) updateExisting(existing *model.Connection, pc *pconn, c *mo
 	if upd.Options == nil {
 		upd.Options = model.Options{}
 	}
-	for k, v := range c.Options { // imported keys win; the user's other options stay
-		upd.Options[k] = v
-	}
+	// imported keys win; the user's other options stay
+	maps.Copy(upd.Options, c.Options)
 	if c.AuthMethod != "" && c.AuthMethod != model.AuthAuto {
 		upd.AuthMethod = c.AuthMethod
 	}
@@ -585,9 +585,7 @@ func (cm *committer) sealSecrets(c *model.Connection, secrets map[string]string)
 		}
 		current = m
 	}
-	for k, v := range secrets {
-		current[k] = v
-	}
+	maps.Copy(current, secrets)
 	enc, err := cm.d.Vault.SealJSON(current)
 	if err != nil {
 		return err
@@ -677,8 +675,7 @@ func (cm *committer) importKeyText(name string, text []byte, passphrase string) 
 	var pub ssh.PublicKey
 	encrypted := false
 	if err != nil {
-		var np *sshx.NeedsPassphraseError
-		if errors.As(err, &np) {
+		if np, ok := errors.AsType[*sshx.NeedsPassphraseError](err); ok {
 			encrypted = true
 			pub = np.PublicKey
 			if pub == nil {

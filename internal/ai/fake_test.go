@@ -160,10 +160,7 @@ func (f *FakeProvider) serve(w http.ResponseWriter, r *http.Request) {
 func splitReply(s string) []string {
 	var out []string
 	for len(s) > 0 {
-		n := 7
-		if n > len(s) {
-			n = len(s)
-		}
+		n := min(7, len(s))
 		for n < len(s) && (s[n]&0xC0) == 0x80 {
 			n++
 		}

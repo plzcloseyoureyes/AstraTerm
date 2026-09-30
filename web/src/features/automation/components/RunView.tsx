@@ -56,7 +56,7 @@ function csvCell(v: unknown): string {
   return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
 }
 
-export function exportResultsCsv(run: Pick<Run, 'name' | 'startedAt'>, results: HostResult[]): void {
+function exportResultsCsv(run: Pick<Run, 'name' | 'startedAt'>, results: HostResult[]): void {
   const head = ['name', 'host', 'status', 'mode', 'exitCode', 'durationMs', 'error', 'output']
   const rows = results.map((r) => [r.name, r.host, r.status, r.mode, r.exitCode, r.durationMs, r.error, r.output].map(csvCell).join(','))
   const blob = new Blob([[head.join(','), ...rows].join('\r\n') + '\r\n'], { type: 'text/csv;charset=utf-8' })

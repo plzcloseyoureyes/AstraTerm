@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"maps"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -340,9 +342,7 @@ func (m *Manager) resolveRequest(ctx context.Context, user *model.User, req Crea
 			c.OwnerID = user.ID
 		}
 		secrets := make(map[string]string, len(req.Secrets))
-		for k, v := range req.Secrets {
-			secrets[k] = v
-		}
+		maps.Copy(secrets, req.Secrets)
 		return c, secrets, c.ID == "", nil
 	case req.ConnectionID != "":
 		if !model.ValidID(req.ConnectionID) {
@@ -1050,7 +1050,7 @@ func (m *Manager) rebuildHooksLocked() {
 	for id := range m.hookMap {
 		ids = append(ids, id)
 	}
-	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	slices.Sort(ids)
 	list := make([]*Hooks, 0, len(ids))
 	for _, id := range ids {
 		list = append(list, m.hookMap[id])

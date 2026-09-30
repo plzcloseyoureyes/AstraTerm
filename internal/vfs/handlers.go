@@ -9,6 +9,7 @@ import (
 	"io"
 	"io/fs"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -286,12 +287,7 @@ func (h *handler) read(c *echo.Context) error {
 }
 
 func containsNUL(b []byte) bool {
-	for _, c := range b {
-		if c == 0 {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(b, 0)
 }
 
 type writeRequest struct {

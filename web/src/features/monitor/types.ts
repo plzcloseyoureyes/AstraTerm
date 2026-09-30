@@ -4,7 +4,7 @@
  */
 import type { MonitorStats, Process, SSHConnInfo } from '@/api/types'
 
-export type Platform = 'linux' | 'darwin' | 'freebsd' | 'openbsd' | 'netbsd' | 'dragonfly' | 'windows' | (string & {})
+type Platform = 'linux' | 'darwin' | 'freebsd' | 'openbsd' | 'netbsd' | 'dragonfly' | 'windows' | (string & {})
 
 /** One monitor sample ({type:'monitor', sessionId, stats}). `disks[0]` is the primary volume. */
 export interface Stats extends MonitorStats {

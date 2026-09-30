@@ -75,7 +75,7 @@ func (s *sudoHelper) ensure(ctx context.Context) (string, error) {
 		return "", err
 	}
 	lastFailed := false
-	for attempt := 0; attempt < 8; attempt++ {
+	for attempt := range 8 {
 		pw, save, err := s.getPass(ctx, attempt, lastFailed)
 		if errors.Is(err, errNoMorePasswords) {
 			break
@@ -281,8 +281,7 @@ func (p *sudoProc) exitError(err error) error {
 	if p.watch.count() > 1 {
 		return errSudoWrongPw // killed at the second prompt
 	}
-	var ee *ssh.ExitError
-	if errors.As(err, &ee) {
+	if ee, ok := errors.AsType[*ssh.ExitError](err); ok {
 		return shellError([]byte(p.watch.message()), ee.ExitStatus(), "sudo")
 	}
 	return err

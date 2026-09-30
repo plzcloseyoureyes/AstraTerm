@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"maps"
 	"net"
 	"strconv"
 	"strings"
@@ -181,8 +182,7 @@ func (p *Pool) classifyDialError(err error, addr, label string) error {
 	case errors.Is(err, httpx.ErrLocked):
 		return err
 	}
-	var ne *ssh.AlgorithmNegotiationError
-	if errors.As(err, &ne) {
+	if ne, ok := errors.AsType[*ssh.AlgorithmNegotiationError](err); ok {
 		return term.Permanent(fmt.Errorf("%sno common algorithm with %s (%v); enable legacy algorithms for old devices", prefix, addr, ne))
 	}
 	msg := strings.TrimPrefix(err.Error(), "ssh: handshake failed: ")
@@ -198,8 +198,7 @@ func isTimeout(err error) bool {
 }
 
 func friendlyNetError(err error) error {
-	var oe *ssh.OpenChannelError
-	if errors.As(err, &oe) {
+	if oe, ok := errors.AsType[*ssh.OpenChannelError](err); ok {
 		switch oe.Reason {
 		case ssh.Prohibited:
 			return fmt.Errorf("the gateway refused to forward the connection (administratively prohibited: %s)", oe.Message)
@@ -399,9 +398,7 @@ func (p *Pool) buildRoute(ctx context.Context, user *model.User, conn *model.Con
 
 func cloneSecrets(m map[string]string) map[string]string {
 	out := make(map[string]string, len(m))
-	for k, v := range m {
-		out[k] = v
-	}
+	maps.Copy(out, m)
 	return out
 }
 

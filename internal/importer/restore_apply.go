@@ -9,6 +9,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"slices"
 	"time"
 
 	"github.com/plzcloseyoureyes/astraterm/internal/config"
@@ -110,8 +111,8 @@ func ApplyStagedRestore(cfg *config.Config, log *slog.Logger) (applied bool, err
 	}
 	rollback := func(cause error) (bool, error) {
 		var errs []error
-		for i := len(done) - 1; i >= 0; i-- {
-			if err := os.Rename(done[i].to, done[i].from); err != nil {
+		for _, d := range slices.Backward(done) {
+			if err := os.Rename(d.to, d.from); err != nil {
 				errs = append(errs, err)
 			}
 		}

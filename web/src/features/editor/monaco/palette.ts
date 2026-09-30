@@ -51,7 +51,7 @@ export const PALETTE = {
   },
 } as const
 
-export type SyntaxColor = keyof typeof PALETTE.light
+type SyntaxColor = keyof typeof PALETTE.light
 
 /** Bracket pair colours (nesting levels 1-3), per theme. */
 export const BRACKET_COLORS = {

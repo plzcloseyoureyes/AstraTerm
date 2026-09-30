@@ -629,7 +629,6 @@ func (st *sessionTriggers) fire(r *compiledTrigger, fc fireCtx) {
 		SessionTitle: info.Title, ConnectionID: info.ConnectionID, Line: truncateUTF8(fc.line, 500), Match: truncateUTF8(match, 200),
 		ExitCode: fc.exit, DurationMs: fc.duration.Milliseconds(), Paused: justPaused, Stats: snap}
 	for _, a := range t.Actions {
-		a := a
 		switch a.Type {
 		case ActNotify:
 			level := a.Level

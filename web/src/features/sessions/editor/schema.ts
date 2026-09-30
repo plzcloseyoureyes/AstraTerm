@@ -239,7 +239,7 @@ function validateTerminal(o: ConnectionOptions, errors: Record<string, string>):
 }
 
 /** All cross-field and protocol checks; keys are field paths. */
-export function validateDraft(v: SessionFormValues, base?: Connection): Record<string, string> {
+function validateDraft(v: SessionFormValues, base?: Connection): Record<string, string> {
   const errors: Record<string, string> = {}
   const profile = getProtocolProfile(v.protocol)
   const conn = toConnection(v, base)
@@ -313,7 +313,7 @@ function isEmpty(v: unknown): boolean {
 }
 
 /** Drop empty values (and a disabled proxy); nested objects are cleaned one level deep. Unknown keys survive. */
-export function cleanOptions(options: ConnectionOptions): ConnectionOptions {
+function cleanOptions(options: ConnectionOptions): ConnectionOptions {
   const out: ConnectionOptions = {}
   for (const [k, v] of Object.entries(options ?? {})) {
     if (isPlainObject(v)) {

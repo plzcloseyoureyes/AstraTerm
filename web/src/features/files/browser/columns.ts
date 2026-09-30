@@ -42,7 +42,7 @@ export const COLUMNS: ColumnSpec[] = [
   { id: 'perm', label: 'Access', size: 86, minSize: 64, maxSize: 180, priority: 30 },
 ]
 
-export const COLUMN_BY_ID = Object.fromEntries(COLUMNS.map((c) => [c.id, c])) as Record<ColumnId, ColumnSpec>
+const COLUMN_BY_ID = Object.fromEntries(COLUMNS.map((c) => [c.id, c])) as Record<ColumnId, ColumnSpec>
 
 const features = tableFeatures({ columnSizingFeature, columnResizingFeature, columnVisibilityFeature })
 const helper = createColumnHelper<typeof features, FileEntry>()

@@ -123,7 +123,7 @@ func detectFormat(content []byte) string {
 	if h := firstNonEmptyLine(s); h != "" {
 		if d := sniffDelimiter(h); d != 0 {
 			cols := map[string]bool{}
-			for _, c := range strings.Split(h, string(d)) {
+			for c := range strings.SplitSeq(h, string(d)) {
 				cols[mapHeader(strings.Trim(strings.TrimSpace(c), `"`), nil)] = true
 			}
 			if cols["host"] {
@@ -154,7 +154,7 @@ func sniffDelimiter(line string) rune {
 }
 
 func firstNonEmptyLine(s string) string {
-	for _, ln := range strings.Split(s, "\n") {
+	for ln := range strings.SplitSeq(s, "\n") {
 		ln = strings.TrimSpace(ln)
 		if ln != "" && !strings.HasPrefix(ln, "#") {
 			return ln
@@ -180,7 +180,7 @@ func looksLikeAstraTermJSON(trimmed string) bool {
 
 // looksLikeKnownHosts reports whether s looks like an OpenSSH known_hosts or a PuTTY host-key cache.
 func looksLikeKnownHosts(s string) bool {
-	for _, ln := range strings.Split(s, "\n") {
+	for ln := range strings.SplitSeq(s, "\n") {
 		ln = strings.TrimSpace(ln)
 		if ln == "" || strings.HasPrefix(ln, "#") {
 			continue

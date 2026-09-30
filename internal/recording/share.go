@@ -901,9 +901,8 @@ func (s *Service) relayShare(ctx context.Context, ws *websocket.Conn, sess *term
 			typ, data, err := cli.Read(rctx)
 			if err != nil {
 				code := websocket.CloseStatus(err)
-				var ce websocket.CloseError
 				reason := ""
-				if errors.As(err, &ce) {
+				if ce, ok := errors.AsType[websocket.CloseError](err); ok {
 					reason = ce.Reason
 				}
 				end(code, reason) // the terminal manager ended the stream (session closed / gone), or the relay ends

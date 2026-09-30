@@ -67,7 +67,7 @@ interface ViewStore {
   views: Record<string, ViewState>
 }
 
-export const useViewStore = create<ViewStore>(() => ({ views: {} }))
+const useViewStore = create<ViewStore>(() => ({ views: {} }))
 
 const FALLBACK = initialView()
 
@@ -96,15 +96,6 @@ export function resetView(viewId: string, fsKey: string, pending: string): void 
   useViewStore.setState((s) => ({
     views: { ...s.views, [viewId]: { ...initialView(), fsKey, pending, pendingMode: 'replace' } },
   }))
-}
-
-export function dropView(viewId: string): void {
-  useViewStore.setState((s) => {
-    if (!s.views[viewId]) return s
-    const views = { ...s.views }
-    delete views[viewId]
-    return { views }
-  })
 }
 
 /** Drop every view whose id starts with a prefix (e.g. all panes of a closed tab). */

@@ -3,7 +3,7 @@
  * IPv6 uses BigInt.
  */
 
-export interface SubnetResultV4 {
+interface SubnetResultV4 {
   family: 4
   cidr: string
   address: string
@@ -20,7 +20,7 @@ export interface SubnetResultV4 {
   isPrivate: boolean
 }
 
-export interface SubnetResultV6 {
+interface SubnetResultV6 {
   family: 6
   cidr: string
   address: string

@@ -58,7 +58,7 @@ const SECTIONS: SectionNavItem<SecuritySection>[] = [
   { id: 'linked', label: 'Linked accounts', icon: Link2 },
 ]
 
-export const SECURITY_SECTIONS = SECTIONS.map((s) => s.id)
+const SECURITY_SECTIONS = SECTIONS.map((s) => s.id)
 
 export default function SecurityView({ tabId, params }: TabProps<SecurityTabParams>) {
   const section: SecuritySection = params?.section && SECURITY_SECTIONS.includes(params.section) ? params.section : 'account'

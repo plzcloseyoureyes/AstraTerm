@@ -13,6 +13,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"maps"
 	"net/http"
 	"net/http/cookiejar"
 	"net/http/httptest"
@@ -139,9 +140,7 @@ func (c *Client) Do(method, path string, body any) (*http.Response, []byte) {
 	if c.Bearer != "" {
 		req.Header.Set("Authorization", "Bearer "+c.Bearer)
 	}
-	for k, v := range c.Header {
-		req.Header[k] = v
-	}
+	maps.Copy(req.Header, c.Header)
 	resp, err := c.HTTP.Do(req)
 	if err != nil {
 		c.Env.T.Fatalf("%s %s: %v", method, path, err)

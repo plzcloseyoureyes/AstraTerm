@@ -21,7 +21,7 @@ import type { DiffSource, DiffSourceInput, DiffTabParams, EditorTabParams, TextT
 // remote files
 // ---------------------------------------------------------------------------------------------------------------------
 
-export function findEditorTab(fsId: string, path: string): TabInfo<EditorTabParams> | undefined {
+function findEditorTab(fsId: string, path: string): TabInfo<EditorTabParams> | undefined {
   return listTabs().find((t) => t.kind === 'editor' && t.params?.fsId === fsId && t.params?.path === path) as TabInfo<EditorTabParams> | undefined
 }
 

@@ -35,8 +35,7 @@ func (s *Service) handleStatus(c *echo.Context) error {
 	rp, err := s.relyingParty(c)
 	out := map[string]any{"available": err == nil}
 	if err != nil {
-		var he *httpx.HTTPError
-		if errors.As(err, &he) {
+		if he, ok := errors.AsType[*httpx.HTTPError](err); ok {
 			out["reason"], out["code"] = he.Message, he.Code
 		}
 	} else {
@@ -586,7 +585,7 @@ func (s *Service) handlePutConfig(c *echo.Context) error {
 			return httpx.BadRequest("list at least one origin, e.g. https://" + cfg.RPID)
 		}
 		for _, o := range cfg.Origins {
-			host := strings.SplitN(strings.TrimPrefix(strings.TrimPrefix(o, "https://"), "http://"), ":", 2)[0]
+			host, _, _ := strings.Cut(strings.TrimPrefix(strings.TrimPrefix(o, "https://"), "http://"), ":")
 			if host != cfg.RPID && !strings.HasSuffix(host, "."+cfg.RPID) {
 				return httpx.BadRequest("origin " + o + " is not on " + cfg.RPID + " or one of its subdomains")
 			}

@@ -38,7 +38,7 @@ const out = session.run("uptime")
 log("uptime:", out)
 `
 
-export const API_HELP: [string, string][] = [
+const API_HELP: [string, string][] = [
   ['session.send(text) / sendLine(text)', 'type raw text / text + Enter'],
   ['session.sendSecret(key, {enter})', 'type a stored secret of the connection (never visible to the script)'],
   ['session.expect(pattern | [patterns], ms)', '→ {index, match, groups, before}; throws TimeoutError'],
@@ -54,7 +54,7 @@ export const API_HELP: [string, string][] = [
   ['vars.name · exit(code)', 'run variables, stop'],
 ]
 
-export function ApiHelp() {
+function ApiHelp() {
   return (
     <Popover>
       <PopoverTrigger asChild>

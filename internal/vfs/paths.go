@@ -133,7 +133,7 @@ func parseMode(s string) (modeSpec, error) {
 	}
 	var spec modeSpec
 	var text []string
-	for _, part := range strings.Split(s, ",") {
+	for part := range strings.SplitSeq(s, ",") {
 		if part == "" {
 			return modeSpec{}, fmt.Errorf("invalid mode %q", s)
 		}

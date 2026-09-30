@@ -25,7 +25,7 @@ const RemotePickerDialog = lazy(() => import('./RemotePicker'))
 // types
 // ---------------------------------------------------------------------------------------------------------------------
 
-export interface Choice<T extends string> {
+interface Choice<T extends string> {
   value: T
   label: string
   variant?: ButtonProps['variant']

@@ -62,7 +62,7 @@ export function StatusDot({ status, className, withTooltip = true }: { status: T
 }
 
 /** Tunnel icons (options.icon), in picker order. */
-export const TUNNEL_ICONS: Record<string, { icon: LucideIcon; label: string }> = {
+const TUNNEL_ICONS: Record<string, { icon: LucideIcon; label: string }> = {
   web: { icon: Globe, label: 'Web' },
   database: { icon: Database, label: 'Database' },
   docker: { icon: Container, label: 'Containers' },
@@ -90,7 +90,7 @@ export const TUNNEL_ICONS: Record<string, { icon: LucideIcon; label: string }> =
 }
 
 /** The icon component of a tunnel icon name (undefined for none / unknown names). */
-export function tunnelIcon(name: string | undefined): LucideIcon | undefined {
+function tunnelIcon(name: string | undefined): LucideIcon | undefined {
   return name && Object.hasOwn(TUNNEL_ICONS, name) ? TUNNEL_ICONS[name].icon : undefined
 }
 

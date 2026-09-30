@@ -187,7 +187,7 @@ func serveGunzipped(w http.ResponseWriter, r *http.Request, fsys fs.FS, etags *e
 }
 
 func etagListMatches(header, etag string) bool {
-	for _, part := range strings.Split(header, ",") {
+	for part := range strings.SplitSeq(header, ",") {
 		part = strings.TrimPrefix(strings.TrimSpace(part), "W/")
 		if part == "*" || part == etag {
 			return true
@@ -221,7 +221,7 @@ func (e *etagCache) get(stored string) string {
 }
 
 func acceptsEncoding(header, token string) bool {
-	for _, part := range strings.Split(header, ",") {
+	for part := range strings.SplitSeq(header, ",") {
 		fields := strings.Split(strings.TrimSpace(part), ";")
 		if !strings.EqualFold(strings.TrimSpace(fields[0]), token) {
 			continue

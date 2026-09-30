@@ -8,7 +8,7 @@ import type { Connection } from '@/api/types'
 import { defineProtocol, type ValidationErrors } from './define'
 import { NumberOption, OptionSection, SelectOption, SwitchOption, optNumber } from './fields'
 
-export function VncEditor({ value, onChange }: ProtocolEditorProps) {
+function VncEditor({ value, onChange }: ProtocolEditorProps) {
   const p = { value, onChange }
   return (
     <div className="grid gap-5">

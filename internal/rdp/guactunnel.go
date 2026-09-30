@@ -132,8 +132,7 @@ func (t *guacTunnel) run() string {
 	hs, cleanup, err := t.prepare()
 	defer cleanup()
 	if err != nil {
-		var rej *certRejectedError
-		if errors.As(err, &rej) {
+		if rej, ok := errors.AsType[*certRejectedError](err); ok {
 			t.fail(guac.StatusClientForbidden, capitalize(rej.msg))
 		} else if be, ok := netguard.IsBlocked(err); ok {
 			t.fail(guac.StatusClientForbidden, capitalize(be.Error()))
@@ -152,8 +151,7 @@ func (t *guacTunnel) run() string {
 	gc, err := guac.Connect(t.ctx, conn, hs)
 	if err != nil {
 		_ = conn.Close()
-		var ge *guac.Error
-		if errors.As(err, &ge) {
+		if ge, ok := errors.AsType[*guac.Error](err); ok {
 			st := ge.Status
 			if st == 0 {
 				st = guac.StatusUpstreamError
@@ -294,7 +292,7 @@ var (
 func mimetypes(in []string) []string {
 	var out []string
 	for _, v := range in {
-		for _, m := range strings.Split(v, "\n") {
+		for m := range strings.SplitSeq(v, "\n") {
 			m = strings.TrimSpace(m)
 			if m != "" && len(m) <= 100 && mimeRe.MatchString(m) && len(out) < 16 {
 				out = append(out, m)

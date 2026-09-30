@@ -73,7 +73,7 @@ const availability = new Map<string, boolean>()
  * Detect an installed font by comparing text widths against generic fallbacks (document.fonts.check() reports true
  * for any unknown local family, so it cannot be used for this).
  */
-export function isFontAvailable(name: string): boolean {
+function isFontAvailable(name: string): boolean {
   const cached = availability.get(name)
   if (cached !== undefined) return cached
   const c = ctx2d()

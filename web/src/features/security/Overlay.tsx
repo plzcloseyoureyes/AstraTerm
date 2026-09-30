@@ -25,7 +25,7 @@ import { refreshAuth, useCurrentUser } from '@/stores/auth'
 import { unlockApp, useUIStore } from '@/stores/ui'
 import { getMe, secQK, useMe, usePasskeys } from './api'
 import { CopyButton, IconOrSpinner, Notice } from './components'
-import { closeSecurityDialogs, finishReauth, ReauthCancelled, showRecoveryCodes, useSecurityDialogs, withReauth, withReauthOrThrow } from './store'
+import { finishReauth, ReauthCancelled, showRecoveryCodes, useSecurityDialogs, withReauth, withReauthOrThrow } from './store'
 import { createPasskey, isPasskeyCancel, passkeyEnvironment, passkeyErrorMessage, verifyWithPasskey } from './webauthn'
 
 export function SecurityOverlay() {
@@ -147,7 +147,7 @@ function ReauthDialog() {
 // --- TOTP enrollment ----------------------------------------------------------------------------------------------------------
 
 /** Groups a base32 secret in blocks of four for reading aloud / typing. */
-export function formatSecret(s: string): string {
+function formatSecret(s: string): string {
   return s.replace(/(.{4})/g, '$1 ').trim()
 }
 
@@ -330,7 +330,7 @@ function TotpEnrollDialog() {
 
 // --- recovery codes --------------------------------------------------------------------------------------------------------------
 
-export function downloadText(name: string, text: string, type = 'text/plain') {
+function downloadText(name: string, text: string, type = 'text/plain') {
   const url = URL.createObjectURL(new Blob([text], { type }))
   const a = document.createElement('a')
   a.href = url
@@ -672,9 +672,4 @@ export function LockPasskeyOverlay({ locked }: { locked: boolean }) {
       </Button>
     </div>
   )
-}
-
-/** Dialogs are dropped (never left half-filled) on sign-out. */
-export function resetSecurityDialogs(): void {
-  closeSecurityDialogs()
 }

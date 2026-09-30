@@ -10,12 +10,12 @@ function defaultPort(scheme: string): number {
 }
 
 /** host[:port] as shown in an address (default port omitted, IPv6 bracketed). */
-export function authority(t: Pick<ProxyTarget, 'scheme' | 'host' | 'port'>): string {
+function authority(t: Pick<ProxyTarget, 'scheme' | 'host' | 'port'>): string {
   const host = t.host.includes(':') ? `[${t.host}]` : t.host
   return t.port && t.port !== defaultPort(t.scheme) ? `${host}:${t.port}` : host
 }
 
-export function originOf(t: ProxyTarget): string {
+function originOf(t: ProxyTarget): string {
   return `${t.scheme}://${authority(t)}`
 }
 

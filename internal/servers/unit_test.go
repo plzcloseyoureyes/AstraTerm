@@ -29,7 +29,7 @@ func TestLogRing(t *testing.T) {
 		published = append(published, e...)
 		mu.Unlock()
 	})
-	for i := 0; i < logRingSize+10; i++ {
+	for range logRingSize + 10 {
 		r.add(levelInfo, "1.2.3.4:5", "", "line")
 	}
 	all, last := r.since(0, maxLogLimit)
@@ -233,7 +233,7 @@ func TestUserDB(t *testing.T) {
 	}
 	// Brute force: the IP gets blocked, even for the right password; another IP is unaffected.
 	var err error
-	for i := 0; i < failMax; i++ {
+	for range failMax {
 		_, err = db.checkPassword("6.6.6.6", "alice", "guess")
 	}
 	if !errors.Is(err, errTooManyFails) {

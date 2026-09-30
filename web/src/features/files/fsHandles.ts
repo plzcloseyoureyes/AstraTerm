@@ -24,9 +24,9 @@ import { listTabs } from '@/stores/workspace'
 import { fsApi, fsKeys, isHandleGone } from './api'
 import type { FsHandleEx, FsOpenBody, FsSource } from './types'
 
-export type HandleStatus = 'idle' | 'opening' | 'ready' | 'error'
+type HandleStatus = 'idle' | 'opening' | 'ready' | 'error'
 
-export interface HandleError {
+interface HandleError {
   message: string
   status: number
   code: string
@@ -181,7 +181,7 @@ export function openFs(src: FsSource, opts: { force?: boolean } = {}): Promise<F
 }
 
 /** Close a handle now (server-side DELETE) and forget it. */
-export function closeFs(key: string): void {
+function closeFs(key: string): void {
   const t = closeTimers.get(key)
   if (t) clearTimeout(t)
   closeTimers.delete(key)
@@ -222,7 +222,7 @@ function scheduleClose(key: string): void {
   )
 }
 
-export function retainFs(key: string): void {
+function retainFs(key: string): void {
   users.set(key, (users.get(key) ?? 0) + 1)
   const t = closeTimers.get(key)
   if (t) {
@@ -231,7 +231,7 @@ export function retainFs(key: string): void {
   }
 }
 
-export function releaseFs(key: string): void {
+function releaseFs(key: string): void {
   const n = Math.max(0, (users.get(key) ?? 0) - 1)
   users.set(key, n)
   if (n > 0) return

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"maps"
 	"net/http"
 	"net/url"
 	"os"
@@ -82,8 +83,7 @@ func TestRetryResumesAfterTransientError(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("POSIX paths")
 	}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	log := slog.New(slog.NewTextHandler(io.Discard, nil))
 	d := &app.Deps{Ctx: ctx, Log: log, Cfg: &config.Config{Mode: config.ModeDesktop, DataDir: t.TempDir()},
 		Events: events.NewHub(ctx, log)}
@@ -162,9 +162,7 @@ func answerPrompts(t *testing.T, env *servertest.Env, c *servertest.Client, resp
 			}
 			n.Add(1)
 			out := map[string]any{"type": "prompt.response", "id": m.Prompt.ID}
-			for k, v := range resp {
-				out[k] = v
-			}
+			maps.Copy(out, resp)
 			b, _ := json.Marshal(out)
 			ws.Write(ctx, websocket.MessageText, b)
 		}

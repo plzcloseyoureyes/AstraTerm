@@ -101,7 +101,7 @@ function fromJsonObject(item: unknown, fallbackName: string): TerminalScheme | n
 }
 
 /** Parse an iTerm2 .itermcolors XML property list. */
-export function parseItermColors(xml: string, name = 'Imported scheme'): TerminalScheme {
+function parseItermColors(xml: string, name = 'Imported scheme'): TerminalScheme {
   let doc: Document
   try {
     doc = new DOMParser().parseFromString(xml, 'application/xml')

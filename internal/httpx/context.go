@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"net/netip"
+	"slices"
 	"strings"
 
 	"github.com/labstack/echo/v5"
@@ -111,8 +112,8 @@ func resolveClientIP(r *http.Request, trusted []netip.Prefix) string {
 	for _, v := range r.Header.Values("X-Forwarded-For") {
 		hops = append(hops, strings.Split(v, ",")...)
 	}
-	for i := len(hops) - 1; i >= 0; i-- {
-		a, err := netip.ParseAddr(strings.TrimSpace(hops[i]))
+	for i, hop := range slices.Backward(hops) {
+		a, err := netip.ParseAddr(strings.TrimSpace(hop))
 		if err != nil {
 			break
 		}

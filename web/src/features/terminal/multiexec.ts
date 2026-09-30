@@ -25,7 +25,7 @@ interface MultiExecState {
 export const useMultiExecStore = create<MultiExecState>(() => ({ active: false, scope: 'visible', selected: [], excluded: [] }))
 
 /** Is the tab currently on screen (a pane of the active tab, floating or popped out)? */
-export const isTabVisible = isWorkspaceTabVisible
+const isTabVisible = isWorkspaceTabVisible
 
 /** Participation of one terminal tab under the current MultiExec settings (false while MultiExec is off). */
 export function isParticipant(tabId: string, state: MultiExecState = useMultiExecStore.getState()): boolean {

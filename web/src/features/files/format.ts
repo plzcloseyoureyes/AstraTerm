@@ -15,14 +15,10 @@ export function isDirLike(e: Pick<FileEntry, 'type' | 'linkType'>): boolean {
   return e.type === 'dir' || (e.type === 'symlink' && e.linkType === 'dir')
 }
 
-export function isSymlink(e: Pick<FileEntry, 'type'>): boolean {
-  return e.type === 'symlink'
-}
-
 const UNITS = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB']
 
 /** Compact size for narrow columns: "35 B", "4.5 KiB", "20.0 MiB", "300 MiB". */
-export function formatBytesCompact(bytes: number): string {
+function formatBytesCompact(bytes: number): string {
   if (!Number.isFinite(bytes)) return ''
   let v = Math.abs(bytes)
   let i = 0
@@ -58,11 +54,6 @@ export function formatMtimeLong(iso: string | undefined): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return '—'
   return formatDate(d, 'yyyy-MM-dd HH:mm:ss')
-}
-
-export function mtimeMs(e: FileEntry): number {
-  const t = Date.parse(e.mtime)
-  return Number.isFinite(t) ? t : 0
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -246,16 +237,10 @@ export function isBinaryKind(k: FileKind): boolean {
   return k === 'image' || k === 'video' || k === 'audio' || k === 'archive' || k === 'pdf' || k === 'spreadsheet' || k === 'document' || k === 'binary'
 }
 
-export type ArchiveFormat = 'zip' | 'tar.gz'
-
 /** Can "Extract here" handle this file? */
 export function isExtractable(name: string): boolean {
   const lower = name.toLowerCase()
   return /\.(zip|tar|tgz|tar\.gz|tar\.bz2|tbz2|tar\.xz|txz|tar\.zst|gz|bz2|xz|7z|rar|jar)$/.test(lower)
-}
-
-export function isHiddenName(name: string): boolean {
-  return name.startsWith('.')
 }
 
 /** The backend receives uploads and transfers into "<target>.astraterm-part" and renames it onto the target at the end. */

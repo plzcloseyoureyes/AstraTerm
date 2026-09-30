@@ -32,7 +32,7 @@ func parsePorts(spec string) ([]int, error) {
 			out = append(out, p)
 		}
 	}
-	for _, part := range strings.Split(spec, ",") {
+	for part := range strings.SplitSeq(spec, ",") {
 		part = strings.TrimSpace(strings.ToLower(part))
 		if part == "" {
 			continue

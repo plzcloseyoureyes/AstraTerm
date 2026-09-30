@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+	"maps"
 	"net/http"
 	"slices"
 	"strings"
@@ -265,9 +266,7 @@ func (s *Service) CompleteLogin(c *echo.Context, userID string, opt LoginOptions
 		s.log.Warn("reset login failures", "err", err)
 	}
 	details := map[string]any{"remember": opt.Remember, "method": opt.Method}
-	for k, v := range opt.Details {
-		details[k] = v
-	}
+	maps.Copy(details, opt.Details)
 	s.d.Audit.LogUser(c, u, "auth.login", u.ID, details)
 	return u, nil
 }

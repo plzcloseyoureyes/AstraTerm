@@ -656,7 +656,7 @@ registerStatusItem({ id, align: 'left'|'right', order, component })
 ```
 * Workspace API (`src/stores/workspace.ts`): `openTab({kind, params, title?, split?: 'right'|'below'|'none', float?})`,
   `closeTab`, `focusTab`, `activeTab`, `splitActive(direction)`, `popout(tabId)`, layout persistence to settings.
-* Opening a connection: `openConnection(conn | connectionId, opts)` in `src/features/sessions/open.ts` → POST /api/sessions → opens
+* Opening a connection: `openConnection(conn | connectionId, opts)` in `src/features/terminal/open.ts` → POST /api/sessions → opens
   tab of kind `terminal` / `vnc` / `rdp`, or for `sftp`/`ftp`/`s3` protocols a `files` tab.
 * Visual language: dark-first professional UI (light theme supported), dense like an IDE, 13px base, JetBrains Mono / system
   mono for terminals. MobaXterm familiarity: ribbon of big icon buttons (Session, Servers, Tools, Sessions, View, Split,
@@ -813,7 +813,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/astraterm` (or `
 
 
 ### F1a — terminal UI (`web/src/features/terminal/**`)
-* **Opening sessions** lives in `src/features/terminal/open.ts` (not `sessions/open.ts`): `openConnection(connOrId, {position?,
+* **Opening sessions** lives in `src/features/terminal/open.ts`: `openConnection(connOrId, {position?,
   reference?, activate?, title?})`, `openQuick(quick & {password?})`, `openLocalShell(shellId?)`, `attachSession(sessionId)`,
   `duplicateSession(tabId, {position})`, `restartSessionInTab(tabId)`, `estimateTerminalSize()`; all resolve the tab id or null
   (errors are toasted). Tab kinds by session kind: `terminal` / `vnc` / `rdp` with params `{sessionId, protocol, connectionId?,
@@ -875,7 +875,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/astraterm` (or `
 * **Dialogs** (editor, folder) render in their own small React root (dialogs/host.tsx) sharing the query client and
   stores: hidden but kept while the screen is locked, dropped on sign-out, app shortcuts suspended while open.
 * **Quick connect** scrubs inline passwords from the ribbon field's local history (`astraterm:quickconnect-history`); the
-  shell could store the sanitised text itself. `src/features/sessions/open.ts` re-exports F1a's `terminal/open.ts`.
+  shell could store the sanitised text itself.
 
 ### Integration — foundation stage
 * **Setup token.** In server mode (or on any non-loopback bind) a fresh instance generates a one-time setup token and

@@ -248,7 +248,7 @@ func (s *stripper) csiDone(final byte) {
 		return
 	}
 	on := final == 'h'
-	for _, f := range bytes.Split(p[1:], []byte{';'}) {
+	for f := range bytes.SplitSeq(p[1:], []byte{';'}) {
 		switch string(f) {
 		case "1049", "1047", "47":
 			if s.altScreen != on {

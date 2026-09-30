@@ -13,7 +13,7 @@ func hasPosixACL(p string) bool {
 	if err != nil || n <= 0 {
 		return false
 	}
-	for _, name := range bytes.Split(buf[:n], []byte{0}) {
+	for name := range bytes.SplitSeq(buf[:n], []byte{0}) {
 		if string(name) == "system.posix_acl_access" {
 			return true
 		}

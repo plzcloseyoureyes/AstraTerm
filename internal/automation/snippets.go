@@ -503,9 +503,7 @@ func (m *Module) replayMacro(ctx context.Context, user *model.User, ids []string
 	var mu sync.Mutex
 	failed := 0
 	for _, id := range ids {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			err := m.replayOne(ctx, user, id, steps, speed, emit)
 			ev := progressEvent{Kind: "done", SessionID: id, Done: len(steps), Total: len(steps), OK: err == nil}
 			if err != nil {
@@ -515,7 +513,7 @@ func (m *Module) replayMacro(ctx context.Context, user *model.User, ids []string
 				mu.Unlock()
 			}
 			emit(ev)
-		}()
+		})
 	}
 	wg.Wait()
 	if err := ctx.Err(); err != nil {

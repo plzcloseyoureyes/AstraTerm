@@ -8,8 +8,8 @@ export const getSettings = () => api.get<SettingsObject>('/api/settings')
 /** Partial merge: each top-level key present in `patch` replaces that stored key. */
 export const putSettings = (patch: SettingsObject) => api.put<SettingsObject | void>('/api/settings', patch)
 
-export const getAdminSettings = () => api.get<SettingsObject>('/api/admin/settings')
-export const putAdminSettings = (patch: SettingsObject) => api.put<SettingsObject | void>('/api/admin/settings', patch)
+const getAdminSettings = () => api.get<SettingsObject>('/api/admin/settings')
+const putAdminSettings = (patch: SettingsObject) => api.put<SettingsObject | void>('/api/admin/settings', patch)
 
 export function useAdminSettings(enabled = true) {
   return useQuery({ queryKey: queryKeys.adminSettings, queryFn: getAdminSettings, enabled })

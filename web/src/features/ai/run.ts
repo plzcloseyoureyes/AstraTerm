@@ -19,7 +19,7 @@ export interface RunTarget {
   sessionId?: string
 }
 
-export interface GuardMatch {
+interface GuardMatch {
   rule: string
   message: string
   severity: 'danger' | 'warning' | string
@@ -28,13 +28,13 @@ export interface GuardMatch {
 }
 
 /** Whether a paste reaches this terminal's shell as bracketed paste (typed, not executed line by line). */
-export function bracketedPasteActive(h: TerminalHandle): boolean {
+function bracketedPasteActive(h: TerminalHandle): boolean {
   const modes = h.term.modes as { bracketedPasteMode?: boolean }
   const opts = h.term.options as { ignoreBracketedPasteMode?: boolean }
   return !!modes.bracketedPasteMode && !opts.ignoreBracketedPasteMode
 }
 
-export function resolveTerminal(target?: RunTarget): TerminalHandle | undefined {
+function resolveTerminal(target?: RunTarget): TerminalHandle | undefined {
   if (target?.tabId) {
     const h = getTerminalByTab(target.tabId)
     if (h) return h
@@ -61,8 +61,6 @@ function usable(h: TerminalHandle | undefined): h is TerminalHandle {
   }
   return true
 }
-
-export { cleanCommand } from './heuristics'
 
 /**
  * Type the command at the prompt without pressing Enter. A multi-line command can only be typed without running it

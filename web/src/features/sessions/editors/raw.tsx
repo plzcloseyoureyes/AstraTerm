@@ -7,7 +7,7 @@ import type { ProtocolEditorProps } from '@/app/registry'
 import { defineProtocol } from './define'
 import { LINE_ENDING_CHOICES, OptionSection, SelectOption, SwitchOption, optString } from './fields'
 
-export function RawEditor({ value, onChange }: ProtocolEditorProps) {
+function RawEditor({ value, onChange }: ProtocolEditorProps) {
   const p = { value, onChange }
   const transport = optString(value, 'transport') || 'tcp'
   return (

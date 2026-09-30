@@ -106,7 +106,7 @@ func parseProbe(out []byte) *hostInfo {
 	case uname != "":
 		h.Platform = strings.ToLower(uname)
 	}
-	for _, kv := range strings.Fields(sec["TOOLS"].first()) {
+	for kv := range strings.FieldsSeq(sec["TOOLS"].first()) {
 		if k, v, ok := strings.Cut(kv, "="); ok && v != "" {
 			h.Tools[k] = true
 		}

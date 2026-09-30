@@ -3,6 +3,7 @@ package rdp
 import (
 	"context"
 	"encoding/base64"
+	"maps"
 	"net"
 	"net/url"
 	"strings"
@@ -265,9 +266,7 @@ func TestGuacTunnelFakeGuacd(t *testing.T) {
 	// Handshake values: credentials from the vault / prompt, never from the browser.
 	gd.mu.Lock()
 	cp := map[string]string{}
-	for k, v := range gd.connect {
-		cp[k] = v
-	}
+	maps.Copy(cp, gd.connect)
 	argv := gd.argv["password"]
 	size := strings.Join(gd.size, "x")
 	gd.mu.Unlock()

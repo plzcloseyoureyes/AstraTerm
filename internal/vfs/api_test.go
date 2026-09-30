@@ -513,7 +513,7 @@ func TestTransferCancel(t *testing.T) {
 	admin := env.Setup("admin", pw)
 	f := openLocal(t, admin)
 	src, dst := tempDir(t), tempDir(t)
-	for i := 0; i < 200; i++ {
+	for i := range 200 {
 		os.WriteFile(fmt.Sprintf("%s/f%03d", src, i), bytes.Repeat([]byte{byte(i)}, 256<<10), 0o644)
 	}
 	var in transfer.Info

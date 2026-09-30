@@ -27,8 +27,8 @@ export const serverKeys = {
 
 // ---- REST ---------------------------------------------------------------------------------------------------------
 
-export const listServers = () => api.get<ServerStatusEx[]>('/api/servers')
-export const getHostInfo = () => api.get<HostInfo>('/api/servers/host')
+const listServers = () => api.get<ServerStatusEx[]>('/api/servers')
+const getHostInfo = () => api.get<HostInfo>('/api/servers/host')
 export const saveServerConfig = (kind: ServerKindEx, config: Record<string, unknown>) =>
   api.put<ServerStatusEx>(`/api/servers/${seg(kind)}`, config)
 export const startServer = (kind: ServerKindEx) => api.post<ServerStatusEx>(`/api/servers/${seg(kind)}/start`)

@@ -38,7 +38,7 @@ export function isPeerAbort(err: unknown): boolean {
   return (err as { type?: string } | null)?.type === 'peer_aborted' || err instanceof PeerAbortError
 }
 
-export class PeerAbortError extends Error {
+class PeerAbortError extends Error {
   constructor() {
     super('The remote side canceled the transfer')
     this.name = 'PeerAbortError'
@@ -79,14 +79,14 @@ export function stripSessionHeader(out: Uint8Array): Uint8Array {
 const CAN = 0x18
 const BS = 0x08
 /** The full cancel sequence of the ZMODEM spec (8 × CAN, 10 × BS). */
-export const CANCEL_SEQUENCE: Uint8Array = Uint8Array.from([...Array(8).fill(CAN), ...Array(10).fill(BS)])
+const CANCEL_SEQUENCE: Uint8Array = Uint8Array.from([...Array(8).fill(CAN), ...Array(10).fill(BS)])
 
 /**
  * zmodem.js cancels with 5 × CAN (+ 5 × BS); lrzsz's sz, busy streaming, needs more before it gives up. Five
  * consecutive CANs never occur in encoded ZMODEM data (ZDLE = CAN is always followed by another byte), so the
  * library's abort output is recognised and replaced by the spec's full sequence.
  */
-export function expandAbort(bytes: Uint8Array): Uint8Array {
+function expandAbort(bytes: Uint8Array): Uint8Array {
   if (bytes.length !== 5 && bytes.length !== 10) return bytes
   for (let i = 0; i < 5; i++) if (bytes[i] !== CAN) return bytes
   for (let i = 5; i < bytes.length; i++) if (bytes[i] !== BS) return bytes
@@ -241,7 +241,7 @@ export interface ZResult {
 // receive (remote `sz`)
 // ---------------------------------------------------------------------------------------------------------------------
 
-export interface ZOfferInfo {
+interface ZOfferInfo {
   /** Name as sent by the remote. */
   name: string
   /** Safe relative path components. */

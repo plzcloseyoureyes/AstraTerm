@@ -189,7 +189,7 @@ func (c *sspClient) Close() {
 		dgs := c.encodeLocked(&ti, time.Now())
 		c.cond.Broadcast()
 		c.mu.Unlock()
-		for i := 0; i < 3; i++ {
+		for range 3 {
 			for _, dg := range dgs {
 				_, _ = c.conn.Write(dg)
 			}

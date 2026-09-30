@@ -149,7 +149,7 @@ func TestScriptPatterns(t *testing.T) {
 func TestLogBufferTruncation(t *testing.T) {
 	var l logBuffer
 	big := strings.Repeat("x", 1000)
-	for i := 0; i < 400; i++ {
+	for range 400 {
 		l.add(time.Now(), "info", "h", big)
 	}
 	s := l.String()

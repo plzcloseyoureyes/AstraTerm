@@ -10,7 +10,7 @@ import { OptionSection, SelectOption, SwitchOption, TextOption, optString } from
 const FTP_PORT = 21
 const FTPS_IMPLICIT_PORT = 990
 
-export function FtpEditor({ value, onChange }: ProtocolEditorProps) {
+function FtpEditor({ value, onChange }: ProtocolEditorProps) {
   const p = { value, onChange }
   const tls = optString(value, 'ftpTls') || 'none'
   // Implicit FTPS listens on 990 by convention: follow it unless a custom port was chosen.

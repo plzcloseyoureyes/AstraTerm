@@ -16,7 +16,7 @@ import { askConflict, dropUpload, putUpload } from './store'
 import { currentSettings, transferSettings, type ConflictPolicy } from './settings'
 import type { UploadView } from './types'
 
-export const CHUNK_SIZE = 8 * 1024 * 1024
+const CHUNK_SIZE = 8 * 1024 * 1024
 const MAX_ATTEMPTS = 6
 const STALL_MS = 60_000
 
@@ -36,7 +36,7 @@ interface FsEntry {
 
 const base = (id: string) => `/api/fs/${seg(id)}`
 
-export function openFsFor(src: { sessionId: string } | { local: true }): Promise<FsHandleInfo> {
+function openFsFor(src: { sessionId: string } | { local: true }): Promise<FsHandleInfo> {
   return api.post<FsHandleInfo>('/api/fs', src)
 }
 

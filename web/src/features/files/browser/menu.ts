@@ -44,7 +44,7 @@ import type { FsContext } from '../types'
 import { getController, type BrowserController } from './controller'
 
 /** Extra fields this feature puts on the registry's FileContext. */
-export interface FilesMenuContext extends FileContext {
+interface FilesMenuContext extends FileContext {
   viewId?: string
   ctx?: FsContext
 }

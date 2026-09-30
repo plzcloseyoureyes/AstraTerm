@@ -4,7 +4,7 @@
 
 export type TransferProtocol = 'zmodem' | 'trzsz' | 'send'
 export type TransferDirection = 'download' | 'upload'
-export type TransferPhase = 'running' | 'done' | 'error' | 'canceled'
+type TransferPhase = 'running' | 'done' | 'error' | 'canceled'
 
 /** One in-terminal transfer as shown on the terminal's transfer card. */
 export interface TransferView {

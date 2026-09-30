@@ -65,17 +65,11 @@ export interface RetentionResult {
   failed: number
 }
 
-export interface SearchMatch {
+interface SearchMatch {
   line?: number
   time?: number
   ts?: string
   text: string
-}
-
-export interface SearchResponse {
-  matches: SearchMatch[]
-  total: number
-  truncated: boolean
 }
 
 export interface SearchAllResponse {
@@ -84,28 +78,7 @@ export interface SearchAllResponse {
   truncated: boolean
 }
 
-export interface CommandRecord {
-  time: string
-  command: string
-  exitCode?: number
-  durationMs?: number
-  cwd?: string
-  source: 'shell-integration' | 'input'
-  running?: boolean
-  /** Typed by a viewer of an interactive share link. */
-  guest?: GuestRef
-}
-
-/** The share-link viewer who typed a command (command audit attribution). */
-export interface GuestRef {
-  shareId: string
-  viewerId: string
-  username?: string
-  ip?: string
-  label?: string
-}
-
-export interface ViewerInfo {
+interface ViewerInfo {
   id: string
   ip: string
   username?: string

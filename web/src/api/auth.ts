@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { api, seg } from './client'
 import { queryKeys } from './queryKeys'
 import type {
@@ -9,10 +9,8 @@ import type {
   ChangePasswordRequest,
   LoginRequest,
   LoginResponse,
-  Role,
   SetupRequest,
   TotpSetupResponse,
-  User,
 } from './types'
 
 // --- account / session ------------------------------------------------------------------------------------------------
@@ -37,7 +35,7 @@ export const regenerateRecoveryCodes = (password: string) =>
 
 // --- API tokens --------------------------------------------------------------------------------------------------------
 
-export const listTokens = () => api.get<APIToken[]>('/api/auth/tokens')
+const listTokens = () => api.get<APIToken[]>('/api/auth/tokens')
 export const createToken = (req: { name: string; expiresInDays?: number }) => api.post<APITokenCreated>('/api/auth/tokens', req)
 export const deleteToken = (id: string) => api.del<void>(`/api/auth/tokens/${seg(id)}`)
 
@@ -47,34 +45,9 @@ export function useApiTokens() {
 
 // --- browser login sessions ------------------------------------------------------------------------------------------
 
-export const listAuthSessions = () => api.get<AuthSessionInfo[]>('/api/auth/sessions')
+const listAuthSessions = () => api.get<AuthSessionInfo[]>('/api/auth/sessions')
 export const revokeAuthSession = (id: string) => api.del<void>(`/api/auth/sessions/${seg(id)}`)
 
 export function useAuthSessions() {
   return useQuery({ queryKey: queryKeys.authSessions, queryFn: listAuthSessions })
 }
-
-export function useRevokeAuthSession() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: revokeAuthSession,
-    onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.authSessions }),
-  })
-}
-
-// --- admin: users ----------------------------------------------------------------------------------------------------
-
-export interface CreateUserRequest {
-  username: string
-  password: string
-  displayName?: string
-  role: Role
-}
-export type UpdateUserRequest = Partial<Pick<User, 'displayName' | 'role' | 'disabled'>>
-
-export const adminListUsers = () => api.get<User[]>('/api/admin/users')
-export const adminCreateUser = (req: CreateUserRequest) => api.post<User>('/api/admin/users', req)
-export const adminUpdateUser = (id: string, patch: UpdateUserRequest) => api.patch<User>(`/api/admin/users/${seg(id)}`, patch)
-export const adminDeleteUser = (id: string) => api.del<void>(`/api/admin/users/${seg(id)}`)
-export const adminResetPassword = (id: string, password: string) =>
-  api.post<void>(`/api/admin/users/${seg(id)}/reset-password`, { password })

@@ -11,6 +11,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -212,9 +213,9 @@ func (h *harness) waitLog(u *model.User, kind Kind, substr string) LogEntry {
 	deadline := time.Now().Add(5 * time.Second)
 	for {
 		entries := h.logs(u, kind)
-		for i := len(entries) - 1; i >= 0; i-- { // newest match
-			if strings.Contains(entries[i].Message, substr) {
-				return entries[i]
+		for _, entrie := range slices.Backward(entries) { // newest match
+			if strings.Contains(entrie.Message, substr) {
+				return entrie
 			}
 		}
 		if time.Now().After(deadline) {
@@ -250,7 +251,7 @@ func (h *harness) shareDir() string {
 // freePort returns a currently free port on 127.0.0.1 for network ("tcp", "udp" or "both").
 func freePort(t *testing.T, network string) int {
 	t.Helper()
-	for i := 0; i < 50; i++ {
+	for range 50 {
 		ln, err := net.Listen("tcp", "127.0.0.1:0")
 		if err != nil {
 			t.Fatal(err)

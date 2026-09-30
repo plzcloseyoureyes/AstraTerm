@@ -93,11 +93,9 @@ func (s *Server) Listen() (addr string, stop func(), err error) {
 			if err != nil {
 				return
 			}
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
+			wg.Go(func() {
 				s.Serve(c)
-			}()
+			})
 		}
 	}()
 	return ln.Addr().String(), func() { ln.Close() }, nil
@@ -283,7 +281,7 @@ func DESResponse(password string, challenge []byte) []byte {
 	copy(key[:], password)
 	for i, b := range key {
 		var r byte
-		for j := 0; j < 8; j++ {
+		for j := range 8 {
 			if b&(1<<j) != 0 {
 				r |= 1 << (7 - j)
 			}

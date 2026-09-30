@@ -281,8 +281,7 @@ func waitForDevice(ctx context.Context, sess *term.Session, device string, mode 
 }
 
 func isNotFound(err error) bool {
-	var pe *goserial.PortError
-	if errors.As(err, &pe) {
+	if pe, ok := errors.AsType[*goserial.PortError](err); ok {
 		return pe.Code() == goserial.PortNotFound
 	}
 	return errors.Is(err, fs.ErrNotExist)
@@ -353,8 +352,7 @@ func buildMode(o model.Options) (*goserial.Mode, string, error) {
 // classifyOpenError marks errors that retrying cannot fix as permanent. While reconnecting after a replug, a device
 // that is not ready yet can refuse its configuration briefly, so that is only permanent on the first connect.
 func classifyOpenError(device string, err error, reconnect bool) error {
-	var pe *goserial.PortError
-	if errors.As(err, &pe) {
+	if pe, ok := errors.AsType[*goserial.PortError](err); ok {
 		switch pe.Code() {
 		case goserial.InvalidSpeed, goserial.InvalidDataBits, goserial.InvalidParity, goserial.InvalidStopBits, goserial.InvalidSerialPort:
 			// The device refused the configuration (or is not a serial port).

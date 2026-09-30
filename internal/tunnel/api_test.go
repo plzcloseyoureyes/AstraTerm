@@ -611,12 +611,10 @@ func TestConcurrentStartsAndDemotedOwner(t *testing.T) {
 	var wg sync.WaitGroup
 	codes := make(chan int, 8)
 	for range 8 {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			code, _ := h.call(admin, "POST", "/api/tunnels/"+local.ID+"/start", nil, nil)
 			codes <- code
-		}()
+		})
 	}
 	wg.Wait()
 	close(codes)

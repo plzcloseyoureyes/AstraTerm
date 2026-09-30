@@ -31,7 +31,7 @@ export interface FsOpenBody {
 }
 
 /** Capabilities reported by the backend (SPEC §9 files-backend adds everything after `checksum`). */
-export interface FsCapabilitiesEx {
+interface FsCapabilitiesEx {
   chmod: boolean
   chown: boolean
   symlink: boolean
@@ -91,11 +91,6 @@ export interface PaneParams {
 
 /** Sortable columns of the file list. */
 export type ColumnId = 'name' | 'size' | 'mtime' | 'owner' | 'group' | 'perm'
-
-export interface SortSpec {
-  by: ColumnId
-  desc: boolean
-}
 
 /** What double-clicking a file does. */
 export type DoubleClickAction = 'edit' | 'preview' | 'download'

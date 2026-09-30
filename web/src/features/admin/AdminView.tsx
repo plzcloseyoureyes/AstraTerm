@@ -22,7 +22,7 @@ export type AdminSection = 'users' | 'authentication' | 'audit' | 'network' | 's
 export interface AdminTabParams {
   section?: AdminSection
 }
-export const ADMIN_SECTIONS: AdminSection[] = ['users', 'authentication', 'audit', 'network', 'system']
+const ADMIN_SECTIONS: AdminSection[] = ['users', 'authentication', 'audit', 'network', 'system']
 
 const NAV: SectionNavItem<AdminSection>[] = [
   { id: 'users', label: 'Users', icon: Users },

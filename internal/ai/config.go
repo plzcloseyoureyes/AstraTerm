@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
@@ -233,12 +234,7 @@ func (e *Effective) ModelAllowed(m string) bool {
 	if len(e.Models) == 0 || e.Source == "user" {
 		return true
 	}
-	for _, x := range e.Models {
-		if x == m {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(e.Models, m)
 }
 
 func (h *handler) loadScope(ctx context.Context, scope string) (Config, error) {

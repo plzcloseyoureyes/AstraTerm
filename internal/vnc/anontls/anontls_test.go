@@ -127,7 +127,7 @@ func TestRecordRoundTrip(t *testing.T) {
 					t.Fatal("record with a wrong sequence number accepted")
 				}
 				// Truncated and malformed fragments never panic and never decrypt.
-				for n := 0; n < 3*aesBlock+64; n++ {
+				for n := range 3*aesBlock + 64 {
 					r4, _ := s.newHalfConn(macKey, key, iv, etm)
 					if _, err := r4.open(recordApplicationData, versionTLS12, make([]byte, n)); err == nil {
 						t.Fatalf("%d zero bytes accepted as a record", n)
@@ -192,7 +192,7 @@ func TestOpenSSLInterop(t *testing.T) {
 				t.Logf("%+v", st)
 				// One large write (several records) of lines shorter than s_server's 16 KiB line buffer.
 				var lines []string
-				for i := 0; i < 3; i++ {
+				for i := range 3 {
 					lines = append(lines, strings.Repeat(fmt.Sprintf("line%d-abcdefghij", i), 600))
 				}
 				if _, err := io.WriteString(c, strings.Join(lines, "\n")+"\n"); err != nil {
@@ -412,7 +412,7 @@ func desResponse(password string, challenge []byte) []byte {
 	copy(key[:], password)
 	for i, b := range key {
 		var r byte
-		for j := 0; j < 8; j++ {
+		for j := range 8 {
 			r |= (b >> j & 1) << (7 - j)
 		}
 		key[i] = r

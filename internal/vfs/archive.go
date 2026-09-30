@@ -11,6 +11,7 @@ import (
 	"io/fs"
 	"os"
 	"path"
+	"slices"
 	"strings"
 	"time"
 
@@ -305,10 +306,8 @@ func safeJoin(destDir, name string) (string, bool) {
 		return "", false
 	}
 	clean := path.Clean("/" + name)
-	for _, seg := range strings.Split(name, "/") {
-		if seg == ".." {
-			return "", false
-		}
+	if slices.Contains(strings.Split(name, "/"), "..") {
+		return "", false
 	}
 	p := path.Clean(destDir + clean)
 	if !isWithin(p, destDir) || p == destDir {

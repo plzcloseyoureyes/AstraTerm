@@ -25,13 +25,11 @@ func lookupHostNames(ctx context.Context, ip net.IP, local bool) map[string]any 
 		mu.Unlock()
 	}
 	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		if n := reverseDNS(ctx, ip); n != "" {
 			set("hostname", n)
 		}
-	}()
+	})
 	if local && ip.To4() != nil {
 		wg.Add(2)
 		go func() {
@@ -108,7 +106,7 @@ func parseNBStat(b []byte, tid uint16) (netbiosInfo, error) {
 		}
 		return false
 	}
-	for i := 0; i < qd; i++ {
+	for range qd {
 		if !skipName() {
 			return info, fmt.Errorf("truncated")
 		}

@@ -303,7 +303,7 @@ func isToken(s string) bool {
 }
 
 func isHeaderList(s string) bool {
-	for _, f := range strings.Split(s, ",") {
+	for f := range strings.SplitSeq(s, ",") {
 		if f = strings.TrimSpace(f); f != "" && !isToken(f) {
 			return false
 		}

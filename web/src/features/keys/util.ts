@@ -45,7 +45,7 @@ export function shortFingerprint(fp: string, keep = 10): string {
 }
 
 /** Human duration between now and t ("3 d 4 h", "25 min"). */
-export function spanText(ms: number): string {
+function spanText(ms: number): string {
   const abs = Math.abs(ms)
   const min = Math.round(abs / 60_000)
   if (min < 1) return 'less than a minute'

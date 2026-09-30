@@ -42,8 +42,7 @@ func listenError(addr string, err error) error {
 	case errnoIs(err, syscall.EADDRNOTAVAIL, wsaEADDRNOTAVAIL):
 		return httpx.BadRequest(fmt.Sprintf("cannot listen on %s: the address does not belong to this machine", addr))
 	}
-	var dnsErr *net.DNSError
-	if errors.As(err, &dnsErr) {
+	if dnsErr, ok := errors.AsType[*net.DNSError](err); ok {
 		return httpx.BadRequest(fmt.Sprintf("cannot listen on %s: %s", addr, dnsErr.Err))
 	}
 	return httpx.BadRequest(fmt.Sprintf("cannot listen on %s: %s", addr, cleanNetErr(err)))
@@ -66,8 +65,7 @@ func dialError(dest, via string, err error) string {
 	if be, ok := netguard.IsBlocked(err); ok {
 		return be.Error() // refused by the destination policy (SEC-7): the message names the address and the reason
 	}
-	var oce *ssh.OpenChannelError
-	if errors.As(err, &oce) {
+	if oce, ok := errors.AsType[*ssh.OpenChannelError](err); ok {
 		m := strings.TrimSpace(oce.Message)
 		switch oce.Reason {
 		case ssh.Prohibited:

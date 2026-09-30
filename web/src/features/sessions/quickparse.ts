@@ -47,7 +47,7 @@ export interface QuickParseContext {
  * Shell-like split: whitespace separates, single/double quotes group, backslash escapes only a following space, quote
  * or backslash (so Windows paths like C:\Tools\sh.exe survive).
  */
-export function tokenize(input: string): string[] {
+function tokenize(input: string): string[] {
   const out: string[] = []
   let cur = ''
   let inToken = false
@@ -94,7 +94,7 @@ export function isValidHost(host: string): boolean {
   return HOSTNAME_RE.test(host)
 }
 
-export function parsePort(raw: string, what = 'Port'): number {
+function parsePort(raw: string, what = 'Port'): number {
   if (!/^\d{1,5}$/.test(raw)) throw new QuickConnectError(`${what} "${raw}" is not a number`)
   const n = Number(raw)
   if (n < 1 || n > 65535) throw new QuickConnectError(`${what} must be between 1 and 65535`)
@@ -204,8 +204,6 @@ const SCHEMES: Record<string, SchemeDef> = {
   ipmi: { protocol: 'ipmi' },
   local: { protocol: 'local' },
 }
-
-export const QUICK_SCHEMES = Object.keys(SCHEMES)
 
 /** A quoted or bare command-line value (for scrubbing inline secrets such as `-P secret` or `/p:"my pass"`). */
 const ARG_VALUE = String.raw`(?:"[^"]*"|'[^']*'|\S+)`

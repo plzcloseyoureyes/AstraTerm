@@ -469,13 +469,13 @@ func bcryptHash(out, shapass, shasalt []byte) {
 	if err != nil {
 		panic(err) // unreachable: shapass is a 64-byte SHA-512 digest
 	}
-	for i := 0; i < 64; i++ {
+	for range 64 {
 		blowfish.ExpandKey(shasalt, c)
 		blowfish.ExpandKey(shapass, c)
 	}
 	copy(out, bcryptMagic)
 	for i := 0; i < 32; i += 8 {
-		for j := 0; j < 64; j++ {
+		for range 64 {
 			c.Encrypt(out[i:i+8], out[i:i+8])
 		}
 	}

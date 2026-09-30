@@ -157,7 +157,7 @@ func TestPuttyRegFull(t *testing.T) {
 	// Reuse the fixture's [SSH_Hostkeys] lines in .reg syntax.
 	var hostKeys []string
 	inHK := false
-	for _, ln := range strings.Split(string(hk), "\r\n") {
+	for ln := range strings.SplitSeq(string(hk), "\r\n") {
 		if ln == "[SSH_Hostkeys]" {
 			inHK = true
 			continue
@@ -275,7 +275,7 @@ func TestKnownHostsPuttyLines(t *testing.T) {
 		t.Fatal(err)
 	}
 	var lines []string
-	for _, ln := range strings.Split(string(data), "\r\n") {
+	for ln := range strings.SplitSeq(string(data), "\r\n") {
 		if strings.Contains(ln, "@") && strings.Contains(ln, "=0x") || strings.Contains(ln, "=nistp") {
 			// ~/.putty/sshhostkeys syntax: "kind@port:host value".
 			lines = append(lines, strings.Replace(ln, "=", " ", 1))

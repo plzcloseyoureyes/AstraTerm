@@ -570,8 +570,7 @@ func (h *handler) selectOwn(ctx context.Context, u *model.User, ids []string) ([
 
 // errorText renders an error the way the router would (status, code, message).
 func errorText(err error) (int, string, string) {
-	var he *httpx.HTTPError
-	if errors.As(err, &he) {
+	if he, ok := errors.AsType[*httpx.HTTPError](err); ok {
 		if he.Status >= 500 {
 			return he.Status, he.Code, "internal error"
 		}

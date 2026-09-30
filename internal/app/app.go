@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"maps"
 	"sort"
 	"sync"
 
@@ -84,18 +85,14 @@ func (d *Deps) ResolveConnection(ctx context.Context, user *model.User, connID s
 			if err != nil {
 				return nil, nil, err
 			}
-			for k, v := range is {
-				secrets[k] = v
-			}
+			maps.Copy(secrets, is)
 		}
 	}
 	cs, err := d.openSecrets(c.SecretsEnc)
 	if err != nil {
 		return nil, nil, err
 	}
-	for k, v := range cs {
-		secrets[k] = v
-	}
+	maps.Copy(secrets, cs)
 	return conn, secrets, nil
 }
 

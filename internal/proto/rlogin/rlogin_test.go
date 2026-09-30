@@ -136,7 +136,7 @@ func startFakeRlogind(t *testing.T, refuse string) *fakeRlogind {
 			return
 		}
 		var hs []string
-		for i := 0; i < 3; i++ {
+		for range 3 {
 			s, err := readNulString(br)
 			if err != nil {
 				return
@@ -307,7 +307,7 @@ func startFakeRshd(t *testing.T) (port int, got chan []string) {
 			defer stderr.Close()
 		}
 		var fields []string
-		for i := 0; i < 3; i++ {
+		for range 3 {
 			s, err := readNulString(br)
 			if err != nil {
 				return
@@ -441,7 +441,7 @@ func TestServeFakeRlogind(t *testing.T) {
 				return
 			}
 			var hs []string
-			for i := 0; i < 3; i++ {
+			for range 3 {
 				s, err := readNulString(br)
 				if err != nil {
 					return
@@ -473,9 +473,9 @@ func TestServeFakeRlogind(t *testing.T) {
 				in = append(in, buf[:n]...)
 				data := stripped()
 				if !loggedIn {
-					if i := bytes.IndexByte(data, '\r'); i >= 0 {
-						_, _ = fmt.Fprintf(c, "\r\nlogged in with %q\r\n$ ", data[:i])
-						in = append([]byte(nil), data[i+1:]...)
+					if before, after, ok := bytes.Cut(data, []byte{'\r'}); ok {
+						_, _ = fmt.Fprintf(c, "\r\nlogged in with %q\r\n$ ", before)
+						in = append([]byte(nil), after...)
 						loggedIn = true
 					}
 				} else if len(data) > 0 {

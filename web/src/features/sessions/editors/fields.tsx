@@ -62,7 +62,7 @@ export function optStrings(value: Connection, key: string): string[] {
 }
 
 /** Set / clear a write-only secret on the draft (undefined = unchanged, '' = delete the stored value). */
-export function withSecret(value: Connection, key: string, v: string | undefined): Connection {
+function withSecret(value: Connection, key: string, v: string | undefined): Connection {
   const secrets = { ...value.secrets }
   if (v === undefined) delete secrets[key]
   else secrets[key] = v
@@ -786,7 +786,7 @@ export const LINE_ENDING_CHOICES: ChoiceOption[] = [
 const NONE = '__none__'
 
 /** Label of a saved connection in pickers: "name — user@host". */
-export function connectionChoiceLabel(c: Connection): string {
+function connectionChoiceLabel(c: Connection): string {
   const target = connectionTarget(c)
   return target && target !== c.name ? `${c.name} — ${target}` : c.name
 }

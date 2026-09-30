@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/fs"
 	"log/slog"
+	"net/textproto"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -172,7 +173,7 @@ func (f *fakeExec) Exec(ctx context.Context, cmd string, stdin io.Reader, stdout
 func TestOwnerNamesAndChecksumParsing(t *testing.T) {
 	fx := &fakeExec{out: "root:x:0:0:root:/root:/bin/sh\ntest:x:1000:1000::/config:/bin/bash\n::astraterm-groups::\nroot:x:0:root\nusers:x:1000:games,test\n"}
 	oc := newOwnerCache(fx)
-	entries := []*Entry{{UID: intPtr(0), GID: intPtr(0)}, {UID: intPtr(1000), GID: intPtr(1000)}, {UID: intPtr(4242), GID: intPtr(4242)}}
+	entries := []*Entry{{UID: new(0), GID: new(0)}, {UID: new(1000), GID: new(1000)}, {UID: new(4242), GID: new(4242)}}
 	oc.nameOwners(bg, entries)
 	if entries[0].Owner != "root" || entries[1].Owner != "test" || entries[1].Group != "users" || entries[2].Owner != "" {
 		t.Fatalf("names: %+v %+v %+v", entries[0], entries[1], entries[2])
@@ -181,7 +182,7 @@ func TestOwnerNamesAndChecksumParsing(t *testing.T) {
 		t.Fatalf("unexpected command %q", fx.cmds[0])
 	}
 	// Cached: no second exec.
-	oc.nameOwners(bg, []*Entry{{UID: intPtr(1000)}})
+	oc.nameOwners(bg, []*Entry{{UID: new(1000)}})
 	if len(fx.cmds) != 1 {
 		t.Fatal("owner names must be cached")
 	}
@@ -691,3 +692,14 @@ type modelUser struct{ ID string }
 func (m *modelUser) user() *model.User { return &model.User{ID: m.ID} }
 
 func slogDiscard() *slog.Logger { return slog.New(slog.NewTextHandler(io.Discard, nil)) }
+
+func TestFTPLoginError(t *testing.T) {
+	if err := ftpLoginError(&textproto.Error{Code: 530, Msg: "Not logged in."}); !errors.Is(err, fs.ErrPermission) {
+		t.Errorf("530 reply: %v, want a login failure", err)
+	}
+	// A dial error whose text merely contains "530" (here in the port) is not a login failure.
+	blocked := errors.New("dial 127.0.0.1:5300: destination blocked")
+	if err := ftpLoginError(blocked); errors.Is(err, fs.ErrPermission) || !errors.Is(err, blocked) {
+		t.Errorf("dial error: %v, want it wrapped unchanged", err)
+	}
+}

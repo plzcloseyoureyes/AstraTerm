@@ -83,8 +83,7 @@ func decodeJSON(r *http.Request, v any, limit int64) error {
 	}
 	// Reject trailing garbage (but allow trailing whitespace).
 	if _, err := dec.Token(); err != io.EOF {
-		var mbe *http.MaxBytesError
-		if errors.As(err, &mbe) {
+		if _, ok := errors.AsType[*http.MaxBytesError](err); ok {
 			return err
 		}
 		return BadRequest("invalid JSON: unexpected data after the top-level value")

@@ -16,7 +16,7 @@ import { useUIStore } from '@/stores/ui'
 const HISTORY_KEY = 'astraterm:quickconnect-history'
 const MAX_HISTORY = 20
 
-export function getQuickConnectHistory(): string[] {
+function getQuickConnectHistory(): string[] {
   const h = storage.get<unknown>(HISTORY_KEY, [])
   return Array.isArray(h) ? h.filter((x): x is string => typeof x === 'string').slice(0, MAX_HISTORY) : []
 }
@@ -46,7 +46,7 @@ export function useToolbarQuickConnect(): boolean {
 }
 
 /** Run quick connect for a spec ("ssh user@host:22", "telnet://10.0.0.1", ...) and remember it. */
-export async function submitQuickConnect(text: string): Promise<boolean> {
+async function submitQuickConnect(text: string): Promise<boolean> {
   const spec = text.trim()
   if (!spec) return false
   const ok = await runCommand('sessions.quickConnect', spec, { source: 'ribbon' })

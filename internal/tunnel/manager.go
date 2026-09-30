@@ -212,11 +212,9 @@ func (m *Manager) forget(id string) {
 func (m *Manager) stopAll() {
 	var wg sync.WaitGroup
 	for _, r := range m.snapshot() {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			r.stop()
-		}()
+		})
 	}
 	wg.Wait()
 	m.sf.stopAll()
