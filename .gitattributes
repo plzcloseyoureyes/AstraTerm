@@ -1,0 +1,5 @@
+# LF everywhere, on every platform: shell scripts embedded in the binary (internal/monitor/scripts) run on remote
+# POSIX hosts, where a CRLF line ending breaks them. Binary files are detected automatically.
+* text=auto eol=lf
+# Except fixtures of Windows-made files, whose CRLF endings are part of what the tests import.
+*.mxtsessions -text

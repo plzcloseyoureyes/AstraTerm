@@ -40,6 +40,10 @@ func script(name string) string {
 	if err != nil {
 		panic("monitor: missing embedded script " + name)
 	}
+	if strings.HasSuffix(name, ".sh") {
+		// A checkout with CRLF line endings (Git on Windows) must not reach the remote /bin/sh: "}\r" is no keyword.
+		return strings.ReplaceAll(string(b), "\r", "")
+	}
 	return string(b)
 }
 
