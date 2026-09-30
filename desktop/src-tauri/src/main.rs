@@ -73,6 +73,9 @@ fn main_window(app: &AppHandle, origin: Origin) -> tauri::Result<WebviewWindow> 
         .inner_size(1440.0, 900.0)
         .min_inner_size(820.0, 560.0)
         .center()
+        // The page handles drag and drop itself (tabs, files onto the file browser and terminals). Tauri's native
+        // handler would swallow those HTML5 events on Windows (WebView2).
+        .disable_drag_drop_handler()
         // The window title follows the active tab ("host — AstraTerm").
         .on_document_title_changed(|window, title| {
             let _ = window.set_title(&title);
@@ -98,6 +101,7 @@ fn main_window(app: &AppHandle, origin: Origin) -> tauri::Result<WebviewWindow> 
             let label = format!("popout-{}", NEXT.fetch_add(1, Ordering::Relaxed));
             let built = WebviewWindowBuilder::new(&popup_app, label, WebviewUrl::External("about:blank".parse().unwrap()))
                 .window_features(features)
+                .disable_drag_drop_handler()
                 .title("AstraTerm")
                 .on_document_title_changed(|window, title| {
                     let _ = window.set_title(&title);

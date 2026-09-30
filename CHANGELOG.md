@@ -8,6 +8,14 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-09-30
+
+### Fixed
+
+- **Desktop app on Windows:** dragging tabs (to reorder them or split them into another tab) works again, and files
+  can be dropped onto the file browser and terminals. Tauri's native drag-and-drop handler swallowed the page's own
+  drag events in WebView2.
+
 ## [0.1.1] - 2026-09-30
 
 First public release: an organized, self-hosted remote-management workspace, as a server and a desktop app.
@@ -59,5 +67,6 @@ endings, which broke monitoring of Linux, macOS and BSD hosts. That is fixed her
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/plzcloseyoureyes/AstraTerm/releases/tag/v0.1.1
