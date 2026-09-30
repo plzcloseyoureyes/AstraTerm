@@ -10,8 +10,11 @@ declare global {
       translucent?: boolean
       /** Windows: the page switches the blur behind the window (Acrylic) itself, see setWindowBlur. */
       blurOnDemand?: boolean
-      /** macOS: no system title bar; the window buttons sit over the top-left of the page, which drags the window. */
-      titleBarOverlay?: boolean
+      /**
+       * No system title bar; the page's top bar drags the window. macOS: the system window buttons sit over its left
+       * end. Windows: the page draws minimize / maximize / close (layout/WindowControls.tsx).
+       */
+      titleBar?: 'macos' | 'windows'
     }
     __TAURI_INTERNALS__?: { invoke: (cmd: string, args?: Record<string, unknown>) => Promise<unknown> }
   }
@@ -20,7 +23,7 @@ declare global {
 const desktop = typeof window !== 'undefined' ? window.__ASTRATERM_DESKTOP__ : undefined
 
 export const TRANSLUCENCY_SUPPORTED = !!desktop?.translucent
-export const TITLE_BAR_OVERLAY = !!desktop?.titleBarOverlay
+export const TITLE_BAR = desktop?.titleBar
 
 const blurState = new WeakMap<Window, boolean>()
 
@@ -29,4 +32,10 @@ export function setWindowBlur(win: Window | null, on: boolean): void {
   if (!desktop?.blurOnDemand || !win || blurState.get(win) === on) return
   blurState.set(win, on)
   void win.__TAURI_INTERNALS__?.invoke('plugin:window|set_effects', { value: on ? { effects: ['acrylic'] } : null }).catch(() => blurState.delete(win))
+}
+
+/** Run a Tauri window command on this window (only those the desktop app's capabilities allow). */
+export function windowCommand<T = void>(cmd: string): Promise<T> {
+  const ipc = window.__TAURI_INTERNALS__
+  return ipc ? (ipc.invoke(`plugin:window|${cmd}`) as Promise<T>) : Promise.reject(new Error('not in the desktop app'))
 }

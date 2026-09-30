@@ -1,0 +1,23 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "window-controls",
+  "description": "Windows: AstraTerm's own minimize, maximize and close buttons (the window has no system frame).",
+  "windows": [
+    "main"
+  ],
+  "platforms": [
+    "windows"
+  ],
+  "remote": {
+    "urls": [
+      "http://127.0.0.1:*",
+      "http://localhost:*"
+    ]
+  },
+  "permissions": [
+    "core:window:allow-minimize",
+    "core:window:allow-toggle-maximize",
+    "core:window:allow-close",
+    "core:window:allow-is-maximized"
+  ]
+}

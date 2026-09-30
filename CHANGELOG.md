@@ -8,6 +8,13 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-09-30
+
+### Added
+
+- **Clean title bar on Windows:** no system title bar; the tab row moves the window (double-click maximizes) and ends
+  with AstraTerm's own minimize, maximize and close buttons.
+
 ## [0.1.5] - 2026-09-30
 
 ### Fixed
@@ -108,7 +115,8 @@ endings, which broke monitoring of Linux, macOS and BSD hosts. That is fixed her
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.2...v0.1.3

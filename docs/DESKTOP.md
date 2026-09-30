@@ -32,11 +32,12 @@ reimplement anything: the regular `astraterm` binary runs inside it as a sidecar
   Window opacity is below 100%. macOS blurs behind it with vibrancy; on Windows the page turns Acrylic on only while
   see-through (it slows down moving the window on some Windows 11 builds). An initialization script tells the page
   what the window supports (`web/src/lib/desktop.ts`).
-- **Title bar** (macOS): no system title bar; the window buttons sit in AstraTerm's top bar, which moves and zooms the
-  window (`data-tauri-drag-region`).
-- **Security**: the page gets no Tauri IPC except moving and zooming its window on macOS
-  (`capabilities/window-drag.json`) and switching the blur on Windows (`capabilities/window-effects.json`). Otherwise
-  it runs exactly like it does in a browser.
+- **Title bar** (macOS, Windows): no system title bar; AstraTerm's top bar moves the window and double-click
+  maximizes it (`data-tauri-drag-region`). macOS keeps its window buttons, moved into the bar; on Windows the page draws
+  minimize / maximize / close (`web/src/layout/WindowControls.tsx`).
+- **Security**: the page gets no Tauri IPC except its own window's title bar commands (`capabilities/window-drag.json`,
+  `window-controls.json`) and, on Windows, switching the blur (`window-effects.json`). Otherwise it runs exactly like
+  it does in a browser.
 
 ### Engines and their limits
 

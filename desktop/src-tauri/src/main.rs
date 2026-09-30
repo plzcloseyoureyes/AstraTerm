@@ -163,8 +163,9 @@ fn translucent<'a, R: Runtime, M: Manager<R>>(
     builder
 }
 
-/// macOS: no system title bar. The window buttons move into the page's top bar, which then drags the window
-/// (data-tauri-drag-region; capabilities/window-drag.json allows only that).
+/// No system title bar: the page's top bar drags the window (data-tauri-drag-region). macOS keeps its window buttons,
+/// moved into that bar; on Windows the page draws its own (web/src/layout/WindowControls.tsx). The capabilities
+/// window-drag.json and window-controls.json allow exactly those window commands.
 fn title_bar<'a, R: Runtime, M: Manager<R>>(builder: WebviewWindowBuilder<'a, R, M>) -> WebviewWindowBuilder<'a, R, M> {
     #[cfg(target_os = "macos")]
     {
@@ -173,10 +174,16 @@ fn title_bar<'a, R: Runtime, M: Manager<R>>(builder: WebviewWindowBuilder<'a, R,
             .hidden_title(true)
             .traffic_light_position(tauri::LogicalPosition::new(16.0, 20.0))
             .initialization_script(
-                "window.__ASTRATERM_DESKTOP__ = { ...window.__ASTRATERM_DESKTOP__, titleBarOverlay: true };",
+                "window.__ASTRATERM_DESKTOP__ = { ...window.__ASTRATERM_DESKTOP__, titleBar: 'macos' };",
             )
     }
-    #[cfg(not(target_os = "macos"))]
+    #[cfg(target_os = "windows")]
+    {
+        builder.decorations(false).initialization_script(
+            "window.__ASTRATERM_DESKTOP__ = { ...window.__ASTRATERM_DESKTOP__, titleBar: 'windows' };",
+        )
+    }
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
     builder
 }
 

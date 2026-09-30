@@ -20,13 +20,14 @@ import {
 import { Kbd } from '@/components/ui/kbd'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip } from '@/components/ui/tooltip'
-import { TITLE_BAR_OVERLAY } from '@/lib/desktop'
+import { TITLE_BAR } from '@/lib/desktop'
 import { useIsMobile } from '@/lib/hooks'
 import { formatKeybinding } from '@/lib/keys'
 import { cn } from '@/lib/utils'
 import { useCurrentUser, useRunMode } from '@/stores/auth'
 import { openPalette, setAppMenuOpen, setDrawerOpen, useUIStore } from '@/stores/ui'
 import { QuickConnect } from './QuickConnect'
+import { WindowControls } from './WindowControls'
 import { TabStrip } from './workspace/TabStrip'
 
 const MENUS: { id: MenuId; label: string }[] = [
@@ -179,10 +180,10 @@ export function MenuBar({ tabs = false }: { tabs?: boolean }) {
 
   if (tabs) {
     return (
-      // macOS desktop app: the window buttons sit on the left, and the bar's empty space drags the window.
+      // Desktop app: the bar's empty space drags the window; the window buttons sit on the left (macOS) or right (Windows).
       <header
-        className={cn('flex h-10 shrink-0 items-center gap-1 px-1.5', TITLE_BAR_OVERLAY && 'pl-[76px]')}
-        data-tauri-drag-region={TITLE_BAR_OVERLAY ? 'deep' : undefined}
+        className={cn('flex h-10 shrink-0 items-center gap-1 px-1.5', TITLE_BAR === 'macos' && 'pl-[76px]', TITLE_BAR === 'windows' && 'pr-0')}
+        data-tauri-drag-region={TITLE_BAR ? 'deep' : undefined}
       >
         <AppMenu />
         <TabStrip className="min-w-0 flex-1" />
@@ -198,6 +199,7 @@ export function MenuBar({ tabs = false }: { tabs?: boolean }) {
           </button>
         </Tooltip>
         <UserMenu compact />
+        {TITLE_BAR === 'windows' && <WindowControls />}
       </header>
     )
   }
