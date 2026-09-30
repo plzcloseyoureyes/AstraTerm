@@ -133,27 +133,31 @@ fn main_window(app: &AppHandle, origin: Origin) -> tauri::Result<WebviewWindow> 
         .build()
 }
 
-/// macOS and Windows: a transparent window over the system blur (vibrancy / Mica). The page stays opaque unless
-/// Settings → Appearance → Window opacity is below 100% (web/src/lib/theme.ts); the script tells it that it can.
+/// macOS and Windows: a transparent window. The page stays opaque unless Settings → Appearance → Window opacity is
+/// below 100% (web/src/lib/theme.ts); the script tells it what the window supports.
+/// - macOS: always over the vibrancy blur (free when covered by the opaque page).
+/// - Windows: the page turns Acrylic on only while it is see-through (capabilities/window-effects.json), since Acrylic
+///   slows down moving and resizing the window on some Windows 11 builds.
 fn translucent<'a, R: Runtime, M: Manager<R>>(
     builder: WebviewWindowBuilder<'a, R, M>,
 ) -> WebviewWindowBuilder<'a, R, M> {
-    #[cfg(any(target_os = "macos", target_os = "windows"))]
+    #[cfg(target_os = "macos")]
     {
         use tauri::window::{Effect, EffectState, EffectsBuilder};
-        #[cfg(target_os = "macos")]
-        let effect = Effect::UnderWindowBackground;
-        #[cfg(target_os = "windows")]
-        let effect = Effect::Mica;
+        let effects = EffectsBuilder::new()
+            .effect(Effect::UnderWindowBackground)
+            .state(EffectState::FollowsWindowActiveState)
+            .build();
         builder
             .transparent(true)
-            .effects(
-                EffectsBuilder::new()
-                    .effect(effect)
-                    .state(EffectState::FollowsWindowActiveState)
-                    .build(),
-            )
+            .effects(effects)
             .initialization_script("window.__ASTRATERM_DESKTOP__ = { translucent: true };")
+    }
+    #[cfg(target_os = "windows")]
+    {
+        builder
+            .transparent(true)
+            .initialization_script("window.__ASTRATERM_DESKTOP__ = { translucent: true, blurOnDemand: true };")
     }
     #[cfg(not(any(target_os = "macos", target_os = "windows")))]
     builder

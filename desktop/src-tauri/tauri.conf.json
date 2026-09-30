@@ -12,7 +12,8 @@
     "security": {
       "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:",
       "capabilities": [
-        "window-drag"
+        "window-drag",
+        "window-effects"
       ]
     }
   },

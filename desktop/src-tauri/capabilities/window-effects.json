@@ -1,0 +1,9 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "window-effects",
+  "description": "Windows: AstraTerm turns the Acrylic blur on while Window opacity is below 100%, and off again. Nothing else.",
+  "windows": ["main", "popout-*"],
+  "platforms": ["windows"],
+  "remote": { "urls": ["http://127.0.0.1:*", "http://localhost:*"] },
+  "permissions": ["core:window:allow-set-effects"]
+}
