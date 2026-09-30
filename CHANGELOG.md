@@ -8,7 +8,9 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
-First public release candidate: an organized, self-hosted remote-management workspace, as a server and a desktop app.
+## [0.1.0] - 2026-09-30
+
+First public release: an organized, self-hosted remote-management workspace, as a server and a desktop app.
 
 ### Added
 
@@ -54,4 +56,5 @@ First public release candidate: an organized, self-hosted remote-management work
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/astraterm/commits/main
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/plzcloseyoureyes/AstraTerm/releases/tag/v0.1.0
