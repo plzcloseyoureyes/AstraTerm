@@ -8,6 +8,14 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-09-30
+
+### Changed
+
+- **Window opacity on macOS** is clearly see-through now, the terminal included: a clearer blur (the HUD material,
+  which also stays active when the window is in the background), a lighter tint on the content area, and a 10% minimum
+  (Windows keeps 30%).
+
 ## [0.1.7] - 2026-09-30
 
 ### Fixed
@@ -122,7 +130,8 @@ endings, which broke monitoring of Linux, macOS and BSD hosts. That is fixed her
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.7...HEAD
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.4...v0.1.5

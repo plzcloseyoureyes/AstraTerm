@@ -2,7 +2,7 @@
  * Applies appearance settings to the document: light/dark/system theme class, accent colour, UI scale, density and
  * window opacity. Also keeps extra documents (dockview pop-out windows) in sync.
  */
-import { setWindowBlur, TRANSLUCENCY_SUPPORTED } from './desktop'
+import { MIN_WINDOW_OPACITY, setWindowBlur, TRANSLUCENCY_SUPPORTED } from './desktop'
 import { storage } from './utils'
 
 export type ThemeMode = 'dark' | 'light' | 'system'
@@ -133,7 +133,7 @@ function applyTo(doc: Document): void {
 
 /** Effective window opacity: 1 unless the window can be translucent. */
 export function windowAlpha(opacity = current.windowOpacity): number {
-  return TRANSLUCENCY_SUPPORTED && Number.isFinite(opacity) ? Math.min(1, Math.max(0.3, opacity)) : 1
+  return TRANSLUCENCY_SUPPORTED && Number.isFinite(opacity) ? Math.min(1, Math.max(MIN_WINDOW_OPACITY, opacity)) : 1
 }
 
 function refresh(): void {

@@ -4,7 +4,7 @@ import { ColorSwatchPicker } from '@/components/ui/color-swatch-picker'
 import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
-import { TRANSLUCENCY_SUPPORTED } from '@/lib/desktop'
+import { MIN_WINDOW_OPACITY, TRANSLUCENCY_SUPPORTED } from '@/lib/desktop'
 import { ACCENT_PRESETS } from '@/lib/theme'
 import { appearanceSettings, type AppearanceSettings } from '@/stores/settings'
 import { SettingRow, SettingsGroup, SettingsPage } from '../ui'
@@ -61,7 +61,7 @@ export default function AppearanceSection() {
             <div className="flex w-64 items-center gap-3">
               <Slider
                 aria-label="Window opacity"
-                min={30}
+                min={MIN_WINDOW_OPACITY * 100}
                 max={100}
                 step={5}
                 value={[opacity]}

@@ -2,6 +2,7 @@
  * What the desktop app (desktop/src-tauri) tells the page about its window, through an initialization script. Absent
  * in browsers.
  */
+import { isMac } from './utils'
 
 declare global {
   interface Window {
@@ -24,6 +25,8 @@ const desktop = typeof window !== 'undefined' ? window.__ASTRATERM_DESKTOP__ : u
 
 export const TRANSLUCENCY_SUPPORTED = !!desktop?.translucent
 export const TITLE_BAR = desktop?.titleBar
+/** Lowest Window opacity: the macOS blur keeps text readable further down than Windows' Acrylic. */
+export const MIN_WINDOW_OPACITY = isMac ? 0.1 : 0.3
 
 const blurState = new WeakMap<Window, boolean>()
 

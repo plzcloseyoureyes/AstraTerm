@@ -26,7 +26,7 @@
   root.style.setProperty('--ui-scale', String(scale))
   if (a.density === 'compact') root.style.setProperty('--spacing', '0.2rem')
   root.dataset.density = a.density === 'compact' ? 'compact' : 'comfortable'
-  var alpha = typeof a.windowOpacity === 'number' && isFinite(a.windowOpacity) ? Math.min(1, Math.max(0.3, a.windowOpacity)) : 1
+  var alpha = typeof a.windowOpacity === 'number' && isFinite(a.windowOpacity) ? Math.min(1, Math.max(0.1, a.windowOpacity)) : 1
   if (window.__ASTRATERM_DESKTOP__ && window.__ASTRATERM_DESKTOP__.translucent && alpha < 1) {
     root.classList.add('translucent')
     root.style.setProperty('--window-alpha', String(alpha))

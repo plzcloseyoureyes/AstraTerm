@@ -502,7 +502,7 @@ html.translucent {
 html.translucent body {
   --background: transparent;
   /* The content area keeps a faint extra tint so it still reads as a card against the sidebar. */
-  --panel: color-mix(in oklab, var(--window-tint) 40%, transparent);
+  --panel: color-mix(in oklab, var(--window-tint) 15%, transparent);
   --sidebar: transparent;
   --rail: transparent;
   --toolbar: transparent;

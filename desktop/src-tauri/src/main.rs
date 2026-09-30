@@ -151,9 +151,10 @@ fn translucent<'a, R: Runtime, M: Manager<R>>(
     #[cfg(target_os = "macos")]
     {
         use tauri::window::{Effect, EffectState, EffectsBuilder};
+        // The HUD material is the clearest of the dark blurs; always active, so it does not turn grey when unfocused.
         let effects = EffectsBuilder::new()
-            .effect(Effect::UnderWindowBackground)
-            .state(EffectState::FollowsWindowActiveState)
+            .effect(Effect::HudWindow)
+            .state(EffectState::Active)
             .build();
         builder
             .transparent(true)
