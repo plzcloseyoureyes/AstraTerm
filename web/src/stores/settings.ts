@@ -251,6 +251,8 @@ export interface AppearanceSettings {
   /** UI zoom factor (1 = 100%). */
   uiScale: number
   density: Density
+  /** Desktop app on macOS / Windows: below 1 the desktop shows through, blurred (lib/theme.ts). */
+  windowOpacity: number
   showMenuBar: boolean
   showRibbon: boolean
   /** Ribbon shows icons only (compact mode). */
@@ -264,6 +266,7 @@ export const appearanceSettings = defineSettings<AppearanceSettings>('appearance
   accent: DEFAULT_ACCENT,
   uiScale: 1,
   density: 'comfortable',
+  windowOpacity: 1,
   showMenuBar: true,
   // Tabs, quick connect and the app menu share the title bar; tool launchers sit in the sidebar rail.
   showRibbon: false,

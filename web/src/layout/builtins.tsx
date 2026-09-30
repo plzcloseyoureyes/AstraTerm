@@ -69,7 +69,7 @@ import { lockVault } from '@/api/vault'
 import type { Connection, RuntimeSession } from '@/api/types'
 import { events, useEventsStore } from '@/lib/events'
 import { toggleFullscreen } from '@/lib/hooks'
-import { errorMessage } from '@/lib/utils'
+import { errorMessage, isMac } from '@/lib/utils'
 import { setVaultLocked, useAppVersion, useAuthStore, useIsAdmin, useVaultLocked } from '@/stores/auth'
 import { appearanceSettings, workspacesSettings } from '@/stores/settings'
 import { focusQuickConnect, lockApp, openPalette, requestVaultUnlock, setAboutOpen, setAppMenuOpen, setDrawerOpen, useUIStore } from '@/stores/ui'
@@ -232,7 +232,8 @@ registerCommand({
   title: 'Close Tab',
   category: 'Workspace',
   icon: X,
-  keybinding: ['$mod+w', 'Alt+w', 'Control+Alt+q'],
+  // Ctrl+Shift+W as in other terminal apps on Windows / Linux, where the shell keeps Ctrl+W (delete word).
+  keybinding: ['$mod+w', 'Alt+w', 'Control+Alt+q', ...(isMac ? [] : ['Control+Shift+w'])],
   essential: true,
   when: hasActive,
   run: ({ args }) => {

@@ -1,0 +1,9 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "window-drag",
+  "description": "macOS: AstraTerm's top bar moves and zooms the window (it replaces the system title bar). Nothing else.",
+  "windows": ["main"],
+  "platforms": ["macOS"],
+  "remote": { "urls": ["http://127.0.0.1:*", "http://localhost:*"] },
+  "permissions": ["core:window:allow-start-dragging", "core:window:allow-internal-toggle-maximize"]
+}

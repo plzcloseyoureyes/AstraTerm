@@ -11,7 +11,8 @@ import { useConnection } from '@/api/connections'
 import { useRuntimeSession } from '@/api/sessions'
 import type { TabProps } from '@/app/registry'
 import { useLatest } from '@/lib/hooks'
-import { isDarkTheme, onThemeChange } from '@/lib/theme'
+import { isDarkTheme, onThemeChange, windowAlpha } from '@/lib/theme'
+import { appearanceSettings } from '@/stores/settings'
 import { useUIStore } from '@/stores/ui'
 import { getPanel, useIsTabVisible } from '@/stores/workspace'
 import { TerminalController } from './controller'
@@ -48,7 +49,12 @@ export default function TerminalView({ tabId, params }: TabProps<TerminalTabPara
   const global = terminalSettings.use()
   const uiDark = useUiDark()
   const overrides = connection?.options?.terminal ?? params?.quick?.options?.terminal
-  const settings = useMemo(() => effectiveTerminalSettings(global, overrides), [global, overrides])
+  // A translucent window (Window opacity) shows through the terminal too: its background turns clear.
+  const translucent = windowAlpha(appearanceSettings.useValue('windowOpacity')) < 1
+  const settings = useMemo(() => {
+    const s = effectiveTerminalSettings(global, overrides)
+    return translucent ? { ...s, backgroundOpacity: 0 } : s
+  }, [global, overrides, translucent])
   const visible = useIsTabVisible(tabId)
   const locked = useUIStore((s) => s.locked)
   const multi = useMultiExecStore()

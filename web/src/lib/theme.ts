@@ -1,7 +1,8 @@
 /*
- * Applies appearance settings to the document: light/dark/system theme class, accent colour, UI scale and density.
- * Also keeps extra documents (dockview pop-out windows) in sync.
+ * Applies appearance settings to the document: light/dark/system theme class, accent colour, UI scale, density and
+ * window opacity. Also keeps extra documents (dockview pop-out windows) in sync.
  */
+import { TRANSLUCENCY_SUPPORTED } from './desktop'
 import { storage } from './utils'
 
 export type ThemeMode = 'dark' | 'light' | 'system'
@@ -12,7 +13,9 @@ export interface AppearanceLike {
   accent: string
   uiScale: number
   density: Density
+  windowOpacity: number
 }
+
 
 interface AccentPreset {
   label: string
@@ -105,7 +108,7 @@ function resolveAccent(accent: string, dark: boolean): { bg: string; fg: string 
 
 const media = typeof window !== 'undefined' ? window.matchMedia('(prefers-color-scheme: dark)') : null
 const extraDocs = new Set<Document>()
-let current: AppearanceLike = { theme: 'dark', accent: DEFAULT_ACCENT, uiScale: 1, density: 'comfortable' }
+let current: AppearanceLike = { theme: 'dark', accent: DEFAULT_ACCENT, uiScale: 1, density: 'comfortable', windowOpacity: 1 }
 let resolvedDark = true
 const listeners = new Set<(dark: boolean) => void>()
 
@@ -122,6 +125,14 @@ function applyTo(doc: Document): void {
   root.style.setProperty('--ui-scale', String(scale))
   root.style.setProperty('--spacing', current.density === 'compact' ? '0.2rem' : '0.25rem')
   root.dataset.density = current.density
+  const alpha = windowAlpha()
+  root.classList.toggle('translucent', alpha < 1)
+  root.style.setProperty('--window-alpha', String(alpha))
+}
+
+/** Effective window opacity: 1 unless the window can be translucent. */
+export function windowAlpha(opacity = current.windowOpacity): number {
+  return TRANSLUCENCY_SUPPORTED && Number.isFinite(opacity) ? Math.min(1, Math.max(0.3, opacity)) : 1
 }
 
 function refresh(): void {

@@ -20,6 +20,7 @@ import {
 import { Kbd } from '@/components/ui/kbd'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip } from '@/components/ui/tooltip'
+import { TITLE_BAR_OVERLAY } from '@/lib/desktop'
 import { useIsMobile } from '@/lib/hooks'
 import { formatKeybinding } from '@/lib/keys'
 import { cn } from '@/lib/utils'
@@ -178,7 +179,11 @@ export function MenuBar({ tabs = false }: { tabs?: boolean }) {
 
   if (tabs) {
     return (
-      <header className="flex h-10 shrink-0 items-center gap-1 px-1.5">
+      // macOS desktop app: the window buttons sit on the left, and the bar's empty space drags the window.
+      <header
+        className={cn('flex h-10 shrink-0 items-center gap-1 px-1.5', TITLE_BAR_OVERLAY && 'pl-[76px]')}
+        data-tauri-drag-region={TITLE_BAR_OVERLAY ? 'deep' : undefined}
+      >
         <AppMenu />
         <TabStrip className="min-w-0 flex-1" />
         <QuickConnectButton />

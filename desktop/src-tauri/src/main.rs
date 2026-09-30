@@ -12,7 +12,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
 use tauri::webview::{DownloadEvent, NewWindowResponse};
-use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindow, WebviewWindowBuilder};
+use tauri::{AppHandle, Manager, Runtime, WebviewUrl, WebviewWindow, WebviewWindowBuilder};
 use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 use tauri_plugin_opener::OpenerExt;
 use tauri_plugin_shell::process::{CommandChild, CommandEvent};
@@ -68,7 +68,8 @@ fn main_window(app: &AppHandle, origin: Origin) -> tauri::Result<WebviewWindow> 
     let nav_app = app.clone();
     let popup_app = app.clone();
     let popup_origin = origin;
-    WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
+    let window = WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()));
+    title_bar(translucent(window))
         .title("AstraTerm")
         .inner_size(1440.0, 900.0)
         .min_inner_size(820.0, 560.0)
@@ -100,15 +101,15 @@ fn main_window(app: &AppHandle, origin: Origin) -> tauri::Result<WebviewWindow> 
             }
             static NEXT: AtomicUsize = AtomicUsize::new(1);
             let label = format!("popout-{}", NEXT.fetch_add(1, Ordering::Relaxed));
-            let built =
-                WebviewWindowBuilder::new(&popup_app, label, WebviewUrl::External("about:blank".parse().unwrap()))
-                    .window_features(features)
-                    .disable_drag_drop_handler()
-                    .title("AstraTerm")
-                    .on_document_title_changed(|window, title| {
-                        let _ = window.set_title(&title);
-                    })
-                    .build();
+            let url = WebviewUrl::External("about:blank".parse().unwrap());
+            let built = translucent(WebviewWindowBuilder::new(&popup_app, label, url))
+                .window_features(features)
+                .disable_drag_drop_handler()
+                .title("AstraTerm")
+                .on_document_title_changed(|window, title| {
+                    let _ = window.set_title(&title);
+                })
+                .build();
             match built {
                 Ok(window) => NewWindowResponse::Create { window },
                 Err(_) => NewWindowResponse::Deny,
@@ -130,6 +131,49 @@ fn main_window(app: &AppHandle, origin: Origin) -> tauri::Result<WebviewWindow> 
             true
         })
         .build()
+}
+
+/// macOS and Windows: a transparent window over the system blur (vibrancy / Mica). The page stays opaque unless
+/// Settings → Appearance → Window opacity is below 100% (web/src/lib/theme.ts); the script tells it that it can.
+fn translucent<'a, R: Runtime, M: Manager<R>>(
+    builder: WebviewWindowBuilder<'a, R, M>,
+) -> WebviewWindowBuilder<'a, R, M> {
+    #[cfg(any(target_os = "macos", target_os = "windows"))]
+    {
+        use tauri::window::{Effect, EffectState, EffectsBuilder};
+        #[cfg(target_os = "macos")]
+        let effect = Effect::UnderWindowBackground;
+        #[cfg(target_os = "windows")]
+        let effect = Effect::Mica;
+        builder
+            .transparent(true)
+            .effects(
+                EffectsBuilder::new()
+                    .effect(effect)
+                    .state(EffectState::FollowsWindowActiveState)
+                    .build(),
+            )
+            .initialization_script("window.__ASTRATERM_DESKTOP__ = { translucent: true };")
+    }
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    builder
+}
+
+/// macOS: no system title bar. The window buttons move into the page's top bar, which then drags the window
+/// (data-tauri-drag-region; capabilities/window-drag.json allows only that).
+fn title_bar<'a, R: Runtime, M: Manager<R>>(builder: WebviewWindowBuilder<'a, R, M>) -> WebviewWindowBuilder<'a, R, M> {
+    #[cfg(target_os = "macos")]
+    {
+        builder
+            .title_bar_style(tauri::TitleBarStyle::Overlay)
+            .hidden_title(true)
+            .traffic_light_position(tauri::LogicalPosition::new(16.0, 20.0))
+            .initialization_script(
+                "window.__ASTRATERM_DESKTOP__ = { ...window.__ASTRATERM_DESKTOP__, titleBarOverlay: true };",
+            )
+    }
+    #[cfg(not(target_os = "macos"))]
+    builder
 }
 
 /// Starts the bundled server and points the window at it once it is ready. If it cannot start (or stops), the

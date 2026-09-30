@@ -1,6 +1,6 @@
 /*
  * Pre-paint boot (docs/UX.md "Loading states"): a tiny blocking same-origin script (the CSP allows 'self' scripts
- * only) that applies the cached appearance — dark / light / system, accent, UI scale, density — before the first
+ * only) that applies the cached appearance — dark / light / system, accent, UI scale, density, window opacity — before the first
  * paint, so a light-theme user never sees the dark default and the static splash in index.html already has the right
  * colours. Keep it in sync with applyTo() in src/lib/theme.ts (same localStorage key and CSS variables).
  */
@@ -26,6 +26,11 @@
   root.style.setProperty('--ui-scale', String(scale))
   if (a.density === 'compact') root.style.setProperty('--spacing', '0.2rem')
   root.dataset.density = a.density === 'compact' ? 'compact' : 'comfortable'
+  var alpha = typeof a.windowOpacity === 'number' && isFinite(a.windowOpacity) ? Math.min(1, Math.max(0.3, a.windowOpacity)) : 1
+  if (window.__ASTRATERM_DESKTOP__ && window.__ASTRATERM_DESKTOP__.translucent && alpha < 1) {
+    root.classList.add('translucent')
+    root.style.setProperty('--window-alpha', String(alpha))
+  }
   var meta = document.querySelector('meta[name="theme-color"]')
   if (meta) meta.setAttribute('content', dark ? '#15181d' : '#f7f8fa')
 })()

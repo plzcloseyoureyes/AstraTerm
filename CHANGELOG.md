@@ -8,6 +8,16 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-09-30
+
+### Added
+
+- **Window opacity** (desktop app on macOS and Windows): Settings → Appearance. Below 100%, the desktop shows through,
+  blurred (macOS vibrancy, Windows 11 Mica).
+- **Clean title bar on macOS:** the system title bar is gone; the window buttons sit in AstraTerm's tab row, which
+  moves the window (double-click zooms).
+- **Ctrl+Shift+W** closes the current tab on Windows and Linux.
+
 ### Fixed
 
 - **FTP:** connection errors that happened to contain "530" (for example a port like 5300) were reported as a failed
@@ -91,7 +101,8 @@ endings, which broke monitoring of Linux, macOS and BSD hosts. That is fixed her
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/plzcloseyoureyes/AstraTerm/releases/tag/v0.1.1

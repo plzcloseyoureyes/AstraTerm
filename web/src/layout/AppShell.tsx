@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import './builtins'
 import { installKeybindings } from '@/app/keybindings'
 import { DialogHost } from '@/components/ui/dialog-host'
+import { TITLE_BAR_OVERLAY } from '@/lib/desktop'
 import { useIsMobile } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 import { appearanceSettings } from '@/stores/settings'
@@ -90,6 +91,8 @@ export function AppShell() {
         aria-hidden={locked || undefined}
       >
         {(a.showMenuBar || mobile) && <MenuBar tabs={titleBarTabs} />}
+        {/* Title bar hidden in the macOS app: keep a strip for the window buttons and dragging. */}
+        {TITLE_BAR_OVERLAY && !a.showMenuBar && <div className="h-10 shrink-0" data-tauri-drag-region />}
         {a.showRibbon && <Ribbon />}
         <div className="flex min-h-0 flex-1">
           {(a.showSidebar || mobile) && <Sidebar />}
@@ -100,7 +103,7 @@ export function AppShell() {
               !mobile && 'mr-1.5 rounded-lg shadow-xs ring-1 ring-border/60',
               !mobile && !a.showSidebar && 'ml-1.5',
               !mobile && !a.showStatusBar && 'mb-1.5',
-              !mobile && !(a.showMenuBar || a.showRibbon) && 'mt-1.5',
+              !mobile && !(a.showMenuBar || a.showRibbon || TITLE_BAR_OVERLAY) && 'mt-1.5',
             )}
             aria-label="Workspace"
           >

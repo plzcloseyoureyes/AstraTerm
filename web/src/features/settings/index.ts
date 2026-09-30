@@ -59,7 +59,7 @@ registerSettingsSection({
   icon: Palette,
   order: 10,
   group: 'appearance',
-  keywords: ['theme', 'dark', 'light', 'accent', 'colour', 'color', 'zoom', 'scale', 'density', 'compact', 'ribbon', 'toolbar', 'sidebar', 'status bar', 'menu'],
+  keywords: ['theme', 'dark', 'light', 'accent', 'colour', 'color', 'zoom', 'scale', 'density', 'compact', 'opacity', 'transparency', 'translucent', 'blur', 'ribbon', 'toolbar', 'sidebar', 'status bar', 'menu'],
   component: lazy(() => import('./sections/Appearance')),
 })
 

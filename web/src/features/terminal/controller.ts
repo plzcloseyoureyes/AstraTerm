@@ -28,6 +28,7 @@ import { breakSession, getScrollback, reconnectSession, setSessionLogging, setSe
 import type { Connection, RuntimeSession, TerminalServerMessage } from '@/api/types'
 import { terminalPlugins, type TerminalPluginContext, type TerminalPluginDef } from '@/app/registry'
 import { isCommandEnabled, runCommand } from '@/app/commands'
+import { TRANSLUCENCY_SUPPORTED } from '@/lib/desktop'
 import { errorMessage, isMac } from '@/lib/utils'
 import { generalSettings } from '@/stores/settings'
 import { closeTab, focusTab, setTabState, setTabTitle, updateTabParams, useWorkspaceStore, type TabStatus } from '@/stores/workspace'
@@ -324,7 +325,8 @@ export class TerminalController implements TerminalHandle {
       cols: Math.max(2, Math.min(1000, size.cols || 80)),
       rows: Math.max(1, Math.min(1000, size.rows || 24)),
       allowProposedApi: true,
-      allowTransparency: this.settings.backgroundOpacity < 1,
+      // Always in a window that can turn translucent: the option only takes effect at creation.
+      allowTransparency: this.settings.backgroundOpacity < 1 || TRANSLUCENCY_SUPPORTED,
       overviewRuler: { width: 10 },
       logLevel: 'warn',
       windowOptions: { getWinSizeChars: true, getCellSizePixels: true, getWinSizePixels: true, pushTitle: true, popTitle: true },

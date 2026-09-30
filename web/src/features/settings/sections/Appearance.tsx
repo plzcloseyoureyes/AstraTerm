@@ -4,6 +4,7 @@ import { ColorSwatchPicker } from '@/components/ui/color-swatch-picker'
 import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
+import { TRANSLUCENCY_SUPPORTED } from '@/lib/desktop'
 import { ACCENT_PRESETS } from '@/lib/theme'
 import { appearanceSettings, type AppearanceSettings } from '@/stores/settings'
 import { SettingRow, SettingsGroup, SettingsPage } from '../ui'
@@ -23,6 +24,7 @@ function Toggle({ k, label, description }: { k: keyof AppearanceSettings; label:
 export default function AppearanceSection() {
   const a = appearanceSettings.use()
   const pct = Math.round(a.uiScale * 100)
+  const opacity = Math.round(a.windowOpacity * 100)
   return (
     <SettingsPage
       title="Appearance"
@@ -54,6 +56,21 @@ export default function AppearanceSection() {
             onChange={(accent) => appearanceSettings.set({ accent: accent ?? 'blue' })}
           />
         </SettingRow>
+        {TRANSLUCENCY_SUPPORTED && (
+          <SettingRow label="Window opacity" description="Below 100%, your desktop shows through the window, blurred.">
+            <div className="flex w-64 items-center gap-3">
+              <Slider
+                aria-label="Window opacity"
+                min={30}
+                max={100}
+                step={5}
+                value={[opacity]}
+                onValueChange={([v]) => appearanceSettings.set({ windowOpacity: v / 100 })}
+              />
+              <span className="w-11 text-right text-sm tabular text-muted-foreground">{opacity}%</span>
+            </div>
+          </SettingRow>
+        )}
       </SettingsGroup>
 
       <SettingsGroup title="Size & density">

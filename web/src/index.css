@@ -491,3 +491,30 @@
     transition: none;
   }
 }
+
+/* Window opacity (desktop app on macOS / Windows, lib/theme.ts): <html> keeps the solid theme colours, <body> paints
+   them once at --window-alpha over the native blur, and the layout surfaces inside turn clear so nested layers never
+   stack back into an opaque block. Popovers, dialogs and floating panes stay solid. */
+html.translucent {
+  --window-tint: var(--background);
+  background: transparent;
+}
+html.translucent body {
+  --background: transparent;
+  /* The content area keeps a faint extra tint so it still reads as a card against the sidebar. */
+  --panel: color-mix(in oklab, var(--window-tint) 40%, transparent);
+  --sidebar: transparent;
+  --rail: transparent;
+  --toolbar: transparent;
+  --tabbar: transparent;
+  --statusbar: transparent;
+  background: var(--window-tint);
+  background: color-mix(in oklab, var(--window-tint) calc(var(--window-alpha) * 100%), transparent);
+}
+html.translucent .dockview-theme-astraterm {
+  --dv-group-view-background-color: transparent;
+}
+html.translucent .dv-resize-container {
+  --dv-group-view-background-color: var(--window-tint);
+  --dv-tabs-and-actions-container-background-color: var(--window-tint);
+}

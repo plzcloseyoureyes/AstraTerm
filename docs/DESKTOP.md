@@ -28,8 +28,13 @@ reimplement anything: the regular `astraterm` binary runs inside it as a sidecar
 - **`window.open`**: AstraTerm's own pages (pop-out tabs) open as native windows; other URLs (links in terminals and
   web sessions) open in the default browser.
 - **Downloads** go to the Downloads folder, never overwriting an existing file.
-- **Security**: the remote page gets no Tauri IPC (no capabilities are granted), so it runs exactly like it does in a
-  browser.
+- **Translucency** (macOS, Windows): the window is transparent over the system blur (vibrancy / Mica). The page stays
+  opaque until Settings → Appearance → Window opacity is below 100%. An initialization script tells the page what the
+  window supports (`web/src/lib/desktop.ts`).
+- **Title bar** (macOS): no system title bar; the window buttons sit in AstraTerm's top bar, which moves and zooms the
+  window (`data-tauri-drag-region`).
+- **Security**: the page gets no Tauri IPC except, on macOS, moving and zooming its window
+  (`capabilities/window-drag.json`). Otherwise it runs exactly like it does in a browser.
 
 ### Engines and their limits
 
