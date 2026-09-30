@@ -8,6 +8,21 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-09-30
+
+### Added
+
+- **Utilities are back** in Tools: password generator, subnet, hash, chmod and UUID tools, encode/decode, JWT decoder,
+  JSON formatter and timestamp converter. They run entirely in the browser.
+
+### Fixed
+
+- The Tools tab title follows the selected tool.
+
+### Changed
+
+- Shorter README; server flags and the systemd unit moved to `docs/SERVER.md`.
+
 ## [0.1.2] - 2026-09-30
 
 ### Fixed
@@ -67,6 +82,7 @@ endings, which broke monitoring of Linux, macOS and BSD hosts. That is fixed her
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/plzcloseyoureyes/AstraTerm/releases/tag/v0.1.1

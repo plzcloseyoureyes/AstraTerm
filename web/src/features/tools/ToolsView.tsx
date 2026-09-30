@@ -13,7 +13,7 @@ import { LazyBoundary, Spinner } from '@/components/ui/spinner'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { cn } from '@/lib/utils'
 import { useIsAdmin, useRunMode } from '@/stores/auth'
-import { updateTabParams } from '@/stores/workspace'
+import { setTabTitle, updateTabParams } from '@/stores/workspace'
 import type { TabProps } from '@/app/registry'
 import { DEFAULT_TOOL, getTool, TOOL_CATEGORIES, TOOLS, type ToolDef } from './catalog'
 import { cancelTool, useToolRunning, useToolJobs } from './jobs'
@@ -38,6 +38,8 @@ export default function ToolsView({ tabId, params }: TabProps<ToolsTabParams>) {
   )
 
   const tool = getTool(selected) ?? getTool(DEFAULT_TOOL)!
+  // The tab title follows the selection, however it changed (list click or tools.open).
+  React.useEffect(() => setTabTitle(tabId, `Tools · ${tool.label}`), [tabId, tool.label])
   const Panel = tool.component
 
   const q = query.trim().toLowerCase()

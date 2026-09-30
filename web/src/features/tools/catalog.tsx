@@ -5,7 +5,15 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
 import {
   Activity,
+  Binary,
+  Braces,
   Building2,
+  Clock,
+  FileLock2,
+  Fingerprint,
+  Hash,
+  KeyRound,
+  Network,
   EthernetPort,
   Gauge,
   Globe,
@@ -20,7 +28,7 @@ import {
   Waypoints,
 } from 'lucide-react'
 
-export type ToolCategory = 'Diagnostics' | 'Discovery' | 'Security' | 'Host'
+export type ToolCategory = 'Diagnostics' | 'Discovery' | 'Security' | 'Host' | 'Utilities'
 
 export interface ToolDef {
   id: string
@@ -33,6 +41,8 @@ export interface ToolDef {
   serverAdminOnly?: boolean
 }
 
+/** Utilities run entirely in the browser (utilities.tsx). */
+const utility = (name: string) => lazy(() => import('./utilities').then((m) => ({ default: m.UTILITY_PANELS[name] })))
 const host = (name: 'InterfacesPanel' | 'ListeningPanel') => lazy(() => import('./panels/host').then((m) => ({ default: m[name] })))
 
 export const TOOLS: ToolDef[] = [
@@ -54,9 +64,19 @@ export const TOOLS: ToolDef[] = [
   // Host
   { id: 'interfaces', label: 'Interfaces', icon: EthernetPort, category: 'Host', keywords: ['nic', 'ip', 'mac', 'mtu', 'ifconfig'], component: host('InterfacesPanel'), serverAdminOnly: true },
   { id: 'listening', label: 'Listening ports', icon: ListTree, category: 'Host', keywords: ['netstat', 'ss', 'sockets', 'process', 'pid', 'listports', 'kill'], component: host('ListeningPanel'), serverAdminOnly: true },
+  // Utilities
+  { id: 'password', label: 'Password generator', icon: KeyRound, category: 'Utilities', keywords: ['passphrase', 'random', 'diceware'], component: utility('password') },
+  { id: 'subnet', label: 'Subnet calculator', icon: Network, category: 'Utilities', keywords: ['cidr', 'netmask', 'ipv4', 'ipv6', 'ip'], component: utility('subnet') },
+  { id: 'hash', label: 'Hash calculator', icon: Hash, category: 'Utilities', keywords: ['md5', 'sha256', 'sha512', 'blake3', 'checksum'], component: utility('hash') },
+  { id: 'encode', label: 'Encode / decode', icon: Binary, category: 'Utilities', keywords: ['base64', 'hex', 'url', 'encode', 'decode'], component: utility('encode') },
+  { id: 'jwt', label: 'JWT decoder', icon: FileLock2, category: 'Utilities', keywords: ['token', 'json web token', 'claims'], component: utility('jwt') },
+  { id: 'json', label: 'JSON formatter', icon: Braces, category: 'Utilities', keywords: ['pretty', 'minify', 'format', 'validate'], component: utility('json') },
+  { id: 'timestamp', label: 'Timestamp converter', icon: Clock, category: 'Utilities', keywords: ['unix', 'epoch', 'date', 'iso'], component: utility('timestamp') },
+  { id: 'chmod', label: 'chmod calculator', icon: FileLock2, category: 'Utilities', keywords: ['permissions', 'octal', 'rwx'], component: utility('chmod') },
+  { id: 'uuid', label: 'UUID generator', icon: Fingerprint, category: 'Utilities', keywords: ['guid', 'v4', 'v7', 'unique'], component: utility('uuid') },
 ]
 
-export const TOOL_CATEGORIES: ToolCategory[] = ['Diagnostics', 'Discovery', 'Security', 'Host']
+export const TOOL_CATEGORIES: ToolCategory[] = ['Diagnostics', 'Discovery', 'Security', 'Host', 'Utilities']
 
 export const DEFAULT_TOOL = 'ping'
 
