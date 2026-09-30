@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 	"os"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
@@ -195,7 +196,7 @@ func TestGuacShadowAndRecording(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if fi, _ := os.Stat(rec.Path); fi.Mode().Perm() != 0o600 || int64(len(data)) != rec.Size {
+	if fi, _ := os.Stat(rec.Path); (runtime.GOOS != "windows" && fi.Mode().Perm() != 0o600) || int64(len(data)) != rec.Size {
 		t.Fatalf("recording file %v, %d bytes (row %d)", fi.Mode(), len(data), rec.Size)
 	}
 	recorded, err := guac.ParseAll(string(data), guac.CodePoints)

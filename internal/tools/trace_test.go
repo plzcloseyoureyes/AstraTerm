@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
@@ -303,6 +304,9 @@ func TestTraceMTRStopKeepsSummary(t *testing.T) {
 
 // TestLocalTracerLoopback exercises the platform probing engine against 127.0.0.1 (one hop: the destination).
 func TestLocalTracerLoopback(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Windows does not answer loopback probes with ICMP / RST like other systems")
+	}
 	for _, udp := range []bool{false, true} {
 		tr, err := openTracer(net.ParseIP("127.0.0.1"), udp)
 		if err != nil {

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -447,6 +448,9 @@ func TestReverseDynamicProxy(t *testing.T) {
 }
 
 func TestUnixSocketForwards(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Unix sockets")
+	}
 	h := newHarness(t)
 	srv := newTestSSHServer(t)
 	alice := h.user("alice", false)

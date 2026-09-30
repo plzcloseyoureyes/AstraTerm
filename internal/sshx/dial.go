@@ -519,7 +519,7 @@ func dialDirect(ctx context.Context, network, addr string, timeout time.Duration
 	if g != nil {
 		d.Control = g.Control
 	}
-	return d.DialContext(ctx, network, addr)
+	return d.DialContext(ctx, network, netguard.CanonicalAddr(addr))
 }
 
 // ---- port knocking (SSH-39) ---------------------------------------------------------------------------------------

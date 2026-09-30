@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -69,8 +70,9 @@ func TestRemoteForwardToLoopbackRefused(t *testing.T) {
 			t.Fatalf("admin remote forward to %s under applyToAdmins: %d %s", dest, code, body)
 		}
 	}
+	// A remote forward's destination socket is on the AstraTerm host: a Unix path is no path at all on Windows.
 	in := Input{Name: "sock", Type: "remote", ConnectionID: aconn.ID, Options: Options{DestSocket: "/var/run/docker.sock"}}
-	if code, _ := h.call(admin, "POST", "/api/tunnels", in, nil); code != http.StatusForbidden {
+	if code, _ := h.call(admin, "POST", "/api/tunnels", in, nil); runtime.GOOS != "windows" && code != http.StatusForbidden {
 		t.Fatalf("admin remote forward to a Unix socket under applyToAdmins: %d", code)
 	}
 }

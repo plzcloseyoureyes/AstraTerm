@@ -17,6 +17,9 @@ const PartSuffix = partSuffix
 // CleanPath validates an API path and makes it absolute and clean (relative paths resolve against home).
 func CleanPath(p, home string) (string, error) { return cleanPath(p, home) }
 
+// HostToAPI converts an absolute path of the AstraTerm host to the files API form ("/home/x", "/C:/Users/x").
+func HostToAPI(p string) string { return hostToAPI(p) }
+
 // JoinPath joins a clean absolute directory and a name.
 func JoinPath(dir, name string) string { return joinPath(dir, name) }
 

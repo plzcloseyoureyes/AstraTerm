@@ -394,7 +394,7 @@ func TestCopyChecksumSearch(t *testing.T) {
 	if got := mustRead(t, l, "/dst/d/b.log", 0); got != "Needle in here" {
 		t.Fatalf("copy content %q", got)
 	}
-	if e, _ := l.Stat(bg, "/dst/a.txt"); e.Mode&0o777 != 0o600 {
+	if e, _ := l.Stat(bg, "/dst/a.txt"); runtime.GOOS != "windows" && e.Mode&0o777 != 0o600 { // no POSIX modes on Windows
 		t.Fatalf("copy mode %o", e.Mode)
 	}
 	if err := copyTree(bg, l, "/src", "/src/inner"); err == nil {
@@ -470,7 +470,7 @@ func TestExtractRejectsZipSlip(t *testing.T) {
 	filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
 		if !d.IsDir() {
 			r, _ := filepath.Rel(dir, p)
-			found = append(found, r)
+			found = append(found, filepath.ToSlash(r))
 		}
 		return nil
 	})
@@ -556,7 +556,7 @@ func TestUploadPartFlow(t *testing.T) {
 	if got := mustRead(t, l, "/up.bin", 0); got != "hello world" {
 		t.Fatalf("committed %q", got)
 	}
-	if e, _ := l.Stat(bg, "/up.bin"); e.Mode&0o777 != 0o600 {
+	if e, _ := l.Stat(bg, "/up.bin"); runtime.GOOS != "windows" && e.Mode&0o777 != 0o600 { // no POSIX modes on Windows
 		t.Fatalf("replaced file must keep its mode, got %o", e.Mode)
 	}
 	if _, err := l.Stat(bg, "/up.bin"+partSuffix); !errors.Is(err, fs.ErrNotExist) {

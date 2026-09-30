@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
@@ -38,6 +39,9 @@ func (s *slowReader) Read(p []byte) (int, error) {
 }
 
 func TestTransfersSurviveRestart(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("POSIX paths")
+	}
 	dataDir := t.TempDir()
 	st, err := store.Open(context.Background(), filepath.Join(dataDir, "db.sqlite"))
 	if err != nil {

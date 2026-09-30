@@ -79,7 +79,7 @@ func dial(ctx context.Context, c *core.Core, g *netguard.Guard, req term.OpenReq
 		spec.Port = port
 		return c.SSH.DialConnection(ctx, req.User, spec, req.Secrets)
 	}
-	addr := net.JoinHostPort(conn.Host, strconv.Itoa(port))
+	addr := netguard.CanonicalAddr(net.JoinHostPort(conn.Host, strconv.Itoa(port)))
 	nc, err := dialReservedPort(ctx, addr, g)
 	if err != nil && errors.Is(err, errNoReservedPort) {
 		d := &net.Dialer{Timeout: 20 * time.Second, Control: g.Control}

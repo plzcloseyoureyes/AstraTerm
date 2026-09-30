@@ -704,13 +704,15 @@ func (t *guacTunnel) answerRequired(gc *guac.Conn, names []string) {
 			guac.New("end", idx))
 	}
 	t.fmu.Unlock()
-	if err := gc.Send(ins...); err != nil {
-		t.h.log.Debug("rdp: sending argv to guacd failed", "session", t.s.ID, "err", err)
-		return
-	}
+	// State and commit are set before sending: guacd may answer with its first sync (connected, commit the answers)
+	// before Send returns.
 	t.h.setState(t.s.ID, model.StateConnecting, "Signing in")
 	if t.h.hasPending(t.s.ID) {
 		t.commitSaved.Store(true)
+	}
+	if err := gc.Send(ins...); err != nil {
+		t.commitSaved.Store(false)
+		t.h.log.Debug("rdp: sending argv to guacd failed", "session", t.s.ID, "err", err)
 	}
 }
 

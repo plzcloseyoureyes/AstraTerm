@@ -2,6 +2,7 @@ package netguard
 
 import (
 	"fmt"
+	"net"
 	"net/netip"
 	"strconv"
 	"strings"
@@ -297,6 +298,24 @@ func ParseHostIP(host string) (netip.Addr, bool) {
 		return a, true
 	}
 	return netip.Addr{}, false
+}
+
+// CanonicalAddr rewrites a host:port whose host is a legacy IPv4 form ("127.1", "0x7f000001", …) to the dotted
+// address, so every platform dials the same host: the system resolver of some platforms maps these forms to an
+// address and Go's own resolver does not. The dial-time Control check then sees the real address. Other addresses are
+// returned unchanged.
+func CanonicalAddr(addr string) string {
+	host, port, err := net.SplitHostPort(addr)
+	if err != nil {
+		return addr
+	}
+	if _, perr := netip.ParseAddr(host); perr == nil {
+		return addr
+	}
+	if a, ok := parseLegacyIPv4(strings.TrimSuffix(host, ".")); ok {
+		return net.JoinHostPort(a.String(), port)
+	}
+	return addr
 }
 
 // parseLegacyIPv4 implements inet_aton: 1-4 dot-separated parts in decimal, octal (leading 0) or hex (0x); the last

@@ -75,12 +75,40 @@ func serveIndex(c *echo.Context, fsys fs.FS) {
 	http.ServeContent(c.Response(), c.Request(), "index.html", time.Time{}, strings.NewReader(string(b)))
 }
 
+// uiTypes are the content types of the UI's own assets. They are fixed rather than looked up in the operating system:
+// on Windows mime.TypeByExtension reads the registry, which may map .js to text/plain — and browsers refuse module
+// scripts of that type, so the UI would not load.
+var uiTypes = map[string]string{
+	".html":  "text/html; charset=utf-8",
+	".js":    "text/javascript; charset=utf-8",
+	".mjs":   "text/javascript; charset=utf-8",
+	".css":   "text/css; charset=utf-8",
+	".json":  "application/json",
+	".map":   "application/json",
+	".svg":   "image/svg+xml",
+	".png":   "image/png",
+	".ico":   "image/x-icon",
+	".wasm":  "application/wasm",
+	".woff2": "font/woff2",
+	".woff":  "font/woff",
+	".ttf":   "font/ttf",
+	".txt":   "text/plain; charset=utf-8",
+}
+
+func contentType(name string) string {
+	ext := strings.ToLower(path.Ext(name))
+	if ct, ok := uiTypes[ext]; ok {
+		return ct
+	}
+	return mime.TypeByExtension(ext)
+}
+
 // serveFile serves name: a precompressed .br / .gz variant when the client accepts it, else the plain file, else
 // the .gz variant decompressed (precompressed-only assets). Every response carries a strong ETag of what it sends.
 func serveFile(c *echo.Context, fsys fs.FS, etags *etagCache, name string) {
 	w, r := c.Response(), c.Request()
 	w.Header().Add("Vary", "Accept-Encoding")
-	ct := mime.TypeByExtension(path.Ext(name))
+	ct := contentType(name)
 	ae := r.Header.Get("Accept-Encoding")
 	for _, enc := range []struct{ token, ext string }{{"br", ".br"}, {"gzip", ".gz"}} {
 		if !acceptsEncoding(ae, enc.token) {

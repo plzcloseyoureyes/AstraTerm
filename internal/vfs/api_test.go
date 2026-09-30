@@ -506,6 +506,9 @@ func TestTransfersLocal(t *testing.T) {
 }
 
 func TestTransferCancel(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("POSIX paths")
+	}
 	env := servertest.New(t)
 	admin := env.Setup("admin", pw)
 	f := openLocal(t, admin)
@@ -604,6 +607,9 @@ func checkRanges(t *testing.T, c *servertest.Client, u string, data []byte) {
 }
 
 func TestDownloadRanges(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("POSIX paths")
+	}
 	env := servertest.New(t)
 	admin := env.Setup("admin", pw)
 	f := openLocal(t, admin)

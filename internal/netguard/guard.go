@@ -405,7 +405,7 @@ func (g *Guard) Dialer(timeout time.Duration) *net.Dialer {
 
 // DialContext dials with Dialer(timeout).
 func (g *Guard) DialContext(ctx context.Context, network, addr string, timeout time.Duration) (net.Conn, error) {
-	return g.Dialer(timeout).DialContext(ctx, network, addr)
+	return g.Dialer(timeout).DialContext(ctx, network, CanonicalAddr(addr))
 }
 
 // CheckLiteral is the advisory, DNS-free check of a host as written: IP literals (including legacy forms such as

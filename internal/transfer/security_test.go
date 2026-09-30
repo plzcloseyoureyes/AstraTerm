@@ -75,7 +75,7 @@ func TestMaliciousListingCannotEscapeDestination(t *testing.T) {
 	src := reg.Register(user, &vfs.Handle{Kind: "sftp", Driver: "evil", FS: &evilFS{FS: local.FS, outside: outside}, Home: "/"})
 	m := transfer.New(d, reg)
 	in, err := m.Create(ctx, user, transfer.Request{SrcFS: src.ID, SrcPaths: []string{"/tree"}, DstFS: local.ID,
-		DstDir: dst, Overwrite: "overwrite"})
+		DstDir: vfs.HostToAPI(dst), Overwrite: "overwrite"})
 	if err != nil {
 		t.Fatal(err)
 	}

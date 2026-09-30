@@ -16,6 +16,7 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"runtime"
 	"strconv"
 	"strings"
 	"testing"
@@ -92,6 +93,9 @@ func TestPortscanLoopback(t *testing.T) {
 }
 
 func TestPortscanUDPClosed(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Windows does not answer loopback probes with ICMP / RST like other systems")
+	}
 	pc, err := net.ListenPacket("udp", "127.0.0.1:0")
 	if err != nil {
 		t.Fatal(err)
@@ -178,6 +182,9 @@ func TestGuardBlocksLoopbackTargets(t *testing.T) {
 }
 
 func TestNetscanLoopback(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Windows does not answer loopback probes with ICMP / RST like other systems")
+	}
 	port, stop := listenLoopback(t, "")
 	defer stop()
 	cp := closedPort(t)

@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -78,6 +79,9 @@ func realTemp(t *testing.T) string {
 }
 
 func TestRetryResumesAfterTransientError(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("POSIX paths")
+	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	log := slog.New(slog.NewTextHandler(io.Discard, nil))
@@ -169,6 +173,9 @@ func answerPrompts(t *testing.T, env *servertest.Env, c *servertest.Client, resp
 }
 
 func TestAskApplyToAll(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("POSIX paths")
+	}
 	env := servertest.New(t)
 	admin := env.Setup("admin", "correct horse battery staple")
 	var h vfs.Handle

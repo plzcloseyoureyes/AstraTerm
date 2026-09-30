@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"sync"
 	"syscall"
@@ -111,6 +112,12 @@ func lastLine(b []byte) string {
 	return string(b)
 }
 
+// shIsDash reports whether /bin/sh is dash (Debian, Ubuntu) rather than bash (macOS, Fedora …).
+func shIsDash() bool {
+	p, err := filepath.EvalSymlinks("/bin/sh")
+	return err == nil && strings.Contains(filepath.Base(p), "dash")
+}
+
 func TestShellIntegrationRealShells(t *testing.T) {
 	host, _ := exec.Command("uname", "-n").Output()
 	shells := []struct {
@@ -122,7 +129,8 @@ func TestShellIntegrationRealShells(t *testing.T) {
 		{[]string{"/bin/zsh", "-f", "-i"}, "zsh", true},
 		{[]string{"/bin/ksh", "-i"}, "ksh", true},
 		{[]string{"/bin/dash", "-i"}, "posix", false},
-		{[]string{"/bin/sh", "-i"}, "posix", true}, // bash (or dash) as sh: the all-variants line
+		// bash or dash as sh (the all-variants line): only bash follows cd (dash has no prompt hook, see above).
+		{[]string{"/bin/sh", "-i"}, "posix", !shIsDash()},
 	}
 	for _, sh := range shells {
 		if _, err := os.Stat(sh.argv[0]); err != nil {

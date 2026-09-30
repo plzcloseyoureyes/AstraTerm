@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
@@ -390,7 +391,8 @@ func TestOwnershipAndErrors(t *testing.T) {
 	// Unreachable upstream → 422 with a message.
 	up.Close()
 	st, code := admin.ErrorCode("POST", "/api/webproxy", map[string]any{"url": up.URL})
-	if st != 422 || code != "upstream_refused" {
+	// Windows retries a refused connection until the probe gives up: "unreachable" there.
+	if st != 422 || code != "upstream_refused" && !(runtime.GOOS == "windows" && code == "upstream_unreachable") {
 		t.Fatalf("refused: %d %s", st, code)
 	}
 	for _, bad := range []map[string]any{{"url": "ftp://x/"}, {"host": "a b", "port": 80}, {"url": "http://x/", "port": 70000},
