@@ -17,6 +17,7 @@ use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 use tauri_plugin_opener::OpenerExt;
 use tauri_plugin_shell::process::{CommandChild, CommandEvent};
 use tauri_plugin_shell::ShellExt;
+use tauri_plugin_window_state::StateFlags;
 use url::Url;
 
 const READY_PREFIX: &str = "ASTRATERM_READY ";
@@ -48,7 +49,13 @@ fn main() {
                 let _ = window.set_focus();
             }
         }))
-        .plugin(tauri_plugin_window_state::Builder::default().build())
+        // Size, position and maximized state; never the decorations, which title_bar() owns (a restored system frame
+        // would sit on top of AstraTerm's own title bar).
+        .plugin(
+            tauri_plugin_window_state::Builder::default()
+                .with_state_flags(StateFlags::all() - StateFlags::DECORATIONS)
+                .build(),
+        )
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
