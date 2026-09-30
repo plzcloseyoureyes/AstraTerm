@@ -344,12 +344,15 @@ func TestRshSessionAgainstFakeServer(t *testing.T) {
 	if _, err := b.Write([]byte("hello\r\x04")); err != nil {
 		t.Fatal(err)
 	}
-	out := col.until(3*time.Second, func(acc []byte) bool { return bytes.Contains(acc, []byte("stdin=")) })
+	// The server's output may land between (or before) the local echoes: wait for all of them, check each alone.
+	out := col.until(3*time.Second, func(acc []byte) bool {
+		return bytes.Contains(acc, []byte("stdin=")) && bytes.Contains(acc, []byte("^D\r\n"))
+	})
 	fields := <-got
 	if fields[1] != "carol" || fields[2] != "carol" || fields[3] != "cat" {
 		t.Errorf("handshake fields = %q", fields)
 	}
-	for _, want := range []string{"out\n", "hello\r\n^D\r\n", `stdin="hello\n"`} {
+	for _, want := range []string{"out\n", "hello\r\n", "^D\r\n", `stdin="hello\n"`} {
 		if !bytes.Contains(out, []byte(want)) {
 			t.Errorf("output %q lacks %q", out, want)
 		}

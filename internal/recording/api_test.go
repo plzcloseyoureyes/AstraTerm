@@ -150,6 +150,11 @@ func TestCommandAudit(t *testing.T) {
 	c.MustJSON("PUT", "/api/admin/recordings/policy", map[string]any{"commandAudit": true}, nil)
 	for _, marks := range []bool{true, false} {
 		s := e.openSession(t, c, map[string]any{"marks": marks})
+		// Type only once the first prompt was seen (as a person would): the banner before it is not a command.
+		waitFor(t, "first prompt", func() bool {
+			_, body := c.Do("GET", "/api/sessions/"+s.ID+"/replay?minutes=0", nil)
+			return strings.Contains(string(body), "user@fake:~$")
+		})
 		e.input(t, c, s.ID, "ls -la\r")
 		e.input(t, c, s.ID, "sudo\r")
 		e.input(t, c, s.ID, "hunter2\r") // password: never echoed, never audited
