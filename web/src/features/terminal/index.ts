@@ -24,6 +24,7 @@ import { useWorkspaceStore } from '@/stores/workspace'
 import { getTerminalByTab, useTerminalInfoStore } from './bus'
 import { clearClipboardHistory } from './clipboard'
 import { detachingTabs, detachTerminal } from './commands'
+import { dropHistory } from './history'
 import { tintedIcon } from './icons'
 import { duplicateSession, findSessionTabs, reopenTerminal, restartSessionInTab } from './open'
 import { dropSavedTerminal, pruneSavedTerminals } from './persist'
@@ -55,6 +56,7 @@ async function confirmClose(tab: TabInfo<TerminalTabParams>): Promise<boolean> {
 }
 
 function onClosed(tab: TabInfo<TerminalTabParams>): void {
+  dropHistory(tab.id)
   const sessionId = tab.params?.sessionId
   if (!sessionId) return
   if (detachingTabs.delete(tab.id)) {
@@ -121,6 +123,8 @@ registerSettingsSection({
   group: 'terminal',
   keywords: [
     'font',
+    'history',
+    'restore',
     'colour',
     'color',
     'scheme',

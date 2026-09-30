@@ -35,6 +35,7 @@ import { closeTab, focusTab, setTabState, setTabTitle, updateTabParams, useWorks
 import { emitTerminalInput, emitTerminalOutput, hasTerminalOutputListeners, markTerminalFocused, publishTerminalInfo, registerTerminal } from './bus'
 import { pushClipboardHistory, readClipboard, writeClipboard } from './clipboard'
 import { ensureFontLoaded } from './fonts'
+import { dropHistory, HISTORY_BANNER, HISTORY_LINES, loadHistory, pendingRestore, saveHistory } from './history'
 import { InputLocks } from './inputLock'
 import { isParticipant, multiExecTargets } from './multiexec'
 import { notify, pageHasAttention, playBell } from './notify'
@@ -235,6 +236,9 @@ export class TerminalController implements TerminalHandle {
   private runtime?: RuntimeSession
   private host: HTMLElement | null = null
   private opened = false
+  /** The socket reached the session at least once (a restored tab whose session is gone never does). */
+  private everOpen = false
+  private historyTimer: ReturnType<typeof setTimeout> | null = null
   private disposed = false
   private readonly socket: TerminalSocket
   private readonly disposables: IDisposable[] = []
@@ -374,6 +378,10 @@ export class TerminalController implements TerminalHandle {
       this.receivedOffset = this.renderedOffset = this.ackedOffset = saved.offset
       this.writeLocalInternal(saved.data, true)
       this.live.hasOutput = true
+    } else if (pendingRestore.delete(this.tabId)) {
+      // History restore: this tab's previous session was gone after a restart; show what it printed.
+      const history = loadHistory(this.tabId)
+      if (history) this.writeLocalInternal(history + HISTORY_BANNER)
     }
 
     this.socket = new TerminalSocket(
@@ -430,7 +438,7 @@ export class TerminalController implements TerminalHandle {
   dispose(): void {
     if (this.disposed) return
     this.disposed = true
-    for (const t of [this.fitTimer, this.resizeSendTimer, this.copyOnSelectTimer, this.silenceTimer, this.closeOnExitTimer, this.ackTimer, ...this.settleTimers]) {
+    for (const t of [this.fitTimer, this.resizeSendTimer, this.copyOnSelectTimer, this.silenceTimer, this.closeOnExitTimer, this.ackTimer, this.historyTimer, ...this.settleTimers]) {
       if (t) clearTimeout(t)
     }
     this.unwatchWindow?.()
@@ -1131,14 +1139,53 @@ export class TerminalController implements TerminalHandle {
   private onTransport(state: TransportState, attempt: number): void {
     this.setInfo({ transport: state, transportAttempts: attempt })
     if (state === 'open') {
+      this.everOpen = true
       this.sentSize = null
       this.sendResize(true)
     }
   }
 
   private onGone(): void {
-    this.applyState('gone', 'This session no longer exists on the server.')
     dropSavedTerminal(this.sessionId)
+    if (!this.restoreHistory()) this.applyState('gone', 'This session no longer exists on the server.')
+  }
+
+  /** A restored tab whose session is gone (after a restart): start a new session that shows the saved history. */
+  private restoreHistory(): boolean {
+    if (!this.settings.restoreHistory) {
+      dropHistory(this.tabId)
+      return false
+    }
+    if (this.everOpen || !loadHistory(this.tabId)) return false
+    pendingRestore.add(this.tabId)
+    void restartSessionInTab(this.tabId).then(
+      (ok) => ok || this.historyRestoreFailed(),
+      () => this.historyRestoreFailed(),
+    )
+    return true
+  }
+
+  private historyRestoreFailed(): void {
+    pendingRestore.delete(this.tabId)
+    if (!this.disposed) this.applyState('gone', 'This session no longer exists on the server.')
+  }
+
+  /** Save the history snapshot a few seconds after output (restore after a restart; a crash skips pagehide). */
+  private scheduleHistorySave(): void {
+    if (this.historyTimer || !this.settings.restoreHistory) return
+    this.historyTimer = setTimeout(() => {
+      this.historyTimer = null
+      this.saveHistoryNow()
+    }, 5000)
+  }
+
+  private saveHistoryNow(): void {
+    if (this.disposed || !this.settings.restoreHistory || !this.live.hasOutput) return
+    try {
+      saveHistory(this.tabId, this.serializeAddon.serialize({ scrollback: HISTORY_LINES }))
+    } catch (err) {
+      console.warn('[terminal] history snapshot failed', err)
+    }
   }
 
   private onSocketMessage(msg: TerminalServerMessage): void {
@@ -1266,6 +1313,7 @@ export class TerminalController implements TerminalHandle {
       }
     }
     if (hasTerminalOutputListeners()) emitTerminalOutput({ tabId: this.tabId, sessionId: this.sessionId, data: raw, replay: item.replay })
+    this.scheduleHistorySave()
     let bytes: Uint8Array = raw
     for (const f of this.outputFilters) {
       try {
@@ -2215,6 +2263,7 @@ export class TerminalController implements TerminalHandle {
 
   /** Save a snapshot + offset for the next page load (called on pagehide). */
   persist(): void {
+    this.saveHistoryNow()
     if (this.disposed || this.live.state === 'closed' || this.live.state === 'gone' || this.live.state === 'unknown') return
     if (!this.groundAtRendered || this.renderedOffset <= 0) {
       dropSavedTerminal(this.sessionId)

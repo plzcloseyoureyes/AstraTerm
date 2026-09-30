@@ -113,6 +113,8 @@ export interface TerminalSettings {
   focusFollowsMouse: boolean
   /** Small per-terminal toolbar (find, split, MultiExec, logging) shown on hover. */
   showToolbar: boolean
+  /** After a restart, a restored tab whose session is gone starts anew and shows its previous output (history.ts). */
+  restoreHistory: boolean
 }
 
 export const TERMINAL_DEFAULTS: TerminalSettings = {
@@ -186,6 +188,7 @@ export const TERMINAL_DEFAULTS: TerminalSettings = {
   hidePointerWhileTyping: true,
   focusFollowsMouse: false,
   showToolbar: true,
+  restoreHistory: true,
 }
 
 export const terminalSettings = defineSettings<TerminalSettings>('terminal', TERMINAL_DEFAULTS)

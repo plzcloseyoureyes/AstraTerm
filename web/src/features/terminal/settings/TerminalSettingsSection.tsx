@@ -615,6 +615,11 @@ export default function TerminalSettingsSection() {
         <Toggle k="showToolbar" label="Terminal toolbar" description="Find, split, broadcast, pause and logging buttons shown while hovering a terminal." />
         <Toggle k="hidePointerWhileTyping" label="Hide the mouse pointer while typing" />
         <Toggle k="focusFollowsMouse" label="Focus follows the mouse" description="Moving the mouse into a terminal pane gives it the keyboard." />
+        <Toggle
+          k="restoreHistory"
+          label="Restore history"
+          description="After a restart, reopened terminal tabs start a new session showing their previous output. Saved in this browser / app."
+        />
       </SettingsGroup>
 
       <SettingsGroup title="When a session ends">

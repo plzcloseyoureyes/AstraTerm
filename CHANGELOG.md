@@ -8,6 +8,14 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+## [0.1.9] - 2026-09-30
+
+### Added
+
+- **Restore history** (on by default; Settings → Terminal → Conveniences): after a restart, reopened terminal tabs
+  start a new session that shows their previous output, marked "History restored". Closing a tab deletes its saved
+  history.
+
 ## [0.1.8] - 2026-09-30
 
 ### Changed
@@ -130,7 +138,8 @@ endings, which broke monitoring of Linux, macOS and BSD hosts. That is fixed her
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.8...HEAD
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.9...HEAD
+[0.1.9]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.5...v0.1.6
