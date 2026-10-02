@@ -574,13 +574,14 @@ func (b *rshBackend) Write(p []byte) (int, error) {
 	}
 	if eof {
 		b.stdinEOF = true
+		// Echo before closing stdin: the command may finish and end the session right after it sees end-of-file.
+		if b.localEcho {
+			b.out.Inject([]byte("^D\r\n"))
+		}
 		if cw, ok := b.conn.(interface{ CloseWrite() error }); ok {
 			if err := cw.CloseWrite(); err != nil {
 				return 0, err
 			}
-		}
-		if b.localEcho {
-			b.out.Inject([]byte("^D\r\n"))
 		}
 	}
 	return len(p), nil

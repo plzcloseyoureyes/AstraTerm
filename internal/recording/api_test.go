@@ -166,10 +166,17 @@ func TestCommandAudit(t *testing.T) {
 			Details map[string]any `json:"details"`
 		}
 		var entries []auditEntry
-		waitFor(t, "command audit entries", func() bool {
+		for deadline := time.Now().Add(30 * time.Second); ; time.Sleep(25 * time.Millisecond) {
 			c.MustJSON("GET", "/api/admin/audit?action=session.command&target="+s.ID, nil, &entries)
-			return len(entries) >= 4
-		})
+			if len(entries) >= 4 {
+				break
+			}
+			if time.Now().After(deadline) {
+				// What was audited and what the shell printed, to tell a lost echo from a lost command.
+				_, replay := c.Do("GET", "/api/sessions/"+s.ID+"/replay?minutes=0", nil)
+				t.Fatalf("marks=%v: %d command audit entries %+v; session output %q", marks, len(entries), entries, replay)
+			}
+		}
 		time.Sleep(200 * time.Millisecond)
 		c.MustJSON("GET", "/api/admin/audit?action=session.command&target="+s.ID, nil, &entries)
 		var got []string

@@ -22,6 +22,7 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 - **Scripts:** `session.run()` no longer returns the shell prompt in front of the output when the command was typed
   before the previous prompt had appeared.
+- **rsh:** the local echo of Ctrl+D (`^D`) could be lost when the command finished right after end-of-input.
 
 ## [0.1.12] - 2026-10-02
 
