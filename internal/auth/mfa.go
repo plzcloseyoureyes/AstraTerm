@@ -373,6 +373,9 @@ func (s *Service) reauth(c *echo.Context, u *model.User, password string) error 
 		return err
 	}
 	if !m.PasswordSet && password == "" {
+		if s.d.Cfg.LocalAccount {
+			return nil // the desktop app's own account: being in the app is the authentication
+		}
 		return s.RequireRecentAuth(c, "")
 	}
 	return s.checkPassword(c, u, password)

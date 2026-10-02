@@ -43,6 +43,7 @@ func sidecar(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		return 1
 	}
 	cfg.Version = version
+	cfg.LocalAccount = true // a desktop program: no account setup, the app signs in by itself
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()

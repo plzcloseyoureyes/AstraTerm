@@ -34,8 +34,8 @@ Builds are not signed yet, so the first start needs one confirmation:
 - **macOS:** System Settings → Privacy & Security → **Open Anyway**.
 - **Windows:** SmartScreen → **More info → Run anyway**.
 
-The first start shows a short setup wizard. The desktop app also serves AstraTerm at `http://127.0.0.1:7822`, so a
-browser tab works too.
+The desktop app needs no account setup: it signs you in by itself. It also serves AstraTerm at
+`http://127.0.0.1:7822`; to use that from a browser, set a password first (Settings → Security).
 
 Verify a download (optional):
 

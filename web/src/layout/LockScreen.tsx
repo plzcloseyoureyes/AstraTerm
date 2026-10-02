@@ -5,10 +5,10 @@ import { verifyPassword } from '@/api/auth'
 import { Button } from '@/components/ui/button'
 import { PasswordInput } from '@/components/ui/password-input'
 import { errorMessage } from '@/lib/utils'
-import { logout } from '@/app/session'
+import { lockScreen, logout } from '@/app/session'
 import { useCurrentUser } from '@/stores/auth'
 import { securitySettings } from '@/stores/settings'
-import { lockApp, unlockApp, useUIStore } from '@/stores/ui'
+import { unlockApp, useUIStore } from '@/stores/ui'
 
 const ACTIVITY_EVENTS = ['pointerdown', 'pointermove', 'keydown', 'wheel', 'touchstart'] as const
 
@@ -30,7 +30,7 @@ export function useAutoLock(): void {
     }
     for (const ev of ACTIVITY_EVENTS) window.addEventListener(ev, onActivity, { passive: true, capture: true })
     const timer = setInterval(() => {
-      if (Date.now() - last.current >= minutes * 60_000) lockApp()
+      if (Date.now() - last.current >= minutes * 60_000) void lockScreen({ quiet: true })
     }, 10_000)
     return () => {
       for (const ev of ACTIVITY_EVENTS) window.removeEventListener(ev, onActivity, { capture: true })

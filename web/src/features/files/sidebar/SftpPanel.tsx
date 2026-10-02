@@ -65,6 +65,7 @@ export default function SftpPanel() {
   const connection = conns.data?.find((c) => c.id === (session?.connectionId ?? params.connectionId))
 
   if (tab.kind === 'vnc' || tab.kind === 'rdp') return <CompanionPanel key={tab.id} tab={tab} connection={connection} connections={conns.data ?? []} />
+  if (protocol === 'local' && params.sessionId) return <LocalPanel key={params.sessionId} tab={tab} sessionId={params.sessionId} session={session} />
   if (protocol !== 'ssh' || !params.sessionId) return <NotSsh tab={tab} protocol={protocol} />
   return <SessionPanel key={params.sessionId} tab={tab} sessionId={params.sessionId} session={session} connection={connection} quick={params.quick} />
 }
@@ -574,6 +575,68 @@ function CompanionPanel({ tab, connection, connections }: { tab: TabInfo; connec
         }
       />
     </div>
+  )
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Local shell: this computer's files, following the shell's folder like the SSH panel does
+// ---------------------------------------------------------------------------------------------------------------------
+
+const LOCAL_SOURCE: FsSource = { kind: 'local' }
+
+function LocalPanel({ tab, sessionId, session }: { tab: TabInfo; sessionId: string; session: RuntimeSession | undefined }) {
+  const info = useTerminalInfo(tab.id)
+  const fs = useFs(LOCAL_SOURCE)
+  const ctx = useMemo<FsContext | null>(
+    () => (fs.handle && fs.key ? { key: fs.key, handle: fs.handle, source: LOCAL_SOURCE, sessionId, placeKey: 'local', label: 'Local files' } : null),
+    [fs.handle, fs.key, sessionId],
+  )
+  const followSetting = filesSettings.useValue('followTerminal')
+  const follow = usePanelState((s) => s.follow[sessionId]) ?? followSetting
+  const cwd = info?.cwd || session?.cwd || ''
+  const viewId = `panel:${sessionId}`
+
+  useEffect(() => {
+    if (!follow || !cwd || !ctx) return
+    if (lastFollowedCwd.get(sessionId) === cwd) return
+    lastFollowedCwd.set(sessionId, cwd)
+    const c = getController(viewId)
+    if (c) c.navigate(cwd, { quiet: true })
+    else if (getView(viewId).path !== cwd) patchView(viewId, { pending: cwd, pendingMode: 'push', pendingSelect: null, pendingQuiet: true })
+  }, [follow, cwd, ctx, sessionId, viewId])
+
+  const opening = useLoadingGate(!ctx && fs.status !== 'error')
+  const Icon = protocolIcon('local')
+  const header = (
+    <div className="flex h-7 min-w-0 shrink-0 items-center gap-1.5 border-b px-2 text-xs text-muted-foreground">
+      <Icon className="size-3.5 shrink-0" aria-hidden />
+      <span className="truncate">{tab.title}</span>
+    </div>
+  )
+  if (ctx && fs.handle && !opening.show) {
+    return (
+      <FileBrowser
+        viewId={viewId}
+        ctx={ctx}
+        variant="panel"
+        initialPath={(follow && cwd) || fs.handle.home}
+        extraActions={[openInTabAction(ctx, viewId)]}
+        header={header}
+        footer={<PanelFooter sessionId={sessionId} follow={follow} cwdKnown={!!cwd} connected onFollow={(v) => setFollow(sessionId, v)} monitoringOption />}
+      />
+    )
+  }
+  // Local files are not available (server mode: administrators only): the hint with its shortcuts.
+  if (fs.status === 'error') return <NotSsh tab={tab} protocol="local" />
+  return (
+    <PanelShell header={header}>
+      {opening.show && (
+        <div className="flex flex-col items-center gap-2 px-4 py-10 text-sm text-muted-foreground animate-in fade-in-0 duration-200">
+          <Spinner immediate className="size-5" label="Opening" />
+          <span role="status">Opening local files…</span>
+        </div>
+      )}
+    </PanelShell>
   )
 }
 

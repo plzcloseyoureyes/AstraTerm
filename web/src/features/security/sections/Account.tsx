@@ -32,7 +32,7 @@ export default function AccountSection() {
         <PasswordCard hasPassword={d.hasPassword} changedAt={d.passwordChangedAt} />
         <Section title="Ways to sign in" description="Add a second factor so a leaked password alone is not enough.">
           <div className="divide-y rounded-lg border bg-card">
-            <MethodRow icon={KeyRound} title="Password" ok={d.hasPassword} status={d.hasPassword ? 'Set' : 'Not set (single sign-on account)'} />
+            <MethodRow icon={KeyRound} title="Password" ok={d.hasPassword} status={d.hasPassword ? 'Set' : 'Not set'} />
             <MethodRow
               icon={ShieldCheck}
               title="Authenticator app"

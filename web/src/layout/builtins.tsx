@@ -60,7 +60,7 @@ import {
 } from '@/app/registry'
 import { isCommandEnabled, runCommand } from '@/app/commands'
 import { protocolIcon } from '@/app/protocols'
-import { logout } from '@/app/session'
+import { lockScreen, logout } from '@/app/session'
 import { listConnections, recentConnections } from '@/api/connections'
 import { isSessionRunning, useSessions } from '@/api/sessions'
 import { queryClient } from '@/api/queryClient'
@@ -72,7 +72,7 @@ import { toggleFullscreen } from '@/lib/hooks'
 import { errorMessage, isMac } from '@/lib/utils'
 import { setVaultLocked, useAppVersion, useAuthStore, useIsAdmin, useVaultLocked } from '@/stores/auth'
 import { appearanceSettings, workspacesSettings } from '@/stores/settings'
-import { focusQuickConnect, lockApp, openPalette, requestVaultUnlock, setAboutOpen, setAppMenuOpen, setDrawerOpen, useUIStore } from '@/stores/ui'
+import { focusQuickConnect, openPalette, requestVaultUnlock, setAboutOpen, setAppMenuOpen, setDrawerOpen, useUIStore } from '@/stores/ui'
 import {
   activateTabIndex,
   arrangeLayout,
@@ -174,7 +174,7 @@ registerCommand({
   global: true,
   essential: true,
   when: isAuthenticated,
-  run: () => lockApp(),
+  run: () => lockScreen(),
 })
 registerCommand({
   id: 'app.logout',

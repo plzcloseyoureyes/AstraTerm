@@ -48,6 +48,9 @@ type Config struct {
 	Guacd         string // host:port of guacd ("" = disabled)
 	Dev           bool
 	LogLevel      string
+	// LocalAccount: the desktop app. Desktop mode on loopback creates its administrator at the first start instead
+	// of showing first-run setup; the app signs in with the launch token (auth.ensureLocalAccount).
+	LocalAccount bool
 
 	// DetachedSessionTTL: detached runtime sessions are reaped after this long (0 = never).
 	DetachedSessionTTL time.Duration

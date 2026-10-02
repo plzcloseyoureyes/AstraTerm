@@ -83,6 +83,11 @@ func Mount(d *app.Deps) (*Service, error) {
 		reauthAt: map[string]time.Time{}, startedAt: time.Now()}
 	if d.Cfg.IsDesktop() {
 		s.launchToken = randomToken(32)
+		if d.Cfg.LocalAccount && d.Cfg.ListenIsLoopback() {
+			if err := s.ensureLocalAccount(d.Ctx); err != nil {
+				return nil, err
+			}
+		}
 	}
 	if d.Cfg.IsServer() || !d.Cfg.ListenIsLoopback() {
 		// Whoever completes setup becomes the administrator: on an instance other people can reach, only the operator

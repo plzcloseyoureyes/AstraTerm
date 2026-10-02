@@ -288,6 +288,36 @@ func TestLoginRateLimit(t *testing.T) {
 	}
 }
 
+// The desktop app (config.LocalAccount): no first-run setup. The administrator exists from the first start, the launch
+// token signs in, and the account has no usable password.
+func TestLocalAccount(t *testing.T) {
+	env := servertest.New(t, func(c *config.Config) { c.LocalAccount = true })
+	c := env.Client()
+	if st := getState(t, c); st.SetupRequired || st.Authenticated {
+		t.Fatalf("state before launch: %+v", st)
+	}
+	var out struct {
+		User model.User `json:"user"`
+	}
+	c.MustJSON("POST", "/api/auth/launch", map[string]string{"token": env.Server.Auth.LaunchToken()}, &out)
+	if out.User.Role != model.RoleAdmin || out.User.Username == "" || !getState(t, c).Authenticated {
+		t.Fatalf("launch login: %+v", out)
+	}
+	var me struct {
+		HasPassword bool `json:"hasPassword"`
+	}
+	c.MustJSON("GET", "/api/auth/me", nil, &me)
+	if me.HasPassword {
+		t.Fatal("the local account must not have a usable password")
+	}
+	if st, _ := env.Client().ErrorCode("POST", "/api/auth/login", map[string]string{"username": out.User.Username, "password": ""}); st == 200 {
+		t.Fatal("password login must not work")
+	}
+	// Setting the first password needs no current one; afterwards a browser can sign in with it.
+	c.MustJSON("POST", "/api/auth/password", map[string]string{"currentPassword": "", "newPassword": adminPass}, nil)
+	env.Login(out.User.Username, adminPass)
+}
+
 func TestLaunchToken(t *testing.T) {
 	env := servertest.New(t)
 	tok := env.Server.Auth.LaunchToken()

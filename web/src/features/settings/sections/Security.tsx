@@ -6,6 +6,7 @@ import { isApiError } from '@/api/client'
 import { lockVault, setMasterPassword } from '@/api/vault'
 import { commands } from '@/app/registry'
 import { runCommand } from '@/app/commands'
+import { lockScreen } from '@/app/session'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { confirm } from '@/components/ui/dialog-host'
@@ -16,7 +17,7 @@ import { estimateStrength } from '@/lib/password'
 import { errorMessage } from '@/lib/utils'
 import { setVaultHasMasterPassword, setVaultLocked, useAuthState, useCurrentUser, useIsAdmin } from '@/stores/auth'
 import { securitySettings } from '@/stores/settings'
-import { lockApp, requestVaultUnlock } from '@/stores/ui'
+import { requestVaultUnlock } from '@/stores/ui'
 import { SettingRow, SettingsGroup, SettingsPage } from '../ui'
 
 const AUTO_LOCK_OPTIONS = [0, 1, 5, 10, 15, 30, 60, 120, 240]
@@ -45,7 +46,7 @@ function ScreenLock() {
         />
       </SettingRow>
       <SettingRow label="Lock now" description="You will need your account password to unlock.">
-        <Button variant="secondary" size="sm" onClick={() => lockApp()}>
+        <Button variant="secondary" size="sm" onClick={() => void lockScreen()}>
           <Lock /> Lock screen
         </Button>
       </SettingRow>

@@ -8,6 +8,14 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+### Changed
+
+- **Desktop app: no account setup.** A fresh install opens straight into AstraTerm; the local account is created
+  automatically, without a password. Set one in Settings → Security to sign in from a browser or to use the lock
+  screen. Server mode keeps its users and one-time setup link.
+- **Local shell tabs** show this computer's files in the files side panel, following the shell's folder, like SSH
+  sessions show SFTP.
+
 ## [0.1.12] - 2026-10-02
 
 ### Security

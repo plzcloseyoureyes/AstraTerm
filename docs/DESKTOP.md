@@ -10,7 +10,10 @@ reimplement anything: the regular `astraterm` binary runs inside it as a sidecar
    `astraterm serve`.
 2. The sidecar runs AstraTerm in desktop mode and prints one line on stdout, `ASTRATERM_READY <url>`, once the UI can
    be loaded. The URL carries the one-time launch token, so the user is signed in automatically. The window then
-   navigates there (`desktop/src-tauri/src/main.rs`).
+   navigates there (`desktop/src-tauri/src/main.rs`). There is no first-run setup: at the first start the sidecar
+   creates the administrator itself, named after the operating-system user and without a password (`config.LocalAccount`,
+   `internal/auth/local.go`). A password is only needed to sign in from a browser or to lock the screen; it is set in
+   Settings → Security.
 3. The server keeps listening on its port, so a browser can connect too. When the default port (7822) is taken by
    another program, the sidecar uses a free one. If an AstraTerm instance already answers on that port, it reports
    that instance's URL instead of starting a second server.
