@@ -209,7 +209,8 @@ func TestInstantReplay(t *testing.T) {
 	var body []byte
 	waitFor(t, "replay", func() bool {
 		_, body = c.Do("GET", "/api/sessions/"+s.ID+"/replay?minutes=0", nil)
-		return strings.Contains(string(body), "ran: second")
+		// The command's marker is written just after its output.
+		return strings.Contains(string(body), "ran: second") && strings.Contains(string(body), "$ second")
 	})
 	lines := strings.Split(strings.TrimSpace(string(body)), "\n")
 	if !strings.HasPrefix(lines[0], `{"version":3,"term":{"cols":80,"rows":24}`) {

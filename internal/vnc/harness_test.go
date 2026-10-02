@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"reflect"
 	"strings"
 	"sync"
 	"testing"
@@ -203,6 +204,8 @@ func (c *client) JSON(method, path string, body, out any) (int, string) {
 		return resp.StatusCode, e.Code
 	}
 	if out != nil && len(data) > 0 {
+		// A zeroed target: decoding into a value from an earlier call would keep the fields this response omits.
+		reflect.ValueOf(out).Elem().SetZero()
 		if err := json.Unmarshal(data, out); err != nil {
 			c.h.t.Fatalf("%s %s: decode %q: %v", method, path, data, err)
 		}

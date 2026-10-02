@@ -534,8 +534,8 @@ func TestVNCUnencryptedFallbackNeedsConfirmation(t *testing.T) {
 	if _, err := vnctest.Viewer(v.nc); err != nil {
 		t.Fatal(err)
 	}
-	info = vnc.Info{}
 	waitFor(t, "connected", func() bool {
+		info = vnc.Info{} // a fresh value per poll: fields omitted from a response must not keep an earlier poll's value
 		admin.MustJSON("GET", "/api/sessions/"+s.ID+"/vnc-info", nil, &info)
 		return info.Connected
 	})

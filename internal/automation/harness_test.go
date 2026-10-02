@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"strings"
 	"sync"
@@ -151,6 +152,8 @@ func (h *harness) do(u *model.User, method, path string, body, out any) (int, []
 	defer resp.Body.Close()
 	data, _ := io.ReadAll(resp.Body)
 	if out != nil && resp.StatusCode/100 == 2 && len(data) > 0 {
+		// A zeroed target: decoding into a value from an earlier call would keep the fields this response omits.
+		reflect.ValueOf(out).Elem().SetZero()
 		if err := json.Unmarshal(data, out); err != nil {
 			h.t.Fatalf("%s %s: decode %q: %v", method, path, data, err)
 		}

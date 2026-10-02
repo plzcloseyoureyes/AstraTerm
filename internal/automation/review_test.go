@@ -78,10 +78,28 @@ func (h *harness) shellWithMarks(u *model.User) model.RuntimeSession {
 	h.must(u, "POST", "/api/sessions", map[string]any{"quick": quick, "cols": 120, "rows": 30}, &rs)
 	// The whole prompt, including its closing mark: input typed before it would be echoed inside the prompt and count
 	// as output.
-	waitFor(h.t, "the prompt", 15*time.Second, func() bool {
-		return strings.Contains(h.scrollbackAs(u, rs.ID, "1"), "mk$ \x1b]133;B\x07")
-	})
+	h.waitPrompts(u, rs.ID, 1)
 	return rs
+}
+
+// promptEnd closes the prompt of shellWithMarks.
+const promptEnd = "mk$ \x1b]133;B\x07"
+
+// waitPrompts waits until the shell printed n whole prompts, closing mark included: input typed before that would be
+// echoed inside or before the prompt and count as output.
+func (h *harness) waitPrompts(u *model.User, id string, n int) {
+	h.t.Helper()
+	waitFor(h.t, "the prompt", 15*time.Second, func() bool {
+		return strings.Count(h.scrollbackAs(u, id, "1"), promptEnd) >= n
+	})
+}
+
+// runAtPrompt types one command line and waits for the prompt that follows it.
+func (h *harness) runAtPrompt(u *model.User, id, line string) {
+	h.t.Helper()
+	n := strings.Count(h.scrollbackAs(u, id, "1"), promptEnd)
+	h.input(u, id, line+"\r")
+	h.waitPrompts(u, id, n+1)
 }
 
 func TestEventTriggers(t *testing.T) {
@@ -103,9 +121,9 @@ func TestEventTriggers(t *testing.T) {
 		t.Fatalf("unknown event accepted: %d", st)
 	}
 	rs := h.shellWithMarks(alice)
-	h.input(alice, rs.ID, ": ECHOCHECK\r")
-	h.input(alice, rs.ID, "true\r")
-	h.input(alice, rs.ID, "sh -c 'exit 3'\r")
+	h.runAtPrompt(alice, rs.ID, ": ECHOCHECK")
+	h.runAtPrompt(alice, rs.ID, "true")
+	h.runAtPrompt(alice, rs.ID, "sh -c 'exit 3'")
 	waitFor(t, "command trigger", 10*time.Second, func() bool {
 		return events.find(func(ev map[string]any) bool {
 			n, _ := ev["notify"].(map[string]any)

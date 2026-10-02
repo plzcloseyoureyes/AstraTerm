@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"sync"
 	"testing"
@@ -183,6 +184,8 @@ func (c *tclient) json(method, path string, body, out any) int {
 	c.e.t.Helper()
 	st, data, _ := c.do(method, path, body)
 	if out != nil && st >= 200 && st < 300 && len(data) > 0 {
+		// A zeroed target: decoding into a value from an earlier call would keep the fields this response omits.
+		reflect.ValueOf(out).Elem().SetZero()
 		if err := json.Unmarshal(data, out); err != nil {
 			c.e.t.Fatalf("%s %s: decode %s: %v", method, path, data, err)
 		}
@@ -197,6 +200,8 @@ func (c *tclient) must(method, path string, body, out any) {
 		c.e.t.Fatalf("%s %s: %d %s", method, path, st, data)
 	}
 	if out != nil && len(data) > 0 {
+		// A zeroed target: decoding into a value from an earlier call would keep the fields this response omits.
+		reflect.ValueOf(out).Elem().SetZero()
 		if err := json.Unmarshal(data, out); err != nil {
 			c.e.t.Fatalf("%s %s: decode %s: %v", method, path, data, err)
 		}

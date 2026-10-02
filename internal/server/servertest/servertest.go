@@ -17,6 +17,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"sync"
 	"testing"
@@ -156,6 +157,8 @@ func (c *Client) JSON(method, path string, body, out any) int {
 	c.Env.T.Helper()
 	resp, data := c.Do(method, path, body)
 	if out != nil && resp.StatusCode >= 200 && resp.StatusCode < 300 && len(data) > 0 {
+		// A zeroed target: decoding into a value from an earlier call would keep the fields this response omits.
+		reflect.ValueOf(out).Elem().SetZero()
 		if err := json.Unmarshal(data, out); err != nil {
 			c.Env.T.Fatalf("%s %s: decode %q: %v", method, path, data, err)
 		}
@@ -171,6 +174,8 @@ func (c *Client) MustJSON(method, path string, body, out any) {
 		c.Env.T.Fatalf("%s %s: status %d: %s", method, path, resp.StatusCode, data)
 	}
 	if out != nil && len(data) > 0 {
+		// A zeroed target: decoding into a value from an earlier call would keep the fields this response omits.
+		reflect.ValueOf(out).Elem().SetZero()
 		if err := json.Unmarshal(data, out); err != nil {
 			c.Env.T.Fatalf("%s %s: decode %q: %v", method, path, data, err)
 		}

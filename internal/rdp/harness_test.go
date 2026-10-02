@@ -10,6 +10,7 @@ import (
 	"net/http/cookiejar"
 	"net/http/httptest"
 	"os"
+	"reflect"
 	"strings"
 	"sync"
 	"testing"
@@ -199,6 +200,8 @@ func (c *testClient) must(method, path string, body, out any) {
 		c.env.t.Fatalf("%s %s: %d %s", method, path, st, data)
 	}
 	if out != nil && len(data) > 0 {
+		// A zeroed target: decoding into a value from an earlier call would keep the fields this response omits.
+		reflect.ValueOf(out).Elem().SetZero()
 		if err := json.Unmarshal(data, out); err != nil {
 			c.env.t.Fatalf("%s %s: decode %s: %v", method, path, data, err)
 		}

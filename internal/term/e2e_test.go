@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"os"
+	"reflect"
 	"slices"
 	"strconv"
 	"strings"
@@ -50,6 +51,8 @@ func TestE2ERunningServer(t *testing.T) {
 		defer resp.Body.Close()
 		data, _ := io.ReadAll(resp.Body)
 		if out != nil && resp.StatusCode < 300 {
+			// A zeroed target: decoding into a value from an earlier call would keep the fields this response omits.
+			reflect.ValueOf(out).Elem().SetZero()
 			if err := json.Unmarshal(data, out); err != nil {
 				t.Fatalf("%s %s: %v (%s)", method, path, err, data)
 			}
