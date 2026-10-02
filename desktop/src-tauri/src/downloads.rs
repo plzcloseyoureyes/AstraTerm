@@ -46,6 +46,8 @@ pub struct Downloads {
 
 impl Downloads {
     pub fn load(app: &AppHandle) -> Self {
+        // Leftovers of downloads whose dialog was still open when the app quit.
+        let _ = fs::remove_dir_all(temp_dir());
         let file = app.path().app_config_dir().unwrap_or_default().join("downloads.json");
         let settings = fs::read(&file)
             .ok()
@@ -88,6 +90,11 @@ impl Downloads {
     }
 }
 
+/// Where files download to while their save dialog is open.
+fn temp_dir() -> PathBuf {
+    std::env::temp_dir().join("astraterm-downloads")
+}
+
 fn download_dir(app: &AppHandle, settings: &Settings) -> PathBuf {
     settings
         .dir
@@ -114,7 +121,7 @@ pub fn on_download(webview: Webview, event: DownloadEvent<'_>) -> bool {
                 *destination = unique_path(&dir, &name);
                 return true;
             }
-            let temp_dir = std::env::temp_dir().join("astraterm-downloads");
+            let temp_dir = temp_dir();
             if fs::create_dir_all(&temp_dir).is_err() {
                 *destination = unique_path(&dir, &name);
                 return true;
@@ -130,6 +137,7 @@ pub fn on_download(webview: Webview, event: DownloadEvent<'_>) -> bool {
             let dialog_app = app.clone();
             app.dialog()
                 .file()
+                .set_parent(&webview.window())
                 .set_file_name(&name)
                 .set_directory(&dir)
                 .save_file(move |path| {
@@ -211,7 +219,11 @@ pub fn set_download_ask(app: AppHandle, ask: bool) -> View {
 #[tauri::command]
 pub async fn pick_download_dir(app: AppHandle) -> View {
     let current = download_dir(&app, &app.state::<Downloads>().settings.lock().unwrap().clone());
-    let picked = app.dialog().file().set_directory(current).blocking_pick_folder();
+    let mut dialog = app.dialog().file().set_directory(current);
+    if let Some(window) = app.get_webview_window("main") {
+        dialog = dialog.set_parent(&window);
+    }
+    let picked = dialog.blocking_pick_folder();
     if let Some(dir) = picked.and_then(|p| p.into_path().ok()) {
         app.state::<Downloads>().update(|s| s.dir = Some(dir));
     }
