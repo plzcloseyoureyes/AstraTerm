@@ -32,7 +32,7 @@ license; the license texts shipped by each component are reproduced in [License 
 - **@fontsource-variable/jetbrains-mono 5.3.0** (OFL-1.1, npm package): font software; the license below must accompany the fonts, which may not be sold on their own.
 - **@novnc/novnc 1.7.0** (MPL-2.0, npm package): file-level copyleft. It is distributed unmodified; its Source Code Form is available from the upstream
   project and the package registry (https://www.npmjs.com/package/@novnc/novnc/v/1.7.0). Modified MPL files would have to be published under the MPL.
-- **dompurify 3.4.15** ((MPL-2.0 OR Apache-2.0), npm package): used under the non-copyleft alternative of the dual license.
+- **dompurify 3.4.16** ((MPL-2.0 OR Apache-2.0), npm package): used under the non-copyleft alternative of the dual license.
 - Components that ship **no license file** (license taken from their package metadata; notice to be
   obtained from upstream): @devolutions/iron-remote-desktop 0.11.0, @devolutions/iron-remote-desktop-rdp 0.7.0, @headless-tree/core 1.7.0, @headless-tree/react 1.7.0, @uiw/codemirror-extensions-basic-setup 4.25.12, @uiw/react-codemirror 4.25.12, @xterm/addon-serialize 0.14.0, react-remove-scroll-bar 2.3.8.
 
@@ -379,7 +379,7 @@ Production dependencies from `web/package-lock.json`, bundled (minified) into th
 | dockview | 8.3.1 | MIT |  |
 | dockview-core | 8.3.1 | MIT |  |
 | dockview-react | 8.3.1 | MIT |  |
-| dompurify | 3.4.15 | (MPL-2.0 OR Apache-2.0) |  |
+| dompurify | 3.4.16 | (MPL-2.0 OR Apache-2.0) |  |
 | escape-string-regexp | 5.0.0 | MIT |  |
 | estree-util-is-identifier-name | 3.0.0 | MIT |  |
 | extend | 3.0.2 | MIT |  |
@@ -714,7 +714,7 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-### github.com/aws/aws-sdk-go-v2 v1.47.1, github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.20, github.com/aws/aws-sdk-go-v2/config v1.33.6, github.com/aws/aws-sdk-go-v2/credentials v1.20.6, github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.1, github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4, github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4, github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.4, github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.19, github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.5, github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.4, github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.4, github.com/aws/aws-sdk-go-v2/service/s3 v1.113.4, github.com/aws/aws-sdk-go-v2/service/signin v1.10.1, github.com/aws/aws-sdk-go-v2/service/sso v1.38.1, github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.1, github.com/aws/aws-sdk-go-v2/service/sts v1.51.1, github.com/bougou/go-ipmi v0.9.1, github.com/go-jose/go-jose/v4 v4.1.4, github.com/google/go-tpm v0.9.8, github.com/google/pprof v0.0.0-20260802141513-ef3492d7dac3, github.com/jcmturner/dnsutils/v2 v2.0.0, github.com/jcmturner/rpc/v2 v2.0.3, github.com/kayrus/putty v1.0.5, github.com/pquerna/otp v1.5.0, github.com/tklauser/numcpus v0.11.0, dompurify 3.4.15
+### github.com/aws/aws-sdk-go-v2 v1.47.1, github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.20, github.com/aws/aws-sdk-go-v2/config v1.33.6, github.com/aws/aws-sdk-go-v2/credentials v1.20.6, github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.1, github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4, github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4, github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.4, github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.19, github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.5, github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.4, github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.4, github.com/aws/aws-sdk-go-v2/service/s3 v1.113.4, github.com/aws/aws-sdk-go-v2/service/signin v1.10.1, github.com/aws/aws-sdk-go-v2/service/sso v1.38.1, github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.1, github.com/aws/aws-sdk-go-v2/service/sts v1.51.1, github.com/bougou/go-ipmi v0.9.1, github.com/go-jose/go-jose/v4 v4.1.4, github.com/google/go-tpm v0.9.8, github.com/google/pprof v0.0.0-20260802141513-ef3492d7dac3, github.com/jcmturner/dnsutils/v2 v2.0.0, github.com/jcmturner/rpc/v2 v2.0.3, github.com/kayrus/putty v1.0.5, github.com/pquerna/otp v1.5.0, github.com/tklauser/numcpus v0.11.0, dompurify 3.4.16
 
 From `LICENSE.txt`:
 
@@ -7144,7 +7144,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### dompurify 3.4.15
+### dompurify 3.4.16
 
 From `LICENSE-MPL`:
 

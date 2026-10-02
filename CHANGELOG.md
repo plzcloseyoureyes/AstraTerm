@@ -8,6 +8,11 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+### Security
+
+- Updated DOMPurify (bundled by the editor) to 3.4.16, which fixes a low-severity issue. AstraTerm does not use the
+  affected option.
+
 ## [0.1.11] - 2026-10-02
 
 ### Added
