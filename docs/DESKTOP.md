@@ -27,7 +27,8 @@ reimplement anything: the regular `astraterm` binary runs inside it as a sidecar
 - **Navigation** stays on the AstraTerm server; links to anything else open in the default browser (tauri-plugin-opener).
 - **`window.open`**: AstraTerm's own pages (pop-out tabs) open as native windows; other URLs (links in terminals and
   web sessions) open in the default browser.
-- **Downloads** go to the Downloads folder, never overwriting an existing file.
+- **Downloads** (`src/downloads.rs`; Settings → General → Downloads): by default a save dialog asks where each file
+  goes (it downloads to a temporary file meanwhile); otherwise files go to the download folder, never overwriting one.
 - **Translucency** (macOS, Windows): the window is transparent; the page stays opaque until Settings → Appearance →
   Window opacity is below 100%. macOS blurs behind it with vibrancy; on Windows the page turns Acrylic on only while
   see-through (it slows down moving the window on some Windows 11 builds). An initialization script tells the page
@@ -36,8 +37,8 @@ reimplement anything: the regular `astraterm` binary runs inside it as a sidecar
   maximizes it (`data-tauri-drag-region`). macOS keeps its window buttons, moved into the bar; on Windows the page draws
   minimize / maximize / close (`web/src/layout/WindowControls.tsx`).
 - **Security**: the page gets no Tauri IPC except its own window's title bar commands (`capabilities/window-drag.json`,
-  `window-controls.json`) and, on Windows, switching the blur (`window-effects.json`). Otherwise it runs exactly like
-  it does in a browser.
+  `window-controls.json`), switching the blur on Windows (`window-effects.json`) and the three download-settings
+  commands (`downloads.json`). Otherwise it runs exactly like it does in a browser.
 
 ### Engines and their limits
 

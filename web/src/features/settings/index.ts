@@ -69,7 +69,7 @@ registerSettingsSection({
   icon: SlidersHorizontal,
   order: 20,
   group: 'general',
-  keywords: ['workspace', 'restore', 'layout', 'tabs', 'confirm', 'close', 'links', 'browser'],
+  keywords: ['workspace', 'restore', 'layout', 'tabs', 'confirm', 'close', 'links', 'browser', 'download', 'folder', 'save'],
   component: lazy(() => import('./sections/General')),
 })
 

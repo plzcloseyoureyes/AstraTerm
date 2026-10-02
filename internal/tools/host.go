@@ -1,12 +1,14 @@
 package tools
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"os"
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/labstack/echo/v5"
 	gnet "github.com/shirou/gopsutil/v4/net"
@@ -67,14 +69,38 @@ type socketInfo struct {
 	Service    string `json:"service,omitempty"`
 }
 
+// listeningTimeout bounds the listening-ports lookup.
+const listeningTimeout = 15 * time.Second
+
+// connections lists the host's sockets. The lookup shells out on some systems (lsof on macOS), and a stuck lsof can
+// be unkillable, so on timeout the call is abandoned rather than waited for.
+func connections(ctx context.Context) ([]gnet.ConnectionStat, error) {
+	type result struct {
+		conns []gnet.ConnectionStat
+		err   error
+	}
+	ch := make(chan result, 1)
+	go func() {
+		conns, err := gnet.ConnectionsWithContext(ctx, "inet")
+		ch <- result{conns, err}
+	}()
+	select {
+	case r := <-ch:
+		return r.conns, r.err
+	case <-ctx.Done():
+		return nil, errors.New("listing the listening ports timed out")
+	}
+}
+
 func (h *handler) listening(c *echo.Context) error {
 	if err := h.gate(httpx.UserFrom(c), true); err != nil { // exposes host processes: admin-only in server mode
 		return err
 	}
-	ctx := c.Request().Context()
+	ctx, cancel := context.WithTimeout(c.Request().Context(), listeningTimeout)
+	defer cancel()
 	includeAll := c.QueryParam("all") == "1" || c.QueryParam("all") == "true"
 
-	conns, err := gnet.ConnectionsWithContext(ctx, "inet")
+	conns, err := connections(ctx)
 	if err != nil {
 		return httpx.Internal(err)
 	}

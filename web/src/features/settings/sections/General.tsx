@@ -1,9 +1,12 @@
-import { LayoutGrid, ListRestart } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { FolderOpen, LayoutGrid, ListRestart } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { confirm } from '@/components/ui/dialog-host'
 import { SimpleSelect } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
+import { appCommand, DOWNLOAD_SETTINGS, type DownloadSettings } from '@/lib/desktop'
+import { errorMessage } from '@/lib/utils'
 import { generalSettings } from '@/stores/settings'
 import { clearClosedTabs, resetSavedLayout, useClosedTabs } from '@/stores/workspace'
 import { SettingRow, SettingsGroup, SettingsPage } from '../ui'
@@ -64,6 +67,33 @@ export default function GeneralSection() {
           />
         </SettingRow>
       </SettingsGroup>
+
+      {DOWNLOAD_SETTINGS && <DownloadsGroup />}
     </SettingsPage>
+  )
+}
+
+/** Desktop app only: the app, not a browser, decides where downloaded files go. */
+function DownloadsGroup() {
+  const [d, setD] = useState<DownloadSettings | null>(null)
+  const run = (cmd: string, args?: Record<string, unknown>) =>
+    void appCommand<DownloadSettings>(cmd, args).then(setD, (err) => toast.error('Download settings', { description: errorMessage(err) }))
+  useEffect(() => run('download_settings'), [])
+  if (!d) return null
+  return (
+    <SettingsGroup title="Downloads">
+      <SettingRow label="Download folder" description={<span className="font-mono break-all">{d.dir}</span>}>
+        <Button variant="secondary" size="sm" onClick={() => run('pick_download_dir')}>
+          <FolderOpen /> Change…
+        </Button>
+      </SettingRow>
+      <SettingRow
+        label="Ask where to save each file"
+        description="Off: files go straight to the download folder (an existing file is never overwritten)."
+        htmlFor="general-download-ask"
+      >
+        <Switch id="general-download-ask" checked={d.ask} onCheckedChange={(ask) => run('set_download_ask', { ask })} />
+      </SettingRow>
+    </SettingsGroup>
   )
 }

@@ -14,7 +14,8 @@
       "capabilities": [
         "window-drag",
         "window-controls",
-        "window-effects"
+        "window-effects",
+        "downloads"
       ]
     }
   },

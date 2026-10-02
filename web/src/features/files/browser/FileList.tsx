@@ -19,6 +19,7 @@ import type { ColumnId, FsContext, ListRow } from '../types'
 import type { ColumnModel } from './columns'
 import type { BrowserController } from './controller'
 import { buildFileMenu } from './menu'
+import { useMarquee } from './useMarquee'
 import { useView } from './viewStore'
 
 const HEADER_H = 24
@@ -75,6 +76,9 @@ export function FileList({ controller, ctx, rows, columns, rowHeight, busy, cont
     setDropHint((h) => (h === hint ? h : hint))
   }, [ctx, dir])
   const typeAhead = useRef({ text: '', at: 0 })
+  const marquee = useMarquee({ scrollRef, rows, rowHeight, headerHeight: HEADER_H, controller })
+  /** The press started on a file's icon or name: it may drag the file. Anywhere else it starts a rectangle. */
+  const pressOnHandle = useRef(false)
   const baseId = useId()
 
   const virtualizer = useVirtualizer({
@@ -329,18 +333,19 @@ export function FileList({ controller, ctx, rows, columns, rowHeight, busy, cont
   )
   const onRowClick = useCallback(
     (row: ListRow, e: React.MouseEvent) => {
+      if (marquee.justEnded()) return
       const toggle = e.ctrlKey || e.metaKey
       if (!toggle && !e.shiftKey && controller.view.selected.size > 1 && controller.view.selected.has(row.entry.path)) {
         controller.click(row, { toggle: false, range: false })
       }
     },
-    [controller],
+    [controller, marquee],
   )
   const onRowDoubleClick = useCallback((row: ListRow) => controller.open(row), [controller])
   const onRowContextMenu = useCallback((row: ListRow) => controller.contextSelect(row), [controller])
   const onRowDragStart = useCallback(
     (row: ListRow, e: React.DragEvent) => {
-      if (row.parent || !dir) {
+      if (row.parent || !dir || !pressOnHandle.current) {
         e.preventDefault()
         return
       }
@@ -442,12 +447,15 @@ export function FileList({ controller, ctx, rows, columns, rowHeight, busy, cont
               controller.clearSelection()
             }
             controller.markActive()
+            pressOnHandle.current = !!t.closest('[data-drag-handle]')
+            if (e.button === 0 && !pressOnHandle.current && !t.closest('[role="columnheader"], input')) marquee.start(e)
           }}
           onContextMenu={(e) => {
             if (!(e.target as Element).closest('[role="row"][data-index]')) controller.contextSelect(null)
           }}
         >
           <div style={gridTemplate} className="relative w-full">
+            {marquee.box && <div className="pointer-events-none absolute z-20 rounded-xs border border-primary/70 bg-primary/15" style={marquee.box} aria-hidden />}
             {/* header */}
             <div
               role="row"
@@ -694,12 +702,18 @@ function NameCell({
   const e = row.entry
   return (
     <span className="flex min-w-0 flex-1 items-center gap-1.5">
-      <FileIcon entry={e} parent={row.parent} />
       {renaming ? (
-        <RenameInput entry={e} onCommit={onCommit} onCancel={onCancel} />
+        <>
+          <FileIcon entry={e} parent={row.parent} />
+          <RenameInput entry={e} onCommit={onCommit} onCancel={onCancel} />
+        </>
       ) : (
         <>
-          <span className="truncate">{row.parent ? '..' : e.name}</span>
+          {/* Icon and name drag the file; the rest of the row starts a selection rectangle (useMarquee). */}
+          <span data-drag-handle="" className="flex min-w-0 items-center gap-1.5">
+            <FileIcon entry={e} parent={row.parent} />
+            <span className="truncate">{row.parent ? '..' : e.name}</span>
+          </span>
           {e.type === 'symlink' && e.linkTarget && !row.parent && (
             <span className="hidden min-w-0 truncate text-xs text-muted-foreground @md:inline">→ {e.linkTarget}</span>
           )}

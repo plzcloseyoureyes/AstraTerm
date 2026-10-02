@@ -6,12 +6,13 @@
 // happens whenever this app exits, even if it crashes.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // no console window on Windows
 
+mod downloads;
+
 use std::collections::VecDeque;
-use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
-use tauri::webview::{DownloadEvent, NewWindowResponse};
+use tauri::webview::NewWindowResponse;
 use tauri::{AppHandle, Manager, Runtime, WebviewUrl, WebviewWindow, WebviewWindowBuilder};
 use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 use tauri_plugin_opener::OpenerExt;
@@ -59,7 +60,13 @@ fn main() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
+        .invoke_handler(tauri::generate_handler![
+            downloads::download_settings,
+            downloads::set_download_ask,
+            downloads::pick_download_dir
+        ])
         .setup(|app| {
+            app.manage(downloads::Downloads::load(app.handle()));
             let origin = Origin::default();
             let window = main_window(app.handle(), origin.clone())?;
             start_server(app.handle(), window, origin)?;
@@ -75,7 +82,9 @@ fn main_window(app: &AppHandle, origin: Origin) -> tauri::Result<WebviewWindow> 
     let nav_app = app.clone();
     let popup_app = app.clone();
     let popup_origin = origin;
-    let window = WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()));
+    let window = WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
+        // What this window offers the page (web/src/lib/desktop.ts); translucent() and title_bar() add to it.
+        .initialization_script("window.__ASTRATERM_DESKTOP__ = { downloads: true };");
     title_bar(translucent(window))
         .title("AstraTerm")
         .inner_size(1440.0, 900.0)
@@ -122,21 +131,8 @@ fn main_window(app: &AppHandle, origin: Origin) -> tauri::Result<WebviewWindow> 
                 Err(_) => NewWindowResponse::Deny,
             }
         })
-        // Downloads (files, exports, recordings) go to the Downloads folder, never overwriting a file.
-        .on_download(|webview, event| {
-            if let DownloadEvent::Requested { url, destination } = event {
-                let name = destination
-                    .file_name()
-                    .map(|n| n.to_string_lossy().into_owned())
-                    .or_else(|| url.path_segments().and_then(|mut s| s.next_back()).map(str::to_owned))
-                    .filter(|n| !n.is_empty())
-                    .unwrap_or_else(|| "download".into());
-                if let Ok(dir) = webview.app_handle().path().download_dir() {
-                    *destination = unique_path(&dir, &name);
-                }
-            }
-            true
-        })
+        // Downloads (files, exports, recordings): ask where to save, or the download folder (downloads.rs).
+        .on_download(downloads::on_download)
         .build()
 }
 
@@ -156,16 +152,15 @@ fn translucent<'a, R: Runtime, M: Manager<R>>(
             .effect(Effect::HudWindow)
             .state(EffectState::Active)
             .build();
-        builder
-            .transparent(true)
-            .effects(effects)
-            .initialization_script("window.__ASTRATERM_DESKTOP__ = { translucent: true };")
+        builder.transparent(true).effects(effects).initialization_script(
+            "window.__ASTRATERM_DESKTOP__ = { ...window.__ASTRATERM_DESKTOP__, translucent: true };",
+        )
     }
     #[cfg(target_os = "windows")]
     {
         builder
             .transparent(true)
-            .initialization_script("window.__ASTRATERM_DESKTOP__ = { translucent: true, blurOnDemand: true };")
+            .initialization_script("window.__ASTRATERM_DESKTOP__ = { ...window.__ASTRATERM_DESKTOP__, translucent: true, blurOnDemand: true };")
     }
     #[cfg(not(any(target_os = "macos", target_os = "windows")))]
     builder
@@ -255,20 +250,4 @@ fn start_server(app: &AppHandle, window: WebviewWindow, origin: Origin) -> tauri
         }
     });
     Ok(())
-}
-
-/// dir/name, or dir/"name (2).ext" … when that file exists.
-fn unique_path(dir: &Path, name: &str) -> PathBuf {
-    let candidate = dir.join(name);
-    if !candidate.exists() {
-        return candidate;
-    }
-    let (stem, ext) = match name.rsplit_once('.') {
-        Some((s, e)) if !s.is_empty() => (s.to_owned(), format!(".{e}")),
-        _ => (name.to_owned(), String::new()),
-    };
-    (2..)
-        .map(|n| dir.join(format!("{stem} ({n}){ext}")))
-        .find(|p| !p.exists())
-        .unwrap()
 }

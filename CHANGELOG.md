@@ -8,6 +8,23 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+### Added
+
+- **Download location** (desktop app; Settings → General → Downloads): choose the download folder, and whether to be
+  asked where to save each file (on by default).
+- **Selection rectangle** in file lists: drag from empty space, or from the blank part of a row, to select the rows it
+  covers (Ctrl / ⌘ / Shift adds to the selection). Dragging a file's icon or name still moves or copies it.
+
+### Changed
+
+- **Tab titles** show the session name by default instead of the shell's title (Settings → Terminal → Tab title).
+- **Window opacity** goes down to 10% on Windows too.
+
+### Fixed
+
+- **Listening ports** (Tools) reports an error after 15 seconds instead of waiting forever when the system's lookup
+  hangs.
+
 ## [0.1.10] - 2026-10-02
 
 ### Fixed

@@ -149,7 +149,7 @@ export const TERMINAL_DEFAULTS: TerminalSettings = {
   screenReaderMode: false,
   images: true,
 
-  titleMode: 'osc',
+  titleMode: 'session',
 
   copyOnSelect: false,
   rightClickAction: 'menu',

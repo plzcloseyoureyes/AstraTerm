@@ -1,0 +1,19 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "downloads",
+  "description": "Settings \u2192 General \u2192 Downloads: read the download settings, switch asking on or off, pick the download folder. Nothing else.",
+  "windows": [
+    "main"
+  ],
+  "remote": {
+    "urls": [
+      "http://127.0.0.1:*",
+      "http://localhost:*"
+    ]
+  },
+  "permissions": [
+    "allow-download-settings",
+    "allow-set-download-ask",
+    "allow-pick-download-dir"
+  ]
+}

@@ -455,12 +455,12 @@ export default function TerminalSettingsSection() {
         <SelectRow
           k="titleMode"
           label="Tab title"
-          description="Applications set the terminal title with OSC 0/2 escape sequences."
+          description="The terminal title is what the shell or a program sets, like user@host: folder."
           width="w-56"
           options={[
-            { value: 'osc', label: 'Terminal title (fallback: session name)' },
-            { value: 'session', label: 'Session name only' },
+            { value: 'session', label: 'Session name' },
             { value: 'both', label: 'Session name — terminal title' },
+            { value: 'osc', label: 'Terminal title' },
           ]}
         />
         <NumberRow k="padding" label="Inner padding" unit="px" />

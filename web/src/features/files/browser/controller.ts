@@ -239,6 +239,11 @@ export class BrowserController {
     patchView(this.viewId, { selected: EMPTY_SELECTION, anchor: null })
   }
 
+  /** Replace the selection (rubber-band selection). */
+  setSelection(paths: ReadonlySet<string>): void {
+    patchView(this.viewId, { selected: paths.size ? new Set(paths) : EMPTY_SELECTION })
+  }
+
   /** Invert the selection (Explorer / Total Commander "Num *"). */
   invertSelection(): void {
     const cur = this.view.selected
