@@ -670,7 +670,7 @@ registerStatusItem({ id, align: 'left'|'right', order, component })
 ```
 make web      # cd web && npm ci && npm run build   (outputs to internal/webui/dist)
 make build    # CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=…" -o bin/astraterm ./cmd/astraterm
-make dev      # go run ./cmd/astraterm --dev & (cd web && npm run dev)   — vite proxies /api and /ws to :7822
+make dev      # go run ./cmd/astraterm --dev & (cd web && npm run dev)   — vite proxies /api and /ws to the dev backend on :7823
 make release  # cross-compile darwin/linux/windows × amd64/arm64 into dist/
 ```
 Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/astraterm` (or `./astraterm-data` with `--portable`),

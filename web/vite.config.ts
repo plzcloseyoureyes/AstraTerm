@@ -4,7 +4,8 @@ import tailwindcss from '@tailwindcss/vite'
 import { writeFileSync } from 'node:fs'
 import path from 'node:path'
 
-const backend = process.env.ASTRATERM_BACKEND ?? 'http://127.0.0.1:7822'
+// The dev backend (make dev-backend) listens on 7823, leaving 7822 to an installed AstraTerm.
+const backend = process.env.ASTRATERM_BACKEND ?? 'http://127.0.0.1:7823'
 const outDir = path.resolve(__dirname, '../internal/webui/dist')
 
 /** emptyOutDir wipes internal/webui/dist; keep the tracked placeholder that lets go:embed compile on fresh clones. */

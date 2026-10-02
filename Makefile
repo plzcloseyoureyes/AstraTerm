@@ -42,8 +42,9 @@ build: web
 build-go:
 	CGO_ENABLED=0 go build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o $(BIN) ./cmd/astraterm
 
+# Port 7823, not the default 7822, so development never collides with an installed AstraTerm.
 dev-backend:
-	go run ./cmd/astraterm --dev --no-open --data-dir ./.astraterm-data
+	go run ./cmd/astraterm --dev --no-open --data-dir ./.astraterm-data --listen 127.0.0.1:7823
 
 dev-web:
 	cd web && npm run dev
