@@ -739,10 +739,14 @@ func (js *jsSession) run(cmd string, promptRe *regexp.Regexp, timeout time.Durat
 	return cleanCommandOutput(out, cmd, promptRe), nil
 }
 
-// cleanCommandOutput removes the echoed command line(s) and the trailing prompt line.
+// cleanCommandOutput removes the echoed command line(s) and the trailing prompt line. A command typed before the
+// shell printed its previous prompt (type-ahead) is echoed first and the late prompt lands in front of the output
+// ("$ result"): that prompt is removed too.
 func cleanCommandOutput(out, cmd string, promptRe *regexp.Regexp) string {
 	lines := strings.Split(out, "\n")
+	prompt := ""
 	if len(lines) > 0 && promptRe != nil && promptRe.MatchString(lines[len(lines)-1]) {
+		prompt = lines[len(lines)-1]
 		lines = lines[:len(lines)-1]
 	}
 	cmdLines := splitLines(cmd)
@@ -758,6 +762,9 @@ func cleanCommandOutput(out, cmd string, promptRe *regexp.Regexp) string {
 		}
 		lines = lines[1:]
 		cmdLines = cmdLines[1:]
+	}
+	if prompt != "" && len(lines) > 0 && strings.HasPrefix(lines[0], prompt) {
+		lines[0] = lines[0][len(prompt):]
 	}
 	return strings.TrimRight(strings.Join(lines, "\n"), "\n")
 }

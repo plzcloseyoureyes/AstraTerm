@@ -395,7 +395,8 @@ func TestHTTPCheckLoopback(t *testing.T) {
 		t.Fatalf("result = %v", r)
 	}
 	timing := r["timing"].(row)
-	if timing["totalMs"].(float64) <= 0 || timing["ttfbMs"].(float64) <= 0 {
+	// On loopback the first byte can arrive within the clock's resolution (Windows): only the total must be positive.
+	if timing["totalMs"].(float64) <= 0 || timing["ttfbMs"].(float64) < 0 {
 		t.Errorf("timing = %v", timing)
 	}
 	if gotHost != "virtual.test" || gotAuth != "Bearer abc" {

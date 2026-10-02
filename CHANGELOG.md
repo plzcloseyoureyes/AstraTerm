@@ -18,6 +18,11 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 - **Local shell tabs** show this computer's files in the files side panel, following the shell's folder, like SSH
   sessions show SFTP.
 
+### Fixed
+
+- **Scripts:** `session.run()` no longer returns the shell prompt in front of the output when the command was typed
+  before the previous prompt had appeared.
+
 ## [0.1.12] - 2026-10-02
 
 ### Security

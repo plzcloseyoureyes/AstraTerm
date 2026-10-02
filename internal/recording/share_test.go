@@ -117,22 +117,27 @@ func TestShareRelayPolicy(t *testing.T) {
 	if err := g.until(func(text bool, d string) bool { return text && strings.Contains(d, `"type":"readonly","value":false`) }); err != nil {
 		t.Fatal(err)
 	}
-	g.send("whoami-guest\r")
-	e.input(t, c, s.ID, "owner-cmd\r")
 	type auditEntry struct {
 		Details map[string]any `json:"details"`
 	}
 	var entries []auditEntry
-	waitFor(t, "guest command audited", func() bool {
-		c.MustJSON("GET", "/api/admin/audit?action=session.command&target="+s.ID, nil, &entries)
-		n := 0
-		for _, en := range entries {
-			if en.Details["command"] == "whoami-guest" || en.Details["command"] == "owner-cmd" {
-				n++
+	audited := func(command string) func() bool {
+		return func() bool {
+			entries = nil // decoding into the previous poll's maps would keep their keys (a stale "guest")
+			c.MustJSON("GET", "/api/admin/audit?action=session.command&target="+s.ID, nil, &entries)
+			for _, en := range entries {
+				if en.Details["command"] == command {
+					return true
+				}
 			}
+			return false
 		}
-		return n == 2
-	})
+	}
+	// One after the other: typed at the same instant, the two commands could interleave on the same line.
+	g.send("whoami-guest\r")
+	waitFor(t, "guest command audited", audited("whoami-guest"))
+	e.input(t, c, s.ID, "owner-cmd\r")
+	waitFor(t, "owner command audited", audited("owner-cmd"))
 	for _, en := range entries {
 		guest, _ := en.Details["guest"].(map[string]any)
 		switch en.Details["command"] {

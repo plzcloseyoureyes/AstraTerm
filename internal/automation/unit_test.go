@@ -407,6 +407,11 @@ func TestCleanCommandOutput(t *testing.T) {
 	if got := cleanCommandOutput(out, "echo a; \\\necho b", defaultPromptRe); got != "a\nb" {
 		t.Fatalf("clean multi-line %q", got)
 	}
+	// Type-ahead: the command was echoed before the previous prompt arrived, which then precedes the output.
+	out = "echo RUN-OUT\nnx$ RUN-OUT\nnx$ "
+	if got := cleanCommandOutput(out, "echo RUN-OUT", defaultPromptRe); got != "RUN-OUT" {
+		t.Fatalf("clean type-ahead %q", got)
+	}
 }
 
 func TestParseSpec(t *testing.T) {
