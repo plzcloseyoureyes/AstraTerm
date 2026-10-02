@@ -7,6 +7,8 @@ self-hosted app. Run it as a desktop app, or as a server for your team.
 [![Release](https://img.shields.io/github/v/release/plzcloseyoureyes/astraterm?sort=semver)](https://github.com/plzcloseyoureyes/astraterm/releases)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
+![AstraTerm: an SSH session with the SFTP side panel, tabs in the title bar and live server monitoring in the status bar](docs/images/screenshot.png)
+
 - **One workspace.** Every connection type in title-bar tabs, each with its own split layout.
 - **Organized.** Folders, tags, favorites, fuzzy search, reusable identities. Import from MobaXterm, PuTTY,
   `~/.ssh/config` and more.
