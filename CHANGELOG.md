@@ -8,6 +8,8 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+## [0.1.12] - 2026-10-02
+
 ### Security
 
 - Updated DOMPurify (bundled by the editor) to 3.4.16, which fixes a low-severity issue. AstraTerm does not use the
@@ -170,7 +172,8 @@ endings, which broke monitoring of Linux, macOS and BSD hosts. That is fixed her
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.11...HEAD
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.12...HEAD
+[0.1.12]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.11...v0.1.12
 [0.1.11]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.8...v0.1.9
