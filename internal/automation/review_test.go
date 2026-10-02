@@ -168,7 +168,9 @@ func TestTriggerLoopGuardAndEcho(t *testing.T) {
 	rs := h.quickShell(alice, nil)
 
 	// The rule's own output re-triggers it after its cooldown: it must be paused after loopMaxChain fires in a row.
-	h.must(alice, "POST", "/api/automation/triggers", map[string]any{"name": "looper", "pattern": `^LOOP$`, "cooldownMs": 250,
+	// Not anchored at the line start: the rule types its command as soon as it sees LOOP, which can be before the shell
+	// printed its prompt, and then the next LOOP follows that prompt on the same line ("nx$ LOOP").
+	h.must(alice, "POST", "/api/automation/triggers", map[string]any{"name": "looper", "pattern": `LOOP$`, "cooldownMs": 250,
 		"actions": []map[string]any{{"type": "send", "text": "sleep 0.3; echo LOOP", "enter": true}}}, nil)
 	h.input(alice, rs.ID, "echo LO''OP\r")
 	waitFor(t, "loop paused", 20*time.Second, func() bool {
