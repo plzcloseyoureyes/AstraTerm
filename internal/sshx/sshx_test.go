@@ -18,6 +18,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -499,7 +500,14 @@ func TestTerminalOverHTTP(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer ws.CloseNow()
-	var out strings.Builder
+	// The reader goroutine writes the output while the test reads it.
+	var outMu sync.Mutex
+	var outBuf strings.Builder
+	output := func() string {
+		outMu.Lock()
+		defer outMu.Unlock()
+		return outBuf.String()
+	}
 	msgs := make(chan map[string]any, 100)
 	go func() {
 		for {
@@ -509,7 +517,9 @@ func TestTerminalOverHTTP(t *testing.T) {
 				return
 			}
 			if typ == websocket.MessageBinary {
-				out.Write(data)
+				outMu.Lock()
+				outBuf.Write(data)
+				outMu.Unlock()
 				msgs <- map[string]any{"type": "data"}
 				continue
 			}
@@ -531,16 +541,16 @@ func TestTerminalOverHTTP(t *testing.T) {
 					return
 				}
 			case <-timeout:
-				t.Fatalf("timeout; output %q", out.String())
+				t.Fatalf("timeout; output %q", output())
 			}
 		}
 	}
 	waitMsg(func(m map[string]any) bool { return m["type"] == "attach-end" })
 	ws.Write(context.Background(), websocket.MessageText, []byte(`{"type":"resize","cols":120,"rows":40}`))
 	ws.Write(context.Background(), websocket.MessageBinary, []byte("hello-astraterm\r"))
-	waitMsg(func(map[string]any) bool { return strings.Contains(out.String(), "out:hello-astraterm") })
-	if !strings.Contains(out.String(), "Hello from banner") {
-		t.Fatalf("banner missing from %q", out.String())
+	waitMsg(func(map[string]any) bool { return strings.Contains(output(), "out:hello-astraterm") })
+	if !strings.Contains(output(), "Hello from banner") {
+		t.Fatalf("banner missing from %q", output())
 	}
 	srv.mu.Lock()
 	size := srv.PtySize
