@@ -76,7 +76,11 @@ func (h *harness) shellWithMarks(u *model.User) model.RuntimeSession {
 		"env": map[string]any{"PS1": ps1}}}
 	var rs model.RuntimeSession
 	h.must(u, "POST", "/api/sessions", map[string]any{"quick": quick, "cols": 120, "rows": 30}, &rs)
-	h.waitOutput(u, rs.ID, "mk$")
+	// The whole prompt, including its closing mark: input typed before it would be echoed inside the prompt and count
+	// as output.
+	waitFor(h.t, "the prompt", 15*time.Second, func() bool {
+		return strings.Contains(h.scrollbackAs(u, rs.ID, "1"), "mk$ \x1b]133;B\x07")
+	})
 	return rs
 }
 

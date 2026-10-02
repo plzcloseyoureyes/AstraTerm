@@ -208,8 +208,11 @@ func (h *harness) savedShell(u *model.User, name string, options map[string]any,
 	return c
 }
 
-func (h *harness) scrollback(u *model.User, id string) string {
-	req, _ := http.NewRequest("GET", h.srv.URL+"/api/sessions/"+id+"/scrollback?raw=0", nil)
+func (h *harness) scrollback(u *model.User, id string) string { return h.scrollbackAs(u, id, "0") }
+
+// scrollbackAs reads the session's output as text (raw "0") or with its escape sequences (raw "1").
+func (h *harness) scrollbackAs(u *model.User, id, raw string) string {
+	req, _ := http.NewRequest("GET", h.srv.URL+"/api/sessions/"+id+"/scrollback?raw="+raw, nil)
 	req.Header.Set("X-Test-User", u.ID)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

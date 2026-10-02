@@ -93,10 +93,19 @@ func TestPortKnockAndConnectTimeout(t *testing.T) {
 		t.Fatal(err)
 	}
 	release()
-	srv.mu.Lock()
-	connected := srv.ConnectedAt[0]
-	srv.mu.Unlock()
-	if k := knockedAt.Load(); k == 0 || k > connected.UnixNano() {
+	// The test server and the knock listener record their side a moment after the client is done.
+	var connected time.Time
+	for deadline := time.Now().Add(5 * time.Second); time.Now().Before(deadline); time.Sleep(10 * time.Millisecond) {
+		srv.mu.Lock()
+		if len(srv.ConnectedAt) > 0 {
+			connected = srv.ConnectedAt[0]
+		}
+		srv.mu.Unlock()
+		if !connected.IsZero() && knockedAt.Load() != 0 {
+			break
+		}
+	}
+	if k := knockedAt.Load(); k == 0 || connected.IsZero() || k > connected.UnixNano() {
 		t.Fatalf("knock at %d, ssh at %d", k, connected.UnixNano())
 	}
 
