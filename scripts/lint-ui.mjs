@@ -14,7 +14,8 @@
  * Checked everywhere in web/src, the shared layer included (docs/UX.md "Motion & feedback": zero oscillation):
  *   oscillation     looping / blinking motion: pulse, ping, bounce, blink, breathe, heartbeat, caret-blink or
  *                   indeterminate animation classes; keyframes named like them; any `infinite` animation other than
- *                   the spinner's rotation (`spin`); tw-animate's repeat-infinite
+ *                   the spinner's rotation (`spin`) and the ProgressBar's slide (`progress-slide`); tw-animate's
+ *                   repeat-infinite
  *   caret           a blinking text caret: `cursorBlink: true` (xterm), Monaco `cursorBlinking` other than 'solid',
  *                   and CodeMirror (a file importing @codemirror/view, codemirror or @uiw/react-codemirror) without
  *                   `cursorBlinkRate: 0` (native fields are steady through `caret-animation: manual` in index.css)
@@ -42,7 +43,7 @@ const globalRules = [
       new RegExp(`(?<![-\\w])animate-(?:${OSCILLATION_WORDS})\\b`).test(text) ||
       new RegExp(`@keyframes\\s+[\\w-]*(?:${OSCILLATION_WORDS})`).test(text) ||
       /\brepeat-infinite\b/.test(text) ||
-      (/\binfinite\b/.test(text) && /animation|--animate-/.test(text) && !/\bspin\b/.test(text)),
+      (/\binfinite\b/.test(text) && /animation|--animate-/.test(text) && !/\b(?:spin|progress-slide)\b/.test(text)),
     hint: 'nothing may oscillate (docs/UX.md "Motion & feedback"): steady StatusDot / text, a delayed Spinner for long waits, a determinate ProgressBar',
   },
 ]

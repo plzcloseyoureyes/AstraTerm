@@ -194,8 +194,9 @@
 
   /* Motion (docs/UX.md "Motion & feedback"): nothing oscillates — no pulse, breathe, blink, ping, bounce or heartbeat.
      Tailwind's looping animations are removed from the theme so their classes do not exist; the only continuous motion
-     left is the slow, smooth rotation of the spinner ring for an explicit long wait (components/ui/spinner). Status is
-     steady colour + shape (components/ui/status-dot); indeterminate progress is a still bar. One-shot enter / exit
+     left is the slow, smooth rotation of the spinner ring for an explicit long wait (components/ui/spinner) and the
+     one-way slide of an indeterminate progress bar (components/ui/progress; a still bar with reduced motion). Status
+     is steady colour + shape (components/ui/status-dot). One-shot enter / exit
      transitions (tw-animate-css animate-in / animate-out, 120–200 ms) stay. Enforced by lint-ui. */
   --animate-pulse: initial;
   --animate-ping: initial;
@@ -205,6 +206,12 @@
 
   @keyframes spin {
     to { transform: rotate(360deg); }
+  }
+  --animate-progress-slide: progress-slide 1.4s linear infinite;
+
+  @keyframes progress-slide {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(250%); }
   }
 }
 

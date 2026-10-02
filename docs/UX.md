@@ -17,8 +17,8 @@ products by name, except as a supported *import format* (e.g. "Import from MobaX
   operations the user explicitly waits on (connect, upload, save) after 300 ms / ≥ 600 ms. Never more than one
   indicator cycle per user action; bursts of actions coalesce.
 - Prefer instant UI over indicators: caches, prefetch, optimistic updates, keeping the previous content on screen.
-- The only allowed continuous motion: a slow, smooth rotating ring for an explicit long wait, and determinate progress
-  bars that fill monotonically. Transitions 120–200 ms ease-out, no layout shift, `tabular-nums` for changing numbers.
+- The only allowed continuous motion: a slow, smooth rotating ring for an explicit long wait, determinate progress
+  bars that fill monotonically, and the one-way slide of an indeterminate progress bar. Transitions 120–200 ms ease-out, no layout shift, `tabular-nums` for changing numbers.
 - Carets are steady too: native fields through `caret-animation: manual` (index.css; Chrome / Edge ≥ 139 — other
   engines ignore it and keep their native blink), xterm `cursorBlink: false` by default (a user setting may turn it
   on), Monaco `cursorBlinking: 'solid'`, CodeMirror `drawSelection({ cursorBlinkRate: 0 })`. `lint-ui` rule `caret`
@@ -41,7 +41,8 @@ One system, in the shared layer — features never hand-roll spinners, skeletons
    delayed inline spinner in a reserved slot (`<Spinner active={q.isFetching} reserve />`). Refresh icons spin only
    for a refresh the user asked for (`useManualRefresh` → `<IconButton busy>` / `<BusyIcon busy>`).
 4. *Errors* while there is no data use `ErrorState` (message + "Try again"); an error during a refetch keeps the data.
-5. *Progress* is monotonic and eased (`ProgressBar` with a `resetKey`); indeterminate only when truly unknown.
+5. *Progress* is monotonic and eased (`ProgressBar` with a `resetKey`); indeterminate only when truly unknown, shown
+   as a segment sliding one way (a still bar with reduced motion).
 6. *Status dots* are always steady — `pending` (connecting, reconnecting, starting) is a steady amber ring, never an animation.
 
 **Primitives** (`web/src/components/ui`, `web/src/lib`)
@@ -69,7 +70,8 @@ terminal fonts are preloaded and use `font-display: block` (no swap reflow). `ma
 `scripts/lint-ui.mjs` fails on raw `animate-spin|pulse|pulse-dot|indeterminate` classes, ad-hoc skeleton components
 and private copies of the timing hook outside `components/ui` and `lib`, and — everywhere, the shared layer included —
 on oscillating motion (`oscillation`: pulse / ping / bounce / blink / breathe / heartbeat / indeterminate classes,
-keyframes named like them, any `infinite` animation other than the spinner's `spin`, `repeat-infinite`). The looping
+keyframes named like them, any `infinite` animation other than the spinner's `spin` and the progress bar's
+`progress-slide`, `repeat-infinite`). The looping
 Tailwind animations are removed from the theme (`index.css`), so those classes do nothing anyway (escape hatch: a
 `lint-ui-allow: <reason>` comment; `scripts/lint-ui-allowlist.json` is empty and may only stay so).
 `make flash-audit` also flags oscillation on screen (a cell that keeps returning to a previous level, gradually or by

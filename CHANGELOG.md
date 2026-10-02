@@ -8,6 +8,14 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+## [0.1.10] - 2026-10-02
+
+### Fixed
+
+- **Loading bar on tabs:** the progress bar of a tab (opening or reloading a file over SFTP or locally, terminal
+  progress) was hidden behind the active tab's accent line in the title bar. It now takes the accent line's place
+  while the tab is working, and a bar of unknown length slides instead of standing still (still with reduced motion).
+
 ## [0.1.9] - 2026-09-30
 
 ### Added
@@ -138,7 +146,8 @@ endings, which broke monitoring of Linux, macOS and BSD hosts. That is fixed her
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.9...HEAD
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.10...HEAD
+[0.1.10]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.6...v0.1.7

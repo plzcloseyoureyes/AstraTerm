@@ -45,7 +45,8 @@ export function ProgressBar({ value, resetKey, tone = 'primary', label, classNam
       className={cn('relative h-1 w-full overflow-hidden rounded-full bg-muted', className)}
     >
       {indeterminate ? (
-        <div className={cn('h-full w-full rounded-full opacity-35', tones[tone])} />
+        // A segment sliding one way; with reduced motion the animation is off and it is a still, dim bar.
+        <div className={cn('h-full w-2/5 animate-progress-slide rounded-full motion-reduce:w-full motion-reduce:opacity-35', tones[tone])} />
       ) : (
         <div className={cn('h-full rounded-full transition-[width] duration-500 ease-out', tones[tone])} style={{ width: `${shown * 100}%` }} />
       )}

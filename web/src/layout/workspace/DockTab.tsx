@@ -189,13 +189,16 @@ export function TabChip({
           </button>
         )}
         {showProgress && (
-          <span className={cn('pointer-events-none absolute inset-x-0 bottom-0', bar && 'inset-x-1.5')} aria-hidden>
-            <ProgressBar value={barValue} resetKey={runId} className="h-0.5 rounded-none bg-primary/15" />
+          <span className={cn('pointer-events-none absolute inset-x-0 bottom-0', bar && 'inset-x-2 -bottom-px')} aria-hidden>
+            <ProgressBar value={barValue} resetKey={runId} className={cn('h-0.5', bar ? 'bg-primary/25' : 'rounded-none bg-primary/15')} />
           </span>
         )}
         {variant === 'dock' && <span className="nx-tab-indicator" aria-hidden />}
-        {/* Title bar: the active tab carries an accent bar (besides its tint and brighter title). */}
-        {bar && active && <span className="pointer-events-none absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-primary" aria-hidden />}
+        {/* Title bar: the active tab carries an accent bar (besides its tint and brighter title); while the tab is
+            working, the progress bar takes its place (the accent would cover it). */}
+        {bar && active && !showProgress && (
+          <span className="pointer-events-none absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-primary" aria-hidden />
+        )}
       </div>
     </DynamicContextMenu>
   )
