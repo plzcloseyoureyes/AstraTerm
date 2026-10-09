@@ -24,8 +24,12 @@ reimplement anything: the regular `astraterm` binary runs inside it as a sidecar
 
 ### Window behavior
 
-- **Single instance** (tauri-plugin-single-instance): a second start focuses the existing window.
-- **Window state** (tauri-plugin-window-state): size and position are restored.
+- **Windows**: one app (one server and data directory) with any number of windows, like VS Code or a terminal app. A
+  second start (tauri-plugin-single-instance) or New Window opens another window with a blank tab session: the macOS
+  File menu (⌘N) and Dock menu, the Windows taskbar jump list, the Linux launcher's action (`linux/astraterm.desktop`)
+  and the in-app menu / command palette (`src/launcher.rs`). Each window keeps its own tabs; the app quits when the last
+  window closes.
+- **Window state** (tauri-plugin-window-state): the first window's size and position are restored; new ones cascade.
 - **Title** follows the active tab.
 - **Navigation** stays on the AstraTerm server; links to anything else open in the default browser (tauri-plugin-opener).
 - **`window.open`**: AstraTerm's own pages (pop-out tabs) open as native windows; other URLs (links in terminals and

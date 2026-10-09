@@ -253,6 +253,10 @@ export interface AppearanceSettings {
   density: Density
   /** Desktop app on macOS / Windows: below 1 the desktop shows through, blurred (lib/theme.ts). */
   windowOpacity: number
+  /** lib/theme.ts APP_THEMES. */
+  appTheme: string
+  /** Off: terminals draw without WebGL, no blur or translucency; the desktop app's engine skips the GPU (next start). */
+  hardwareAcceleration: boolean
   showMenuBar: boolean
   showRibbon: boolean
   /** Ribbon shows icons only (compact mode). */
@@ -267,6 +271,8 @@ export const appearanceSettings = defineSettings<AppearanceSettings>('appearance
   uiScale: 1,
   density: 'comfortable',
   windowOpacity: 1,
+  appTheme: 'default',
+  hardwareAcceleration: true,
   showMenuBar: true,
   // Tabs, quick connect and the app menu share the title bar; tool launchers sit in the sidebar rail.
   showRibbon: false,

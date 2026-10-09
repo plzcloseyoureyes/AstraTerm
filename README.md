@@ -68,7 +68,8 @@ password? `astraterm reset-password <user>`.
 
 - **Connections:** SSH (jump hosts, proxies, agent and X11 forwarding, certificates), telnet, rlogin, raw TCP/UDP,
   serial, local shells, WSL, Docker, Kubernetes, Mosh, WinRM, IPMI.
-- **Terminal:** WebGL rendering, search, inline images, shell integration, 37 color schemes, MultiExec, ZMODEM/trzsz.
+- **Terminal:** WebGL rendering, search, inline images, shell integration, 37 color schemes, app themes, standard
+  terminal-app shortcuts, history restore, MultiExec, ZMODEM/trzsz.
 - **Files:** SFTP, FTP/FTPS, S3, WebDAV, SMB and local; dual pane, resumable transfers, built-in editor with diff.
 - **Remote desktops:** RDP (IronRDP or guacd), VNC (noVNC), web and Xpra sessions.
 - **Network:** port forwarding, ping, traceroute/mtr, port and network scan, DNS, whois, TLS, SNMP, ssh-audit,

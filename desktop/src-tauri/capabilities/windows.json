@@ -1,0 +1,18 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "windows",
+  "description": "New Window from the page (app menu, command palette). Nothing else.",
+  "windows": [
+    "main",
+    "window-*"
+  ],
+  "remote": {
+    "urls": [
+      "http://127.0.0.1:*",
+      "http://localhost:*"
+    ]
+  },
+  "permissions": [
+    "allow-new-window"
+  ]
+}

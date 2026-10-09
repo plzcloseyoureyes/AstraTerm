@@ -8,6 +8,23 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+## [0.1.14] - 2026-10-09
+
+### Added
+
+- **Multiple windows** (desktop app): starting AstraTerm again, or New Window, opens another window with a blank tab
+  session, like VS Code. New Window is in the macOS File menu (⌘N) and Dock menu, the Windows taskbar jump list, the
+  Linux launcher, and the app menu / command palette on every system. Each window keeps its own tabs.
+- **Terminal-app shortcuts**, as in Windows Terminal, Tabby and iTerm / Terminal: new terminal tab Ctrl+Shift+T
+  (⌘T), go to tab Alt+1–9 (⌘1–9), next / previous tab ⌘⇧] / ⌘⇧[ on macOS, split ⌘D / ⇧⌘D (Alt+Shift+Plus /
+  Minus), focus the pane in a direction Alt+Arrow (⌘⌥Arrow), find ⌘F, clear Ctrl+Shift+K, full screen ⌃⌘F. Reopen a
+  closed tab moves to Alt+Shift+T on Windows / Linux (⇧⌘T on macOS). All of them can be changed in Settings → Keyboard.
+- **New terminals** (Settings → Terminal): a default shell, and new terminals start in the current folder.
+- **App themes** (Settings → Appearance): AstraTerm, Midnight, Nord, Dracula, Solarized, Catppuccin, Tokyo Night,
+  Gruvbox and Rosé Pine, each with matching terminal colours, in dark and light.
+- **Hardware acceleration** can be turned off (Settings → Appearance): terminals draw without WebGL, no blur or
+  translucency, and the desktop app's engine skips the GPU on Windows and Linux after a restart.
+
 ## [0.1.13] - 2026-10-02
 
 ### Changed
@@ -188,7 +205,8 @@ endings, which broke monitoring of Linux, macOS and BSD hosts. That is fixed her
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.13...HEAD
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.14...HEAD
+[0.1.14]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.11...v0.1.12
 [0.1.11]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.10...v0.1.11

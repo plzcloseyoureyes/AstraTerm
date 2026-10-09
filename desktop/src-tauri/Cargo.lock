@@ -51,6 +51,9 @@ checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
 name = "astraterm-desktop"
 version = "0.0.0"
 dependencies = [
+ "muda",
+ "objc2",
+ "objc2-app-kit",
  "serde",
  "serde_json",
  "tauri",
@@ -61,6 +64,7 @@ dependencies = [
  "tauri-plugin-single-instance",
  "tauri-plugin-window-state",
  "url",
+ "windows",
 ]
 
 [[package]]

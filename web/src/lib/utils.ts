@@ -142,30 +142,37 @@ export function clamp(v: number, min: number, max: number): number {
 }
 
 /** Safe localStorage access (private mode / disabled storage must never crash the app). */
-export const storage = {
-  get<T>(key: string, fallback: T): T {
-    try {
-      const raw = localStorage.getItem(key)
-      return raw == null ? fallback : (JSON.parse(raw) as T)
-    } catch {
-      return fallback
-    }
-  },
-  set(key: string, value: unknown): void {
-    try {
-      localStorage.setItem(key, JSON.stringify(value))
-    } catch {
-      /* quota exceeded or storage disabled — non-fatal */
-    }
-  },
-  remove(key: string): void {
-    try {
-      localStorage.removeItem(key)
-    } catch {
-      /* ignore */
-    }
-  },
+function webStore(area: () => Storage) {
+  return {
+    get<T>(key: string, fallback: T): T {
+      try {
+        const raw = area().getItem(key)
+        return raw == null ? fallback : (JSON.parse(raw) as T)
+      } catch {
+        return fallback
+      }
+    },
+    set(key: string, value: unknown): void {
+      try {
+        area().setItem(key, JSON.stringify(value))
+      } catch {
+        /* quota exceeded or storage disabled — non-fatal */
+      }
+    },
+    remove(key: string): void {
+      try {
+        area().removeItem(key)
+      } catch {
+        /* ignore */
+      }
+    },
+  }
 }
+
+/** JSON values in localStorage (per browser profile); failures are non-fatal. */
+export const storage = webStore(() => localStorage)
+/** JSON values in sessionStorage (per browser tab or app window). */
+export const sessionStore = webStore(() => sessionStorage)
 
 /** Deep-ish equality for plain JSON values (used to skip no-op settings writes). */
 export function jsonEqual(a: unknown, b: unknown): boolean {

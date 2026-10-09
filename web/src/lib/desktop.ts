@@ -7,6 +7,8 @@ declare global {
     __ASTRATERM_DESKTOP__?: {
       /** The app decides where downloads go: Settings → General → Downloads (appCommand below). */
       downloads?: boolean
+      /** The app opens more windows (New Window), each with its own tabs (stores/workspace.ts). */
+      windows?: boolean
       /** Transparent window over the system blur (macOS, Windows): Settings → Appearance → Window opacity applies. */
       translucent?: boolean
       /** Windows: the page switches the blur behind the window (Acrylic) itself, see setWindowBlur. */
@@ -25,7 +27,10 @@ const desktop = typeof window !== 'undefined' ? window.__ASTRATERM_DESKTOP__ : u
 
 export const TRANSLUCENCY_SUPPORTED = !!desktop?.translucent
 export const TITLE_BAR = desktop?.titleBar
+/** Running inside the desktop app. */
+export const DESKTOP_APP = !!desktop
 export const DOWNLOAD_SETTINGS = !!desktop?.downloads
+export const MULTI_WINDOW = !!desktop?.windows
 /** Lowest Window opacity. */
 export const MIN_WINDOW_OPACITY = 0.1
 

@@ -22,7 +22,8 @@ import type { Connection, LocalShell, Protocol, RuntimeSession } from '@/api/typ
 import { protocolLabel } from '@/app/protocols'
 import { protocolOpeners, type ClosedTab, type TabPlacement, type TabPosition } from '@/app/registry'
 import { errorMessage } from '@/lib/utils'
-import { activeSpaceApi, findTabs, focusTab, getTabParams, openTab, updateTabParams } from '@/stores/workspace'
+import { activeSpaceApi, findTabs, focusTab, getTabParams, openTab, updateTabParams, useWorkspaceStore } from '@/stores/workspace'
+import { getTerminalByTab } from './bus'
 import { estimateCell } from './fonts'
 import { effectiveTerminalSettings, terminalSettings } from './settings'
 import type { QuickSpec, TerminalTabParams } from './types'
@@ -267,14 +268,20 @@ export async function openQuick(quick: Partial<Connection> & { password?: string
 
 /** Open a local shell on the AstraTerm host (default shell unless `shellId`). */
 export async function openLocalShell(shellId?: string, opts: OpenOptions = {}): Promise<string | null> {
+  const settings = terminalSettings.get()
+  shellId ||= settings.defaultShell || undefined
   const shells = queryClient.getQueryData<LocalShell[]>(queryKeys.localShells)
   const shell = shellId ? shells?.find((x) => x.id === shellId || x.path === shellId) : undefined
   const title = opts.title ?? shell?.name ?? 'Local terminal'
   const size = estimateTerminalSize(opts.position)
+  const options: Record<string, unknown> = shellId ? { shell: shellId } : {}
+  // Like other terminal apps: a new terminal starts where the active local one is.
+  const active = settings.newTabCwd ? getTerminalByTab(useWorkspaceStore.getState().activeTabId)?.info() : undefined
+  if (active?.protocol === 'local' && active.cwd) options.cwd = active.cwd
   let s: RuntimeSession
   try {
     s = await createSession({
-      quick: { protocol: 'local', name: title, options: shellId ? { shell: shellId } : {} },
+      quick: { protocol: 'local', name: title, options },
       cols: size.cols,
       rows: size.rows,
       title,

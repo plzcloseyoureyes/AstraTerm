@@ -67,6 +67,7 @@ import { queryClient } from '@/api/queryClient'
 import { queryKeys } from '@/api/queryKeys'
 import { lockVault } from '@/api/vault'
 import type { Connection, RuntimeSession } from '@/api/types'
+import { appCommand, MULTI_WINDOW } from '@/lib/desktop'
 import { events, useEventsStore } from '@/lib/events'
 import { toggleFullscreen } from '@/lib/hooks'
 import { errorMessage, isMac } from '@/lib/utils'
@@ -78,6 +79,7 @@ import {
   arrangeLayout,
   closeTab,
   cycleTab,
+  focusPane,
   dockTab,
   duplicateTab,
   float,
@@ -89,6 +91,7 @@ import {
   restoreWorkspace,
   saveWorkspace,
   splitActive,
+  hasSplitPanes,
   toggleMaximize,
   useWorkspaceStore,
 } from '@/stores/workspace'
@@ -164,6 +167,16 @@ registerCommand({
     if (document.querySelector('[aria-label="AstraTerm menu"]')) setAppMenuOpen(true)
     else document.querySelector<HTMLElement>('[role="menubar"] [role="menuitem"]')?.focus()
   },
+})
+// Desktop app: another window with a blank tab session. ⌘N on macOS comes from the app's File menu.
+registerCommand({
+  id: 'app.newWindow',
+  title: 'New Window',
+  category: 'Window',
+  icon: AppWindow,
+  keywords: ['window', 'instance'],
+  when: () => MULTI_WINDOW,
+  run: () => appCommand('new_window'),
 })
 registerCommand({
   id: 'app.lock',
@@ -246,7 +259,8 @@ registerCommand({
   title: 'Reopen Closed Tab',
   category: 'Workspace',
   icon: RotateCcw,
-  keybinding: ['$mod+Shift+t', 'Alt+Shift+t'],
+  // Ctrl+Shift+T opens a terminal on Windows / Linux (as in other terminal apps); ⇧⌘T reopens on macOS (as in browsers).
+  keybinding: isMac ? ['$mod+Shift+t', 'Alt+Shift+t'] : ['Alt+Shift+t'],
   when: () => useWorkspaceStore.getState().closed.length > 0,
   run: ({ args }) => {
     const index = args && typeof args === 'object' && typeof (args as { index?: unknown }).index === 'number' ? (args as { index: number }).index : 0
@@ -257,7 +271,7 @@ registerCommand({
   id: 'workspace.nextTab',
   title: 'Next Tab',
   category: 'Workspace',
-  keybinding: ['Control+Tab', 'Control+PageDown', 'Control+Alt+ArrowRight'],
+  keybinding: ['Control+Tab', 'Control+PageDown', 'Control+Alt+ArrowRight', ...(isMac ? ['$mod+Shift+BracketRight'] : [])],
   essential: true,
   when: hasTabs,
   run: () => cycleTab(1),
@@ -266,7 +280,7 @@ registerCommand({
   id: 'workspace.prevTab',
   title: 'Previous Tab',
   category: 'Workspace',
-  keybinding: ['Control+Shift+Tab', 'Control+PageUp', 'Control+Alt+ArrowLeft'],
+  keybinding: ['Control+Shift+Tab', 'Control+PageUp', 'Control+Alt+ArrowLeft', ...(isMac ? ['$mod+Shift+BracketLeft'] : [])],
   essential: true,
   when: hasTabs,
   run: () => cycleTab(-1),
@@ -277,7 +291,8 @@ for (let n = 1; n <= 9; n++) {
     title: `Go to Tab ${n}`,
     category: 'Workspace',
     hidden: true,
-    keybinding: `Control+Alt+F${n}`,
+    // ⌘1–9 on macOS, Alt+1–9 elsewhere (Tabby, GNOME Terminal, browsers on Linux), plus the older Ctrl+Alt+F1–9.
+    keybinding: [isMac ? `$mod+Digit${n}` : `Alt+Digit${n}`, `Control+Alt+F${n}`],
     essential: true,
     run: () => activateTabIndex(n),
   })
@@ -287,7 +302,8 @@ registerCommand({
   title: 'Split Right',
   category: 'Workspace',
   icon: PanelRight,
-  keybinding: '$mod+Backslash',
+  // ⌘D as in iTerm, Alt+Shift+Plus as in Windows Terminal; ⌘\ as in VS Code.
+  keybinding: ['$mod+Backslash', isMac ? '$mod+KeyD' : 'Alt+Shift+Equal'],
   when: hasActive,
   run: ({ args }) => splitActive('right', targetTab(args)),
 })
@@ -296,10 +312,26 @@ registerCommand({
   title: 'Split Down',
   category: 'Workspace',
   icon: PanelBottom,
-  keybinding: '$mod+Shift+Backslash',
+  keybinding: ['$mod+Shift+Backslash', isMac ? '$mod+Shift+KeyD' : 'Alt+Shift+Minus'],
   when: hasActive,
   run: ({ args }) => splitActive('below', targetTab(args)),
 })
+for (const [dir, label, key] of [
+  ['left', 'Left', 'ArrowLeft'],
+  ['right', 'Right', 'ArrowRight'],
+  ['up', 'Up', 'ArrowUp'],
+  ['down', 'Down', 'ArrowDown'],
+] as const) {
+  registerCommand({
+    id: `workspace.focusPane.${dir}`,
+    title: `Focus Pane ${label}`,
+    category: 'Workspace',
+    // Alt+Arrow as in Windows Terminal; ⌘⌥Arrow as in iTerm (on macOS ⌥Arrow moves by word in the shell).
+    keybinding: isMac ? `$mod+Alt+${key}` : `Alt+${key}`,
+    when: hasSplitPanes,
+    run: () => focusPane(dir),
+  })
+}
 registerCommand({
   id: 'workspace.layout.single',
   title: 'Layout: Single',
@@ -519,7 +551,7 @@ registerCommand({
   title: 'Toggle Full Screen',
   category: 'View',
   icon: Fullscreen,
-  keybinding: 'F11',
+  keybinding: ['F11', ...(isMac ? ['Control+$mod+KeyF'] : [])],
   run: () => toggleFullscreen(),
 })
 registerCommand({
@@ -621,6 +653,7 @@ registerMenu({
   menu: 'terminal',
   order: 100,
   items: () => [
+    ...(MULTI_WINDOW ? [{ label: 'New window', icon: AppWindow, command: 'app.newWindow' }, { type: 'separator' as const }] : []),
     { label: 'New local terminal', icon: SquareTerminal, command: 'terminal.newLocal' },
     { label: 'New session…', icon: Plus, command: 'sessions.new' },
     { label: 'Quick connect', icon: Zap, command: 'quickConnect.focus' },

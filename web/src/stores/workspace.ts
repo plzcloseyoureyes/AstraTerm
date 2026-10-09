@@ -22,7 +22,7 @@ import { toast } from 'sonner'
 import type { AddPanelOptions, DockviewApi, DockviewGroupPanel, IDockviewPanel, SerializedDockview } from 'dockview-react'
 import { tabKinds, type ClosedTab, type TabInfo, type TabPlacement, type TabPosition } from '@/app/registry'
 import { trackDocument } from '@/lib/theme'
-import { debounce, storage, uid } from '@/lib/utils'
+import { debounce, sessionStore, storage, uid } from '@/lib/utils'
 import { workspacesSettings, type SavedWorkspace } from './settings'
 
 export const HOST_COMPONENT = 'nx-host'
@@ -129,6 +129,24 @@ const popoutDisposers = new Map<string, () => void>()
 let titleBarTabs = false
 
 const layoutKey = () => `astraterm:layout:v2:${userKey}`
+/**
+ * A window opened with New Window in the desktop app (?window=new) starts with a blank tab session and keeps its layout
+ * in sessionStorage: its own across reloads, gone when the window closes. The first window keeps the saved layout.
+ */
+const extraWindow = (() => {
+  try {
+    const url = new URL(window.location.href)
+    if (url.searchParams.get('window') === 'new') {
+      sessionStorage.setItem('astraterm:extra-window', '1')
+      url.searchParams.delete('window')
+      history.replaceState(history.state, '', url)
+    }
+    return sessionStorage.getItem('astraterm:extra-window') === '1'
+  } catch {
+    return false
+  }
+})()
+const layoutStore = extraWindow ? sessionStore : storage
 const legacyLayoutKey = () => `astraterm:layout:v1:${userKey}`
 const closedKey = () => `astraterm:closed-tabs:v1:${userKey}`
 
@@ -521,7 +539,7 @@ interface SavedLayout {
 const saveLayout = debounce(() => {
   if (!initialized) return
   try {
-    storage.set(layoutKey(), serialize())
+    layoutStore.set(layoutKey(), serialize())
   } catch (err) {
     console.warn('[workspace] could not serialise layout', err)
   }
@@ -578,8 +596,8 @@ function loadSpaces(saved: SavedLayout | null, legacy: SerializedDockview | null
 export function initWorkspace(opts: { userId: string; restore: boolean }): () => void {
   userKey = opts.userId || 'anonymous'
   useWorkspaceStore.setState({ closed: storage.get<ClosedTab[]>(closedKey(), []).slice(0, MAX_CLOSED) })
-  const saved = storage.get<SavedLayout | null>(layoutKey(), null)
-  const legacy = storage.get<SerializedDockview | null>(legacyLayoutKey(), null)
+  const saved = layoutStore.get<SavedLayout | null>(layoutKey(), null)
+  const legacy = extraWindow ? null : storage.get<SerializedDockview | null>(legacyLayoutKey(), null)
   const hadLayout = !!saved || !!legacy
   if (opts.restore) loadSpaces(saved, legacy)
   if (legacy) storage.remove(legacyLayoutKey())
@@ -631,7 +649,7 @@ export function onWorkspaceWindow(cb: (win: Window) => void): () => void {
 
 /** Forget the saved layout for the current user (Settings → General → Reset layout). */
 export function resetSavedLayout(): void {
-  storage.remove(layoutKey())
+  layoutStore.remove(layoutKey())
   storage.remove(legacyLayoutKey())
 }
 
@@ -782,6 +800,36 @@ function tabsOfSpaces(ids: string[]): string[] {
 export function closeOtherTabs(tabId: string): Promise<void> {
   const own = spaceOf(tabId)
   return closeTabs(tabsOfSpaces(spaceOrder().filter((id) => id !== own)))
+}
+
+/** Move the focus to the pane next to the active one in a direction (Alt+Arrow, ⌘⌥Arrow on macOS). */
+export function focusPane(dir: 'left' | 'right' | 'up' | 'down'): void {
+  const api = activeSpace()?.api
+  const current = api?.activeGroup
+  if (!api || !current) return
+  const from = current.element.getBoundingClientRect()
+  const cx = from.left + from.width / 2
+  const cy = from.top + from.height / 2
+  const horizontal = dir === 'left' || dir === 'right'
+  const sign = dir === 'left' || dir === 'up' ? -1 : 1
+  let best: { id: string; score: number } | null = null
+  for (const g of api.groups) {
+    const panel = g.activePanel
+    if (g === current || !panel) continue
+    const r = g.element.getBoundingClientRect()
+    const along = sign * (horizontal ? r.left + r.width / 2 - cx : r.top + r.height / 2 - cy)
+    if (along <= 1) continue
+    // Nearest in that direction, preferring panes in line with the current one.
+    const across = Math.abs(horizontal ? r.top + r.height / 2 - cy : r.left + r.width / 2 - cx)
+    const score = along + 2 * across
+    if (!best || score < best.score) best = { id: panel.id, score }
+  }
+  if (best) focusTab(best.id)
+}
+
+/** The active tab shares its title-bar tab with other panes (split). */
+export function hasSplitPanes(): boolean {
+  return (activeSpace()?.api.groups.length ?? 0) > 1
 }
 
 /** Close the spaces to the right of the one holding `tabId`. */

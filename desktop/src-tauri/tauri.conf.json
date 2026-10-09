@@ -15,7 +15,9 @@
         "window-drag",
         "window-controls",
         "window-effects",
-        "downloads"
+        "downloads",
+        "windows",
+        "preferences"
       ]
     }
   },
@@ -58,7 +60,11 @@
     },
     "linux": {
       "deb": {
-        "depends": []
+        "depends": [],
+        "desktopTemplate": "linux/astraterm.desktop"
+      },
+      "rpm": {
+        "desktopTemplate": "linux/astraterm.desktop"
       }
     },
     "resources": {

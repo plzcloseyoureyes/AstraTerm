@@ -3,7 +3,8 @@
   "identifier": "downloads",
   "description": "Settings \u2192 General \u2192 Downloads: read the download settings, switch asking on or off, pick the download folder. Nothing else.",
   "windows": [
-    "main"
+    "main",
+    "window-*"
   ],
   "remote": {
     "urls": [

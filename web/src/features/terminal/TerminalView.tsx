@@ -51,10 +51,14 @@ export default function TerminalView({ tabId, params }: TabProps<TerminalTabPara
   const overrides = connection?.options?.terminal ?? params?.quick?.options?.terminal
   // A translucent window (Window opacity) shows through the terminal too: its background turns clear.
   const translucent = windowAlpha(appearanceSettings.useValue('windowOpacity')) < 1
+  // Hardware acceleration off (Settings → Appearance): the DOM renderer instead of WebGL.
+  const gpu = appearanceSettings.useValue('hardwareAcceleration')
   const settings = useMemo(() => {
-    const s = effectiveTerminalSettings(global, overrides)
-    return translucent ? { ...s, backgroundOpacity: 0 } : s
-  }, [global, overrides, translucent])
+    let s = effectiveTerminalSettings(global, overrides)
+    if (translucent) s = { ...s, backgroundOpacity: 0 }
+    if (!gpu) s = { ...s, renderer: 'dom' }
+    return s
+  }, [global, overrides, translucent, gpu])
   const visible = useIsTabVisible(tabId)
   const locked = useUIStore((s) => s.locked)
   const multi = useMultiExecStore()

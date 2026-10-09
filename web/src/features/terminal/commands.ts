@@ -65,8 +65,9 @@ registerCommand<{ shellId?: string } | undefined>({
   title: 'New Local Terminal',
   category: CATEGORY,
   icon: SquareTerminal,
-  keybinding: '$mod+Shift+l',
-  keywords: ['shell', 'bash', 'zsh', 'powershell', 'local', 'console'],
+  // A new terminal tab: ⌘T on macOS, Ctrl+Shift+T elsewhere (Windows Terminal, Tabby, GNOME Terminal).
+  keybinding: [isMac ? '$mod+KeyT' : 'Control+Shift+KeyT', '$mod+Shift+l'],
+  keywords: ['shell', 'bash', 'zsh', 'powershell', 'local', 'console', 'new tab'],
   run: ({ args }) => openLocalShell(argString(args, 'shellId')).then(() => undefined),
 })
 
@@ -117,7 +118,7 @@ registerCommand({
   title: 'Find in Terminal',
   category: CATEGORY,
   icon: Search,
-  keybinding: '$mod+Shift+f',
+  keybinding: isMac ? ['$mod+KeyF', '$mod+Shift+f'] : '$mod+Shift+f',
   when: hasTerminal,
   run: withTerminal((t) => t.openSearch()),
 })
@@ -127,6 +128,8 @@ registerCommand({
   title: 'Clear Scrollback',
   category: CATEGORY,
   icon: Eraser,
+  // Ctrl+Shift+K as in Tabby; on macOS ⌘K is the command palette (rebind in Settings → Keyboard).
+  keybinding: isMac ? undefined : 'Control+Shift+KeyK',
   when: hasTerminal,
   run: withTerminal((t) => t.clear()),
 })

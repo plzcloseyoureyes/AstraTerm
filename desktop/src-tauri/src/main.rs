@@ -7,6 +7,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // no console window on Windows
 
 mod downloads;
+mod launcher;
+mod prefs;
 
 use std::collections::VecDeque;
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -28,7 +30,7 @@ const LOG_TAIL: usize = 12;
 /// The running server, held for the app's lifetime: dropping it would close its stdin, which stops the server.
 struct Sidecar(#[allow(dead_code)] Mutex<Option<CommandChild>>);
 
-/// The server's origin once known (navigation and pop-up policy).
+/// The server's origin once known (navigation and pop-up policy, new windows).
 #[derive(Default, Clone)]
 struct Origin(Arc<Mutex<Option<url::Origin>>>);
 
@@ -39,22 +41,27 @@ impl Origin {
             None => false,
         }
     }
+
+    fn url(&self) -> Option<Url> {
+        self.0
+            .lock()
+            .unwrap()
+            .as_ref()
+            .and_then(|o| Url::parse(&o.ascii_serialization()).ok())
+    }
 }
 
 fn main() {
     tauri::Builder::default()
-        // A second start focuses the running window instead of starting another server.
-        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
-            if let Some(window) = app.get_webview_window("main") {
-                let _ = window.unminimize();
-                let _ = window.set_focus();
-            }
-        }))
-        // Size, position and maximized state; never the decorations, which title_bar() owns (a restored system frame
-        // would sit on top of AstraTerm's own title bar).
+        // One app (one server and data directory) with any number of windows: a second start opens a new window, like
+        // VS Code or a terminal app.
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| open_window(app)))
+        // The main window's size, position and maximized state; never the decorations, which title_bar() owns (a
+        // restored system frame would sit on top of AstraTerm's own title bar). New windows cascade from the current one.
         .plugin(
             tauri_plugin_window_state::Builder::default()
                 .with_state_flags(StateFlags::all() - StateFlags::DECORATIONS)
+                .with_filter(|label| label == "main")
                 .build(),
         )
         .plugin(tauri_plugin_shell::init())
@@ -63,11 +70,23 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             downloads::download_settings,
             downloads::set_download_ask,
-            downloads::pick_download_dir
+            downloads::pick_download_dir,
+            new_window,
+            prefs::set_hardware_acceleration
         ])
+        .on_menu_event(|app, event| {
+            if event.id() == launcher::NEW_WINDOW {
+                open_window(app);
+            }
+        })
         .setup(|app| {
+            let prefs = prefs::load(app.handle());
+            prefs::apply_early(&prefs);
+            app.manage(prefs);
             app.manage(downloads::Downloads::load(app.handle()));
             let origin = Origin::default();
+            app.manage(origin.clone());
+            launcher::install(app.handle())?;
             let window = main_window(app.handle(), origin.clone())?;
             start_server(app.handle(), window, origin)?;
             Ok(())
@@ -78,18 +97,74 @@ fn main() {
 
 /// The main window: the bundled loading page first, then the server's UI.
 fn main_window(app: &AppHandle, origin: Origin) -> tauri::Result<WebviewWindow> {
+    app_window(app, "main", WebviewUrl::App("index.html".into()), origin, None)
+}
+
+/// A new window with a blank tab session (web/src/stores/workspace.ts), signed in through the shared cookies. Before the
+/// server is up there is nothing to show yet, so the main window is brought forward instead.
+fn open_window(app: &AppHandle) {
+    let origin = app.state::<Origin>().inner().clone();
+    let Some(mut url) = origin.url() else {
+        if let Some(window) = app.get_webview_window("main") {
+            let _ = window.unminimize();
+            let _ = window.set_focus();
+        }
+        return;
+    };
+    url.set_query(Some("window=new"));
+    // Cascade from the window in front, like other apps, so the new one does not hide exactly behind it.
+    let windows = app.webview_windows();
+    let front = windows
+        .values()
+        .find(|w| w.is_focused().unwrap_or(false))
+        .or_else(|| windows.get("main"));
+    let position = front.and_then(|w| {
+        let scale = w.scale_factor().ok()?;
+        let p = w.outer_position().ok()?.to_logical::<f64>(scale);
+        Some((p.x + 28.0, p.y + 28.0))
+    });
+    static NEXT: AtomicUsize = AtomicUsize::new(1);
+    let label = format!("window-{}", NEXT.fetch_add(1, Ordering::Relaxed));
+    if let Ok(window) = app_window(app, &label, WebviewUrl::External(url), origin, position) {
+        let _ = window.set_focus();
+    }
+}
+
+/// New Window from the page (the app menu and command palette; capabilities/windows.json).
+#[tauri::command]
+fn new_window(app: AppHandle) {
+    open_window(&app);
+}
+
+/// An AstraTerm window: title bar, translucency, navigation, pop-ups and downloads are the same for every window.
+fn app_window(
+    app: &AppHandle,
+    label: &str,
+    url: WebviewUrl,
+    origin: Origin,
+    position: Option<(f64, f64)>,
+) -> tauri::Result<WebviewWindow> {
     let nav_origin = origin.clone();
     let nav_app = app.clone();
     let popup_app = app.clone();
     let popup_origin = origin;
-    let window = WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
+    let window = WebviewWindowBuilder::new(app, label, url)
         // What this window offers the page (web/src/lib/desktop.ts); translucent() and title_bar() add to it.
-        .initialization_script("window.__ASTRATERM_DESKTOP__ = { downloads: true };");
-    title_bar(translucent(window))
+        .initialization_script("window.__ASTRATERM_DESKTOP__ = { downloads: true, windows: true };");
+    #[cfg(target_os = "windows")]
+    let window = match prefs::webview_args(app.state::<prefs::Prefs>().inner()) {
+        Some(args) => window.additional_browser_args(args),
+        None => window,
+    };
+    let window = title_bar(translucent(window))
         .title("AstraTerm")
         .inner_size(1440.0, 900.0)
-        .min_inner_size(820.0, 560.0)
-        .center()
+        .min_inner_size(820.0, 560.0);
+    let window = match position {
+        Some((x, y)) => window.position(x, y),
+        None => window.center(),
+    };
+    window
         // The page handles drag and drop itself (tabs, files onto the file browser and terminals). Tauri's native
         // handler would swallow those HTML5 events on Windows (WebView2).
         .disable_drag_drop_handler()

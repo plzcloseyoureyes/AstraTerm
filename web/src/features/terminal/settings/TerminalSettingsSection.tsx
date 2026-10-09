@@ -6,6 +6,7 @@ import { useMemo, useRef, useState } from 'react'
 import { Copy, Download, Ellipsis, FileUp, Keyboard, Pencil, Plus, RotateCcw, Search, Trash2, Volume2 } from 'lucide-react'
 import { parseKeybinding } from 'tinykeys'
 import { toast } from 'sonner'
+import { useLocalShells } from '@/api/sessions'
 import { runCommand } from '@/app/commands'
 import { Button } from '@/components/ui/button'
 import { confirm } from '@/components/ui/dialog-host'
@@ -83,6 +84,13 @@ function NumberRow({
       />
     </SettingRow>
   )
+}
+
+/** The shell new local terminals start (⌘T / Ctrl+Shift+T), from the shells found on this machine. */
+function DefaultShellRow() {
+  const shells = useLocalShells()
+  const options = [{ value: '', label: 'System default' }, ...(shells.data ?? []).map((sh) => ({ value: sh.id, label: sh.name }))]
+  return <SelectRow k="defaultShell" label="Default shell" description="Used by New Local Terminal." options={options} width="w-56" />
 }
 
 function SelectRow<K extends Keys<TerminalSettings, string>>({
@@ -620,6 +628,11 @@ export default function TerminalSettingsSection() {
           label="Restore history"
           description="After a restart, reopened terminal tabs start a new session showing their previous output. Saved in this browser / app."
         />
+      </SettingsGroup>
+
+      <SettingsGroup title="New terminals">
+        <DefaultShellRow />
+        <Toggle k="newTabCwd" label="Start in the current folder" description="A new local terminal opens in the folder of the active one." />
       </SettingsGroup>
 
       <SettingsGroup title="When a session ends">

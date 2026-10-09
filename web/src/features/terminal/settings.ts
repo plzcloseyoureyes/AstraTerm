@@ -115,6 +115,10 @@ export interface TerminalSettings {
   showToolbar: boolean
   /** After a restart, a restored tab whose session is gone starts anew and shows its previous output (history.ts). */
   restoreHistory: boolean
+  /** Shell of new local terminals (a local shell's id or path; '' = the system's default shell). */
+  defaultShell: string
+  /** New local terminals start in the folder of the active local terminal. */
+  newTabCwd: boolean
 }
 
 export const TERMINAL_DEFAULTS: TerminalSettings = {
@@ -189,6 +193,8 @@ export const TERMINAL_DEFAULTS: TerminalSettings = {
   focusFollowsMouse: false,
   showToolbar: true,
   restoreHistory: true,
+  defaultShell: '',
+  newTabCwd: true,
 }
 
 export const terminalSettings = defineSettings<TerminalSettings>('terminal', TERMINAL_DEFAULTS)

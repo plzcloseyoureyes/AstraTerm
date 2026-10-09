@@ -1,0 +1,18 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "preferences",
+  "description": "Settings \u2192 Appearance \u2192 Hardware acceleration: copied to the app, which applies it at the next start. Nothing else.",
+  "windows": [
+    "main",
+    "window-*"
+  ],
+  "remote": {
+    "urls": [
+      "http://127.0.0.1:*",
+      "http://localhost:*"
+    ]
+  },
+  "permissions": [
+    "allow-set-hardware-acceleration"
+  ]
+}

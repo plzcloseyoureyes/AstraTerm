@@ -2,7 +2,7 @@
  * Applies appearance settings to the document: light/dark/system theme class, accent colour, UI scale, density and
  * window opacity. Also keeps extra documents (dockview pop-out windows) in sync.
  */
-import { MIN_WINDOW_OPACITY, setWindowBlur, TRANSLUCENCY_SUPPORTED } from './desktop'
+import { appCommand, DESKTOP_APP, MIN_WINDOW_OPACITY, setWindowBlur, TRANSLUCENCY_SUPPORTED } from './desktop'
 import { storage } from './utils'
 
 export type ThemeMode = 'dark' | 'light' | 'system'
@@ -14,7 +14,33 @@ export interface AppearanceLike {
   uiScale: number
   density: Density
   windowOpacity: number
+  appTheme: string
+  hardwareAcceleration: boolean
 }
+
+export interface AppTheme {
+  id: string
+  label: string
+  /** Its knobs in index.css (hue, tint strength, dark-mode lightness offset), for previews. */
+  h: number
+  cs: number
+  l: number
+  /** Terminal colour schemes that go with it (dark, light); picking the theme switches the terminal to them. */
+  terminal: [dark: string, light: string]
+}
+
+/** App themes (index.css html[data-app-theme]): the neutral surfaces of the whole UI. */
+export const APP_THEMES: AppTheme[] = [
+  { id: 'default', label: 'AstraTerm', h: 258, cs: 1, l: 0, terminal: ['astraterm-dark', 'astraterm-light'] },
+  { id: 'midnight', label: 'Midnight', h: 258, cs: 0.6, l: -0.12, terminal: ['astraterm-dark', 'astraterm-light'] },
+  { id: 'nord', label: 'Nord', h: 264, cs: 2.5, l: 0.14, terminal: ['nord', 'astraterm-light'] },
+  { id: 'dracula', label: 'Dracula', h: 283, cs: 2.4, l: 0.11, terminal: ['dracula', 'astraterm-light'] },
+  { id: 'solarized', label: 'Solarized', h: 219, cs: 5.4, l: 0.09, terminal: ['solarized-dark', 'solarized-light'] },
+  { id: 'catppuccin', label: 'Catppuccin', h: 284, cs: 3.3, l: 0.06, terminal: ['catppuccin-mocha', 'catppuccin-latte'] },
+  { id: 'tokyo-night', label: 'Tokyo Night', h: 278, cs: 2.9, l: 0.04, terminal: ['tokyo-night', 'astraterm-light'] },
+  { id: 'gruvbox', label: 'Gruvbox', h: 70, cs: 1.4, l: 0.1, terminal: ['gruvbox-dark', 'gruvbox-light'] },
+  { id: 'rose-pine', label: 'Rosé Pine', h: 297, cs: 3.3, l: 0.035, terminal: ['rose-pine', 'rose-pine-dawn'] },
+]
 
 
 interface AccentPreset {
@@ -108,8 +134,9 @@ function resolveAccent(accent: string, dark: boolean): { bg: string; fg: string 
 
 const media = typeof window !== 'undefined' ? window.matchMedia('(prefers-color-scheme: dark)') : null
 const extraDocs = new Set<Document>()
-let current: AppearanceLike = { theme: 'dark', accent: DEFAULT_ACCENT, uiScale: 1, density: 'comfortable', windowOpacity: 1 }
+let current: AppearanceLike = { theme: 'dark', accent: DEFAULT_ACCENT, uiScale: 1, density: 'comfortable', windowOpacity: 1, appTheme: 'default', hardwareAcceleration: true }
 let resolvedDark = true
+let syncedAcceleration: boolean | undefined
 const listeners = new Set<(dark: boolean) => void>()
 
 const CACHE_KEY = 'astraterm:appearance'
@@ -125,6 +152,9 @@ function applyTo(doc: Document): void {
   root.style.setProperty('--ui-scale', String(scale))
   root.style.setProperty('--spacing', current.density === 'compact' ? '0.2rem' : '0.25rem')
   root.dataset.density = current.density
+  // Without hardware acceleration: no blur behind surfaces (and no translucent window, see windowAlpha).
+  root.classList.toggle('no-gpu', current.hardwareAcceleration === false)
+  root.dataset.appTheme = APP_THEMES.some((t) => t.id === current.appTheme) ? current.appTheme : 'default'
   const alpha = windowAlpha()
   root.classList.toggle('translucent', alpha < 1)
   root.style.setProperty('--window-alpha', String(alpha))
@@ -133,7 +163,7 @@ function applyTo(doc: Document): void {
 
 /** Effective window opacity: 1 unless the window can be translucent. */
 export function windowAlpha(opacity = current.windowOpacity): number {
-  return TRANSLUCENCY_SUPPORTED && Number.isFinite(opacity) ? Math.min(1, Math.max(MIN_WINDOW_OPACITY, opacity)) : 1
+  return TRANSLUCENCY_SUPPORTED && current.hardwareAcceleration !== false && Number.isFinite(opacity) ? Math.min(1, Math.max(MIN_WINDOW_OPACITY, opacity)) : 1
 }
 
 function refresh(): void {
@@ -160,6 +190,11 @@ media?.addEventListener('change', () => {
 /** Apply appearance settings (idempotent) and cache them for the next page load (pre-login screens). */
 export function applyAppearance(a: Partial<AppearanceLike>): void {
   current = { ...current, ...a }
+  // The desktop app needs it before its windows exist, so it keeps its own copy (applied at the next start).
+  if (DESKTOP_APP && current.hardwareAcceleration !== syncedAcceleration) {
+    syncedAcceleration = current.hardwareAcceleration
+    void appCommand('set_hardware_acceleration', { enabled: current.hardwareAcceleration !== false }).catch(() => (syncedAcceleration = undefined))
+  }
   // public/boot.js reads this before the first paint (theme class, accent, scale): it gets the resolved accent colours
   // too, so it needs no copy of the presets.
   const dark = resolveAccent(current.accent, true)

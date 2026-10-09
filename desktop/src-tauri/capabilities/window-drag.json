@@ -3,7 +3,8 @@
   "identifier": "window-drag",
   "description": "AstraTerm's top bar moves and zooms the window (it replaces the system title bar). Nothing else.",
   "windows": [
-    "main"
+    "main",
+    "window-*"
   ],
   "platforms": [
     "macOS",
