@@ -239,6 +239,7 @@ func (s *sshServer) handleSession(sconn *ssh.ServerConn, nch ssh.NewChannel) {
 	started := false
 	for req := range reqs {
 		ok := true
+		var start func() // runs after the reply: a fast command could otherwise close the channel before it
 		switch req.Type {
 		case "pty-req":
 			var p struct {
@@ -291,14 +292,14 @@ func (s *sshServer) handleSession(sconn *ssh.ServerConn, nch ssh.NewChannel) {
 		case "shell":
 			if !started {
 				started = true
-				go func() { s.runShell(ch); close(done) }()
+				start = func() { s.runShell(ch); close(done) }
 			}
 		case "exec":
 			var p struct{ Cmd string }
 			ssh.Unmarshal(req.Payload, &p)
 			if !started {
 				started = true
-				go func() { s.runExec(ch, p.Cmd); close(done) }()
+				start = func() { s.runExec(ch, p.Cmd); close(done) }
 			}
 		case "subsystem":
 			var p struct{ Name string }
@@ -308,7 +309,7 @@ func (s *sshServer) handleSession(sconn *ssh.ServerConn, nch ssh.NewChannel) {
 				break
 			}
 			started = true
-			go func() {
+			start = func() {
 				opts := []sftp.ServerOption{}
 				if s.opts.SFTPDir != "" {
 					opts = append(opts, sftp.WithServerWorkingDirectory(s.opts.SFTPDir))
@@ -318,12 +319,15 @@ func (s *sshServer) handleSession(sconn *ssh.ServerConn, nch ssh.NewChannel) {
 					srv.Serve()
 				}
 				close(done)
-			}()
+			}
 		default:
 			ok = false
 		}
 		if req.WantReply {
 			req.Reply(ok, nil)
+		}
+		if start != nil {
+			go start()
 		}
 	}
 	if started {
