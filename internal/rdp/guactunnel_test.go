@@ -342,9 +342,11 @@ func TestGuacTunnelBadTicketAndGuacdDown(t *testing.T) {
 	if last.Arg(1) != "519" || !strings.Contains(last.Arg(0), "guacd") {
 		t.Fatalf("guacd down %+v", last)
 	}
-	if st, msg := env.sessionState(rs.ID); st != model.StateError || !strings.Contains(msg, "guacd") {
-		t.Fatalf("state %s %q", st, msg)
-	}
+	// The error reaches the browser just before the session state is updated.
+	waitFor(t, "guacd error state", func() bool {
+		st, msg := env.sessionState(rs.ID)
+		return st == model.StateError && strings.Contains(msg, "guacd")
+	})
 }
 
 // TestGuacTunnelTestEnv connects through the shared test environment's guacd to its xrdp (ASTRATERM_TESTENV=1) and
