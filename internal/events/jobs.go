@@ -73,12 +73,7 @@ func (j *Jobs) Start(user *model.User, name string, fn func(ctx context.Context,
 
 	userID := user.ID
 	go func() {
-		defer func() {
-			cancel()
-			j.mu.Lock()
-			delete(j.jobs, id)
-			j.mu.Unlock()
-		}()
+		defer cancel()
 		var finished atomic.Bool
 		emit := func(data any) {
 			if finished.Load() {
@@ -88,6 +83,10 @@ func (j *Jobs) Start(user *model.User, name string, fn func(ctx context.Context,
 		}
 		err := runJob(ctx, fn, emit)
 		finished.Store(true)
+		// Unlisted before the final event, so a client that reloads the list on it no longer sees the job.
+		j.mu.Lock()
+		delete(j.jobs, id)
+		j.mu.Unlock()
 		switch {
 		case err == nil:
 			j.hub.Publish(userID, JobEvent{Type: model.EvJob, JobID: id, Event: JobDone})

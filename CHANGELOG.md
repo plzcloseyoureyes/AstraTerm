@@ -23,6 +23,7 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
   editor read the app themes' colours as text it could not parse; it now lets the browser compute them.
 - **Scripts:** `session.run()` could still return a late shell prompt in front of the output after an empty line.
 - **FTP:** parallel uploads into a new folder no longer fail when both try to create it.
+- **Background jobs:** a finished job could still be listed right after its done event.
 
 ### Security
 
