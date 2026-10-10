@@ -15,6 +15,11 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 - **File editor:** "The editor could not be loaded: Illegal value for token color" on every server since 0.1.14. The
   editor read the app themes' colours as text it could not parse; it now lets the browser compute them.
 
+### Security
+
+- Updated solid-js (used by the recording player) to 1.9.17, which brings seroval 1.6.9 (critical and high
+  advisories), and source-map-js to 1.2.2 (build tooling only).
+
 ## [0.1.14] - 2026-10-09
 
 ### Added

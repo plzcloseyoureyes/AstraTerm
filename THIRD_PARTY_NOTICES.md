@@ -466,9 +466,9 @@ Production dependencies from `web/package-lock.json`, bundled (minified) into th
 | remark-stringify | 11.0.0 | MIT |  |
 | rolldown | 1.2.11 | MIT | build tool: bundler runtime helpers emitted into the bundle |
 | scheduler | 0.28.0 | MIT |  |
-| seroval | 1.5.6 | MIT |  |
-| seroval-plugins | 1.5.6 | MIT |  |
-| solid-js | 1.9.15 | MIT |  |
+| seroval | 1.6.9 | MIT |  |
+| seroval-plugins | 1.6.9 | MIT |  |
+| solid-js | 1.9.17 | MIT |  |
 | solid-transition-group | 0.2.3 | MIT |  |
 | sonner | 2.0.8 | MIT |  |
 | space-separated-tokens | 2.0.2 | MIT |  |
@@ -9207,7 +9207,7 @@ end of terms and conditions
 The licenses of externally maintained libraries from which parts of the Software is derived are listed [here](https://github.com/rolldown/rolldown/blob/main/THIRD-PARTY-LICENSE).
 ```
 
-### seroval 1.5.6, seroval-plugins 1.5.6
+### seroval 1.6.9, seroval-plugins 1.6.9
 
 From `LICENSE`:
 
@@ -9221,7 +9221,7 @@ The above copyright notice and this permission notice (including the next paragr
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-### solid-js 1.9.15
+### solid-js 1.9.17
 
 From `LICENSE`:
 
