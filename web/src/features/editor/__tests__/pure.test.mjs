@@ -147,6 +147,9 @@ test('design-token colours convert to Monaco hex (oklch, oklab, rgb, hsl, hex, a
   assert.ok(accent && accent.b > accent.r && accent.b > 180, JSON.stringify(accent))
   assert.equal(toHex(parseColor('oklab(0.62795 0.22486 0.12585)')), '#ff0000')
   assert.equal(toHex(parseColor('oklch(0.62796 0.25768 29.2339)')), '#ff0000')
+  // Theme tokens keep their maths when read from CSS (index.css): not parseable here, so null (the browser evaluates
+  // them), never NaN channels that Monaco rejects ("Illegal value for token color").
+  assert.equal(parseColor('oklch(calc(0.195 + 0) calc(0.009 * 1) 258)'), null)
   assert.equal(toHex(parseColor('rgb(10 20 30 / 50%)')), '#0a141e80')
   assert.equal(toHex(parseColor('rgba(255, 0, 0, 0.25)')), '#ff000040')
   assert.equal(toHex(parseColor('hsl(120deg 100% 25%)')), '#008000')

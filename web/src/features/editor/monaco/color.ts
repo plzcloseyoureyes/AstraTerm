@@ -96,7 +96,13 @@ function hslToRgb(h: number, s: number, l: number): [number, number, number] {
 }
 
 /** Parse a CSS colour (hex, rgb[a], hsl[a], lab, lch, oklab, oklch, color(srgb …), transparent). Null when unsupported. */
+/** A CSS colour as RGBA, or null when it is not a plain colour this parser understands (e.g. calc() inside it). */
 export function parseColor(input: string): Rgba | null {
+  const c = parseRaw(input)
+  return c && [c.r, c.g, c.b, c.a].every(Number.isFinite) ? c : null
+}
+
+function parseRaw(input: string): Rgba | null {
   const s = input.trim().toLowerCase()
   if (!s) return null
   if (s === 'transparent') return { r: 0, g: 0, b: 0, a: 0 }

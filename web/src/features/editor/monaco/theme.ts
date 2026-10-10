@@ -44,9 +44,19 @@ type TokenColors = Record<Token, Rgba>
 let canvasCtx: CanvasRenderingContext2D | null | undefined
 
 /** Any CSS colour → RGBA: parsed when possible, else painted on a 1×1 canvas and read back. */
+let probe: HTMLSpanElement | undefined
+
 function resolveColor(value: string): Rgba | null {
   const parsed = parseColor(value)
   if (parsed) return parsed
+  // Computed custom properties keep their calc() / var() maths (the app themes, index.css): let the browser evaluate it
+  // on a hidden probe without transitions, which serializes plain numbers.
+  probe ??= Object.assign(document.createElement('span'), { hidden: true })
+  if (!probe.isConnected) document.body.append(probe)
+  probe.style.cssText = 'transition: none'
+  probe.style.color = value
+  const evaluated = parseColor(getComputedStyle(probe).color)
+  if (evaluated) return evaluated
   if (canvasCtx === undefined) canvasCtx = document.createElement('canvas').getContext('2d', { willReadFrequently: true })
   const ctx = canvasCtx
   if (!ctx) return null

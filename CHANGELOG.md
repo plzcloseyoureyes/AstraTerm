@@ -8,6 +8,13 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+## [0.1.15] - 2026-10-10
+
+### Fixed
+
+- **File editor:** "The editor could not be loaded: Illegal value for token color" on every server since 0.1.14. The
+  editor read the app themes' colours as text it could not parse; it now lets the browser compute them.
+
 ## [0.1.14] - 2026-10-09
 
 ### Added
@@ -205,7 +212,8 @@ endings, which broke monitoring of Linux, macOS and BSD hosts. That is fixed her
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.14...HEAD
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.15...HEAD
+[0.1.15]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.11...v0.1.12
