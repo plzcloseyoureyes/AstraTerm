@@ -3,7 +3,7 @@
  * [&final=1] with raw 8 MiB chunks. The server appends at `offset` to a partial file and answers {size}; the last
  * chunk carries final=1 (atomic rename into place, mtime applied). After a failure the upload resumes from the size
  * the server already has (GET …/upload?path= → {size}, 0 when unknown). Several files upload in parallel
- * (settings.files.uploadParallelism, default 3); progress comes from XHR upload events.
+ * (settings.files.uploadParallelism, default 6); progress comes from XHR upload events.
  *
  *   planUpload(ctx, destDir, files, dirs)   conflict check against the destination + start
  *   collectDrop(dataTransfer)                files and folders dropped from the OS (webkitGetAsEntry recursion)
@@ -68,7 +68,9 @@ interface Job {
   destDir: string
   label: string
   items: Item[]
-  /** Absolute folders to create first (folder uploads, including empty ones). */
+  /** Index of the first item that may still be queued (the scheduler does not rescan finished ones). */
+  next: number
+  /** Absolute empty folders to create first; the server creates the folders of uploaded files itself. */
   dirs: string[]
   dirsReady: boolean
   canceled: boolean
@@ -164,12 +166,12 @@ export function startUpload(ctx: FsContext, destDir: string, files: LocalFile[],
     state: 'queued',
     attempts: 0,
   }))
+  // Only folders without files: the first file into a folder creates it (and its parents) on the server, which saves
+  // a request per folder of a dropped tree.
+  const fileDirs = new Set<string>()
+  for (const it of items) for (let d = dirname(it.target); d !== dest && !fileDirs.has(d); d = dirname(d)) fileDirs.add(d)
   const dirSet = new Set<string>()
-  for (const d of dirs) if (d) dirSet.add(joinPath(dest, d))
-  for (const it of items) {
-    const parent = dirname(it.target)
-    if (parent !== dest) dirSet.add(parent)
-  }
+  for (const d of dirs) if (d && !fileDirs.has(joinPath(dest, d))) dirSet.add(joinPath(dest, d))
   const topNames = new Set(files.map((f) => f.relPath.split('/')[0]).concat(dirs.map((d) => d.split('/')[0])))
   const label = topNames.size === 1 ? [...topNames][0] : files.length ? plural(files.length, 'file') : plural(dirs.length, 'folder')
   const job: Job = {
@@ -179,6 +181,7 @@ export function startUpload(ctx: FsContext, destDir: string, files: LocalFile[],
     destDir: dest,
     label,
     items,
+    next: 0,
     dirs: [...dirSet].sort((a, b) => a.split('/').length - b.split('/').length),
     dirsReady: dirSet.size === 0,
     canceled: false,
@@ -309,7 +312,8 @@ function nextItem(): { job: Job; item: Item } | null {
   const ordered = [...jobs.values()].sort((a, b) => a.createdAt - b.createdAt)
   for (const job of ordered) {
     if (job.canceled || !job.dirsReady) continue
-    const item = job.items.find((i) => i.state === 'queued')
+    while (job.next < job.items.length && job.items[job.next].state !== 'queued') job.next++
+    const item = job.items[job.next]
     if (item) return { job, item }
   }
   return null
@@ -326,10 +330,12 @@ function pump(): void {
     if (!next) break
     running++
     next.item.state = 'running'
-    publish(next.job, true)
+    // Coalesced (publish without `now`): with many small files, publishing every start and finish would rebuild the
+    // whole job's view each time.
+    publish(next.job)
     void runItem(next.job, next.item).finally(() => {
       running--
-      publish(next.job, true)
+      publish(next.job)
       finishIfDone(next.job)
       pump()
     })
@@ -726,6 +732,7 @@ function retryJob(id: string): void {
   job.canceled = false
   job.notified = false
   job.finishedAt = undefined
+  job.next = 0
   for (const it of job.items) {
     if (it.state === 'error' || it.state === 'canceled') {
       it.state = 'queued'

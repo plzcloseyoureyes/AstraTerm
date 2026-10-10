@@ -92,7 +92,7 @@ export default function FilesSettingsSection() {
             value={s.uploadParallelism}
             min={1}
             max={MAX_UPLOAD_PARALLELISM}
-            onChange={(n) => filesSettings.set({ uploadParallelism: n ?? 3 })}
+            onChange={(n) => filesSettings.set({ uploadParallelism: n ?? 6 })}
           />
         </SettingRow>
         <SettingRow label="When items already exist" description="For uploads, copies and moves.">

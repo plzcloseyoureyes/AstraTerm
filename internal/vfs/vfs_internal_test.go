@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"io/fs"
 	"log/slog"
@@ -534,24 +535,24 @@ func TestCompareTrees(t *testing.T) {
 
 func TestUploadPartFlow(t *testing.T) {
 	l, _ := newJail(t)
-	if _, err := writePart(bg, l, "/up.bin", 5, strings.NewReader("x"), 1, false); !errors.As(err, new(errOffsetMismatch)) {
+	if _, err := writePart(bg, l, nil, "/up.bin", 5, strings.NewReader("x"), 1, false); !errors.As(err, new(errOffsetMismatch)) {
 		t.Fatalf("resume without a part: %v", err)
 	}
-	n, err := writePart(bg, l, "/up.bin", 0, strings.NewReader("hello "), 6, false)
+	n, err := writePart(bg, l, nil, "/up.bin", 0, strings.NewReader("hello "), 6, false)
 	if err != nil || n != 6 {
 		t.Fatal(n, err)
 	}
 	var om errOffsetMismatch
-	if _, err := writePart(bg, l, "/up.bin", 9, strings.NewReader("x"), 1, false); !errors.As(err, &om) || om.size != 6 {
+	if _, err := writePart(bg, l, nil, "/up.bin", 9, strings.NewReader("x"), 1, false); !errors.As(err, &om) || om.size != 6 {
 		t.Fatalf("gap must be refused with the stored size: %v", err)
 	}
 	// Retry of a partially stored chunk: offset below the part size truncates.
-	if n, err = writePart(bg, l, "/up.bin", 4, strings.NewReader("o world"), 7, true); err != nil || n != 11 {
+	if n, err = writePart(bg, l, nil, "/up.bin", 4, strings.NewReader("o world"), 7, true); err != nil || n != 11 {
 		t.Fatal(n, err)
 	}
 	mustWrite(t, l, "/up.bin", "old")
 	l.Chmod(bg, "/up.bin", 0o600)
-	if err := commitPart(bg, l, "/up.bin"); err != nil {
+	if err := commitPart(bg, l, "/up.bin", mustLstat(t, l, "/up.bin")); err != nil {
 		t.Fatal(err)
 	}
 	if got := mustRead(t, l, "/up.bin", 0); got != "hello world" {
@@ -563,14 +564,14 @@ func TestUploadPartFlow(t *testing.T) {
 	if _, err := l.Stat(bg, "/up.bin"+partSuffix); !errors.Is(err, fs.ErrNotExist) {
 		t.Fatal("part file must be gone")
 	}
-	if _, err := writePart(bg, l, "/short.bin", 0, strings.NewReader("abc"), 10, true); err == nil {
+	if _, err := writePart(bg, l, nil, "/short.bin", 0, strings.NewReader("abc"), 10, true); err == nil {
 		t.Fatal("a short body must fail")
 	}
 	// Folder uploads: missing parents are created on the first chunk.
-	if _, err := writePart(bg, l, "/new/deep/dir/f.txt", 0, strings.NewReader("x"), 1, true); err != nil {
+	if _, err := writePart(bg, l, nil, "/new/deep/dir/f.txt", 0, strings.NewReader("x"), 1, true); err != nil {
 		t.Fatal(err)
 	}
-	if err := commitPart(bg, l, "/new/deep/dir/f.txt"); err != nil {
+	if err := commitPart(bg, l, "/new/deep/dir/f.txt", nil); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -701,5 +702,77 @@ func TestFTPLoginError(t *testing.T) {
 	blocked := errors.New("dial 127.0.0.1:5300: destination blocked")
 	if err := ftpLoginError(blocked); errors.Is(err, fs.ErrPermission) || !errors.Is(err, blocked) {
 		t.Errorf("dial error: %v, want it wrapped unchanged", err)
+	}
+}
+
+func mustLstat(t *testing.T, fsys FS, p string) *Entry {
+	t.Helper()
+	e, err := fsys.Lstat(bg, p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return e
+}
+
+// countingFS counts the calls an upload makes: on remote file systems (SFTP, FTP…) each is a network round trip.
+type countingFS struct {
+	FS
+	calls int
+}
+
+func (c *countingFS) Stat(ctx context.Context, p string) (*Entry, error) {
+	c.calls++
+	return c.FS.Stat(ctx, p)
+}
+
+func (c *countingFS) MkdirAll(ctx context.Context, p string) error {
+	c.calls++
+	return c.FS.MkdirAll(ctx, p)
+}
+
+func (c *countingFS) Create(ctx context.Context, p string, offset int64) (io.WriteCloser, error) {
+	c.calls++
+	return c.FS.Create(ctx, p, offset)
+}
+
+func (c *countingFS) Chmod(ctx context.Context, p string, perm uint32) error {
+	c.calls++
+	return c.FS.Chmod(ctx, p, perm)
+}
+
+func (c *countingFS) Rename(ctx context.Context, from, to string) error {
+	c.calls++
+	return c.FS.Rename(ctx, from, to)
+}
+
+// Many small files into one folder: after the first, each costs a create and a rename only (no folder check), and a
+// folder that disappears meanwhile is created again.
+func TestUploadRoundTrips(t *testing.T) {
+	l, _ := newJail(t)
+	c := &countingFS{FS: l}
+	var dirs dirCache
+	put := func(target string) {
+		t.Helper()
+		if _, err := writePart(bg, c, &dirs, target, 0, strings.NewReader("x"), 1, true); err != nil {
+			t.Fatal(err)
+		}
+		if err := commitPart(bg, c, target, nil); err != nil {
+			t.Fatal(err)
+		}
+	}
+	put("/batch/f0.txt") // stat + mkdir of the new folder, create, rename
+	c.calls = 0
+	for i := 1; i <= 10; i++ {
+		put(fmt.Sprintf("/batch/f%d.txt", i))
+	}
+	if c.calls != 20 {
+		t.Fatalf("10 files in a known folder took %d calls, want 20 (create + rename each)", c.calls)
+	}
+	if err := l.RemoveAll(bg, "/batch"); err != nil {
+		t.Fatal(err)
+	}
+	put("/batch/again.txt")
+	if got := mustRead(t, l, "/batch/again.txt", 0); got != "x" {
+		t.Fatalf("after the folder was removed: %q", got)
 	}
 }

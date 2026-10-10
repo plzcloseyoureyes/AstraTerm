@@ -763,8 +763,15 @@ func cleanCommandOutput(out, cmd string, promptRe *regexp.Regexp) string {
 		lines = lines[1:]
 		cmdLines = cmdLines[1:]
 	}
-	if prompt != "" && len(lines) > 0 && strings.HasPrefix(lines[0], prompt) {
-		lines[0] = lines[0][len(prompt):]
+	if prompt != "" {
+		// The late prompt may follow an empty line (the echo's line break, then the prompt).
+		i := 0
+		for i < len(lines) && strings.TrimSpace(lines[i]) == "" {
+			i++
+		}
+		if i < len(lines) && strings.HasPrefix(lines[i], prompt) {
+			lines = append([]string{lines[i][len(prompt):]}, lines[i+1:]...)
+		}
 	}
 	return strings.TrimRight(strings.Join(lines, "\n"), "\n")
 }

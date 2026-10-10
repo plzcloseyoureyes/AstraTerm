@@ -269,7 +269,7 @@ async function uploadFile(job: Job, fsId: string, target: string, file: File, on
       for (;;) {
         const end = Math.min(size, offset + CHUNK_SIZE)
         const final = end >= size
-        const url = apiUrl(`${base(fsId)}/upload`, { path: target, offset, total: size, mtime, final: final ? 1 : undefined })
+        const url = apiUrl(`${base(fsId)}/upload`, { path: target, offset, total: size, mtime, final: final ? 1 : undefined, entry: 0 })
         sent = true
         const res = await putChunk(job, url, file.slice(offset, end), (loaded) => onBytes(offset + loaded))
         if (final) {

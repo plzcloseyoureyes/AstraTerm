@@ -583,7 +583,14 @@ func (f *ftpFS) MkdirAll(ctx context.Context, p string) error {
 	if err := f.MkdirAll(ctx, parentDir(p)); err != nil {
 		return err
 	}
-	return f.Mkdir(ctx, p)
+	if err := f.Mkdir(ctx, p); err != nil {
+		// Parallel uploads into a new folder race to create it: the folder being there now is success.
+		if e, lerr := f.Lstat(ctx, p); lerr == nil && (e.Type == "dir" || e.LinkType == "dir") {
+			return nil
+		}
+		return err
+	}
+	return nil
 }
 
 func (f *ftpFS) Remove(ctx context.Context, p string) error {

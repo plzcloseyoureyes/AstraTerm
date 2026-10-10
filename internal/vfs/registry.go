@@ -72,7 +72,8 @@ type Handle struct {
 	closing    bool
 	closed     bool
 	uploads    map[string]*uploadState
-	stagingDir string // local staging of chunked uploads for drivers without partial writes
+	stagingDir string   // local staging of chunked uploads for drivers without partial writes
+	knownDirs  dirCache // upload folders seen to exist (fewer round trips per uploaded file)
 }
 
 // NewRegistry creates the handle registry; handles are closed when d.Ctx ends.

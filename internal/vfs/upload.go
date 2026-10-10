@@ -16,6 +16,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/labstack/echo/v5"
@@ -218,9 +219,14 @@ func (h *handler) upload(c *echo.Context) error {
 		final = true
 	}
 	ctx := req.Context()
+	// One look at the target serves the folder check and, on commit, keeping a replaced file's permissions.
+	var existing *Entry
 	if final {
-		if te, err := hd.FS.Lstat(ctx, target); err == nil && te.Type == model.FileTypeDir {
-			return httpx.NewError(http.StatusConflict, codeExists, "a folder with this name exists: "+target)
+		if te, err := hd.FS.Lstat(ctx, target); err == nil {
+			if te.Type == model.FileTypeDir {
+				return httpx.NewError(http.StatusConflict, codeExists, "a folder with this name exists: "+target)
+			}
+			existing = te
 		}
 	}
 	hasher := hd.hashFor(target, offset)
@@ -252,7 +258,7 @@ func (h *handler) upload(c *echo.Context) error {
 			}
 		}
 	default:
-		size, err = writePart(ctx, hd.FS, target, offset, body, n, final)
+		size, err = writePart(ctx, hd.FS, &hd.knownDirs, target, offset, body, n, final)
 		if om, ok := errors.AsType[errOffsetMismatch](err); ok {
 			return offsetMismatch(c, om.size)
 		}
@@ -261,7 +267,7 @@ func (h *handler) upload(c *echo.Context) error {
 			return fsError(err, target)
 		}
 		if final {
-			if err := commitPart(ctx, hd.FS, target); err != nil {
+			if err := commitPart(ctx, hd.FS, target, existing); err != nil {
 				return fsError(err, target)
 			}
 		}
@@ -283,14 +289,18 @@ func (h *handler) upload(c *echo.Context) error {
 		details["sha256"] = hex.EncodeToString(hasher.Sum(nil))
 	}
 	h.audit(c, "fs.upload", target, details)
-	if e, err := entryFor(ctx, hd, target); err == nil {
-		res.Entry = e
+	// The new entry costs another round trip; clients that do not need it (AstraTerm's own) pass entry=0.
+	if q.Get("entry") != "0" {
+		if e, err := entryFor(ctx, hd, target); err == nil {
+			res.Entry = e
+		}
 	}
 	return c.JSON(http.StatusOK, res)
 }
 
-// writePart streams body into target's part file at offset and returns the part size afterwards.
-func writePart(ctx context.Context, fsys FS, target string, offset int64, body io.Reader, n int64, final bool) (int64, error) {
+// writePart streams body into target's part file at offset and returns the part size afterwards. On remote file
+// systems every call is a round trip, so a folder already seen to exist (dirs) is not checked again per file.
+func writePart(ctx context.Context, fsys FS, dirs *dirCache, target string, offset int64, body io.Reader, n int64, final bool) (int64, error) {
 	part := target + partSuffix
 	if offset > 0 {
 		st, err := fsys.Stat(ctx, part)
@@ -304,20 +314,30 @@ func writePart(ctx context.Context, fsys FS, target string, offset int64, body i
 			return 0, errOffsetMismatch{size: st.Size}
 		}
 	}
-	if offset == 0 {
+	parent := parentDir(target)
+	if offset == 0 && !dirs.known(parent) {
 		// Folder uploads (drag & drop of a tree): create missing parent folders on the first chunk.
-		if _, err := fsys.Stat(ctx, parentDir(target)); errors.Is(err, fs.ErrNotExist) {
-			if err := fsys.MkdirAll(ctx, parentDir(target)); err != nil {
+		if _, err := fsys.Stat(ctx, parent); errors.Is(err, fs.ErrNotExist) {
+			if err := fsys.MkdirAll(ctx, parent); err != nil {
 				return 0, err
 			}
 		}
+		dirs.add(parent)
 	}
-	var w io.WriteCloser
-	var err error
-	if sc, ok := fsys.(sizedCreator); ok && offset == 0 && final && n >= 0 {
-		w, err = sc.CreateSized(ctx, part, n, 0o644)
-	} else {
-		w, err = fsys.Create(ctx, part, offset)
+	create := func() (io.WriteCloser, error) {
+		if sc, ok := fsys.(sizedCreator); ok && offset == 0 && final && n >= 0 {
+			return sc.CreateSized(ctx, part, n, 0o644)
+		}
+		return fsys.Create(ctx, part, offset)
+	}
+	w, err := create()
+	if offset == 0 && errors.Is(err, fs.ErrNotExist) {
+		// The folder went away since it was seen: create it again.
+		dirs.forget(parent)
+		if err = fsys.MkdirAll(ctx, parent); err == nil {
+			dirs.add(parent)
+			w, err = create()
+		}
 	}
 	if err != nil {
 		if errors.Is(err, errCannotTruncate) {
@@ -341,13 +361,53 @@ func writePart(ctx context.Context, fsys FS, target string, offset int64, body i
 	return offset + written, nil
 }
 
-// commitPart atomically replaces target with its part file, keeping the permissions of a replaced file.
-func commitPart(ctx context.Context, fsys FS, target string) error {
+// commitPart atomically replaces target with its part file, keeping the permissions of the file it replaces
+// (existing, as found before the upload; nil for a new file).
+func commitPart(ctx context.Context, fsys FS, target string, existing *Entry) error {
 	part := target + partSuffix
-	if te, err := fsys.Stat(ctx, target); err == nil && te.Type == model.FileTypeFile {
-		_ = fsys.Chmod(ctx, part, te.Mode&0o7777)
+	if existing != nil && existing.Type == model.FileTypeFile {
+		_ = fsys.Chmod(ctx, part, existing.Mode&0o7777)
 	}
 	return fsys.Rename(ctx, part, target)
+}
+
+// dirCache remembers folders seen to exist during uploads, so each uploaded file does not check its folder again.
+type dirCache struct {
+	mu sync.Mutex
+	m  map[string]struct{}
+}
+
+const maxKnownDirs = 4096
+
+func (c *dirCache) known(dir string) bool {
+	if c == nil {
+		return false
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	_, ok := c.m[dir]
+	return ok
+}
+
+func (c *dirCache) add(dir string) {
+	if c == nil {
+		return
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.m == nil || len(c.m) >= maxKnownDirs {
+		c.m = map[string]struct{}{}
+	}
+	c.m[dir] = struct{}{}
+}
+
+func (c *dirCache) forget(dir string) {
+	if c == nil {
+		return
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	delete(c.m, dir)
 }
 
 // stagingReserve is the free space always left on the AstraTerm host's disk when data is staged locally (WebDAV

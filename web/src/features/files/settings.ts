@@ -42,7 +42,8 @@ export const filesSettings = defineSettings<FilesSettings>('files', {
   showPartialUploads: false,
   confirmDelete: true,
   doubleClickAction: 'edit',
-  uploadParallelism: 3,
+  // Browsers open up to 6 connections per server; small files are latency-bound, so use them all.
+  uploadParallelism: 6,
   foldersFirst: true,
   conflictPolicy: 'ask',
   openQueueOnTransfer: false,
@@ -57,7 +58,7 @@ export const MAX_UPLOAD_PARALLELISM = 8
 
 export function uploadParallelism(): number {
   const n = Number(filesSettings.get().uploadParallelism)
-  return Number.isFinite(n) ? Math.min(MAX_UPLOAD_PARALLELISM, Math.max(1, Math.round(n))) : 3
+  return Number.isFinite(n) ? Math.min(MAX_UPLOAD_PARALLELISM, Math.max(1, Math.round(n))) : 6
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

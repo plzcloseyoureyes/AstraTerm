@@ -977,7 +977,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/astraterm` (or `
   an offset below the part size truncates = safe chunk retry; above it → 409 `offset_mismatch` with the stored `size`,
   header `Upload-Offset`). `final=1` — or `offset + body == total` — atomically renames the part onto the target
   (replacing a file, keeping its permissions; a folder of that name → 409) and applies `mtime`. **Without `final`/`total`
-  the part is kept.** Reply `{size, offset, final, entry?}`. Resume point: `GET` (or `HEAD`) `…/upload?path=<target>` →
+  the part is kept.** Reply `{size, offset, final, entry?}` (`entry=0` skips the entry, saving a round trip per file). Resume point: `GET` (or `HEAD`) `…/upload?path=<target>` →
   `{size, offset, exists}` + `Upload-Offset`. S3 keeps native multipart state instead of part files, WebDAV stages
   chunks in `<data dir>/tmp` until the final one (both are lost on a server restart → the client restarts at 0).
 * **Download.** One file: `Range` (one range: `a-b`, `a-`, `-n`; ends beyond the size are clamped) → 206 with exact

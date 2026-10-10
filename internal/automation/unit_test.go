@@ -412,6 +412,10 @@ func TestCleanCommandOutput(t *testing.T) {
 	if got := cleanCommandOutput(out, "echo RUN-OUT", defaultPromptRe); got != "RUN-OUT" {
 		t.Fatalf("clean type-ahead %q", got)
 	}
+	out = "echo RUN-OUT\n\nnx$ RUN-OUT\nnx$ "
+	if got := cleanCommandOutput(out, "echo RUN-OUT", defaultPromptRe); got != "RUN-OUT" {
+		t.Fatalf("clean type-ahead after an empty line %q", got)
+	}
 }
 
 func TestParseSpec(t *testing.T) {

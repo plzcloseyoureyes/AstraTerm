@@ -128,7 +128,8 @@ export const fsApi = {
   },
   /** URL of the upload endpoint for one chunk (the upload engine PUTs raw bytes to it). */
   uploadUrl: (id: string, path: string, offset: number, opts: { mtime?: number; final?: boolean; total?: number } = {}) =>
-    apiUrl(`${base(id)}/upload`, { path, offset, mtime: opts.mtime, final: opts.final ? 1 : undefined, total: opts.total }),
+    // entry=0: the reply's file entry is not used here, and it would cost the server another round trip per file.
+    apiUrl(`${base(id)}/upload`, { path, offset, mtime: opts.mtime, final: opts.final ? 1 : undefined, total: opts.total, entry: 0 }),
 
   /** The terminal's current folder ("" when unknown) — polling fallback for "Follow terminal folder". */
   cwd: async (id: string, sessionId?: string): Promise<string> => {
