@@ -61,7 +61,10 @@ export function useFsHandle(tabId: string, params: EditorTabParams): FsHandle {
       if (reconnecting.current) return reconnecting.current
       const src = latestParams.current.source
       if (!src) return Promise.resolve(null)
+      const { sessionId, ...saved } = src
+      // A runtime session that ended falls back to its saved session.
       const p = openFs(src)
+        .catch((err) => (sessionId && saved.connectionId ? openFs(saved) : Promise.reject(err)))
         .then((h) => {
           rememberHandle(h)
           idRef.current = h.id

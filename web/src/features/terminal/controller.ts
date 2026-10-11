@@ -1170,13 +1170,18 @@ export class TerminalController implements TerminalHandle {
     if (!this.disposed) this.applyState('gone', 'This session no longer exists on the server.')
   }
 
-  /** Save the history snapshot a few seconds after output (restore after a restart; a crash skips pagehide). */
+  /**
+   * Save the history snapshot a while after output, when the browser is idle (pagehide saves it too; this covers a
+   * crash). Serializing 1000 lines and writing localStorage blocks the page, so not more often than every 15 s.
+   */
   private scheduleHistorySave(): void {
     if (this.historyTimer || !this.settings.restoreHistory) return
     this.historyTimer = setTimeout(() => {
       this.historyTimer = null
-      this.saveHistoryNow()
-    }, 5000)
+      // Safari has no requestIdleCallback.
+      if (typeof requestIdleCallback === 'function') requestIdleCallback(() => this.saveHistoryNow(), { timeout: 5000 })
+      else this.saveHistoryNow()
+    }, 15_000)
   }
 
   private saveHistoryNow(): void {

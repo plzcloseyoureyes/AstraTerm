@@ -78,53 +78,69 @@ export function SearchResults({
   }
 
   return (
-    <ul ref={listRef} id={id} role="listbox" aria-label="Matching sessions" className="h-full overflow-y-auto overscroll-contain py-1">
-      {hits.map((h, i) => {
-        const target = connectionTarget(h.conn)
-        const tagHits = h.matches.filter((m) => m.key === 'tags' && typeof m.value === 'string').map((m) => m.value as string)
-        const inNotes = h.matches.some((m) => m.key === 'notes')
-        return (
-          <li
-            key={h.conn.id}
-            id={`${id}-${i}`}
-            data-index={i}
-            data-conn-id={h.conn.id}
-            role="option"
-            aria-selected={i === active}
-            style={{ minHeight: rowHeight }}
-            className={cn(
-              'flex cursor-default flex-col justify-center px-2 py-0.5 select-none hover:bg-sidebar-accent/70',
-              i === active && 'bg-primary/15 hover:bg-primary/20',
-            )}
-            onMouseDown={(e) => e.preventDefault() /* keep focus in the search box */}
-            onClick={() => onActiveChange(i)}
-            onDoubleClick={() => void connectSafely(h.conn)}
-            onAuxClick={(e) => {
-              if (e.button === 1) void connectSafely(h.conn)
-            }}
-          >
-            <div className="flex min-w-0 items-center gap-1.5 text-base">
-              <ConnectionLabel
-                conn={h.conn}
-                running={running.get(h.conn.id)}
-                name={highlight(h.conn.name, rangesFor(h.matches, 'name'))}
-                target={target ? highlight(target, targetRanges(h.conn, target, h.matches)) : null}
-              />
-            </div>
-            {(h.folderPath || tagHits.length > 0 || inNotes) && (
-              <div className="flex min-w-0 items-center gap-1 pl-5.5 text-xs text-muted-foreground">
-                {h.folderPath && <span className="truncate">{h.folderPath}</span>}
-                {tagHits.slice(0, 3).map((t) => (
-                  <Badge key={t} variant="outline" className="h-4 px-1 text-2xs">
-                    {t}
-                  </Badge>
-                ))}
-                {inNotes && <span className="shrink-0 italic">in notes</span>}
+    <div className="flex h-full flex-col">
+      {/* An address no session has exactly: Enter connects to it (SessionsPanel). */}
+      {active < 0 && (
+        <button
+          type="button"
+          className="flex shrink-0 items-center gap-1.5 px-2 py-1.5 text-left text-sm hover:bg-sidebar-accent/70"
+          onMouseDown={(e) => e.preventDefault() /* keep focus in the search box */}
+          onClick={onQuickConnect}
+        >
+          <Zap className="size-3.5 shrink-0 text-muted-foreground" />
+          <span className="shrink-0 text-muted-foreground">Connect to</span>
+          <span className="min-w-0 truncate font-mono">{query}</span>
+          <kbd className="ml-auto shrink-0 font-sans text-xs text-muted-foreground">Enter</kbd>
+        </button>
+      )}
+      <ul ref={listRef} id={id} role="listbox" aria-label="Matching sessions" className="min-h-0 flex-1 overflow-y-auto overscroll-contain py-1">
+        {hits.map((h, i) => {
+          const target = connectionTarget(h.conn)
+          const tagHits = h.matches.filter((m) => m.key === 'tags' && typeof m.value === 'string').map((m) => m.value as string)
+          const inNotes = h.matches.some((m) => m.key === 'notes')
+          return (
+            <li
+              key={h.conn.id}
+              id={`${id}-${i}`}
+              data-index={i}
+              data-conn-id={h.conn.id}
+              role="option"
+              aria-selected={i === active}
+              style={{ minHeight: rowHeight }}
+              className={cn(
+                'flex cursor-default flex-col justify-center px-2 py-0.5 select-none hover:bg-sidebar-accent/70',
+                i === active && 'bg-primary/15 hover:bg-primary/20',
+              )}
+              onMouseDown={(e) => e.preventDefault() /* keep focus in the search box */}
+              onClick={() => onActiveChange(i)}
+              onDoubleClick={() => void connectSafely(h.conn)}
+              onAuxClick={(e) => {
+                if (e.button === 1) void connectSafely(h.conn)
+              }}
+            >
+              <div className="flex min-w-0 items-center gap-1.5 text-base">
+                <ConnectionLabel
+                  conn={h.conn}
+                  running={running.get(h.conn.id)}
+                  name={highlight(h.conn.name, rangesFor(h.matches, 'name'))}
+                  target={target ? highlight(target, targetRanges(h.conn, target, h.matches)) : null}
+                />
               </div>
-            )}
-          </li>
-        )
-      })}
-    </ul>
+              {(h.folderPath || tagHits.length > 0 || inNotes) && (
+                <div className="flex min-w-0 items-center gap-1 pl-5.5 text-xs text-muted-foreground">
+                  {h.folderPath && <span className="truncate">{h.folderPath}</span>}
+                  {tagHits.slice(0, 3).map((t) => (
+                    <Badge key={t} variant="outline" className="h-4 px-1 text-2xs">
+                      {t}
+                    </Badge>
+                  ))}
+                  {inNotes && <span className="shrink-0 italic">in notes</span>}
+                </div>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </div>
   )
 }

@@ -87,7 +87,8 @@ export function realpath(fsId: string, path: string): Promise<{ path: string }> 
 
 /** How to re-open a handle like this one (null for quick-connect handles). */
 export function sourceOf(h: Partial<FsHandleInfo>): FsOpenRequest | undefined {
-  if (h.sessionId) return { sessionId: h.sessionId }
+  // With the saved session: its files can still be opened after the runtime session ended (server restart).
+  if (h.sessionId) return h.connectionId ? { sessionId: h.sessionId, connectionId: h.connectionId } : { sessionId: h.sessionId }
   if (h.connectionId) return { connectionId: h.connectionId }
   if (h.kind === 'local') return { local: true }
   return undefined

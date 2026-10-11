@@ -16,7 +16,6 @@ import { prompt } from '@/components/ui/dialog-host'
 import {
   closeOtherTabs,
   closeSpace,
-  closeTab,
   closeTabsToRight,
   dockTab,
   float,
@@ -25,7 +24,6 @@ import {
   popout,
   renameTab,
   spaceOf,
-  splitActive,
   toggleMaximize,
   useWorkspaceStore,
 } from '@/stores/workspace'
@@ -53,8 +51,8 @@ function paneItems(tabId: string): MenuItem[] {
   const titleOf = (id: string | null) => tabs.find((t) => t.id === id)?.title ?? 'Tab'
   const others = spaces.filter((s) => s.id !== own && s.panes.length > 0)
   const items: MenuItem[] = [
-    { label: 'Split right', icon: PanelRight, run: () => splitActive('right', tabId) },
-    { label: 'Split down', icon: PanelBottom, run: () => splitActive('below', tabId) },
+    { label: 'Split right', icon: PanelRight, command: 'workspace.split.right', args: { tabId } },
+    { label: 'Split down', icon: PanelBottom, command: 'workspace.split.below', args: { tabId } },
     location === 'grid'
       ? { label: panel.api.isMaximized() ? 'Restore size' : 'Maximize pane', icon: Maximize2, run: () => toggleMaximize(tabId), disabled: ownPanes < 2 }
       : { label: 'Dock into the tab', icon: PanelTop, run: () => dockTab(tabId) },
@@ -106,8 +104,10 @@ export function buildSpaceMenu(spaceId: string, tabId: string): MenuItem[] {
     { label: 'Duplicate as a new tab', icon: Copy, command: 'workspace.duplicateTab', args: { tabId } },
   ]
   const close: MenuItem[] = [
-    ...(panes > 1 ? [{ label: 'Close pane', icon: X, run: () => void closeTab(tabId) } as MenuItem] : []),
-    { label: panes > 1 ? `Close tab (${panes} panes)` : 'Close tab', icon: panes > 1 ? undefined : X, run: () => void closeSpace(spaceId) },
+    // The close shortcut closes the active pane: shown on "Close pane", or on "Close tab" when it is the only one.
+    ...(panes > 1
+      ? [{ label: 'Close pane', icon: X, command: 'workspace.closeTab', args: { tabId } } as MenuItem, { label: `Close tab (${panes} panes)`, run: () => void closeSpace(spaceId) } as MenuItem]
+      : [{ label: 'Close tab', icon: X, command: 'workspace.closeTab', args: { tabId } } as MenuItem]),
     { label: 'Close other tabs', run: () => void closeOtherTabs(tabId), disabled: spaces.length < 2 },
     { label: 'Close tabs to the right', run: () => void closeTabsToRight(tabId), disabled: index < 0 || index >= spaces.length - 1 },
   ]

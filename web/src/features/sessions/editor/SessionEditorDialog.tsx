@@ -3,7 +3,7 @@
  * editor), Terminal, Network, Bookmark, Automation. react-hook-form holds the draft, zod validates it (protocol-aware),
  * create / edit / read-only (shared by another user) modes, "Save", "Save & connect", dirty-close confirmation.
  */
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type BaseSyntheticEvent, type KeyboardEvent } from 'react'
 import { useForm, useWatch, type FieldErrors, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
@@ -246,8 +246,13 @@ function EditorForm({ request, original, hidden }: { request: EditorRequest; ori
     setSubmitError('Please fix the highlighted fields.')
   }
 
-  const onSave = handleSubmit((v) => save(v, false), onInvalid)
-  const onSaveConnect = handleSubmit((v) => save(v, true), onInvalid)
+  // Enter submits from inside the host field, before its blur would split "user@host:port".
+  const submit = (connectAfter: boolean) => (e?: BaseSyntheticEvent) => {
+    onHostBlur(getValues('host'))
+    return handleSubmit((v) => save(v, connectAfter), onInvalid)(e)
+  }
+  const onSave = submit(false)
+  const onSaveConnect = submit(true)
 
   const requestClose = () => {
     if (saving) return
@@ -277,7 +282,7 @@ function EditorForm({ request, original, hidden }: { request: EditorRequest; ori
     protocol: spec?.tabLabel ?? `${protocolLabel(values.protocol)} settings`,
     terminal: 'Terminal',
     network: 'Network',
-    bookmark: 'Bookmark',
+    bookmark: 'Organize',
     automation: 'Automation',
   }
   const canShare = isAdmin || (!!original?.shared && original.ownerId === user?.id)

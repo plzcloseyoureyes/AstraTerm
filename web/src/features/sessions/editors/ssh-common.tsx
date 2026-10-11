@@ -103,7 +103,7 @@ export function SshCommonOptions({ value, onChange, variant }: ProtocolEditorPro
           <SelectOption
             {...p}
             name="sshBrowser"
-            label="SSH-browser type"
+            label="SFTP browser"
             defaultLabel="SFTP protocol"
             options={[
               { value: 'scp', label: 'SCP (shell commands)' },
@@ -116,7 +116,7 @@ export function SshCommonOptions({ value, onChange, variant }: ProtocolEditorPro
             <SwitchOption
               {...p}
               name="followCwd"
-              label="Follow SSH path"
+              label="Follow terminal folder"
               hint="The SFTP browser follows the shell's current directory. Unset, “Follow terminal folder by default” (Settings → Files & SFTP) decides."
               defaultValue={followTerminalDefault}
             />

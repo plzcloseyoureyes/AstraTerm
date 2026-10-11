@@ -183,8 +183,8 @@ function SessionPanel({
         <EmptyState
           size="sm"
           icon={FolderSync}
-          title="SSH-browser is off for this session"
-          description="The session's “SSH-browser type” is set to None."
+          title="The SFTP browser is off for this session"
+          description="The session's “SFTP browser” option is set to None."
           action={
             connection ? (
               <Button size="xs" variant="secondary" onClick={() => void runCommand('sessions.edit', { id: connection.id }, { source: 'menu' })}>
@@ -270,7 +270,7 @@ function SessionPanel({
         <EmptyState
           size="sm"
           icon={CircleAlert}
-          title="Could not open the SSH-browser"
+          title="Could not open the SFTP browser"
           description={fs.error?.message || 'The file browser could not be started.'}
           action={
             <Button size="xs" variant="secondary" onClick={fs.retry}>
@@ -288,7 +288,7 @@ function SessionPanel({
       {opening.show && (
         <div className="flex flex-col items-center gap-2 px-4 py-10 text-center text-sm text-muted-foreground animate-in fade-in-0 duration-200">
           <Spinner immediate className="size-5" label="Connecting" />
-          <span role="status">{LIVE.has(state) && !connected ? `Connecting to ${host || 'the server'}…` : 'Opening the SSH-browser…'}</span>
+          <span role="status">{LIVE.has(state) && !connected ? `Connecting to ${host || 'the server'}…` : 'Opening the SFTP browser…'}</span>
         </div>
       )}
     </PanelShell>
@@ -398,7 +398,7 @@ type CwdHintReason = 'option' | 'setting' | 'command'
 const CWD_HINTS: Record<CwdHintReason | 'default', string> = {
   default:
     'The shell has not reported its folder. AstraTerm sets this up at login for bash, zsh, fish and ksh, but skips it when you type before the first prompt appears — reconnect to retry. Other shells need to emit OSC 7.',
-  option: 'The shell was not set up to report its folder because “Follow SSH path” is off for this session. Turn it on in the session settings and reconnect.',
+  option: 'The shell was not set up to report its folder because “Follow terminal folder” is off for this session. Turn it on in the session settings and reconnect.',
   setting: 'The shell was not set up to report its folder because “Follow terminal folder by default” is off in Settings → Files & SFTP. Turn it on and reconnect.',
   command: 'This session runs a remote command instead of a login shell, so its folder is only known if the program emits OSC 7.',
 }
@@ -513,7 +513,7 @@ function NotSsh({ tab, protocol }: { tab: TabInfo; protocol?: string }) {
       <EmptyState
         size="sm"
         icon={FolderSync}
-        title={local ? 'Local terminal' : `No SSH-browser for ${protocolLabel(protocol) || 'this session'}`}
+        title={local ? 'Local terminal' : `No SFTP browser for ${protocolLabel(protocol) || 'this session'}`}
         description={local ? 'Browse this computer’s files in a files tab, or open an SSH session.' : 'Open an SSH session to browse its files here.'}
         action={
           <>

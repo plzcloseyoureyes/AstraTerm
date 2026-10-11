@@ -22,6 +22,7 @@ import type { Connection, LocalShell, Protocol, RuntimeSession } from '@/api/typ
 import { protocolLabel } from '@/app/protocols'
 import { protocolOpeners, type ClosedTab, type TabPlacement, type TabPosition } from '@/app/registry'
 import { errorMessage } from '@/lib/utils'
+import { requestVaultUnlock } from '@/stores/ui'
 import { activeSpaceApi, findTabs, focusTab, getTabParams, openTab, updateTabParams, useWorkspaceStore } from '@/stores/workspace'
 import { getTerminalByTab } from './bus'
 import { estimateCell } from './fonts'
@@ -102,7 +103,10 @@ function clampInt(v: number, min: number, max: number, fallback: number): number
 
 function reportError(what: string, err: unknown): void {
   if (isApiError(err) && err.status === 423) {
-    toast.error(`${what}: the vault is locked`, { description: 'Unlock the vault to use stored credentials.' })
+    toast.error(`${what}: the vault is locked`, {
+      description: 'Unlock the vault to use stored credentials, then try again.',
+      action: { label: 'Unlock', onClick: () => void requestVaultUnlock() },
+    })
     return
   }
   toast.error(what, { description: errorMessage(err) })

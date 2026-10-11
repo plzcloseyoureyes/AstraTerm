@@ -13,7 +13,7 @@ import { IconButton } from '@/components/ui/icon-button'
 import { Kbd } from '@/components/ui/kbd'
 import { ResizeHandle } from '@/components/ui/resizable'
 import { cn, isEditableTarget } from '@/lib/utils'
-import { closeTab, updateTabParams } from '@/stores/workspace'
+import { closeTab, updateTabParams, useIsTabVisible } from '@/stores/workspace'
 import { Delayed, Spinner } from '@/components/ui/spinner'
 import { compareFolders } from '../actions'
 import { FileBrowser } from '../browser/FileBrowser'
@@ -87,6 +87,7 @@ function Pane({
   controllerRef?: (c: BrowserController) => void
 }) {
   const { fs, ctx, place } = useFsContext(source)
+  const visible = useIsTabVisible(tabId)
   const viewId = `tab:${tabId}:${side}`
   if (ctx) {
     return (
@@ -101,6 +102,7 @@ function Pane({
         header={header}
         peer={peer}
         active={active}
+        live={visible}
         onActivate={onActivate}
         controllerRef={controllerRef}
       />

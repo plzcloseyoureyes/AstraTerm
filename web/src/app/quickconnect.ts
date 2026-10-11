@@ -28,3 +28,18 @@ export function sanitizeQuickConnect(text: string): string | null {
     return fallback(text)
   }
 }
+
+/** Text that is clearly a connection spec rather than a search: user@host, host:port, a URL, an IP address... */
+export function looksLikeSpec(q: string): boolean {
+  return /[@:/]|^\s*(ssh|sftp|telnet|rdp|vnc|ftp|serial|mosh)\s|^\s*\d{1,3}(\.\d{1,3}){3}\s*$/i.test(q)
+}
+
+/** Whether `q` is exactly a saved session's name, host or user@host[:port] (then it wins over connecting to `q`). */
+export function isExactSession(q: string, c: { name: string; host?: string; username?: string; port?: number | null }): boolean {
+  const t = q.trim().toLowerCase()
+  if (c.name.toLowerCase() === t) return true
+  if (!c.host) return false
+  const host = c.host.toLowerCase()
+  const target = c.username ? `${c.username.toLowerCase()}@${host}` : host
+  return t === host || t === target || (!!c.port && t === `${target}:${c.port}`)
+}

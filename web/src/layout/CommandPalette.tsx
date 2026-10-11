@@ -1,10 +1,11 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Command } from 'cmdk'
 import Fuse from 'fuse.js'
-import { AppWindow, ChevronRight, Command as CommandIcon, Search } from 'lucide-react'
+import { AppWindow, ChevronRight, Command as CommandIcon, Search, Zap } from 'lucide-react'
 import { commands, tabKinds, type CommandDef } from '@/app/registry'
 import { getKeybindings, runCommand } from '@/app/commands'
 import { protocolIcon, protocolLabel } from '@/app/protocols'
+import { isExactSession, looksLikeSpec } from '@/app/quickconnect'
 import { useConnections } from '@/api/connections'
 import type { Connection } from '@/api/types'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
@@ -176,6 +177,9 @@ function PaletteBody({ raw, setRaw, mode: initialMode }: { raw: string; setRaw: 
   }, [showTabs, tabs, q, limit, mode])
 
   const connectAvailable = commands.useItem('sessions.connect') !== undefined
+  const quickAvailable = commands.useItem('sessions.quickConnect') !== undefined
+  // A typed address (user@host, an IP...) is offered first, unless a saved session is exactly that.
+  const connectTo = quickAvailable && mode !== 'commands' && mode !== 'tabs' && looksLikeSpec(q) && !connResults.some((c) => isExactSession(q, c)) ? q : null
 
   const exec = (fn: () => void) => {
     closePalette()
@@ -186,7 +190,7 @@ function PaletteBody({ raw, setRaw, mode: initialMode }: { raw: string; setRaw: 
   const placeholder =
     mode === 'commands' ? 'Run a command…' : mode === 'connections' ? 'Connect to a saved session…' : mode === 'tabs' ? 'Go to tab…' : 'Search commands, sessions and tabs…'
 
-  const empty = !cmdResults.length && !connResults.length && !tabResults.length
+  const empty = !connectTo && !cmdResults.length && !connResults.length && !tabResults.length
 
   // Groups in their usual order (sessions, tabs, commands), except that a group whose best result contains the typed
   // words comes before groups that only resemble them — Enter runs the first item.
@@ -307,6 +311,20 @@ function PaletteBody({ raw, setRaw, mode: initialMode }: { raw: string; setRaw: 
           </div>
         )}
 
+        {connectTo && (
+          <Command.Group heading="Quick connect" className={groupClass}>
+            <Command.Item
+              value="quick-connect"
+              className={itemClass}
+              onSelect={() => exec(() => void runCommand('sessions.quickConnect', connectTo, { source: 'palette' }))}
+            >
+              <Zap className="size-4 shrink-0 text-muted-foreground" />
+              <span className="truncate">
+                Connect to <span className="font-mono">{connectTo}</span>
+              </span>
+            </Command.Item>
+          </Command.Group>
+        )}
         {groups.map((g) => (
           <Fragment key={g.key}>{g.node}</Fragment>
         ))}

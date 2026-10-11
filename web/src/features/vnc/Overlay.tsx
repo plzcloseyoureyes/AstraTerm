@@ -6,8 +6,9 @@
  * "start a new session".
  */
 import { useEffect, useId, useState } from 'react'
-import { KeyRound, MonitorX, PlugZap, RefreshCw, ShieldAlert, ShieldQuestion, X } from 'lucide-react'
+import { KeyRound, MonitorX, Pencil, PlugZap, RefreshCw, ShieldAlert, ShieldQuestion, X } from 'lucide-react'
 import { toast } from 'sonner'
+import { isCommandEnabled, runCommand } from '@/app/commands'
 import type { Connection } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { CheckboxField } from '@/components/ui/checkbox'
@@ -83,7 +84,7 @@ export function StatusOverlay({ c, s, sessionMessage, target, onRestart, onClose
       )
     case 'disconnected':
     case 'error':
-      return <Ended c={c} s={s} onRestart={onRestart} onCloseTab={onCloseTab} />
+      return <Ended c={c} s={s} onRestart={onRestart} onCloseTab={onCloseTab} connectionId={editableConnection?.id} />
   }
 }
 
@@ -100,7 +101,20 @@ function Shell({ children, className }: { children: React.ReactNode; className?:
   )
 }
 
-function Ended({ c, s, onRestart, onCloseTab }: { c: VncController; s: VncState; onRestart: () => void; onCloseTab: () => void }) {
+function Ended({
+  c,
+  s,
+  onRestart,
+  onCloseTab,
+  connectionId,
+}: {
+  c: VncController
+  s: VncState
+  onRestart: () => void
+  onCloseTab: () => void
+  /** Offers "Edit session…" when the connection failed (host, port, password). */
+  connectionId?: string
+}) {
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
     if (!s.retryAt) return
@@ -148,6 +162,11 @@ function Ended({ c, s, onRestart, onCloseTab }: { c: VncController; s: VncState;
             <Button size="sm" variant="secondary" onClick={onCloseTab}>
               Close tab
             </Button>
+            {failed && connectionId && isCommandEnabled('sessions.edit') && (
+              <Button size="sm" variant="secondary" onClick={() => void runCommand('sessions.edit', { id: connectionId })}>
+                <Pencil /> Edit session…
+              </Button>
+            )}
             <Button size="sm" onClick={() => c.reconnect()} autoFocus>
               <RefreshCw /> Reconnect
             </Button>

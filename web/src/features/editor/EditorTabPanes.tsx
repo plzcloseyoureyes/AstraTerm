@@ -72,14 +72,15 @@ export function ErrorPane({
         title="The file system connection is no longer available"
         actions={
           <>
-            {canReconnect && (
+            {canReconnect ? (
               <Button size="sm" onClick={onReconnect} autoFocus>
-                Reconnect
+                <RefreshCw /> Reconnect
+              </Button>
+            ) : (
+              <Button size="sm" variant="secondary" onClick={onRetry}>
+                <RefreshCw /> Retry
               </Button>
             )}
-            <Button size="sm" variant="secondary" onClick={onRetry}>
-              <RefreshCw /> Retry
-            </Button>
             {closeButton}
           </>
         }

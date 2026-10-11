@@ -3,15 +3,16 @@
  * Q/Enter = close), transport reconnect badge, read-only / paused / paste-progress badges.
  */
 import { useEffect, useState, type ReactNode } from 'react'
-import { CircleAlert, CopyPlus, Download, Eye, Lock, Pause, Play, PlugZap, RefreshCw, Unplug, WifiOff, X, CircleStop, SearchX } from 'lucide-react'
+import { CircleAlert, CopyPlus, Download, Eye, Lock, Pause, Pencil, Play, PlugZap, RefreshCw, Unplug, WifiOff, X, CircleStop, SearchX } from 'lucide-react'
+import { isCommandEnabled, runCommand } from '@/app/commands'
 import { Button } from '@/components/ui/button'
 import { Kbd } from '@/components/ui/kbd'
 import { Delayed, Spinner } from '@/components/ui/spinner'
 import { cn, formatBytes } from '@/lib/utils'
-import { closeTab } from '@/stores/workspace'
+import { closeTab, getTabParams } from '@/stores/workspace'
 import type { TerminalController } from './controller'
 import { duplicateSession } from './open'
-import type { TerminalInfo } from './types'
+import type { TerminalInfo, TerminalTabParams } from './types'
 
 function endedCopy(info: TerminalInfo): { title: string; icon: typeof Unplug; tone: 'muted' | 'error' } {
   const hasExit = info.exitCode !== undefined && info.exitCode !== null
@@ -52,6 +53,8 @@ function EndedPanel({ ctrl, info }: { ctrl: TerminalController; info: TerminalIn
   const { title, icon: Icon, tone } = endedCopy(info)
   // Closed or vanished sessions cannot be reconnected: a new session replaces them in this tab.
   const gone = info.state === 'gone' || info.state === 'closed'
+  // A failed connection is usually fixed in its saved session (host, port, credentials).
+  const connectionId = info.state === 'error' ? getTabParams<TerminalTabParams>(ctrl.tabId)?.connectionId : undefined
   return (
     <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center bg-gradient-to-t from-black/35 to-transparent px-3 pt-10 pb-4">
       <div
@@ -81,6 +84,11 @@ function EndedPanel({ ctrl, info }: { ctrl: TerminalController; info: TerminalIn
           <Button size="sm" variant="secondary" onClick={() => void duplicateSession(ctrl.tabId)}>
             <CopyPlus /> Duplicate <Kbd className="ml-1">D</Kbd>
           </Button>
+          {connectionId && isCommandEnabled('sessions.edit') && (
+            <Button size="sm" variant="secondary" onClick={() => void runCommand('sessions.edit', { id: connectionId })}>
+              <Pencil /> Edit session…
+            </Button>
+          )}
           <Button size="sm" variant="secondary" onClick={() => ctrl.saveOutput('text')}>
             <Download /> Save output <Kbd className="ml-1">S</Kbd>
           </Button>

@@ -2,7 +2,7 @@
  * Sessions sidebar panel: toolbar, fuzzy search (type-to-connect), filter chips, Favorites / Recent, and the session
  * tree — or ranked results while searching. One context menu serves every row (registry target `session-node`).
  */
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
+import { useDeferredValue, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import Fuse from 'fuse.js'
 import {
   ArrowDownUp,
@@ -27,6 +27,7 @@ import {
 import { getContextMenuItems } from '@/app/registry'
 import { runCommand, useCommand } from '@/app/commands'
 import { protocolIcon, protocolLabel } from '@/app/protocols'
+import { isExactSession, looksLikeSpec } from '@/app/quickconnect'
 import { recentConnections, useConnections } from '@/api/connections'
 import { useFolders } from '@/api/folders'
 import { useSessions } from '@/api/sessions'
@@ -145,7 +146,9 @@ export default function SessionsPanel() {
   const fullIndex = useMemo(() => (predicate ? buildTreeIndex(folderList, connections, { sortMode: settings.sortMode }) : index), [predicate, folderList, connections, settings.sortMode, index])
 
   // --- search --------------------------------------------------------------------------------------------------------
-  const searching = query.trim().length > 0
+  // Matched after the keystroke is painted: typing stays smooth with large inventories.
+  const searchQuery = useDeferredValue(query.trim())
+  const searching = searchQuery.length > 0
   const fuse = useMemo(() => {
     const byId = new Map(folderList.map((f) => [f.id, f]))
     return new Fuse(connections, {
@@ -170,13 +173,16 @@ export default function SessionsPanel() {
     if (!searching) return []
     const byId = new Map(folderList.map((f) => [f.id, f]))
     return fuse
-      .search(query.trim(), { limit: 400 })
+      .search(searchQuery, { limit: 400 })
       .filter((r) => !predicate || predicate(r.item))
       .slice(0, 200)
       .map((r) => ({ conn: r.item, matches: r.matches ?? [], folderPath: folderPathLabel(byId, r.item.folderId) }))
-  }, [searching, fuse, query, predicate, folderList])
+  }, [searching, searchQuery, fuse, predicate, folderList])
 
-  useEffect(() => setActive(hits.length ? 0 : -1), [hits])
+  // Enter opens the first hit, unless the query is an address no session has exactly: Enter connects to it then.
+  useEffect(() => {
+    setActive(hits.length && (!looksLikeSpec(searchQuery) || isExactSession(searchQuery, hits[0].conn)) ? 0 : -1)
+  }, [hits, searchQuery])
 
   const quickConnectQuery = () => {
     const text = query.trim()
@@ -194,12 +200,12 @@ export default function SessionsPanel() {
     } else if (e.key === 'ArrowUp') {
       if (searching) {
         e.preventDefault()
-        setActive((a) => Math.max(0, a - 1))
+        setActive((a) => Math.max(-1, a - 1))
       }
     } else if (e.key === 'Enter') {
       if (!searching) return
       e.preventDefault()
-      const hit = hits[active >= 0 ? active : 0]
+      const hit = active >= 0 ? hits[active] : undefined
       if (!hit) quickConnectQuery()
       else if (e.altKey) openSessionEditor({ mode: 'edit', connectionId: hit.conn.id })
       else void connectSafely(hit.conn).then((ok) => ok && setPanelQuery(''))
@@ -440,7 +446,7 @@ export default function SessionsPanel() {
           value={query}
           onChange={(e) => setPanelQuery(e.target.value)}
           onKeyDown={onSearchKeyDown}
-          placeholder="Search sessions"
+          placeholder="Search or connect"
           aria-label="Search sessions"
           role="combobox"
           aria-expanded={searching}

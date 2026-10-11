@@ -548,7 +548,7 @@ export default function HomeView(_props: TabProps<{ watermark?: boolean }>) {
               command="terminal.newLocal"
               accent="bg-success/15 text-success"
             />
-            <ActionCard icon={FolderOpen} title="Browse files" description="Local files and transfers" command="files.openLocal" accent="bg-warning/15 text-warning" />
+            <ActionCard icon={FolderOpen} title="Local files" description="Files on this machine and transfers" command="files.openLocal" accent="bg-warning/15 text-warning" />
             <ActionCard icon={Search} title="Command palette" description="Find any action or session" command="palette.open" accent="bg-info/15 text-info" />
           </div>
         </section>

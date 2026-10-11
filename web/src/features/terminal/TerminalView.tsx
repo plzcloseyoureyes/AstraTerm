@@ -162,6 +162,8 @@ export default function TerminalView({ tabId, params }: TabProps<TerminalTabPara
   // No bottom padding: rows are whole, so the fit's leftover (0..1 row) already pads the bottom — a fixed pad there
   // would often cost a whole row.
   const hostStyle: CSSProperties = {
+    // Hidden tabs only become invisible; not displayed, xterm stops drawing their output and repaints when shown.
+    display: visible ? undefined : 'none',
     inset: `${pad}px ${pad}px ${Math.min(pad, 2)}px`,
     ...(opaque ? { background: theme.background } : { boxShadow: `0 0 0 ${pad}px ${theme.background}` }),
   }

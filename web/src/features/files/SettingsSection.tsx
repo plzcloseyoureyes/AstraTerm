@@ -28,14 +28,14 @@ export default function FilesSettingsSection() {
   const s = filesSettings.use()
   const bookmarkCount = Object.values(s.bookmarks ?? {}).reduce((n, l) => n + (Array.isArray(l) ? l.length : 0), 0)
   return (
-    <SettingsPage title="Files & SFTP" description="The SSH-browser side panel, file tabs, uploads and transfers.">
-      <SettingsGroup title="SSH-browser (SFTP panel)">
+    <SettingsPage title="Files & SFTP" description="The SFTP browser side panel, file tabs, uploads and transfers.">
+      <SettingsGroup title="SFTP browser">
         <SettingRow label="Show the SFTP panel when an SSH session connects" description="Switches the left sidebar to the session's files." htmlFor="files-autoshow">
           <Switch id="files-autoshow" checked={s.autoShowPanel} onCheckedChange={(v) => filesSettings.set({ autoShowPanel: v })} />
         </SettingRow>
         <SettingRow
           label="Follow terminal folder by default"
-          description="The browser goes where the shell goes (cd). A session's “Follow SSH path” option can turn it off."
+          description="The browser goes where the shell goes (cd). A session's “Follow terminal folder” option can turn it off."
           htmlFor="files-follow"
         >
           <Switch id="files-follow" checked={s.followTerminal} onCheckedChange={(v) => filesSettings.set({ followTerminal: v })} />

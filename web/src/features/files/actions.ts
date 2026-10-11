@@ -77,7 +77,7 @@ async function listNames(ctx: FsContext, dir: string): Promise<{ names: Set<stri
 function openRequestOf(ctx: FsContext): FsOpenRequest | undefined {
   switch (ctx.source.kind) {
     case 'session':
-      return { sessionId: ctx.source.sessionId }
+      return ctx.handle.connectionId ? { sessionId: ctx.source.sessionId, connectionId: ctx.handle.connectionId } : { sessionId: ctx.source.sessionId }
     case 'connection':
       return { connectionId: ctx.source.connectionId }
     case 'local':

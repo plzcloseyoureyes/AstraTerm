@@ -7,6 +7,7 @@
  *   openLocalFile()                                                           file from this computer (FS Access API)
  */
 import { toast } from 'sonner'
+import type { FsOpenRequest } from '@/api/types'
 import type { TabInfo, TabPosition } from '@/app/registry'
 import { errorMessage, uid } from '@/lib/utils'
 import { focusTab, listTabs, openTab, updateTabParams } from '@/stores/workspace'
@@ -21,8 +22,20 @@ import type { DiffSource, DiffSourceInput, DiffTabParams, EditorTabParams, TextT
 // remote files
 // ---------------------------------------------------------------------------------------------------------------------
 
-function findEditorTab(fsId: string, path: string): TabInfo<EditorTabParams> | undefined {
-  return listTabs().find((t) => t.kind === 'editor' && t.params?.fsId === fsId && t.params?.path === path) as TabInfo<EditorTabParams> | undefined
+/** Both from the same session, saved session or this computer: their handles reach the same files. */
+function sameOrigin(a?: FsOpenRequest, b?: FsOpenRequest): boolean {
+  if (!a || !b) return false
+  return (!!a.sessionId && a.sessionId === b.sessionId) || (!!a.connectionId && a.connectionId === b.connectionId) || (!!a.local && !!b.local)
+}
+
+/** The tab of the same file, also when it was opened through another handle (e.g. before a restart: same origin or host). */
+function findEditorTab(p: EditorTabParams): TabInfo<EditorTabParams> | undefined {
+  return listTabs().find(
+    (t) =>
+      t.kind === 'editor' &&
+      t.params?.path === p.path &&
+      (t.params.fsId === p.fsId || sameOrigin(t.params.source, p.source) || (!!p.label && t.params.label === p.label)),
+  ) as TabInfo<EditorTabParams> | undefined
 }
 
 export interface OpenRemoteOptions extends EditorTabParams {
@@ -36,13 +49,17 @@ export function openRemoteFile(opts: OpenRemoteOptions): string {
   if (!params.fsId || !params.path) throw new Error('editor.open needs {fsId, path}')
   if (params.label) rememberHandle({ id: params.fsId, label: params.label })
   addRecent({ fsId: params.fsId, path: params.path, label: params.label, source: params.source })
-  const existing = findEditorTab(params.fsId, params.path)
+  const existing = findEditorTab(params)
   if (existing) {
     if (activate !== false) focusTab(existing.id)
     const patch: Partial<EditorTabParams> = {}
     if (params.mode && params.mode !== existing.params.mode) patch.mode = params.mode
     if (params.label && !existing.params.label) patch.label = params.label
-    if (params.source && !existing.params.source) patch.source = params.source
+    // The newer origin: the tab's own may have ended (the tab re-opens its handle from it).
+    if (params.source && JSON.stringify(params.source) !== JSON.stringify(existing.params.source)) patch.source = params.source
+    // Without unsaved changes the tab moves to the live handle (it reloads the file), which also recovers a tab whose
+    // handle is gone. With changes it keeps its buffer and re-opens its handle when it saves.
+    if (existing.params.fsId !== params.fsId && !getController(existing.id)?.isDirty()) Object.assign(patch, { fsId: params.fsId, ownsFs: params.ownsFs })
     if (Object.keys(patch).length) updateTabParams<EditorTabParams>(existing.id, patch)
     if (params.line) getController(existing.id)?.revealLine?.(params.line)
     if (params.find) getController(existing.id)?.revealText?.(params.find)

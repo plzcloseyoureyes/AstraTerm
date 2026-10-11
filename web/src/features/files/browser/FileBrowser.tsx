@@ -65,6 +65,8 @@ export interface FileBrowserProps {
   peer?: () => BrowserController | undefined
   /** Commander: this pane has the focus. */
   active?: boolean
+  /** Keeps the folder live (false while the tab is hidden: no polling, a refresh when shown again). */
+  live?: boolean
   onActivate?: () => void
   /** Extra toolbar actions (the panel adds "Open in full tab"). */
   extraActions?: ToolAction[]
@@ -106,7 +108,7 @@ function useWidth<T extends HTMLElement>(): [React.RefObject<T | null>, number] 
 }
 
 export function FileBrowser(props: FileBrowserProps) {
-  const { viewId, ctx, variant, initialPath, onPathChange, active = true } = props
+  const { viewId, ctx, variant, initialPath, onPathChange, active = true, live = true } = props
   const fsId = ctx.handle.id
   const mobile = useIsMobile()
   const settings = filesSettings.use()
@@ -141,10 +143,16 @@ export function FileBrowser(props: FileBrowserProps) {
     staleTime: 2500,
     retry: false,
     // Keep the folder live (files created in the terminal, saved from the editor…) without hammering huge folders.
-    refetchInterval: (query) => ((query.state.data?.entries.length ?? 0) > 5000 || query.state.status === 'error' ? false : 8000),
+    refetchInterval: (query) => (!live || (query.state.data?.entries.length ?? 0) > 5000 || query.state.status === 'error' ? false : 8000),
     refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,
   })
+  const wasLive = useRef(live)
+  const { refetch } = q
+  useEffect(() => {
+    if (live && !wasLive.current) void refetch()
+    wasLive.current = live
+  }, [live, refetch])
 
   // A listing arrived: confirm the folder, update the history, select what was asked for.
   useEffect(() => {

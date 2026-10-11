@@ -67,7 +67,7 @@ import { queryClient } from '@/api/queryClient'
 import { queryKeys } from '@/api/queryKeys'
 import { lockVault } from '@/api/vault'
 import type { Connection, RuntimeSession } from '@/api/types'
-import { appCommand, MULTI_WINDOW } from '@/lib/desktop'
+import { appCommand, DESKTOP_APP, MULTI_WINDOW } from '@/lib/desktop'
 import { events, useEventsStore } from '@/lib/events'
 import { toggleFullscreen } from '@/lib/hooks'
 import { errorMessage, isMac } from '@/lib/utils'
@@ -245,8 +245,9 @@ registerCommand({
   title: 'Close Tab',
   category: 'Workspace',
   icon: X,
-  // Ctrl+Shift+W as in other terminal apps on Windows / Linux, where the shell keeps Ctrl+W (delete word).
-  keybinding: ['$mod+w', 'Alt+w', 'Control+Alt+q', ...(isMac ? [] : ['Control+Shift+w'])],
+  // Ctrl+Shift+W as in other terminal apps on Windows / Linux, where the shell keeps Ctrl+W (delete word). The first one
+  // is the one shown: in a browser, Ctrl/⌘W closes the browser tab, so Alt+W there.
+  keybinding: [...(DESKTOP_APP ? ['$mod+w', 'Alt+w'] : ['Alt+w', '$mod+w']), 'Control+Alt+q', ...(isMac ? [] : ['Control+Shift+w'])],
   essential: true,
   when: hasActive,
   run: ({ args }) => {

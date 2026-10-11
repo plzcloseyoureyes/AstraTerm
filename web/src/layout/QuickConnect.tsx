@@ -2,9 +2,9 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import Fuse from 'fuse.js'
 import { ArrowRight, Clock, Star, X, Zap } from 'lucide-react'
 import { commands } from '@/app/registry'
-import { runCommand } from '@/app/commands'
+import { getKeybindings, runCommand } from '@/app/commands'
 import { protocolIcon, protocolLabel } from '@/app/protocols'
-import { sanitizeQuickConnect } from '@/app/quickconnect'
+import { isExactSession, looksLikeSpec, sanitizeQuickConnect } from '@/app/quickconnect'
 import { recentConnections, useConnections } from '@/api/connections'
 import type { Connection } from '@/api/types'
 import { Kbd } from '@/components/ui/kbd'
@@ -62,11 +62,6 @@ const MAX_RECENT = 8
 /** `user@host:port` of a saved session (what its row shows under the name). */
 function target(c: Connection): string {
   return `${c.username ? `${c.username}@` : ''}${c.host ?? ''}${c.port ? `:${c.port}` : ''}` || protocolLabel(c.protocol)
-}
-
-/** Text that is clearly a connection spec rather than a search: the typed spec goes first. */
-function looksLikeSpec(q: string): boolean {
-  return /[@:/]|^\s*(ssh|sftp|telnet|rdp|vnc|ftp|serial|mosh)\s/i.test(q)
 }
 
 /**
@@ -140,6 +135,7 @@ export function QuickConnect({
   const focusReq = useUIStore((s) => s.quickConnectFocus)
   const available = commands.useItem('sessions.quickConnect') !== undefined
   const suggestions = useSuggestions(value, history)
+  const focusKey = getKeybindings('quickConnect.focus')[0]
   const lg = size === 'lg'
 
   useEffect(() => {
@@ -149,10 +145,12 @@ export function QuickConnect({
     }
   }, [focusReq, primary])
 
-  // A typed spec is what Enter connects to; the first saved-session match is pre-highlighted only for plain searches.
+  // A typed spec is what Enter connects to; the first saved-session match is pre-highlighted for plain searches, and for
+  // a spec only when it is that session's exact name or host (10.0.0.5 must not open the saved 10.0.0.15).
   useEffect(() => {
     const q = value.trim()
-    setActive(q && !looksLikeSpec(q) && suggestions[0]?.kind === 'saved' ? 0 : -1)
+    const first = suggestions[0]
+    setActive(q && first?.kind === 'saved' && (!looksLikeSpec(q) || isExactSession(q, first.conn)) ? 0 : -1)
   }, [value, suggestions])
 
   const done = () => {
@@ -254,7 +252,7 @@ export function QuickConnect({
             <ArrowRight className="size-3.5" />
           </button>
         ) : (
-          <Kbd keys="Control+Shift+q" className="hidden lg:inline-flex" />
+          focusKey && <Kbd keys={focusKey} className="hidden lg:inline-flex" />
         )}
       </div>
       {showList && (

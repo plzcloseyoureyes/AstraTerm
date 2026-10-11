@@ -8,6 +8,28 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+### Changed
+
+- **Quick connect, session search and the command palette:** a typed address (an IP, user@host, host:port) connects to
+  that address instead of opening a similar saved session (10.0.0.5 no longer opens the saved 10.0.0.15); an exact name
+  or host still opens the saved one. The sidebar search shows "Connect to …" for it, and the command palette offers it.
+- **Session editor:** pressing Enter in the host field accepts `user@host:port` like leaving the field does; the
+  "Bookmark" tab is now "Organize".
+- **Failed connections** (terminal and VNC) offer **Edit session…**; a "vault is locked" message offers **Unlock**.
+- The tab menu shows the shortcuts of Split right / down and Close tab; in a browser, Close tab shows Alt+W (Ctrl/⌘W
+  closes the browser tab there).
+- One name for the side panel, "SFTP browser", and its option "Follow terminal folder"; the Home card that opens this
+  computer's files is now "Local files".
+- **Performance:** terminals in hidden tabs no longer draw their output (they repaint when shown), the terminal history
+  is saved when the browser is idle and at most every 15 s, hidden file tabs stop polling their folder, and session
+  search matches after the keystroke is painted.
+
+### Fixed
+
+- **Editor tabs after a restart:** a file whose session ended re-opens through its saved session instead of showing
+  "The file system connection is no longer available", and opening the same file again reuses its tab instead of a
+  second one.
+
 ## [0.1.15] - 2026-10-10
 
 ### Changed
