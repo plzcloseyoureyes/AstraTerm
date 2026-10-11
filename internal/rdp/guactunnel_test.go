@@ -242,12 +242,15 @@ func TestGuacTunnelFakeGuacd(t *testing.T) {
 	if err := ws.Write(ctx, websocket.MessageText, []byte("0.,4.ping,13.1700000000000;")); err != nil {
 		t.Fatal(err)
 	}
-	ins, frames := readInstructions(t, ws, 20*time.Second, func(in guac.Instruction) bool { return in.Opcode == "sync" })
-	sawPong := false
+	// The echo can come before or after the fake guacd's first sync: read until both arrived.
+	sawPong, sawSync := false, false
+	ins, frames := readInstructions(t, ws, 20*time.Second, func(in guac.Instruction) bool {
+		sawPong = sawPong || (in.Opcode == guac.InternalOpcode && in.Arg(0) == "ping" && in.Arg(1) == "1700000000000")
+		sawSync = sawSync || in.Opcode == "sync"
+		return sawPong && sawSync
+	})
 	for _, in := range ins {
 		switch in.Opcode {
-		case guac.InternalOpcode:
-			sawPong = sawPong || (in.Arg(0) == "ping" && in.Arg(1) == "1700000000000")
 		case "clipboard", "blob", "end", "required", "ack":
 			t.Fatalf("instruction %q reached the browser", in.Opcode)
 		case "file":

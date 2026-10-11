@@ -151,15 +151,23 @@ func TestCommandAudit(t *testing.T) {
 	c.MustJSON("PUT", "/api/admin/recordings/policy", map[string]any{"commandAudit": true}, nil)
 	for _, marks := range []bool{true, false} {
 		s := e.openSession(t, c, map[string]any{"marks": marks})
-		// Type only once the first prompt was seen (as a person would): the banner before it is not a command.
-		waitFor(t, "first prompt", func() bool {
-			_, body := c.Do("GET", "/api/sessions/"+s.ID+"/replay?minutes=0", nil)
-			return strings.Contains(string(body), "user@fake:~$")
-		})
+		// Type each line once the shell answered the previous one, as a person would: the banner before the first prompt
+		// is not a command, and the password goes to the password prompt (typed ahead, it could take the next line's echo).
+		shown := func(text string) {
+			waitFor(t, text, func() bool {
+				_, body := c.Do("GET", "/api/sessions/"+s.ID+"/replay?minutes=0", nil)
+				return strings.Contains(string(body), text)
+			})
+		}
+		shown("user@fake:~$")
 		e.input(t, c, s.ID, "ls -la\r")
+		shown("ran: ls -la")
 		e.input(t, c, s.ID, "sudo\r")
+		shown("password for user")
 		e.input(t, c, s.ID, "hunter2\r") // password: never echoed, never audited
+		shown("authenticated")
 		e.input(t, c, s.ID, "git statt\x7fus\r")
+		shown("ran: git status")
 		e.input(t, c, s.ID, "false\r")
 		type auditEntry struct {
 			Target  string         `json:"target"`
