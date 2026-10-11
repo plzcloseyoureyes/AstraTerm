@@ -8,6 +8,8 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+## [0.1.16] - 2026-10-11
+
 ### Changed
 
 - **Quick connect, session search and the command palette:** a typed address (an IP, user@host, host:port) connects to
@@ -249,7 +251,8 @@ endings, which broke monitoring of Linux, macOS and BSD hosts. That is fixed her
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.15...HEAD
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.16...HEAD
+[0.1.16]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.12...v0.1.13
