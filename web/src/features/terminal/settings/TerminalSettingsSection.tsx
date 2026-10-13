@@ -20,6 +20,7 @@ import { Switch } from '@/components/ui/switch'
 import { TagInput } from '@/components/ui/tag-input'
 import { SettingRow, SettingsGroup, SettingsPage } from '@/features/settings/ui'
 import { isDarkTheme } from '@/lib/theme'
+import { hostAccess } from '@/stores/auth'
 import { isMac } from '@/lib/utils'
 import { clearClipboardHistory, useClipboardHistory } from '../clipboard'
 import { cssFamily, fontOptions, queryInstalledMonospaceFonts } from '../fonts'
@@ -86,11 +87,26 @@ function NumberRow({
   )
 }
 
-/** The shell new local terminals start (⌘T / Ctrl+Shift+T), from the shells found on this machine. */
+/** Stands for "System default" (the setting's empty value), which a select cannot hold. */
+const SYSTEM_SHELL = '(system)'
+
+/** The shell new terminals start ("+", ⌘T / Ctrl+Shift+T, the one opened at start), from the shells found on this machine. */
 function DefaultShellRow() {
   const shells = useLocalShells()
-  const options = [{ value: '', label: 'System default' }, ...(shells.data ?? []).map((sh) => ({ value: sh.id, label: sh.name }))]
-  return <SelectRow k="defaultShell" label="Default shell" description="New tabs (+, and the new terminal shortcut) and the terminal opened at start." options={options} width="w-56" />
+  const value = terminalSettings.useValue('defaultShell') || SYSTEM_SHELL
+  const options = [{ value: SYSTEM_SHELL, label: 'System default' }, ...(shells.data ?? []).map((sh) => ({ value: sh.id, label: sh.name }))]
+  return (
+    <SettingRow label="Default shell" description="New tabs (+, and the new terminal shortcut) and the terminal opened at start.">
+      <SimpleSelect
+        aria-label="Default shell"
+        size="sm"
+        className="w-56"
+        value={value}
+        onValueChange={(v) => terminalSettings.set({ defaultShell: v === SYSTEM_SHELL ? '' : v })}
+        options={options}
+      />
+    </SettingRow>
+  )
 }
 
 function SelectRow<K extends Keys<TerminalSettings, string>>({
@@ -426,6 +442,12 @@ export default function TerminalSettingsSection() {
         </Button>
       }
     >
+      {hostAccess() && (
+        <SettingsGroup title="New terminals">
+          <DefaultShellRow />
+          <Toggle k="newTabCwd" label="Start in the current folder" description="A new local terminal opens in the folder of the active one." />
+        </SettingsGroup>
+      )}
       <ColourSchemes s={s} font={font} />
       <FontSettings s={s} />
 
@@ -628,11 +650,6 @@ export default function TerminalSettingsSection() {
           label="Restore history"
           description="After a restart, reopened terminal tabs start a new session showing their previous output. Saved in this browser / app."
         />
-      </SettingsGroup>
-
-      <SettingsGroup title="New terminals">
-        <DefaultShellRow />
-        <Toggle k="newTabCwd" label="Start in the current folder" description="A new local terminal opens in the folder of the active one." />
       </SettingsGroup>
 
       <SettingsGroup title="When a session ends">

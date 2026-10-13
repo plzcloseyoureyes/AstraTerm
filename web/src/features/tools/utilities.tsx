@@ -120,7 +120,12 @@ function PasswordGenPanel() {
               <Slider value={[words]} min={3} max={10} step={1} onValueChange={([v]) => setWords(v)} onValueCommit={genPassphrase} />
             </Field>
             <Field label="Separator">
-              <SimpleSelect value={sep} onValueChange={setSep} options={[{ value: '-', label: 'Hyphen -' }, { value: '.', label: 'Dot .' }, { value: '_', label: 'Underscore _' }, { value: ' ', label: 'Space' }, { value: '', label: 'None' }]} />
+              {/* A select cannot hold an empty value: "none" stands for no separator. */}
+              <SimpleSelect
+                value={sep || 'none'}
+                onValueChange={(v) => setSep(v === 'none' ? '' : v)}
+                options={[{ value: '-', label: 'Hyphen -' }, { value: '.', label: 'Dot .' }, { value: '_', label: 'Underscore _' }, { value: ' ', label: 'Space' }, { value: 'none', label: 'None' }]}
+              />
             </Field>
           </FormGrid>
           <div className="flex flex-wrap gap-4">

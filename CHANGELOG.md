@@ -15,7 +15,12 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
   start with nothing to restore (first run, a new window) opens a terminal instead of Home. Where local shells are not
   available (server mode, not an admin), "+" lists the sessions and Home opens as before.
 - Local terminal tabs are named by the shell's title, else their folder, instead of "Local terminal".
-- Home lists New terminal first.
+- Home lists New terminal first; Settings → Terminal starts with **New terminals** (default shell, start folder).
+
+### Fixed
+
+- The default shell setting showed an empty box for "System default"; the passphrase generator's "None" separator did
+  the same.
 
 ## [0.1.16] - 2026-10-11
 

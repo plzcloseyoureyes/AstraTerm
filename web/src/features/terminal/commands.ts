@@ -86,7 +86,8 @@ registerMenu({
   items: () => {
     if (!hostAccess()) return []
     const shells = queryClient.getQueryData<LocalShell[]>(queryKeys.localShells)
-    if (!shells) void queryClient.prefetchQuery({ queryKey: queryKeys.localShells, queryFn: listLocalShells })
+    // Kept for the session: the menu reads the cache, and the shells of a machine rarely change.
+    if (!shells) void queryClient.prefetchQuery({ queryKey: queryKeys.localShells, queryFn: listLocalShells, gcTime: Infinity })
     return [
       { label: 'New terminal', icon: SquareTerminal, command: 'terminal.newLocal' },
       // Only the default shell has the shortcut.

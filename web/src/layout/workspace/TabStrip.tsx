@@ -230,6 +230,8 @@ const stripButton =
 function NewTabButton() {
   const terminal = useCommand('terminal.newLocal')
   const items = () => getMenuItems('newTab')
+  // Building the menu loads what it lists (the shells, the sessions): done up front, so it opens complete.
+  useEffect(() => void getMenuItems('newTab'), [terminal.enabled])
   if (!terminal.enabled) {
     return (
       <DynamicDropdown items={items} source="ribbon">
@@ -247,15 +249,7 @@ function NewTabButton() {
         </button>
       </Tooltip>
       <DynamicDropdown items={items} source="ribbon">
-        <button
-          type="button"
-          aria-label="Shells and sessions"
-          title="Shells and sessions"
-          className={cn(stripButton, 'w-4')}
-          // Building the menu loads what it lists (the shells, the sessions): done before it opens.
-          onPointerEnter={items}
-          onFocus={items}
-        >
+        <button type="button" aria-label="Shells and sessions" title="Shells and sessions" className={cn(stripButton, 'w-4')}>
           <ChevronDown className="size-3" />
         </button>
       </DynamicDropdown>
