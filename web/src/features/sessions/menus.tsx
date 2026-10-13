@@ -29,7 +29,7 @@ import {
   ChevronsDownUp,
   ChevronsUpDown,
 } from 'lucide-react'
-import { listConnections } from '@/api/connections'
+import { listConnections, recentConnections } from '@/api/connections'
 import { listFolders } from '@/api/folders'
 import { queryClient } from '@/api/queryClient'
 import { queryKeys } from '@/api/queryKeys'
@@ -346,6 +346,21 @@ export function ribbonSessionsMenu(): MenuItem[] {
     items.push({ type: 'separator' }, { label: 'No saved sessions yet', disabled: true })
   }
   return items
+}
+
+const MAX_NEW_TAB_SAVED = 12
+
+/** The tab strip's "+" menu, after the terminals: a new or quick session, then favorites and recently used ones. */
+export function newTabSessionsMenu(): MenuItem[] {
+  const conns = queryClient.getQueryData<Connection[]>(queryKeys.connections)
+  if (!conns) void queryClient.prefetchQuery({ queryKey: queryKeys.connections, queryFn: listConnections })
+  const favorites = (conns ?? []).filter((c) => c.favorite)
+  const saved = [...favorites, ...recentConnections(conns, MAX_NEW_TAB_SAVED).filter((c) => !c.favorite)].slice(0, MAX_NEW_TAB_SAVED)
+  return [
+    { label: 'New session…', icon: Terminal, command: 'sessions.new' },
+    { label: 'Quick connect', icon: Zap, command: 'quickConnect.focus' },
+    ...(saved.length ? [{ type: 'separator' } as MenuItem, { type: 'label', label: 'Saved sessions' } as MenuItem, ...saved.map(connectItem)] : []),
+  ]
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

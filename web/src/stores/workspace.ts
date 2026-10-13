@@ -590,20 +590,18 @@ function loadSpaces(saved: SavedLayout | null, legacy: SerializedDockview | null
 }
 
 /**
- * Start the workspace for a user: restore the saved spaces (when `restore`), open Home on the first run, and flush
- * openTab calls made before the workspace was ready. Returns a disposer.
+ * Start the workspace for a user: restore the saved spaces (when `restore`) and flush openTab calls made before the
+ * workspace was ready. Returns a disposer.
  */
 export function initWorkspace(opts: { userId: string; restore: boolean }): () => void {
   userKey = opts.userId || 'anonymous'
   useWorkspaceStore.setState({ closed: storage.get<ClosedTab[]>(closedKey(), []).slice(0, MAX_CLOSED) })
   const saved = layoutStore.get<SavedLayout | null>(layoutKey(), null)
   const legacy = extraWindow ? null : storage.get<SerializedDockview | null>(legacyLayoutKey(), null)
-  const hadLayout = !!saved || !!legacy
   if (opts.restore) loadSpaces(saved, legacy)
   if (legacy) storage.remove(legacyLayoutKey())
   initialized = true
   useWorkspaceStore.setState({ ready: true })
-  if (!hadLayout) openTab({ kind: 'home' }) // first run for this user on this browser
   for (const o of pendingOpens.splice(0)) openTab(o)
 
   // A reload or close right after a change (within the save debounce) must not lose it.

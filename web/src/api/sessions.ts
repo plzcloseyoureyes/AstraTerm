@@ -31,7 +31,7 @@ export const getScrollback = (id: string, raw = true) =>
 
 // --- local resources -------------------------------------------------------------------------------------------------
 
-const listLocalShells = () => api.get<LocalShell[]>('/api/local/shells')
+export const listLocalShells = () => api.get<LocalShell[]>('/api/local/shells')
 const listSerialPorts = () => api.get<SerialPortInfo[]>('/api/serial/ports')
 export const listKubeContexts = () => api.get<KubeContext[]>('/api/kube/contexts')
 export const listKubePods = (context?: string, namespace?: string) =>

@@ -271,7 +271,8 @@ export type MenuItem =
   | { type: 'label'; label: string }
   | { type: 'submenu'; label: string; icon?: IconType; items: MenuItem[] | (() => MenuItem[]); disabled?: boolean }
 
-export type MenuId = 'terminal' | 'sessions' | 'view' | 'tools' | 'settings' | 'help'
+/** Menu bar menus, and 'newTab': the menu of the tab strip's "+". */
+export type MenuId = 'terminal' | 'sessions' | 'view' | 'tools' | 'settings' | 'help' | 'newTab'
 
 export interface MenuContribution {
   id?: string

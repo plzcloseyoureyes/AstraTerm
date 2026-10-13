@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState, type DragEvent, type KeyboardEvent } from 'react'
-import { Columns2, Maximize2, Minimize2, PanelBottom, PanelRight, Plus } from 'lucide-react'
-import { ribbonButtons, type MenuItem, type TabInfo } from '@/app/registry'
+import { ChevronDown, Columns2, Maximize2, Minimize2, PanelBottom, PanelRight, Plus } from 'lucide-react'
+import { useCommand } from '@/app/commands'
+import { getMenuItems, type TabInfo } from '@/app/registry'
 import { DynamicDropdown } from '@/components/menu-items'
 import { IconButton } from '@/components/ui/icon-button'
+import { Tooltip } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import {
   beginSpaceDrag,
@@ -218,22 +220,45 @@ function SplitBadge({ count }: { count: number }) {
   )
 }
 
-/** "+": the saved-sessions menu (new session, quick connect, favorites / recent). */
+const stripButton =
+  'flex h-7 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none hover:bg-foreground/5 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/60 data-[state=open]:bg-foreground/5'
+
+/**
+ * "+": a new terminal with the default shell, as in a terminal app; the arrow next to it lists the shells and saved
+ * sessions (the 'newTab' menu). Without local shells (server mode, not an admin), "+" opens that list.
+ */
 function NewTabButton() {
-  const items = (): MenuItem[] => {
-    const saved = ribbonButtons.get('sessions')?.menu?.() ?? []
-    return saved.length ? saved : [{ label: 'New session…', icon: Plus, command: 'sessions.new' }]
+  const terminal = useCommand('terminal.newLocal')
+  const items = () => getMenuItems('newTab')
+  if (!terminal.enabled) {
+    return (
+      <DynamicDropdown items={items} source="ribbon">
+        <button type="button" aria-label="New tab" title="New tab" className={cn(stripButton, 'w-7')}>
+          <Plus className="size-4" />
+        </button>
+      </DynamicDropdown>
+    )
   }
   return (
-    <DynamicDropdown items={items} source="ribbon">
-      <button
-        type="button"
-        aria-label="New tab"
-        title="New tab"
-        className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none hover:bg-foreground/5 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/60 data-[state=open]:bg-foreground/5"
-      >
-        <Plus className="size-4" />
-      </button>
-    </DynamicDropdown>
+    <div className="flex shrink-0 items-center">
+      <Tooltip content="New terminal" shortcut={terminal.keybindings[0]}>
+        <button type="button" aria-label="New terminal" className={cn(stripButton, 'w-7')} onClick={() => void terminal.run(undefined, 'ribbon')}>
+          <Plus className="size-4" />
+        </button>
+      </Tooltip>
+      <DynamicDropdown items={items} source="ribbon">
+        <button
+          type="button"
+          aria-label="Shells and sessions"
+          title="Shells and sessions"
+          className={cn(stripButton, 'w-4')}
+          // Building the menu loads what it lists (the shells, the sessions): done before it opens.
+          onPointerEnter={items}
+          onFocus={items}
+        >
+          <ChevronDown className="size-3" />
+        </button>
+      </DynamicDropdown>
+    </div>
   )
 }

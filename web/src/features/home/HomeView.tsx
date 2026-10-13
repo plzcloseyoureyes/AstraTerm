@@ -540,14 +540,14 @@ export default function HomeView(_props: TabProps<{ watermark?: boolean }>) {
                 accent="bg-primary text-primary-foreground"
               />
             )}
-            <ActionCard icon={Plus} title="New session" description="SSH, RDP, VNC, SFTP, serial…" command="sessions.new" accent="bg-primary/15 text-primary" />
             <ActionCard
               icon={SquareTerminal}
-              title="Local terminal"
+              title="New terminal"
               description="A shell on this machine"
               command="terminal.newLocal"
               accent="bg-success/15 text-success"
             />
+            <ActionCard icon={Plus} title="New session" description="SSH, RDP, VNC, SFTP, serial…" command="sessions.new" accent="bg-primary/15 text-primary" />
             <ActionCard icon={FolderOpen} title="Local files" description="Files on this machine and transfers" command="files.openLocal" accent="bg-warning/15 text-warning" />
             <ActionCard icon={Search} title="Command palette" description="Find any action or session" command="palette.open" accent="bg-info/15 text-info" />
           </div>

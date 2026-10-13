@@ -2,7 +2,7 @@
  * Light registry of the per-terminal transfer controllers (the controller module itself — with trzsz and zmodem.js —
  * loads lazily when the first terminal mounts). Commands, menus and the overlay look controllers up here.
  */
-import { useAuthStore } from '@/stores/auth'
+import { hostAccess } from '@/stores/auth'
 import { useWorkspaceStore } from '@/stores/workspace'
 import type { TransferController } from './controller'
 
@@ -29,7 +29,4 @@ export function activeController(): TransferController | undefined {
 }
 
 /** Local files (the AstraTerm host) are reachable in desktop mode and, in server mode, for admins (SPEC principle 7). */
-export function localFilesAllowed(): boolean {
-  const st = useAuthStore.getState()
-  return st.state?.mode !== 'server' || st.user?.role === 'admin'
-}
+export const localFilesAllowed = hostAccess

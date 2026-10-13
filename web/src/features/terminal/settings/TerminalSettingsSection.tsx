@@ -90,7 +90,7 @@ function NumberRow({
 function DefaultShellRow() {
   const shells = useLocalShells()
   const options = [{ value: '', label: 'System default' }, ...(shells.data ?? []).map((sh) => ({ value: sh.id, label: sh.name }))]
-  return <SelectRow k="defaultShell" label="Default shell" description="Used by New Local Terminal." options={options} width="w-56" />
+  return <SelectRow k="defaultShell" label="Default shell" description="New tabs (+, and the new terminal shortcut) and the terminal opened at start." options={options} width="w-56" />
 }
 
 function SelectRow<K extends Keys<TerminalSettings, string>>({

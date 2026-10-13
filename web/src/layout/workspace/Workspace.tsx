@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { DockviewReact, type DockviewReadyEvent, type DockviewTheme } from 'dockview-react'
+import { isCommandEnabled, runCommand } from '@/app/commands'
 import { cn } from '@/lib/utils'
 import { generalSettings } from '@/stores/settings'
 import { useCurrentUser } from '@/stores/auth'
-import { attachSpace, HOST_COMPONENT, initWorkspace, POPOUT_URL, TAB_COMPONENT, useActiveSpaceId, useSpaces } from '@/stores/workspace'
+import { attachSpace, HOST_COMPONENT, initWorkspace, openTab, POPOUT_URL, TAB_COMPONENT, useActiveSpaceId, useSpaces, useWorkspaceStore } from '@/stores/workspace'
 import { DockTab } from './DockTab'
 import { GroupActions } from './GroupActions'
 import { PanelHost } from './PanelHost'
@@ -22,6 +23,9 @@ const theme: DockviewTheme = {
 const components = { [HOST_COMPONENT]: PanelHost }
 const tabComponents = { [TAB_COMPONENT]: DockTab }
 
+/** The user whose workspace start ran (development runs effects twice). */
+let startedFor: string | null = null
+
 /**
  * The workspace: one dockview per space (a top-level tab of the title bar, with its own split layout). Every space
  * stays mounted, so background sessions keep running; only the active one is shown. With no tabs, Home shows.
@@ -30,12 +34,27 @@ export function Workspace() {
   const user = useCurrentUser()
   const spaces = useSpaces()
   const activeId = useActiveSpaceId()
+  const [starting, setStarting] = useState(false)
 
-  useEffect(() => initWorkspace({ userId: user?.id ?? 'anonymous', restore: generalSettings.get().restoreWorkspace }), [user?.id])
+  useEffect(() => {
+    const userId = user?.id ?? 'anonymous'
+    const dispose = initWorkspace({ userId, restore: generalSettings.get().restoreWorkspace })
+    // Nothing restored (first run, a new window): open a terminal, as a terminal app does; Home without local shells.
+    if (startedFor !== userId && !useWorkspaceStore.getState().spaces.length) {
+      if (isCommandEnabled('terminal.newLocal')) {
+        setStarting(true)
+        void runCommand('terminal.newLocal').finally(() => setStarting(false))
+      } else {
+        openTab({ kind: 'home' })
+      }
+    }
+    startedFor = userId
+    return dispose
+  }, [user?.id])
 
   return (
     <div className="relative h-full w-full" data-workspace>
-      {spaces.length === 0 && <Watermark />}
+      {spaces.length === 0 && !starting && <Watermark />}
       {spaces.map((s) => (
         <SpaceView key={s.id} id={s.id} hidden={s.id !== activeId} />
       ))}

@@ -7,7 +7,7 @@ import { queryClient } from '@/api/queryClient'
 import { queryKeys } from '@/api/queryKeys'
 import type { RuntimeSession } from '@/api/types'
 import type { TabInfo } from '@/app/registry'
-import { useAuthStore } from '@/stores/auth'
+import { hostAccess } from '@/stores/auth'
 import { activeTab, getTabParams, openTab } from '@/stores/workspace'
 import type { MonitorPanel, MonitorTabParams, SysInfoTabParams } from './types'
 
@@ -35,10 +35,7 @@ export function isMonitorable(s: RuntimeSession | undefined): boolean {
 }
 
 /** Local host monitoring is allowed in desktop mode or for administrators (backend enforces it too). */
-export function canMonitorLocal(): boolean {
-  const st = useAuthStore.getState()
-  return st.state?.mode !== 'server' || st.user?.role === 'admin'
-}
+export const canMonitorLocal = hostAccess
 
 /** Open (or focus) the monitor tab of a session, optionally on a panel. */
 export function openMonitor(target: string, panel?: MonitorPanel, extra: Partial<MonitorTabParams> = {}): string {

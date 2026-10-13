@@ -145,3 +145,9 @@ export const useRunMode = () => useAuthStore((s) => s.state?.mode ?? 'desktop')
 export const useVaultLocked = () => useAuthStore((s) => !!s.state?.vaultLocked)
 export const useServerFeatures = () => useAuthStore((s) => s.state?.features)
 export const useAppVersion = () => useAuthStore((s) => s.state?.version ?? '')
+
+/** The AstraTerm host itself (local shells, files, monitoring): desktop mode, or admins in server mode (enforced by the server). */
+export function hostAccess(): boolean {
+  const st = useAuthStore.getState()
+  return st.state?.mode !== 'server' || st.user?.role === 'admin'
+}

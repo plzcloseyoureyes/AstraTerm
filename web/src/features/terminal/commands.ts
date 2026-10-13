@@ -16,16 +16,22 @@ import {
   RefreshCw,
   RotateCcw,
   Search,
+  Settings2,
   SquareTerminal,
   Workflow,
   ZoomIn,
   ZoomOut,
 } from 'lucide-react'
 import { matchKeybindingPress, parseKeybinding } from 'tinykeys'
-import { registerCommand, registerMenu } from '@/app/registry'
+import { listLocalShells } from '@/api/sessions'
+import { queryClient } from '@/api/queryClient'
+import { queryKeys } from '@/api/queryKeys'
+import type { LocalShell } from '@/api/types'
+import { registerCommand, registerMenu, type MenuItem } from '@/app/registry'
 import { getKeybindings, runCommand } from '@/app/commands'
 import { claimKeys } from '@/app/keybindings'
 import { isMac } from '@/lib/utils'
+import { hostAccess } from '@/stores/auth'
 import { closeTab } from '@/stores/workspace'
 import { getFocusedTabTerminal, listTerminals } from './bus'
 import { toggleMultiExec, useMultiExecStore } from './multiexec'
@@ -68,7 +74,26 @@ registerCommand<{ shellId?: string } | undefined>({
   // A new terminal tab: ⌘T on macOS, Ctrl+Shift+T elsewhere (Windows Terminal, Tabby, GNOME Terminal).
   keybinding: [isMac ? '$mod+KeyT' : 'Control+Shift+KeyT', '$mod+Shift+l'],
   keywords: ['shell', 'bash', 'zsh', 'powershell', 'local', 'console', 'new tab'],
+  when: hostAccess,
   run: ({ args }) => openLocalShell(argString(args, 'shellId')).then(() => undefined),
+})
+
+/** The "+" menu of the tab strip: a terminal with the default shell, then one per shell found on this machine. */
+registerMenu({
+  id: 'terminal.newTab',
+  menu: 'newTab',
+  order: 10,
+  items: () => {
+    if (!hostAccess()) return []
+    const shells = queryClient.getQueryData<LocalShell[]>(queryKeys.localShells)
+    if (!shells) void queryClient.prefetchQuery({ queryKey: queryKeys.localShells, queryFn: listLocalShells })
+    return [
+      { label: 'New terminal', icon: SquareTerminal, command: 'terminal.newLocal' },
+      // Only the default shell has the shortcut.
+      ...(shells ?? []).map((sh): MenuItem => ({ label: sh.name, command: 'terminal.newLocal', args: { shellId: sh.id }, shortcut: '' })),
+      { label: 'Change default shell…', icon: Settings2, command: 'settings.open', args: { section: 'terminal' }, shortcut: '' },
+    ]
+  },
 })
 
 registerCommand<{ sessionId: string }>({

@@ -120,6 +120,13 @@ const isLinux = typeof navigator !== 'undefined' && /Linux/.test(navigator.platf
 // oxlint-disable-next-line no-control-regex -- terminal reports are control sequences
 const REPORT_RE = /^(\x1b\[[?>]?[\d;]*[cnRty]|\x1b\[\d+;\d+R|\x1b\[[IO]|\x1b\][\s\S]*(\x07|\x1b\\)|\x1bP[\s\S]*\x1b\\|\x1b\[\?[\d;]*\$y)$/
 
+/** Last segment of a path ("/" stays "/"). */
+function folderName(path: string | undefined): string {
+  if (!path) return ''
+  const p = path.replace(/[\\/]+$/, '')
+  return p.slice(Math.max(p.lastIndexOf('/'), p.lastIndexOf('\\')) + 1) || path
+}
+
 function sanitizeTitle(t: string): string {
   // oxlint-disable-next-line no-control-regex -- strip control characters from remote titles
   return t.replace(/[\u0000-\u001f\u007f-\u009f]/g, '').trim().slice(0, 200)
@@ -1208,7 +1215,10 @@ export class TerminalController implements TerminalHandle {
         if (typeof msg.title === 'string') this.onOscTitle(msg.title)
         break
       case 'cwd':
-        if (typeof msg.path === 'string') this.setInfo({ cwd: msg.path })
+        if (typeof msg.path === 'string') {
+          this.setInfo({ cwd: msg.path })
+          this.applyTitle()
+        }
         break
       case 'readonly':
         this.setReadOnly(!!msg.value)
@@ -1511,9 +1521,12 @@ export class TerminalController implements TerminalHandle {
   private applyTitle(): void {
     const base = this.baseTitle()
     const osc = this.live.oscTitle
+    const mode = this.settings.titleMode
     let title = base
-    if (this.settings.titleMode === 'osc' && osc) title = osc
-    else if (this.settings.titleMode === 'both' && osc && osc !== base) title = `${base} — ${osc}`
+    if (mode === 'osc' && osc) title = osc
+    else if (mode === 'both' && osc && osc !== base) title = `${base} — ${osc}`
+    // A local terminal opened with "+" has no session name: like a terminal app, its tab shows the shell's title, else its folder.
+    else if (mode === 'session' && !this.connection && this.params.quick?.protocol === 'local') title = osc || folderName(this.live.cwd) || base
     this.setInfo({ title })
     setTabTitle(this.tabId, title)
   }

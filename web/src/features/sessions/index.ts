@@ -26,7 +26,7 @@ import { cachedConnections, connectFolder, currentIndex, deleteConnections, dupl
 import { connectTo } from './connect'
 import { installDialogHost } from './dialogs/host'
 import { openFolderDialog, openSessionEditor } from './dialogs/store'
-import { menubarSessionsItems, ribbonSessionsMenu, sessionNodeItems } from './menus'
+import { menubarSessionsItems, newTabSessionsMenu, ribbonSessionsMenu, sessionNodeItems } from './menus'
 import { connNodeId, folderNodeId, parseNodeId } from './model'
 import { focusSessionSearch, getTreeController, revealNode, useTreeFocus } from './panel/controller'
 import { setPanelFilters } from './panel/state'
@@ -276,6 +276,7 @@ registerContextMenu({
 })
 
 registerMenu({ id: 'sessions.menubar', menu: 'sessions', order: 150, items: menubarSessionsItems })
+registerMenu({ id: 'sessions.newTab', menu: 'newTab', order: 20, items: newTabSessionsMenu })
 
 // The "Sessions" toolbar drop-down (folders as sub-menus). The shell registers a simpler placeholder under the
 // same id when it loads after this module; keep ours registered.
