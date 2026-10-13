@@ -15,6 +15,7 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
   start with nothing to restore (first run, a new window) opens a terminal instead of Home. Where local shells are not
   available (server mode, not an admin), "+" lists the sessions and Home opens as before.
 - Local terminal tabs are named by the shell's title, else their folder, instead of "Local terminal".
+- **⇧⌘T** opens a new terminal tab on macOS too (like ⌘T); reopening a closed tab is ⌥⇧T.
 - Home lists New terminal first; Settings → Terminal starts with **New terminals** (default shell, start folder).
 
 ### Fixed

@@ -260,8 +260,8 @@ registerCommand({
   title: 'Reopen Closed Tab',
   category: 'Workspace',
   icon: RotateCcw,
-  // Ctrl+Shift+T opens a terminal on Windows / Linux (as in other terminal apps); ⇧⌘T reopens on macOS (as in browsers).
-  keybinding: isMac ? ['$mod+Shift+t', 'Alt+Shift+t'] : ['Alt+Shift+t'],
+  // Ctrl+Shift+T (⇧⌘T on macOS) opens a terminal, as in other terminal apps.
+  keybinding: ['Alt+Shift+t'],
   when: () => useWorkspaceStore.getState().closed.length > 0,
   run: ({ args }) => {
     const index = args && typeof args === 'object' && typeof (args as { index?: unknown }).index === 'number' ? (args as { index: number }).index : 0

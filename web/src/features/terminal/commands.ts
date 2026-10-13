@@ -71,8 +71,8 @@ registerCommand<{ shellId?: string } | undefined>({
   title: 'New Local Terminal',
   category: CATEGORY,
   icon: SquareTerminal,
-  // A new terminal tab: ⌘T on macOS, Ctrl+Shift+T elsewhere (Windows Terminal, Tabby, GNOME Terminal).
-  keybinding: [isMac ? '$mod+KeyT' : 'Control+Shift+KeyT', '$mod+Shift+l'],
+  // A new terminal tab: ⌘T or ⇧⌘T on macOS, Ctrl+Shift+T elsewhere (Windows Terminal, Tabby, GNOME Terminal).
+  keybinding: [...(isMac ? ['$mod+KeyT', '$mod+Shift+KeyT'] : ['Control+Shift+KeyT']), '$mod+Shift+l'],
   keywords: ['shell', 'bash', 'zsh', 'powershell', 'local', 'console', 'new tab'],
   when: hostAccess,
   run: ({ args }) => openLocalShell(argString(args, 'shellId')).then(() => undefined),
