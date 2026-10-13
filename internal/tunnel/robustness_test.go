@@ -214,9 +214,10 @@ func TestSocksManyConcurrentConnectionsAndCleanTeardown(t *testing.T) {
 	if failed.Load() != 0 || len(clients) != n {
 		t.Fatalf("%d of %d connections failed", failed.Load(), n)
 	}
-	s := h.waitStatus(v.ID, func(s Status) bool { return s.ActiveConns == n })
-	// Counters are the payload relayed to and from the destination, not the SOCKS negotiation.
-	if s.BytesOut != sent.Load() || s.BytesIn != sent.Load() || s.TotalConns != n || s.FailedConns != 0 {
+	// Counters are the payload relayed to and from the destination, not the SOCKS negotiation. A write is counted once it
+	// returned, which can be after its echo came back: wait for them to settle.
+	s := h.waitStatus(v.ID, func(s Status) bool { return s.ActiveConns == n && s.BytesOut == sent.Load() && s.BytesIn == sent.Load() })
+	if s.TotalConns != n || s.FailedConns != 0 {
 		t.Fatalf("counters: out=%d in=%d (payload %d) total=%d failed=%d", s.BytesOut, s.BytesIn, sent.Load(), s.TotalConns, s.FailedConns)
 	}
 
