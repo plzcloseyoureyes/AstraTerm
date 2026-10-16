@@ -475,3 +475,39 @@ func parseSlowPathUpdate(pdu []byte) (mcs, share, upd []byte, ok bool) {
 	share, upd, ok = updateData(body)
 	return mcs, share, upd, ok
 }
+
+// sharePDU wraps a Share Control PDU of pduType with body (after the share control header) in TPKT / X.224 / MCS Send
+// Data Indication, like a server sends it on the I/O channel.
+func sharePDU(pduType int, body []byte) []byte {
+	b := make([]byte, 6, 6+len(body))
+	binary.LittleEndian.PutUint16(b[0:], uint16(6+len(body)))
+	binary.LittleEndian.PutUint16(b[2:], uint16(0x10|pduType))
+	binary.LittleEndian.PutUint16(b[4:], 0x03EA)
+	b = append(b, body...)
+	mcs := []byte{0x68, 0x00, 0x04, 0x03, 0xEB, 0x70}
+	n := 4 + 3 + len(mcs) + 2 + len(b)
+	out := []byte{fpActionX224, 0, byte(n >> 8), byte(n), 0x02, 0xF0, 0x80}
+	out = append(out, mcs...)
+	out = append(out, 0x80|byte(len(b)>>8), byte(len(b)))
+	return append(out, b...)
+}
+
+func TestServerFilterDropsDeactivateAllBeforeActivation(t *testing.T) {
+	shareID := []byte{0xEA, 0x03, 0x01, 0x00}
+	deactivate := sharePDU(pduTypeDeactivateAll, concat(shareID, []byte{1, 0, 0}))
+	demand := sharePDU(pduTypeDemandActive, concat(shareID, []byte{4, 0, 0, 0, 'R', 'D', 'P', 0}))
+	update := slowPathPDU(bitmapUpdateData())
+
+	// Windows Server / GNOME Remote Desktop: Deactivate All before the first Demand Active. Nothing is active yet, and
+	// IronRDP 0.7 fails on it ("invalid state (this is a bug)"): the client only sees the Demand Active.
+	out, _ := filterAll(t, 0, concat(deactivate, demand, update), 0)
+	if want := concat(demand, update); !bytes.Equal(out, want) {
+		t.Fatalf("initial Deactivate All forwarded:\n got % x\nwant % x", out, want)
+	}
+
+	// Once the session is active, a Deactivate All starts a reactivation and reaches the client.
+	out, f := filterAll(t, 0, concat(demand, deactivate), 0)
+	if !bytes.Equal(out, concat(demand, deactivate)) || !f.reactivating {
+		t.Fatalf("reactivation: reactivating=%v, got % x", f.reactivating, out)
+	}
+}

@@ -20,7 +20,9 @@ import (
 // resizes the display): xrdp sends a truncated Deactivate All PDU (only the share control header) that IronRDP 0.7
 // cannot decode — the filter completes it — and keeps sending output before the client finished the reactivation,
 // which IronRDP 0.7 rejects ("unexpected server message") — the filter holds that output back until the server's
-// Font Map PDU and then releases it in order.
+// Font Map PDU and then releases it in order. A Deactivate All before the first Demand Active (Windows Server, GNOME
+// Remote Desktop) deactivates nothing; IronRDP 0.7 skips it in its capabilities exchange and then fails ("invalid
+// state (this is a bug)", fixed upstream after 0.7), so the filter drops it.
 //
 // The filter follows the server → client byte stream: CredSSP TSRequests (DER) while NLA runs, the 4-byte Early User
 // Authorization Result of HYBRID_EX, then slow-path (TPKT) and fast-path output PDUs. Bitmap updates are rewritten in
@@ -43,7 +45,8 @@ type serverFilter struct {
 	reactivating  bool
 	held          []byte
 	shareID       uint32
-	reactivations int // diagnostics
+	reactivations int  // diagnostics
+	activated     bool // a Demand Active was seen: a Deactivate All from now on is a reactivation
 }
 
 const (
@@ -264,8 +267,11 @@ func (f *serverFilter) slowPath(pdu []byte) {
 		if len(body) >= 10 && (pduType == pduTypeData || pduType == pduTypeDemandActive) {
 			f.shareID = binary.LittleEndian.Uint32(body[6:])
 		}
+		f.activated = f.activated || pduType == pduTypeDemandActive
 	}
 	switch {
+	case pduType == pduTypeDeactivateAll && !f.activated:
+		return // before the first activation (see serverFilter)
 	case pduType == pduTypeDeactivateAll:
 		f.reactivating = true
 		f.reactivations++

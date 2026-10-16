@@ -26,6 +26,12 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 - **Code:** removed leftover dependency pins and four unused Go modules, test-only helpers moved into the tests, and
   helpers that several packages had copied (child processes on a PTY, proxy / gateway detection) shared.
 
+### Fixed
+
+- **RDP:** connecting to servers that send a Deactivate All PDU before the first Demand Active (Windows Server, GNOME
+  Remote Desktop) failed with "invalid state (this is a bug): general error" in the built-in IronRDP client. The relay
+  now drops that PDU (nothing is active yet), as the newer IronRDP does.
+
 ## [0.1.17] - 2026-10-13
 
 ### Changed
