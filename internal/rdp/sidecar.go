@@ -264,19 +264,6 @@ func (s *sidecar) stop(ctx context.Context, emit func(any)) error {
 	return nil
 }
 
-// remove deletes the sidecar container (tests).
-func (s *sidecar) remove(ctx context.Context) error {
-	ci, err := s.inspect(ctx)
-	if err != nil || !ci.exists {
-		return err
-	}
-	if !ci.managed {
-		return fmt.Errorf("the container %q was not created by AstraTerm", s.cfg.Name)
-	}
-	_, err = s.run(ctx, nil, "rm", "-f", s.cfg.Name)
-	return err
-}
-
 var ansiRe = regexp.MustCompile(`\x1b\[[0-9;?]*[A-Za-z]`)
 
 // run executes a docker command and returns its stdout; errors carry the (trimmed) stderr.

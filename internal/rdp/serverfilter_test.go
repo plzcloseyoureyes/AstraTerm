@@ -464,3 +464,14 @@ func FuzzServerFilter(f *testing.F) {
 		}
 	})
 }
+
+// parseSlowPathUpdate returns the MCS header, the share headers and the update data of a slow-path Update PDU (ok =
+// false for any other PDU).
+func parseSlowPathUpdate(pdu []byte) (mcs, share, upd []byte, ok bool) {
+	mcs, body, ok := sendDataIndication(pdu)
+	if !ok {
+		return nil, nil, nil, false
+	}
+	share, upd, ok = updateData(body)
+	return mcs, share, upd, ok
+}

@@ -4,6 +4,8 @@ import (
 	"strconv"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // vtHandler receives the parsed elements of a terminal output stream.
@@ -68,7 +70,7 @@ func (v *vtScanner) feed(p []byte, h vtHandler) {
 			case b < 0x80:
 				h.text(rune(b))
 			default:
-				n := leadLen(b)
+				n := term.UTF8LeadLen(b)
 				if n < 2 {
 					continue // invalid byte (e.g. a C1 control or continuation): ignore
 				}
@@ -167,18 +169,6 @@ func (v *vtScanner) dispatchOSC(h vtHandler) {
 	}
 	h.osc(string(v.osc))
 	v.osc = v.osc[:0]
-}
-
-func leadLen(b byte) int {
-	switch {
-	case b&0xe0 == 0xc0:
-		return 2
-	case b&0xf0 == 0xe0:
-		return 3
-	case b&0xf8 == 0xf0:
-		return 4
-	}
-	return 0
 }
 
 // csiInt returns the i-th numeric CSI parameter (def when missing or 0 when def is 0).

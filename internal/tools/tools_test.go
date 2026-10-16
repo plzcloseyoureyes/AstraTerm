@@ -8,11 +8,13 @@ import (
 	"net/netip"
 	"strings"
 	"sync"
+	"syscall"
 	"testing"
 	"time"
 
 	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 	"github.com/plzcloseyoureyes/astraterm/internal/model"
+	"github.com/plzcloseyoureyes/astraterm/internal/netguard"
 )
 
 // collector accumulates the rows a sink emits so job runners can be tested without an events hub.
@@ -521,4 +523,12 @@ func TestSanitizers(t *testing.T) {
 	if s := sanitizeText("a\x00b\r\nc\x1bd\u009be"); s != "ab\ncde" {
 		t.Errorf("text = %q", s)
 	}
+}
+
+// blockedAddr reports whether a is off-limits under the default policy.
+func blockedAddr(a netip.Addr) bool { return !(&netguard.Guard{}).Check(a, 0).Allowed }
+
+// control is a net.Dialer.Control hook: it vets the concrete address being connected to.
+func (ng *netGuard) control(network, address string, c syscall.RawConn) error {
+	return ng.guard().Control(network, address, c)
 }

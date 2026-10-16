@@ -78,7 +78,7 @@ func open(ctx context.Context, d *app.Deps, c *core.Core, req term.OpenRequest) 
 			nc = tconn
 		}
 	case "udp":
-		if routed(conn) {
+		if conn.Options.Routed() {
 			return nil, term.Permanent(errors.New("raw: UDP cannot be routed through a proxy or SSH gateway"))
 		}
 		// A direct socket of the AstraTerm host: vetted by the owner's destination guard (SEC-7) on the concrete
@@ -98,22 +98,6 @@ func open(ctx context.Context, d *app.Deps, c *core.Core, req term.OpenRequest) 
 		return nil, fmt.Errorf("raw: connect to %s: %w", addr, err)
 	}
 	return newBackend(nc, linedisc.ParseEnding(o.String("lineEnding", ""), linedisc.CRLF), o.Bool("localEcho")), nil
-}
-
-// routed reports whether conn's options send its traffic through a proxy or an SSH gateway (UDP cannot follow).
-func routed(conn *model.Connection) bool {
-	o := conn.Options
-	if strings.TrimSpace(o.String("sshTunnelVia", "")) != "" {
-		return true
-	}
-	if len(o.Strings("jumpHosts")) > 0 {
-		return true
-	}
-	if strings.TrimSpace(o.String("proxyCommand", "")) != "" {
-		return true
-	}
-	pt := strings.ToLower(strings.TrimSpace(model.Options(o.Map("proxy")).String("type", "")))
-	return pt != "" && pt != "none"
 }
 
 // udpConn is a connected UDP socket whose reads survive ICMP "port unreachable" (ECONNREFUSED; WSAECONNRESET on

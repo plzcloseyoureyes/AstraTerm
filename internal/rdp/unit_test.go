@@ -3,6 +3,7 @@ package rdp
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"strings"
@@ -239,4 +240,24 @@ func TestCleanMessageAndHelpers(t *testing.T) {
 	if u := newUUID(); len(u) != 36 || u[14] != '4' {
 		t.Fatalf("uuid %q", u)
 	}
+}
+
+// remove deletes the sidecar container (tests).
+func (s *sidecar) remove(ctx context.Context) error {
+	ci, err := s.inspect(ctx)
+	if err != nil || !ci.exists {
+		return err
+	}
+	if !ci.managed {
+		return fmt.Errorf("the container %q was not created by AstraTerm", s.cfg.Name)
+	}
+	_, err = s.run(ctx, nil, "rm", "-f", s.cfg.Name)
+	return err
+}
+
+// len reports the number of stored tickets (tests).
+func (s *ticketStore) len() int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return len(s.tickets)
 }

@@ -317,11 +317,6 @@ func (t *tap) process(items []tapChunk, dropped bool) {
 	}
 }
 
-// feedDirect processes data synchronously (unit tests).
-func (t *tap) feedDirect(data []byte) {
-	t.process([]tapChunk{{start: -1, data: data}}, false)
-}
-
 func (t *tap) broadcastLocked() {
 	close(t.changed)
 	t.changed = make(chan struct{})

@@ -346,17 +346,6 @@ func updateData(body []byte) (share, upd []byte, ok bool) {
 	return body[:shareHeadersLen], body[shareHeadersLen:], true
 }
 
-// parseSlowPathUpdate returns the MCS header, the share headers and the update data of a slow-path Update PDU (ok =
-// false for any other PDU).
-func parseSlowPathUpdate(pdu []byte) (mcs, share, upd []byte, ok bool) {
-	mcs, body, ok := sendDataIndication(pdu)
-	if !ok {
-		return nil, nil, nil, false
-	}
-	share, upd, ok = updateData(body)
-	return mcs, share, upd, ok
-}
-
 // appendDeactivateAll forwards a Deactivate All PDU, completing one that carries nothing but the share control header
 // (xrdp) into a TS_DEACTIVATE_ALL_PDU ([MS-RDPBCGR] 2.2.3.1: shareID, lengthSourceDescriptor = 1, sourceDescriptor 0).
 func appendDeactivateAll(dst, pdu, mcs, body []byte, shareID uint32) []byte {

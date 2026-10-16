@@ -284,12 +284,3 @@ func (s *stripper) oscDone() {
 		s.onMark(kind, exit)
 	}
 }
-
-// StripText converts a complete chunk of terminal output into plain text lines joined by '\n' (tests, batch
-// captures).
-func StripText(data []byte) string {
-	l := newTextLog(len(data) + 1024)
-	var s stripper
-	s.feed(l, data)
-	return string(l.from(0))
-}

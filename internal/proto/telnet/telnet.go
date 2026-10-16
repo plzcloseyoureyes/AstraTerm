@@ -419,13 +419,6 @@ func (b *backend) binaryIn() bool {
 	return b.him[optBINARY] == qYes
 }
 
-// serverEchoes reports whether the server performs ECHO (local echo is then suppressed).
-func (b *backend) serverEchoes() bool {
-	b.mu.Lock()
-	defer b.mu.Unlock()
-	return b.him[optECHO] == qYes
-}
-
 // ---- negotiation --------------------------------------------------------------------------------------------------
 
 // supportedLocal lists the options we are willing to perform (WILL).

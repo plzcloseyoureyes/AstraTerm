@@ -423,3 +423,11 @@ func desResponse(password string, challenge []byte) []byte {
 	block.Encrypt(out[8:], challenge[8:])
 	return out
 }
+
+// CipherSuiteName returns the IANA name of a suite implemented by this package ("" if unknown).
+func CipherSuiteName(id uint16) string {
+	if s := suiteByID(id); s != nil {
+		return s.name
+	}
+	return ""
+}

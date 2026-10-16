@@ -111,27 +111,23 @@ func TestSpecLabelsAndAddresses(t *testing.T) {
 		sp          spec
 		label       string
 		lnet, laddr string
-		rnet, raddr string
 		dnet, daddr string
 	}{
 		{spec{kind: kindLocal, bindHost: "127.0.0.1", bindPort: 8080, destHost: "web", destPort: 80}, "127.0.0.1:8080 → web:80",
-			"tcp", "127.0.0.1:8080", "tcp", "127.0.0.1:8080", "tcp", "web:80"},
+			"tcp", "127.0.0.1:8080", "tcp", "web:80"},
 		{spec{kind: kindLocal, bindHost: "*", bindPort: 0, destHost: "::1", destPort: 5432}, "*:auto → [::1]:5432",
-			"tcp", ":0", "tcp", ":0", "tcp", "[::1]:5432"},
+			"tcp", ":0", "tcp", "[::1]:5432"},
 		{spec{kind: kindRemote, bindHost: "localhost", bindPort: 9000, destSocket: "/run/app.sock"}, "remote localhost:9000 → /run/app.sock",
-			"tcp", "localhost:9000", "tcp", "localhost:9000", "unix", "/run/app.sock"},
+			"tcp", "localhost:9000", "unix", "/run/app.sock"},
 		{spec{kind: kindRemoteDynamic, bindSocket: "/tmp/s"}, "remote SOCKS proxy on /tmp/s",
-			"unix", "/tmp/s", "unix", "/tmp/s", "tcp", ":0"},
+			"unix", "/tmp/s", "tcp", ":0"},
 	}
 	for _, c := range cases {
 		if got := c.sp.label(); got != c.label {
 			t.Errorf("label = %q, want %q", got, c.label)
 		}
-		if n, a := c.sp.localListenAddr(); n != c.lnet || a != c.laddr {
-			t.Errorf("local listen = %s %s", n, a)
-		}
-		if n, a := c.sp.remoteListenAddr(); n != c.rnet || a != c.raddr {
-			t.Errorf("remote listen = %s %s", n, a)
+		if n, a := c.sp.listenAddr(); n != c.lnet || a != c.laddr {
+			t.Errorf("listen = %s %s", n, a)
 		}
 		if n, a := c.sp.destAddr(); n != c.dnet || a != c.daddr {
 			t.Errorf("dest = %s %s", n, a)

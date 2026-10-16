@@ -269,21 +269,9 @@ func (s *spec) exposedRemote() bool {
 	return !s.kind.listensLocally() && s.bindSocket == "" && !isLoopbackHost(s.bindHost)
 }
 
-// localListenAddr returns the net.Listen arguments of a listener on the AstraTerm host.
-func (s *spec) localListenAddr() (network, addr string) {
-	if s.bindSocket != "" {
-		return "unix", s.bindSocket
-	}
-	host := s.bindHost
-	if host == "*" {
-		host = ""
-	}
-	return "tcp", net.JoinHostPort(host, strconv.Itoa(s.bindPort))
-}
-
-// remoteListenAddr returns the ssh Listen arguments of a listener on the SSH server ("" = all interfaces, RFC 4254
-// §7.1).
-func (s *spec) remoteListenAddr() (network, addr string) {
+// listenAddr returns the Listen arguments of the forward's listener: net.Listen on the AstraTerm host, or the SSH
+// server's Listen for remote forwards ("" = all interfaces, RFC 4254 §7.1).
+func (s *spec) listenAddr() (network, addr string) {
 	if s.bindSocket != "" {
 		return "unix", s.bindSocket
 	}

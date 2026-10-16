@@ -31,6 +31,7 @@ import (
 	"github.com/labstack/echo/v5"
 
 	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/childproc"
 	"github.com/plzcloseyoureyes/astraterm/internal/core"
 	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 	"github.com/plzcloseyoureyes/astraterm/internal/model"
@@ -402,8 +403,8 @@ type backend struct {
 const drainGrace = 300 * time.Millisecond
 
 func (b *backend) wait() {
-	err := xpty.WaitProcess(context.Background(), b.cmd)
-	b.code.Store(int64(exitCode(b.cmd, err)))
+	_ = xpty.WaitProcess(context.Background(), b.cmd)
+	b.code.Store(int64(childproc.ExitCode(b.cmd)))
 	close(b.done)
 	time.Sleep(drainGrace)
 	b.closePty()

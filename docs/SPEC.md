@@ -905,7 +905,7 @@ Defaults: listen `127.0.0.1:7822`, data dir `os.UserConfigDir()/astraterm` (or `
   address the user already has a live or recently idle transport to reuses it without prompting. A different host
   spelling (`localhost` vs `127.0.0.1`) is a different transport and known-hosts entry.
 * **Build/test.** `make web` runs `npm ci` only when `web/package.json` / `package-lock.json` change (the lockfile is
-  never rewritten); `make fmt-check` covers `internal/deps` too. End-to-end smoke test of the built binary (desktop +
+  never rewritten). End-to-end smoke test of the built binary (desktop +
   server mode, Docker SSH target): `make smoke` → `scripts/smoke/smoke.mjs` (see `scripts/smoke/README.md`).
 
 ### HTTP layer migrated to Echo v5 (2026-09-27)
@@ -2223,7 +2223,7 @@ extension *inside your own paths* and document it in §9.
 
 Shared-file rules:
 * `go.mod`/`go.sum` and `web/package.json`/`package-lock.json` are owned by the foundation stage. Later stages must not
-  run `go get` / `npm install`; all dependencies are pre-installed (see `internal/deps/tools.go` and package.json).
+  run `go get` / `npm install`.
 * `internal/server/modules.go` contains one `Mount` call per module; a module owner may edit **only its own line(s)**.
 * `web/src/api/types.ts` is owned by the foundation; feature-specific extra types go in `web/src/features/<f>/types.ts`.
 * `web/src/features/index.ts` imports every feature's `index.ts` (pre-created); do not edit it.

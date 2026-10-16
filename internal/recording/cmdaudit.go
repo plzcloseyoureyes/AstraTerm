@@ -257,7 +257,7 @@ func (t *commandTracker) osc(payload string) {
 		t.region = 0
 	case 'E':
 		if ps == "633" {
-			t.explicit = unescape633(strings.SplitN(rest, ";", 2)[0])
+			t.explicit = term.Unescape633(strings.SplitN(rest, ";", 2)[0])
 		}
 	}
 }
@@ -604,32 +604,6 @@ func cleanCommand(s string) string {
 		s = string(r[:maxCommandRunes]) + "…"
 	}
 	return s
-}
-
-// unescape633 decodes the VS Code escaping of OSC 633 values (\\ and \xHH).
-func unescape633(s string) string {
-	if !strings.Contains(s, `\`) {
-		return s
-	}
-	var b strings.Builder
-	for i := 0; i < len(s); i++ {
-		if s[i] == '\\' && i+1 < len(s) {
-			if s[i+1] == '\\' {
-				b.WriteByte('\\')
-				i++
-				continue
-			}
-			if s[i+1] == 'x' && i+3 < len(s) {
-				if v, err := strconv.ParseUint(s[i+2:i+4], 16, 8); err == nil {
-					b.WriteByte(byte(v))
-					i += 3
-					continue
-				}
-			}
-		}
-		b.WriteByte(s[i])
-	}
-	return b.String()
 }
 
 // ---- auditor ------------------------------------------------------------------------------------------------------

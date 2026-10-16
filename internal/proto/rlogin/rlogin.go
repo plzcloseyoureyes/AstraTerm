@@ -71,7 +71,7 @@ func open(ctx context.Context, d *app.Deps, c *core.Core, req term.OpenRequest) 
 // or connects; a refusal is permanent (no auto-reconnect loop) and unwraps to 403 destination_blocked.
 func dial(ctx context.Context, c *core.Core, g *netguard.Guard, req term.OpenRequest, port int) (net.Conn, error) {
 	conn := req.Connection
-	if routed(conn) {
+	if conn.Options.Routed() {
 		if c == nil || c.SSH == nil {
 			return nil, term.Permanent(errors.New("no dialer available"))
 		}
@@ -92,21 +92,6 @@ func dial(ctx context.Context, c *core.Core, g *netguard.Guard, req term.OpenReq
 		return nil, err
 	}
 	return nc, nil
-}
-
-func routed(conn *model.Connection) bool {
-	o := conn.Options
-	if strings.TrimSpace(o.String("sshTunnelVia", "")) != "" {
-		return true
-	}
-	if len(o.Strings("jumpHosts")) > 0 {
-		return true
-	}
-	if strings.TrimSpace(o.String("proxyCommand", "")) != "" {
-		return true
-	}
-	pt := strings.ToLower(strings.TrimSpace(model.Options(o.Map("proxy")).String("type", "")))
-	return pt != "" && pt != "none"
 }
 
 var errNoReservedPort = errors.New("no reserved source port available")
@@ -377,7 +362,7 @@ func openRsh(ctx context.Context, c *core.Core, g *netguard.Guard, req term.Open
 	}
 	var b *rshBackend
 	err = guardHandshake(ctx, nc, func() (err error) {
-		b, err = startRsh(nc, conn, command, !routed(conn))
+		b, err = startRsh(nc, conn, command, !conn.Options.Routed())
 		return err
 	})
 	if err != nil {

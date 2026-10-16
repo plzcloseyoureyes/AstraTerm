@@ -702,7 +702,7 @@ func (h *handler) suggestPort(u *model.User, sp *spec) int {
 
 // probeListen tries to bind a TCP listener briefly.
 func probeListen(sp *spec) error {
-	network, addr := sp.localListenAddr()
+	network, addr := sp.listenAddr()
 	ln, err := net.Listen(network, addr)
 	if err != nil {
 		_, _, msg := errorText(listenError(sp.bindLabel(), err))

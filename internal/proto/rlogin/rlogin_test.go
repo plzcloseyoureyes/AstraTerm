@@ -19,21 +19,6 @@ import (
 	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
-func TestRoutedDetection(t *testing.T) {
-	if routed(&model.Connection{}) {
-		t.Error("plain connection should be direct")
-	}
-	if !routed(&model.Connection{Options: model.Options{"sshTunnelVia": "abc"}}) {
-		t.Error("sshTunnelVia should be routed")
-	}
-	if !routed(&model.Connection{Options: model.Options{"jumpHosts": []any{"h"}}}) {
-		t.Error("jumpHosts should be routed")
-	}
-	if !routed(&model.Connection{Options: model.Options{"proxy": map[string]any{"type": "socks5", "host": "h", "port": 1}}}) {
-		t.Error("proxy should be routed")
-	}
-}
-
 func TestLoginMatchOnce(t *testing.T) {
 	st := loginState{enabled: true}
 	if got := st.match("", "hunter2", []byte("Password: ")); got != "hunter2\r" {

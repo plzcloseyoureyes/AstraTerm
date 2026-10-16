@@ -60,21 +60,12 @@ func open(ctx context.Context, c *core.Core, req term.OpenRequest) (term.Backend
 		defer cancel()
 		return dl.DialContext(dctx, network, addr)
 	}
-	b, err := start(ctx, conn, req.Secrets[model.SecretPassword], dial, dl.Via() == nil && !routedByProxy(conn), func() { dl.Close() })
+	b, err := start(ctx, conn, req.Secrets[model.SecretPassword], dial, dl.Via() == nil && !conn.Options.Proxied(), func() { dl.Close() })
 	if err != nil {
 		dl.Close()
 		return nil, err
 	}
 	return b, nil
-}
-
-func routedByProxy(conn *model.Connection) bool {
-	o := conn.Options
-	if len(o.Strings("jumpHosts")) > 0 || strings.TrimSpace(o.String("proxyCommand", "")) != "" {
-		return true
-	}
-	pt := strings.ToLower(strings.TrimSpace(model.Options(o.Map("proxy")).String("type", "")))
-	return pt != "" && pt != "none"
 }
 
 // start opens the remote shell and interpreter. direct reports that the host is reached without proxy or gateway

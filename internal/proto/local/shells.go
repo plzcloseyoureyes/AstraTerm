@@ -5,29 +5,6 @@ import (
 	"unicode/utf16"
 )
 
-// shellNames maps executable base names to display names.
-var shellNames = map[string]string{
-	"bash": "Bash", "zsh": "Zsh", "fish": "Fish", "sh": "sh", "dash": "Dash", "ksh": "Korn shell",
-	"mksh": "MirBSD Korn shell", "tcsh": "tcsh", "csh": "C shell", "pwsh": "PowerShell", "nu": "Nushell",
-	"xonsh": "Xonsh", "elvish": "Elvish", "rbash": "Restricted Bash", "busybox": "BusyBox",
-}
-
-func shellName(base string) string {
-	if n, ok := shellNames[strings.TrimSuffix(strings.ToLower(base), ".exe")]; ok {
-		return n
-	}
-	return base
-}
-
-// nonInteractive lists /etc/shells entries that are not usable as interactive shells.
-func nonInteractive(base string) bool {
-	switch strings.ToLower(base) {
-	case "nologin", "false", "true", "git-shell", "scponly", "rssh", "sync", "shutdown", "halt":
-		return true
-	}
-	return false
-}
-
 // decodeWSLList decodes the output of `wsl.exe -l -q`, which is UTF-16LE (with or without BOM) on most Windows
 // builds and UTF-8 when WSL_UTF8=1, into distribution names.
 func decodeWSLList(out []byte) []string {

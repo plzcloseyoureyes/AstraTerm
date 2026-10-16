@@ -13,10 +13,3 @@ func killCmd(cmd *exec.Cmd) {
 		_ = cmd.Process.Kill()
 	}
 }
-
-func exitCode(cmd *exec.Cmd, _ error) int {
-	if cmd.ProcessState == nil {
-		return -1
-	}
-	return cmd.ProcessState.ExitCode()
-}

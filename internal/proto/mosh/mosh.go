@@ -65,7 +65,7 @@ func open(ctx context.Context, d *app.Deps, c *core.Core, req term.OpenRequest) 
 	// The destination guard of the session owner (nil = unrestricted: desktop mode, administrators). The SSH leg is
 	// vetted by the pool; the UDP leg here.
 	g := netguard.ForUser(d, req.User)
-	if routed(conn) {
+	if conn.Options.Proxied() {
 		// The UDP leg resolves the host name on the AstraTerm host (not on the jump host / proxy): refuse an obviously
 		// blocked destination before starting mosh-server remotely (DNS names are checked once resolved).
 		if err := g.CheckLiteral(conn.Host, 0); err != nil {
@@ -112,7 +112,7 @@ func startSession(ctx context.Context, g *netguard.Guard, req term.OpenRequest, 
 		return nil, err
 	}
 	var sshAddr net.Addr
-	if !routed(conn) {
+	if !conn.Options.Proxied() {
 		sshAddr = cl.RemoteAddr()
 	}
 	ip, err := udpTarget(ctx, conn.Host, sshAddr)
@@ -279,15 +279,6 @@ func firstLine(s string) string {
 		s = s[:200] + "…"
 	}
 	return s
-}
-
-func routed(conn *model.Connection) bool {
-	o := conn.Options
-	if len(o.Strings("jumpHosts")) > 0 || strings.TrimSpace(o.String("proxyCommand", "")) != "" {
-		return true
-	}
-	pt := strings.ToLower(strings.TrimSpace(model.Options(o.Map("proxy")).String("type", "")))
-	return pt != "" && pt != "none"
 }
 
 // udpTarget picks the IP to send mosh datagrams to: the address the SSH connection actually reached (like the mosh

@@ -462,3 +462,10 @@ func TestTelnetAgainstTestServer(t *testing.T) {
 		t.Errorf("resize did not reach the remote pty: %q", out)
 	}
 }
+
+// serverEchoes reports whether the server performs ECHO (local echo is then suppressed).
+func (b *backend) serverEchoes() bool {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.him[optECHO] == qYes
+}

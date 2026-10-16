@@ -166,7 +166,7 @@ func (sc *oscScanner) dispatch(offset int64, emit func(oscEvent)) {
 	case "633": // VS Code shell integration
 		if strings.HasPrefix(pt, "P;") {
 			if v, ok := strings.CutPrefix(pt[2:], "Cwd="); ok {
-				if p := cleanCwd(unescape633(v)); p != "" {
+				if p := cleanCwd(Unescape633(v)); p != "" {
 					emit(oscEvent{Kind: oscCwd, Text: p, Offset: offset})
 				}
 			}
@@ -259,8 +259,8 @@ func cleanCwd(p string) string {
 	return p
 }
 
-// unescape633 decodes the VS Code escaping of OSC 633 values (\\ and \xHH).
-func unescape633(s string) string {
+// Unescape633 decodes the VS Code escaping of OSC 633 values (\\ and \xHH).
+func Unescape633(s string) string {
 	if !strings.Contains(s, `\`) {
 		return s
 	}

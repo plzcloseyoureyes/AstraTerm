@@ -216,7 +216,7 @@ func (c *trackedConn) CloseWrite() error { return closeWrite(c.Conn) }
 // listenLocal opens the forward's listener on the AstraTerm host and starts accepting. Errors are typed API errors
 // (address in use, permission denied…).
 func (f *forward) listenLocal() error {
-	network, addr := f.sp.localListenAddr()
+	network, addr := f.sp.listenAddr()
 	var (
 		ln  net.Listener
 		err error
@@ -317,7 +317,7 @@ func (e *errRemoteListen) Unwrap() error { return e.err }
 // cancelled or the forward is closed. ready is called with the bound address once listening. A failure to listen
 // is returned as *errRemoteListen.
 func (f *forward) serveRemote(ctx context.Context, l link, ready func(addr string)) error {
-	network, addr := f.sp.remoteListenAddr()
+	network, addr := f.sp.listenAddr()
 	rln, err := l.Listen(network, addr)
 	if err != nil && network == "unix" && f.removeStaleRemoteSocket(ctx, l, addr) {
 		rln, err = l.Listen(network, addr)

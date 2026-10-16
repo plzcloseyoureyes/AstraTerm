@@ -318,3 +318,7 @@ func TestGuacShadowTestEnv(t *testing.T) {
 	list, _ := recs.listBySession(context.Background(), rs.ID)
 	t.Logf("recording %s: %d bytes, %dx%d", list[0].ID, list[0].Size, list[0].Width, list[0].Height)
 }
+
+func (r *recordingStore) listBySession(ctx context.Context, sessionID string) ([]*rdpRecording, error) {
+	return r.query(ctx, `SELECT `+recordingCols+` FROM rdp_recordings WHERE session_id = ? ORDER BY started_at`, sessionID)
+}

@@ -129,10 +129,3 @@ func (s *ticketStore) sweepLocked(now time.Time) {
 		}
 	}
 }
-
-// len reports the number of stored tickets (tests).
-func (s *ticketStore) len() int {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	return len(s.tickets)
-}

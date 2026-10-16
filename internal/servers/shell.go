@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/x/xpty"
+	"github.com/plzcloseyoureyes/astraterm/internal/childproc"
 )
 
 // shellSpec describes a shell started for an SSH or Telnet client (as the AstraTerm OS user).
@@ -164,7 +165,7 @@ func startPTYShell(spec shellSpec) (*ptyShell, error) {
 	if err != nil {
 		return nil, fmt.Errorf("create pseudo-terminal: %w", err)
 	}
-	if err := startOnPTY(p, cmd); err != nil {
+	if err := childproc.StartOnPTY(p, cmd); err != nil {
 		_ = p.Close()
 		return nil, fmt.Errorf("start %s: %w", filepath.Base(cmd.Path), err)
 	}
@@ -216,7 +217,7 @@ func (s *ptyShell) Close() {
 		select {
 		case <-s.done:
 		default:
-			hangup(s.cmd)
+			childproc.Hangup(s.cmd)
 			go func() {
 				select {
 				case <-s.done:

@@ -137,7 +137,7 @@ func (r *Registry) openS3(ctx context.Context, user *model.User, conn *model.Con
 	var closeDial func()
 	var transport http.RoundTripper
 	// Restricted users (netguard) always get AstraTerm's own transport (never the environment's proxies).
-	if needsDialer(conn) || endpointURL != nil || netguard.ForUser(r.d, user) != nil {
+	if conn.Options.Routed() || endpointURL != nil || netguard.ForUser(r.d, user) != nil {
 		dconn := conn.Clone()
 		if endpointURL != nil {
 			dconn.Host = endpointURL.Hostname()
@@ -180,20 +180,6 @@ func (r *Registry) openS3(ctx context.Context, user *model.User, conn *model.Con
 	}
 	h.Capabilities = capsFor(f, "s3", false)
 	return h, nil
-}
-
-// needsDialer reports whether the connection routes through a proxy or SSH gateway.
-func needsDialer(conn *model.Connection) bool {
-	o := conn.Options
-	if o.String("sshTunnelVia", "") != "" || len(o.Strings("jumpHosts")) > 0 || o.String("proxyCommand", "") != "" {
-		return true
-	}
-	if m := o.Map("proxy"); m != nil {
-		if t, _ := m["type"].(string); t != "" && t != "none" {
-			return true
-		}
-	}
-	return false
 }
 
 func (r *Registry) openWebDAV(ctx context.Context, user *model.User, conn *model.Connection, secrets map[string]string) (*Handle, error) {

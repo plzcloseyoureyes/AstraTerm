@@ -9,24 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/plzcloseyoureyes/astraterm/internal/model"
 	"github.com/plzcloseyoureyes/astraterm/internal/proto/rawtcp/linedisc"
 )
-
-func TestRoutedDetection(t *testing.T) {
-	if routed(&model.Connection{}) {
-		t.Error("plain should be direct")
-	}
-	if !routed(&model.Connection{Options: model.Options{"proxy": map[string]any{"type": "http", "host": "h", "port": 8080}}}) {
-		t.Error("http proxy should be routed")
-	}
-	if routed(&model.Connection{Options: model.Options{"proxy": map[string]any{"type": "none"}}}) {
-		t.Error("proxy type none is direct")
-	}
-	if !routed(&model.Connection{Options: model.Options{"sshTunnelVia": "abc"}}) {
-		t.Error("SSH gateway should be routed")
-	}
-}
 
 // collector reads a backend with one goroutine and lets tests wait for data.
 type collector struct {

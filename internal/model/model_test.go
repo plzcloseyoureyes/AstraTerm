@@ -87,3 +87,28 @@ func TestErrorsAndConnection(t *testing.T) {
 		t.Fatal("ValidProtocol")
 	}
 }
+
+func TestOptionsRouting(t *testing.T) {
+	cases := []struct {
+		name            string
+		o               Options
+		proxied, routed bool
+	}{
+		{"direct", Options{}, false, false},
+		{"proxy none", Options{"proxy": map[string]any{"type": "none"}}, false, false},
+		{"http proxy", Options{"proxy": map[string]any{"type": "http", "host": "h", "port": 8080}}, true, true},
+		{"socks proxy", Options{"proxy": map[string]any{"type": "SOCKS5 ", "host": "h", "port": 1}}, true, true},
+		{"jump host", Options{"jumpHosts": []any{"h"}}, true, true},
+		{"proxy command", Options{"proxyCommand": "nc %h %p"}, true, true},
+		{"blank proxy command", Options{"proxyCommand": "  "}, false, false},
+		{"ssh tunnel", Options{"sshTunnelVia": "abc"}, false, true},
+	}
+	for _, c := range cases {
+		if got := c.o.Proxied(); got != c.proxied {
+			t.Errorf("%s: Proxied() = %v", c.name, got)
+		}
+		if got := c.o.Routed(); got != c.routed {
+			t.Errorf("%s: Routed() = %v", c.name, got)
+		}
+	}
+}

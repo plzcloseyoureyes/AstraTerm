@@ -190,14 +190,8 @@ func (g *Conn) Write(b []byte) error {
 // SetWriteDeadline bounds the next writes.
 func (g *Conn) SetWriteDeadline(t time.Time) error { return g.conn.SetWriteDeadline(t) }
 
-// SetReadDeadline bounds the next reads.
-func (g *Conn) SetReadDeadline(t time.Time) error { return g.conn.SetReadDeadline(t) }
-
 // Close closes the connection to guacd.
 func (g *Conn) Close() error { return g.conn.Close() }
-
-// NetConn returns the underlying connection.
-func (g *Conn) NetConn() net.Conn { return g.conn }
 
 // ProbeVersion connects to guacd, asks for the arguments of protocol and returns the protocol version guacd
 // announces (VERSION_x_y_z, or VERSION_1_0_0 for servers that announce none) and the advertised parameter names.

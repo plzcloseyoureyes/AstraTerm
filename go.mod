@@ -4,7 +4,6 @@ go 1.26.2
 
 require (
 	charm.land/ssh v0.4.3
-	github.com/Azure/go-ntlmssp v0.1.1
 	github.com/Microsoft/go-winio v0.6.2
 	github.com/aws/aws-sdk-go-v2 v1.47.1
 	github.com/aws/aws-sdk-go-v2/config v1.33.6
@@ -12,7 +11,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.113.4
 	github.com/aws/smithy-go v1.28.1
 	github.com/bougou/go-ipmi v0.9.1
-	github.com/bramvdbogaerde/go-scp v1.6.1
 	github.com/charmbracelet/x/ansi v0.11.8
 	github.com/charmbracelet/x/xpty v0.1.4
 	github.com/coder/websocket v1.8.15
@@ -25,7 +23,6 @@ require (
 	github.com/gosnmp/gosnmp v1.45.0
 	github.com/hirochachacha/go-smb2 v1.1.0
 	github.com/jlaffaye/ftp v0.2.4
-	github.com/kardianos/service v1.3.0
 	github.com/kayrus/putty v1.0.5
 	github.com/kevinburke/ssh_config v1.6.0
 	github.com/labstack/echo/v5 v5.3.1
@@ -39,7 +36,6 @@ require (
 	github.com/prometheus-community/pro-bing v0.9.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/shirou/gopsutil/v4 v4.26.8
-	github.com/skeema/knownhosts v1.3.3
 	github.com/spf13/afero v1.15.0
 	github.com/studio-b12/gowebdav v0.13.0
 	github.com/things-go/go-socks5 v0.1.3
@@ -53,11 +49,11 @@ require (
 	golang.org/x/term v0.46.0
 	golang.org/x/text v0.42.0
 	golang.org/x/time v0.16.0
-	gopkg.in/ini.v1 v1.67.3
 	modernc.org/sqlite v1.59.0
 )
 
 require (
+	github.com/Azure/go-ntlmssp v0.1.1 // indirect
 	github.com/ChrisTrenkamp/goxpath v0.0.0-20210404020558-97928f7e12b6 // indirect
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.20 // indirect

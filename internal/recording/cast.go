@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/plzcloseyoureyes/astraterm/internal/term"
 )
 
 // asciicast v2 / v3 reading and writing (REC-2). v3 (what AstraTerm records): a header line
@@ -388,7 +390,7 @@ func validUTF8Prefix(p []byte) ([]byte, []byte) {
 		if b < 0x80 {
 			return p, nil
 		}
-		if need := leadLen(b); need > 0 && i+need > n {
+		if need := term.UTF8LeadLen(b); need > 0 && i+need > n {
 			return p[:i], p[i:]
 		}
 		return p, nil

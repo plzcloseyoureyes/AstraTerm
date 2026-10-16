@@ -45,7 +45,7 @@ func (a *ansiStripper) Feed(p []byte, text func(r rune), control func(b byte)) {
 		switch action {
 		case parser.CollectAction:
 			if next == parser.Utf8State {
-				n := utf8LeadLen(b)
+				n := UTF8LeadLen(b)
 				if n < 2 {
 					next = parser.GroundState
 					break
@@ -61,7 +61,8 @@ func (a *ansiStripper) Feed(p []byte, text func(r rune), control func(b byte)) {
 	}
 }
 
-func utf8LeadLen(b byte) int {
+// UTF8LeadLen returns the length of the UTF-8 sequence a lead byte starts (2–4), 0 for anything else.
+func UTF8LeadLen(b byte) int {
 	switch {
 	case b&0xe0 == 0xc0:
 		return 2

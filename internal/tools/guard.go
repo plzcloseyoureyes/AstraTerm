@@ -3,8 +3,6 @@ package tools
 import (
 	"context"
 	"net"
-	"net/netip"
-	"syscall"
 	"time"
 
 	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
@@ -43,16 +41,8 @@ func (ng *netGuard) guard() *netguard.Guard {
 	return ng.g
 }
 
-// blockedAddr reports whether a is off-limits under the default policy.
-func blockedAddr(a netip.Addr) bool { return !(&netguard.Guard{}).Check(a, 0).Allowed }
-
 // checkIP returns an error when ip is off-limits (always nil for a nil guard).
 func (ng *netGuard) checkIP(ip net.IP) error { return ng.guard().CheckIP(ip, 0) }
-
-// control is a net.Dialer.Control hook: it vets the concrete address being connected to.
-func (ng *netGuard) control(network, address string, c syscall.RawConn) error {
-	return ng.guard().Control(network, address, c)
-}
 
 // dialer returns a net.Dialer with the given timeout that enforces the guard on every connection attempt.
 func (ng *netGuard) dialer(timeout time.Duration) *net.Dialer { return ng.guard().Dialer(timeout) }

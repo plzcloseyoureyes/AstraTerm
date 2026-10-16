@@ -84,14 +84,10 @@ func ShellKind(shell string) string {
 	return ""
 }
 
-// ShellIntegrationLine returns the setup line for a shell family or kind (see ShellFamily, ShellKind), or "" when
-// unsupported.
-func ShellIntegrationLine(family string) string { return ShellIntegrationLineFor(family, "") }
-
-// ShellIntegrationLineFor is ShellIntegrationLine with a host guard: when host (the `uname -n` of the machine the
-// session logged in to) is given, the reporter is only installed if the shell reading the line runs on that host —
-// after `ssh other` or `docker exec` the user may be typing into another machine, whose folders the files panel of
-// this session must not follow. family is "posix" / "fish" (ShellFamily) or a ShellKind; a kind line only carries
+// ShellIntegrationLineFor returns the setup line for a shell family or kind, or "" when unsupported. When host (the
+// `uname -n` of the machine the session logged in to) is given, the reporter is only installed if the shell reading
+// the line runs on that host — after `ssh other` or `docker exec` the user may be typing into another machine, whose
+// folders the files panel of this session must not follow. family is "posix" / "fish" (ShellFamily) or a ShellKind; a kind line only carries
 // its shell's setup (shorter), guarded at run time: another shell reading it only reports the folder once. The
 // line starts with a space (history-free in shells with ignorespace / fish) and bash also removes it from its
 // history list.

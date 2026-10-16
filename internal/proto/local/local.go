@@ -22,6 +22,7 @@ import (
 	"github.com/labstack/echo/v5"
 
 	"github.com/plzcloseyoureyes/astraterm/internal/app"
+	"github.com/plzcloseyoureyes/astraterm/internal/childproc"
 	"github.com/plzcloseyoureyes/astraterm/internal/core"
 	"github.com/plzcloseyoureyes/astraterm/internal/httpx"
 	"github.com/plzcloseyoureyes/astraterm/internal/model"
@@ -151,7 +152,7 @@ func Open(ctx context.Context, req term.OpenRequest) (term.Backend, error) {
 	if err != nil {
 		return nil, fmt.Errorf("create pseudo-terminal: %w", err)
 	}
-	if err := startOnPty(p, cmd); err != nil {
+	if err := childproc.StartOnPTY(p, cmd); err != nil {
 		p.Close()
 		return nil, fmt.Errorf("start %s: %w", sh.Name, err)
 	}
@@ -243,8 +244,8 @@ type backend struct {
 const drainGrace = 500 * time.Millisecond
 
 func (b *backend) wait() {
-	err := xpty.WaitProcess(context.Background(), b.cmd)
-	b.code.Store(int64(exitCode(b.cmd, err)))
+	_ = xpty.WaitProcess(context.Background(), b.cmd)
+	b.code.Store(int64(childproc.ExitCode(b.cmd)))
 	close(b.done)
 	time.Sleep(drainGrace)
 	b.closePty()
@@ -282,7 +283,7 @@ func (b *backend) Close() error {
 		select {
 		case <-b.done:
 		default:
-			hangup(b.cmd)
+			childproc.Hangup(b.cmd)
 			go func() {
 				select {
 				case <-b.done:

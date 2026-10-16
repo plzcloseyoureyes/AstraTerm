@@ -495,3 +495,17 @@ func TestScriptLimiter(t *testing.T) {
 		t.Fatalf("release did not free a slot")
 	}
 }
+
+// StripText converts a complete chunk of terminal output into plain text lines joined by '\n' (tests, batch
+// captures).
+func StripText(data []byte) string {
+	l := newTextLog(len(data) + 1024)
+	var s stripper
+	s.feed(l, data)
+	return string(l.from(0))
+}
+
+// feedDirect processes data synchronously (unit tests).
+func (t *tap) feedDirect(data []byte) {
+	t.process([]tapChunk{{start: -1, data: data}}, false)
+}

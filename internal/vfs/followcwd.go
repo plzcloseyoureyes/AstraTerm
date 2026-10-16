@@ -17,7 +17,7 @@ import (
 
 // "Follow terminal folder" (FILE-2), MobaXterm style: when an SSH terminal connects, detect the login shell over the
 // session's own pooled transport (exec `echo "$SHELL"`), wait until the first prompt is idle, then inject one hidden
-// setup line that makes the shell report its folder with OSC 7 (term.ShellIntegrationLine / Manager.InjectHidden).
+// setup line that makes the shell report its folder with OSC 7 (term.ShellIntegrationLineFor / Manager.InjectHidden).
 // The terminal scanner turns those reports into RuntimeSession.cwd (session.updated) and {type:'cwd'} messages the
 // files panel follows. Every failure is silent (debug log): the session is never disturbed.
 

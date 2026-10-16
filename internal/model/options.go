@@ -303,3 +303,18 @@ func toInt(v any) (int, bool) {
 	}
 	return 0, false
 }
+
+// Proxied reports whether the connection's traffic goes through a jump host, a ProxyCommand or a proxy.
+func (o Options) Proxied() bool {
+	if len(o.Strings("jumpHosts")) > 0 || strings.TrimSpace(o.String("proxyCommand", "")) != "" {
+		return true
+	}
+	pt := strings.ToLower(strings.TrimSpace(Options(o.Map("proxy")).String("type", "")))
+	return pt != "" && pt != "none"
+}
+
+// Routed reports whether the connection's traffic goes anywhere but straight from the AstraTerm host: Proxied, or
+// through an SSH tunnel (sshTunnelVia).
+func (o Options) Routed() bool {
+	return o.Proxied() || strings.TrimSpace(o.String("sshTunnelVia", "")) != ""
+}

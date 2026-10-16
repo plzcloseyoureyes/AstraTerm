@@ -396,3 +396,7 @@ func TestInjectHiddenReleasesBackgroundOutput(t *testing.T) {
 		}
 	}
 }
+
+// ShellIntegrationLine returns the setup line for a shell family or kind (see ShellFamily, ShellKind), or "" when
+// unsupported.
+func ShellIntegrationLine(family string) string { return ShellIntegrationLineFor(family, "") }

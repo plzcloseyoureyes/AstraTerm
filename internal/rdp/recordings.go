@@ -99,10 +99,6 @@ func (r *recordingStore) list(ctx context.Context, ownerID string) ([]*rdpRecord
 	return r.query(ctx, `SELECT `+recordingCols+` FROM rdp_recordings WHERE owner_id = ? ORDER BY started_at DESC LIMIT 1000`, ownerID)
 }
 
-func (r *recordingStore) listBySession(ctx context.Context, sessionID string) ([]*rdpRecording, error) {
-	return r.query(ctx, `SELECT `+recordingCols+` FROM rdp_recordings WHERE session_id = ? ORDER BY started_at`, sessionID)
-}
-
 func (r *recordingStore) delete(ctx context.Context, id string) error {
 	_, err := r.db.ExecContext(ctx, `DELETE FROM rdp_recordings WHERE id = ?`, id)
 	return err
