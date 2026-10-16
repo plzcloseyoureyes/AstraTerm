@@ -149,7 +149,7 @@ export default function DebugLogsView({ tabId }: TabProps) {
           className="w-36"
           options={[{ value: '__all', label: 'All modules' }, ...modules.map((m) => ({ value: m, label: m }))]}
         />
-        <Input inputSize="sm" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search messages and fields…" leading={<Search />} className="w-64" />
+        <Input inputSize="sm" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search messages and fields…" aria-label="Search logs" leading={<Search />} className="w-64" />
         <div className="flex-1" />
         <span className="text-xs text-muted-foreground tabular-nums">
           {shown.length.toLocaleString()} shown{meta ? ` · ${meta.stored.toLocaleString()} / ${meta.capacity.toLocaleString()} kept` : ''}

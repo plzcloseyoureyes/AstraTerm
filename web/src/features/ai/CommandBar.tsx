@@ -194,8 +194,12 @@ export function CommandBar() {
           </button>
         </div>
 
+        {/* Focus stays in the input: the outcome is announced. */}
+        <span className="sr-only" role="status">
+          {done ? 'Suggestion ready' : ''}
+        </span>
         {s.phase === 'error' && s.error && (
-          <div className="border-t px-3 py-2 text-sm animate-in fade-in-0 duration-150">
+          <div role="alert" className="border-t px-3 py-2 text-sm animate-in fade-in-0 duration-150">
             <span className="font-medium text-destructive">{s.error.title}</span>
             {s.error.hint && <span className="text-muted-foreground"> — {s.error.hint}</span>}
           </div>

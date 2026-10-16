@@ -2,7 +2,7 @@
  * Dialogs raised by a terminal (paste safety, link confirmation, OSC 52 clipboard access, clipboard history). They
  * portal into the terminal's own document so they appear in the right window when the tab is popped out.
  */
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from 'react'
+import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from 'react'
 import { Dialog as DialogPrimitive } from 'radix-ui'
 import { ClipboardCopy, ClipboardPaste, Info, Link2, ShieldAlert, Trash2, TriangleAlert, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -281,6 +281,7 @@ function ClipboardHistoryDialog({ ctrl, container, onDone }: { ctrl: TerminalCon
   const entries = useClipboardHistory((s) => s.entries)
   const [query, setQuery] = useState('')
   const [active, setActive] = useState(0)
+  const listId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -321,6 +322,11 @@ function ClipboardHistoryDialog({ ctrl, container, onDone }: { ctrl: TerminalCon
         value={query}
         placeholder="Filter…"
         aria-label="Filter clipboard history"
+        // The arrow keys move through the list from here: screen readers follow the highlighted entry.
+        role="combobox"
+        aria-expanded
+        aria-controls={listId}
+        aria-activedescendant={filtered.length ? `${listId}-${active}` : undefined}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'ArrowDown') {
@@ -335,11 +341,12 @@ function ClipboardHistoryDialog({ ctrl, container, onDone }: { ctrl: TerminalCon
           }
         }}
       />
-      <ul role="listbox" aria-label="Clipboard history" className="-mx-1 max-h-[45vh] min-h-24 overflow-y-auto px-1">
+      <ul id={listId} role="listbox" aria-label="Clipboard history" className="-mx-1 max-h-[45vh] min-h-24 overflow-y-auto px-1">
         {filtered.length === 0 && <li className="px-2 py-6 text-center text-sm text-muted-foreground">{entries.length ? 'No matches' : 'Nothing copied yet'}</li>}
         {filtered.map((e, i) => (
           <li
             key={e.id}
+            id={`${listId}-${i}`}
             role="option"
             aria-selected={i === active}
             className={cn('group flex cursor-default items-start gap-2 rounded-md px-2 py-1.5', i === active && 'bg-accent')}

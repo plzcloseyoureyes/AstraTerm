@@ -58,7 +58,7 @@ export default function LiveSessionsView({ tabId }: TabProps) {
           {q.data ? `${q.data.length} sessions · ${users} ${users === 1 ? 'user' : 'users'}` : ' '}
         </span>
         <div className="flex-1" />
-        <Input inputSize="sm" value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Filter by user, host, title…" leading={<Search />} className="w-64" />
+        <Input inputSize="sm" value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Filter by user, host, title…" aria-label="Filter live sessions" leading={<Search />} className="w-64" />
         <IconButton icon={RefreshCw} label="Refresh" onClick={refresh} busy={refreshing} />
       </div>
       <div className="min-h-0 flex-1 overflow-auto">

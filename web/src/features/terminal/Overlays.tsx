@@ -72,7 +72,10 @@ function EndedPanel({ ctrl, info }: { ctrl: TerminalController; info: TerminalIn
             <Icon className="size-4" />
           </div>
           <div className="grid min-w-0 gap-0.5">
-            <div className="text-base font-medium">{title}</div>
+            {/* The panel keeps focus in the terminal (R / D / S / Q work there): the title is announced instead. */}
+            <div role="alert" className="text-base font-medium">
+              {title}
+            </div>
             {info.stateMessage && <div className="text-sm break-words text-muted-foreground">{info.stateMessage}</div>}
           </div>
         </div>

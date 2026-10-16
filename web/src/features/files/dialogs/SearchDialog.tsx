@@ -40,6 +40,7 @@ export default function SearchDialog({ ctx, path, viewId, onClose }: { ctx: FsCo
   const [max, setMax] = useState(500)
   const [st, setSt] = useState<State>({ status: 'idle', entries: [], truncated: false })
   const [active, setActive] = useState(-1)
+  const resultsId = useId()
   const abort = useRef<AbortController | null>(null)
   const listRef = useRef<HTMLDivElement>(null)
   const id = useId()
@@ -176,6 +177,7 @@ export default function SearchDialog({ ctx, path, viewId, onClose }: { ctx: FsCo
             ref={listRef}
             role="listbox"
             aria-label="Search results"
+            aria-activedescendant={active >= 0 && st.entries[active] ? `${resultsId}-${active}` : undefined}
             tabIndex={0}
             className="min-h-0 flex-1 overflow-y-auto outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
             onKeyDown={(e) => {
@@ -197,6 +199,7 @@ export default function SearchDialog({ ctx, path, viewId, onClose }: { ctx: FsCo
               return (
                 <div
                   key={e.path}
+                  id={`${resultsId}-${i}`}
                   role="option"
                   aria-selected={i === active}
                   onClick={() => setActive(i)}
@@ -210,18 +213,20 @@ export default function SearchDialog({ ctx, path, viewId, onClose }: { ctx: FsCo
                   <span className="hidden w-16 shrink-0 text-right text-xs tabular text-muted-foreground sm:block">{isDirLike(e) ? '' : formatBytes(e.size)}</span>
                   <span className="hidden w-28 shrink-0 text-xs tabular text-muted-foreground md:block">{formatMtime(e.mtime)}</span>
                   <span className="flex shrink-0 opacity-0 group-hover:opacity-100 group-aria-selected:opacity-100">
-                    <IconButton icon={FolderSearch} label="Show in folder" size="xs" onClick={() => reveal(e)} />
-                    <IconButton icon={Download} label="Download" size="xs" onClick={() => downloadEntries(ctx, [e], dirname(e.path))} />
+                    {/* Only the highlighted row's buttons are in the Tab order (hundreds of results otherwise). */}
+                    <IconButton icon={FolderSearch} label="Show in folder" size="xs" tabIndex={i === active ? 0 : -1} onClick={() => reveal(e)} />
+                    <IconButton icon={Download} label="Download" size="xs" tabIndex={i === active ? 0 : -1} onClick={() => downloadEntries(ctx, [e], dirname(e.path))} />
                     <IconButton
                       icon={Copy}
                       label="Copy path"
                       size="xs"
+                      tabIndex={i === active ? 0 : -1}
                       onClick={async () => {
                         if (await copyText(e.path)) toast.success('Path copied')
                       }}
                     />
                   </span>
-                  <button type="button" className="sr-only" onClick={() => openEntry(e)}>
+                  <button type="button" className="sr-only" tabIndex={i === active ? 0 : -1} onClick={() => openEntry(e)}>
                     Open {e.name}
                   </button>
                 </div>

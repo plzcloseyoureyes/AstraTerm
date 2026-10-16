@@ -635,7 +635,7 @@ const Row = memo(function Row(p: RowProps) {
         !selected && 'hover:bg-accent/55',
         selected && (listFocused ? 'bg-primary/22 text-foreground' : 'bg-primary/12'),
         isCursor && listFocused && 'shadow-[inset_0_0_0_1px_var(--ring)]',
-        (e.hidden || cut || isPartialUpload(e)) && !row.parent && 'text-foreground/55',
+        (e.hidden || cut || isPartialUpload(e)) && !row.parent && 'text-muted-foreground',
         cut && 'italic',
         p.dropTarget && 'bg-primary/15 shadow-[inset_0_0_0_2px_var(--ring)]',
       )}

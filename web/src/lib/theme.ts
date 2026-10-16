@@ -56,19 +56,20 @@ interface AccentPreset {
 const WHITE = 'oklch(0.99 0 0)'
 
 export const ACCENT_PRESETS: Record<string, AccentPreset> = {
-  blue: { label: 'Blue', light: 'oklch(0.55 0.19 252)', dark: 'oklch(0.62 0.18 252)', fgLight: WHITE, fgDark: WHITE, swatch: '#3b82f6' },
+  // Dark-theme accents stay light enough to read as text on the dark surfaces, so their buttons get dark text (WCAG AA).
+  blue: { label: 'Blue', light: 'oklch(0.55 0.19 252)', dark: 'oklch(0.62 0.18 252)', fgLight: WHITE, fgDark: 'oklch(0.2 0.04 252)', swatch: '#3b82f6' },
   sky: {
     label: 'Sky',
-    light: 'oklch(0.58 0.14 232)',
+    light: 'oklch(0.54 0.14 232)',
     dark: 'oklch(0.72 0.14 228)',
     fgLight: WHITE,
     fgDark: 'oklch(0.2 0.04 230)',
     swatch: '#0ea5e9',
   },
-  violet: { label: 'Violet', light: 'oklch(0.54 0.22 292)', dark: 'oklch(0.64 0.2 292)', fgLight: WHITE, fgDark: WHITE, swatch: '#8b5cf6' },
+  violet: { label: 'Violet', light: 'oklch(0.54 0.22 292)', dark: 'oklch(0.64 0.2 292)', fgLight: WHITE, fgDark: 'oklch(0.2 0.04 292)', swatch: '#8b5cf6' },
   teal: {
     label: 'Teal',
-    light: 'oklch(0.55 0.1 185)',
+    light: 'oklch(0.54 0.1 185)',
     dark: 'oklch(0.72 0.12 182)',
     fgLight: WHITE,
     fgDark: 'oklch(0.2 0.04 185)',
@@ -92,13 +93,13 @@ export const ACCENT_PRESETS: Record<string, AccentPreset> = {
   },
   orange: {
     label: 'Orange',
-    light: 'oklch(0.62 0.19 45)',
+    light: 'oklch(0.57 0.19 45)',
     dark: 'oklch(0.72 0.18 50)',
     fgLight: WHITE,
     fgDark: 'oklch(0.2 0.05 50)',
     swatch: '#f97316',
   },
-  rose: { label: 'Rose', light: 'oklch(0.57 0.21 12)', dark: 'oklch(0.66 0.2 12)', fgLight: WHITE, fgDark: WHITE, swatch: '#f43f5e' },
+  rose: { label: 'Rose', light: 'oklch(0.57 0.21 12)', dark: 'oklch(0.66 0.2 12)', fgLight: WHITE, fgDark: 'oklch(0.2 0.05 12)', swatch: '#f43f5e' },
   slate: {
     label: 'Graphite',
     light: 'oklch(0.4 0.02 255)',
@@ -127,7 +128,8 @@ function hexLuminance(hex: string): number {
 function resolveAccent(accent: string, dark: boolean): { bg: string; fg: string } {
   const preset = ACCENT_PRESETS[accent]
   if (preset) return { bg: dark ? preset.dark : preset.light, fg: dark ? preset.fgDark : preset.fgLight }
-  if (HEX_RE.test(accent)) return { bg: accent, fg: hexLuminance(accent) > 0.45 ? 'oklch(0.18 0.01 255)' : WHITE }
+  // The text colour with the higher contrast on it (WCAG): near-black above a luminance of about 0.19, else white.
+  if (HEX_RE.test(accent)) return { bg: accent, fg: hexLuminance(accent) > 0.19 ? 'oklch(0.18 0.01 255)' : WHITE }
   const d = ACCENT_PRESETS[DEFAULT_ACCENT]
   return { bg: dark ? d.dark : d.light, fg: dark ? d.fgDark : d.fgLight }
 }

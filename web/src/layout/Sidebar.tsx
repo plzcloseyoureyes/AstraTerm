@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { PanelLeftClose, Settings } from 'lucide-react'
+import { Dialog as DialogPrimitive } from 'radix-ui'
 import { commands, ribbonButtons, sidebarPanels, type RibbonButtonDef, type SidebarPanelDef } from '@/app/registry'
 import { runCommand, useCommand } from '@/app/commands'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { DynamicContextMenu, DynamicDropdown } from '@/components/menu-items'
 import { IconButton } from '@/components/ui/icon-button'
+import { usePortalContainer } from '@/components/ui/portal'
 import { ResizeHandle } from '@/components/ui/resizable'
 import { LazyBoundary } from '@/components/ui/spinner'
 import { Tooltip } from '@/components/ui/tooltip'
@@ -204,6 +206,8 @@ export function Sidebar() {
   const p = useSidebarPrefs()
   const mobile = useIsMobile()
   const drawerOpen = useUIStore((s) => s.drawerOpen)
+  const portal = usePortalContainer()
+  const opener = useRef<HTMLElement | null>(null)
   const [width, setWidth] = useState(p.width)
   useEffect(() => setWidth(p.width), [p.width])
 
@@ -233,20 +237,38 @@ export function Sidebar() {
   )
 
   if (mobile) {
-    if (!drawerOpen) return null
+    // A modal drawer: focus moves in and stays there, Escape or a tap outside closes it, focus returns after.
     return (
-      <div className="fixed inset-0 z-40 flex" role="dialog" aria-modal="true" aria-label="Sidebar">
-        <div className="flex h-full w-[min(88vw,380px)] border-r bg-sidebar text-sidebar-foreground shadow-popover animate-in slide-in-from-left duration-150">
-          <Rail panels={panels} activeId={active.id} collapsed={false} onSelect={onSelect} />
-          <div className="flex min-w-0 flex-1 flex-col">
-            {header}
-            <div className="relative min-h-0 flex-1 overflow-hidden">
-              <PanelBody panel={active} />
+      <DialogPrimitive.Root open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DialogPrimitive.Portal container={portal}>
+          <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-overlay" />
+          <DialogPrimitive.Content
+            aria-describedby={undefined}
+            // The drawer itself takes focus (announced as "Sidebar"): its first button's tooltip would take the first Escape.
+            // It is opened from the menu bar, not a Radix trigger, so focus goes back to what had it.
+            onOpenAutoFocus={(e) => {
+              e.preventDefault()
+              opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
+              const drawer = e.currentTarget as HTMLElement
+              drawer.focus()
+            }}
+            onCloseAutoFocus={(e) => {
+              e.preventDefault()
+              opener.current?.focus()
+            }}
+            className="fixed inset-y-0 left-0 z-40 flex w-[min(88vw,380px)] border-r bg-sidebar text-sidebar-foreground shadow-popover outline-none animate-in slide-in-from-left duration-150"
+          >
+            <DialogPrimitive.Title className="sr-only">Sidebar</DialogPrimitive.Title>
+            <Rail panels={panels} activeId={active.id} collapsed={false} onSelect={onSelect} />
+            <div className="flex min-w-0 flex-1 flex-col">
+              {header}
+              <div className="relative min-h-0 flex-1 overflow-hidden">
+                <PanelBody panel={active} />
+              </div>
             </div>
-          </div>
-        </div>
-        <button type="button" aria-label="Close sidebar" className="flex-1 bg-overlay" onClick={() => setDrawerOpen(false)} />
-      </div>
+          </DialogPrimitive.Content>
+        </DialogPrimitive.Portal>
+      </DialogPrimitive.Root>
     )
   }
 

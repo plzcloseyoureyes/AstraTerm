@@ -497,6 +497,7 @@ function ClipboardPanel({ ctrl, viewer }: { ctrl: RdpController | null; viewer: 
             <div className="grid gap-1.5">
               <div className="text-xs font-medium text-muted-foreground">To the remote desktop</div>
               <Textarea
+                aria-label="To the remote desktop"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 rows={4}

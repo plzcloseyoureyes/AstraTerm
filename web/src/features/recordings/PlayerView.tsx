@@ -560,7 +560,7 @@ function MarkerList({ markers, current, onSeek }: { markers: { time: number; lab
             aria-selected={i === active}
             onClick={() => onSeek(m.time)}
             className={cn(
-              'flex w-full items-baseline gap-2 px-2 py-1 text-left text-sm transition-colors hover:bg-accent focus-visible:bg-accent focus-visible:outline-none',
+              'flex w-full items-baseline gap-2 px-2 py-1 text-left text-sm transition-colors hover:bg-accent focus-visible:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-inset',
               i === active && 'bg-primary/10',
             )}
           >
@@ -607,6 +607,7 @@ function OutputSearch({
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Find in output…"
+          aria-label="Find in output"
           leading={<Search />}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && hits.length) {
@@ -627,7 +628,7 @@ function OutputSearch({
             <button
               type="button"
               onClick={() => onSeek(h.time)}
-              className="flex w-full items-baseline gap-2 px-2 py-1 text-left text-sm hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
+              className="flex w-full items-baseline gap-2 px-2 py-1 text-left text-sm hover:bg-accent focus-visible:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-inset"
             >
               <span className="w-12 shrink-0 text-xs text-muted-foreground tabular-nums">{clock(h.time)}</span>
               <span className="min-w-0 truncate font-mono text-[12px]">{h.text}</span>

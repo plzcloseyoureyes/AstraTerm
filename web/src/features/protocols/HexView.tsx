@@ -156,10 +156,10 @@ export function HexView({ sessionId }: { sessionId: string }) {
                   className="absolute left-0 flex w-full gap-3 px-3 whitespace-pre"
                   style={{ top: 0, transform: `translateY(${vi.start}px)`, height: vi.size }}
                 >
-                  <span className="text-muted-foreground/70 select-none" title={new Date(row.ts).toLocaleString()}>
+                  <span className="text-muted-foreground select-none" title={new Date(row.ts).toLocaleString()}>
                     {timeOf(row.ts)}
                   </span>
-                  <span className="text-muted-foreground/60 select-none">{row.offset.toString(16).padStart(8, '0')}</span>
+                  <span className="text-muted-foreground select-none">{row.offset.toString(16).padStart(8, '0')}</span>
                   <span>
                     {Array.from({ length: COLS }, (_, i) =>
                       i < row.bytes.length ? (

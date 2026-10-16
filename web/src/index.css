@@ -85,18 +85,19 @@
   --popover: oklch(calc(0.225 + var(--t-l)) calc(0.01 * var(--t-cs)) var(--t-h));
   --popover-foreground: var(--foreground);
   --muted: oklch(calc(0.245 + var(--t-l)) calc(0.01 * var(--t-cs)) var(--t-h));
-  --muted-foreground: oklch(0.68 calc(0.012 * var(--t-cs)) calc(var(--t-h) - 3));
+  /* Follows lighter theme surfaces (--t-l) so secondary text keeps its contrast on them. */
+  --muted-foreground: oklch(max(0.68, calc(0.68 + var(--t-l))) calc(0.012 * var(--t-cs)) calc(var(--t-h) - 3));
   --accent: oklch(calc(0.28 + var(--t-l)) calc(0.012 * var(--t-cs)) var(--t-h));
   --accent-foreground: oklch(0.96 calc(0.004 * var(--t-cs)) calc(var(--t-h) - 8));
   --secondary: oklch(calc(0.265 + var(--t-l)) calc(0.011 * var(--t-cs)) var(--t-h));
   --secondary-foreground: oklch(0.92 calc(0.006 * var(--t-cs)) calc(var(--t-h) - 8));
   --primary: oklch(0.62 0.18 252);
-  --primary-foreground: oklch(0.99 0 0);
+  --primary-foreground: oklch(0.2 0.04 252);
   --border: oklch(calc(0.29 + var(--t-l)) calc(0.01 * var(--t-cs)) var(--t-h));
   --input: oklch(calc(0.33 + var(--t-l)) calc(0.011 * var(--t-cs)) var(--t-h));
   --ring: var(--primary);
   --destructive: oklch(0.63 0.2 25);
-  --destructive-foreground: oklch(0.99 0 0);
+  --destructive-foreground: oklch(0.2 0.05 25);
   --success: oklch(0.72 0.16 152);
   --success-foreground: oklch(0.18 0.03 152);
   --warning: oklch(0.8 0.15 78);

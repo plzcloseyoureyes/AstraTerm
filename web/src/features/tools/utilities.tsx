@@ -406,7 +406,7 @@ function EncodePanel() {
       {output.error ? (
         <p className="mt-1 text-sm text-destructive">{output.error}</p>
       ) : (
-        <Textarea mono rows={5} readOnly value={output.value} className="mt-1" />
+        <Textarea mono rows={5} readOnly value={output.value} className="mt-1" aria-label="Output" />
       )}
     </UtilLayout>
   )

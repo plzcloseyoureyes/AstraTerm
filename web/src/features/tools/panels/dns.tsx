@@ -56,7 +56,7 @@ const COLUMNS: Column<ToolRow>[] = [
     cell: (r) => (
       <span className="group flex items-center gap-1">
         <span className="min-w-0 break-all">{str(r.data)}</span>
-        <span className="opacity-0 transition-opacity group-hover:opacity-100">
+        <span className="opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
           <CopyButton value={str(r.data)} label="" title="Copy value" />
         </span>
       </span>

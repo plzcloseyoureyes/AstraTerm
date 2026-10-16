@@ -48,7 +48,7 @@ export default function CommandsPanel() {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex shrink-0 items-center gap-2 border-b bg-toolbar px-2 py-1.5">
-        <Input inputSize="sm" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter commands, hosts, folders…" leading={<Search />} className="w-72" />
+        <Input inputSize="sm" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter commands, hosts, folders…" aria-label="Filter commands" leading={<Search />} className="w-72" />
         {isAdmin && (
           <Button size="sm" variant={all ? 'secondary' : 'ghost'} aria-pressed={all} onClick={() => setAll((v) => !v)}>
             <Users /> All users

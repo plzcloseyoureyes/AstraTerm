@@ -8,6 +8,24 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+### Changed
+
+- **Accessibility:**
+  - Primary and destructive buttons reach WCAG AA contrast: dark text on them in the dark theme (the accent colour
+    stays readable as text), slightly deeper Sky, Orange and Teal in the light theme, and custom accent colours pick the
+    text colour with the higher contrast.
+  - Secondary text keeps its contrast in the lighter dark app themes (Nord, Dracula, Gruvbox…).
+  - Screen readers follow the highlighted entry in the clipboard history and file search lists, hear AI suggestions
+    and replies, transfer results while the queue is open, and a terminal's "Session ended" panel.
+  - The file search results no longer put three hidden buttons per result in the Tab order (only the highlighted
+    row's).
+  - The mobile sidebar is a real modal: it takes focus, closes with Escape and gives focus back.
+  - Visible keyboard focus on key, recording and install rows; names for unlabelled fields and an icon-only copy
+    button; the import wizard's session list no longer claims to be a tree; dimmed timestamps and hidden-file names
+    are readable; smooth scrolling in AI chat respects "reduce motion".
+- **Code:** removed leftover dependency pins and four unused Go modules, test-only helpers moved into the tests, and
+  helpers that several packages had copied (child processes on a PTY, proxy / gateway detection) shared.
+
 ## [0.1.17] - 2026-10-13
 
 ### Changed

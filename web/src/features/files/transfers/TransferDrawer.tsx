@@ -68,6 +68,7 @@ export function TransferDrawer({ locked }: { locked: boolean }) {
   }, [open])
   if (!open || locked) return null
   const finished = views.filter((v) => v.state !== 'queued' && v.state !== 'running').length
+  const failed = views.filter((v) => v.state === 'error').length
   return (
     <section
       ref={ref}
@@ -86,6 +87,10 @@ export function TransferDrawer({ locked }: { locked: boolean }) {
         'rounded-lg border bg-popover text-popover-foreground shadow-popover outline-none animate-in fade-in-0 slide-in-from-bottom-2 duration-150',
       )}
     >
+      {/* No toasts while the queue is open: completions and failures are announced here instead. */}
+      <span className="sr-only" role="status">
+        {finished ? `${finished} of ${views.length} transfers finished${failed ? `, ${failed} failed` : ''}` : ''}
+      </span>
       <header className="flex h-9 shrink-0 items-center gap-2 border-b pr-1.5 pl-3">
         <ArrowUpDown className="size-4 text-muted-foreground" aria-hidden />
         <h2 className="text-sm font-semibold">Transfers</h2>

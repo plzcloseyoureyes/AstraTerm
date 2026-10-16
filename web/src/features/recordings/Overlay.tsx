@@ -53,6 +53,7 @@ function MessageDialog({ locked }: { locked: boolean }) {
         </DialogHeader>
         <Textarea
           autoFocus
+          aria-label="Message"
           value={text}
           maxLength={500}
           rows={3}

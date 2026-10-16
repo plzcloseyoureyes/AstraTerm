@@ -223,6 +223,7 @@ export default function LogViewer({ item, line }: { item: RecordingItem; line?: 
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Find…"
+            aria-label="Find in log"
             leading={<Search />}
             aria-invalid={matcher === 'invalid' || undefined}
             onKeyDown={(e) => {

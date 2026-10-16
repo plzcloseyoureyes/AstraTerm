@@ -711,7 +711,7 @@ function PreviewStep(props: {
         </div>
       )}
 
-      <div className="min-h-32 flex-1 overflow-y-auto rounded-lg border" role="tree" aria-label="Sessions to import" aria-multiselectable>
+      <div className="min-h-32 flex-1 overflow-y-auto rounded-lg border" role="group" aria-label="Sessions to import">
         {prev.connections.length === 0 ? (
           <EmptyState
             size="sm"
@@ -855,14 +855,15 @@ const TreeNode = memo(function TreeNode({
     const count = node.ids.filter((id) => selected.has(id)).length
     const state = count === 0 ? false : count === node.ids.length ? true : 'indeterminate'
     return (
-      <li role="treeitem" aria-expanded={open} aria-selected={state === true}>
+      <li>
         <div className="flex items-center gap-2 rounded-md px-1.5 py-1 hover:bg-accent/60" style={pad}>
           <Checkbox checked={state} onCheckedChange={() => setMany(node.ids, state !== true)} aria-label={`Import folder ${node.name}`} />
           <button
             type="button"
             className="flex min-w-0 items-center gap-1.5 rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
             onClick={() => setOpen((v) => !v)}
-            aria-label={`${open ? 'Collapse' : 'Expand'} ${node.name}`}
+            aria-expanded={open}
+            aria-label={node.name}
           >
             {open ? <ChevronDown className="size-3.5 shrink-0 opacity-70" /> : <ChevronRight className="size-3.5 shrink-0 opacity-70" />}
             <Folder className="size-4 shrink-0 text-muted-foreground" aria-hidden />
@@ -873,7 +874,7 @@ const TreeNode = memo(function TreeNode({
           </span>
         </div>
         {open && (
-          <ul role="group">
+          <ul>
             {node.children.map((c) => (
               <TreeNode key={c.key} node={c} selected={selected} setMany={setMany} depth={depth + 1} />
             ))}
@@ -889,7 +890,7 @@ const TreeNode = memo(function TreeNode({
   const detail = [c.username ? `${c.username}@` : '', c.host, c.port ? `:${c.port}` : ''].join('')
   const notes = c.warnings ?? []
   return (
-    <li role="treeitem" aria-selected={checked}>
+    <li>
       <div className="flex items-center gap-2 rounded-md px-1.5 py-1 hover:bg-accent/60" style={pad}>
         <Checkbox checked={checked} onCheckedChange={() => setMany([c.id], !checked)} aria-label={`Import ${c.name}`} />
         <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />

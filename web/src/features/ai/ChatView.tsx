@@ -394,7 +394,7 @@ function useStickToBottom(dep: unknown) {
   const jump = () => {
     const el = ref.current
     if (!el) return
-    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+    el.scrollTo({ top: el.scrollHeight, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
     atBottom.current = true
     setAway(false)
   }
@@ -608,6 +608,10 @@ export default function ChatView({ variant = 'panel', tabId }: { variant?: 'pane
         )}
       </div>
       {conv && <Composer conv={conv} status={status} streaming={streaming} />}
+      {/* Screen readers hear when a reply has finished (streamed text is not read out word by word). */}
+      <span className="sr-only" role="status">
+        {!streaming && lastContent?.role === 'assistant' ? (lastContent.status === 'error' ? 'The reply failed' : lastContent.status === 'done' ? 'Reply ready' : '') : ''}
+      </span>
     </div>
   )
 }

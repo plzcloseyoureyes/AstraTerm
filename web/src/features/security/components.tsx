@@ -92,6 +92,8 @@ export function CopyButton({ text, label = 'Copy', size = 'sm', variant = 'secon
     <Button
       size={size}
       variant={variant}
+      // Icon only (label ""): still named for screen readers.
+      aria-label={label ? undefined : done ? 'Copied' : 'Copy'}
       onClick={async () => {
         if (await copyText(text)) {
           setDone(true)

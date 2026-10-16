@@ -120,7 +120,7 @@ export default function InstallDialog({ keyId: initialKey, connectionId: initial
                         setError(null)
                       }}
                       className={cn(
-                        'flex w-full items-center gap-2 border-b px-3 py-1.5 text-left last:border-b-0 hover:bg-accent/50 focus-visible:bg-accent/60 focus-visible:outline-none',
+                        'flex w-full items-center gap-2 border-b px-3 py-1.5 text-left last:border-b-0 hover:bg-accent/50 focus-visible:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-inset',
                         selected && 'bg-primary/10 hover:bg-primary/15',
                       )}
                     >

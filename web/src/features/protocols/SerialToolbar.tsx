@@ -18,7 +18,7 @@ function Led({ label, on, title }: { label: string; on: boolean; title: string }
   return (
     <span className="flex items-center gap-1" title={`${title}: ${on ? 'on' : 'off'}`}>
       <span aria-hidden className={cn('size-1.5 rounded-full', on ? 'bg-success shadow-[0_0_4px] shadow-success/70' : 'bg-muted-foreground/30')} />
-      <span className={cn('text-[10px] font-medium tracking-wide', on ? 'text-foreground' : 'text-muted-foreground/70')}>
+      <span className={cn('text-[10px] font-medium tracking-wide', on ? 'text-foreground' : 'text-muted-foreground')}>
         {label}
         <span className="sr-only">{on ? ' on' : ' off'}</span>
       </span>

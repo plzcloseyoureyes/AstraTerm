@@ -173,6 +173,7 @@ function BrowsePanel({ initialConnectionId, initialQ }: { initialConnectionId?: 
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Filter by title or connection…"
+          aria-label="Filter recordings"
           leading={<Search />}
           className="w-64 min-w-36 shrink"
           trailing={q ? <IconButton icon={X} label="Clear" size="xs" onClick={() => setQ('')} /> : undefined}
@@ -488,7 +489,7 @@ function ContentSearch({ q, filters, onClose }: { q: string; filters: RecordingF
                       <li key={i}>
                         <button
                           type="button"
-                          className="flex w-full items-baseline gap-2 rounded-sm px-1 text-left hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
+                          className="flex w-full items-baseline gap-2 rounded-sm px-1 text-left hover:bg-accent focus-visible:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-inset"
                           onClick={() =>
                             playRecording(r.recording, m.time != null ? { startAt: Math.max(0, m.time - 1) } : { line: m.line })
                           }

@@ -176,7 +176,7 @@ function KeyRow({ k, selected, onSelect }: { k: StoredKey; selected: boolean; on
       tabIndex={0}
       aria-selected={selected}
       data-state={selected ? 'selected' : undefined}
-      className="group cursor-default focus-visible:bg-accent/40 focus-visible:outline-none"
+      className="group cursor-default focus-visible:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-inset"
       onClick={(e) => {
         if (!(e.target as HTMLElement).closest('button,[role=menuitem]')) onSelect()
       }}

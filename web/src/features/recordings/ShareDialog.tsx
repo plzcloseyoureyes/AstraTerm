@@ -164,6 +164,7 @@ function ShareDialogBody({ sessionId, title }: { sessionId: string; title?: stri
                 inputSize="sm"
                 value={label}
                 onChange={(e) => setLabel(e.target.value)}
+                aria-label="Link label (optional)"
                 placeholder="Label (optional), e.g. “for Dana”"
                 maxLength={80}
                 className="min-w-48 flex-1"

@@ -131,7 +131,7 @@ export default function SignDialog({ caKeyId, subjectKeyId, onClose }: { caKeyId
           <DialogBody className="grid gap-4">
             <div className="grid gap-1.5">
               <SectionLabel>Certificate</SectionLabel>
-              <Textarea mono readOnly rows={4} value={result.certificate} className="text-xs break-all" onFocus={(e) => e.currentTarget.select()} />
+              <Textarea aria-label="Certificate" mono readOnly rows={4} value={result.certificate} className="text-xs break-all" onFocus={(e) => e.currentTarget.select()} />
             </div>
             <CertificateDetails info={result.info} />
           </DialogBody>
