@@ -147,8 +147,10 @@ func (r *relay) run() string {
 	err = r.ws.Write(wctx, websocket.MessageBinary, resp)
 	cancel()
 	if err != nil {
+		r.h.log.Debug("rdp: viewer gone before the RDCleanPath response", "session", s.ID, "err", err)
 		return "Viewer disconnected"
 	}
+	h.log.Debug("rdp: relaying", "session", s.ID, "server", sc.serverAddr, "security", protocolName(sc.selected))
 	h.setState(s.ID, model.StateAuthenticating, "Signing in ("+protocolName(sc.selected)+")")
 	h.auditUser(r.ctx, r.user, "rdp.connect", s.ID, map[string]any{"engine": engineIronRDP, "host": t.host,
 		"port": t.port, "security": protocolName(sc.selected), "requested": xreq.requested,
@@ -189,6 +191,7 @@ func (r *relay) readRequest() ([]byte, error) {
 
 // fail reports err to the session state and the client, then closes the socket.
 func (r *relay) fail(e *relayError) {
+	r.h.log.Debug("rdp: relay failed", "session", r.s.ID, "err", e.msg)
 	r.h.failState(r.s, r.viewer, e.msg)
 	if b, err := e.fail.encode(); err == nil {
 		ctx, cancel := context.WithTimeout(r.ctx, 5*time.Second)
@@ -559,11 +562,17 @@ func (r *relay) pump(tc *tls.Conn, selected uint32, autologon bool, blockedChann
 	}()
 	buf := make([]byte, pumpBuffer)
 	filter := newServerFilter(nc, selected)
-	_, err := io.CopyBuffer(filter, tc, buf) // server → browser
-	if filter.fixed > 0 || filter.reactivations > 0 {
-		r.h.log.Debug("rdp: server output adjusted for the web client", "session", r.s.ID,
-			"rewrittenRects", filter.fixed, "reactivations", filter.reactivations)
+	// The server hung up before the desktop started. Recorded before the client hears of it, so it shows this
+	// instead of IronRDP's "disconnect provider ultimatum".
+	filter.onEarlyDisconnect = func() {
+		r.h.failState(r.s, r.viewer, "The remote desktop ended the connection before the desktop started. Servers that "+
+			"require the RDP graphics pipeline, such as GNOME Remote Desktop, do not work with the built-in IronRDP engine yet: "+
+			"set this session's Engine to guacd, or connect with VNC.")
 	}
+	_, err := io.CopyBuffer(filter, tc, buf) // server → browser
+	r.h.log.Debug("rdp: server output filter", "session", r.s.ID, "selected", selected, "rewrittenRects", filter.fixed,
+		"reactivations", filter.reactivations, "droppedEarlyDeactivateAll", filter.droppedEarly,
+		"preActivationPDUs", filter.preActivate, "gaveUp", filter.gaveUp)
 	switch {
 	case err == nil || errors.Is(err, io.EOF):
 		finish("The remote desktop closed the connection")

@@ -511,3 +511,31 @@ func TestServerFilterDropsDeactivateAllBeforeActivation(t *testing.T) {
 		t.Fatalf("reactivation: reactivating=%v, got % x", f.reactivating, out)
 	}
 }
+
+func TestServerFilterReportsDisconnectBeforeActivation(t *testing.T) {
+	shareID := []byte{0xEA, 0x03, 0x01, 0x00}
+	deactivate := sharePDU(pduTypeDeactivateAll, concat(shareID, []byte{1, 0, 0}))
+	demand := sharePDU(pduTypeDemandActive, concat(shareID, []byte{4, 0, 0, 0, 'R', 'D', 'P', 0}))
+	ultimatum := []byte{fpActionX224, 0, 0, 9, 0x02, 0xF0, 0x80, 0x21, 0x80} // MCS Disconnect Provider Ultimatum
+
+	for _, c := range []struct {
+		name  string
+		input []byte
+		want  int
+	}{
+		// GNOME Remote Desktop without a graphics pipeline client: Deactivate All, then it hangs up.
+		{"before activation", concat(deactivate, ultimatum), 1},
+		{"after activation", concat(demand, ultimatum), 0},
+	} {
+		var out bytes.Buffer
+		f := newServerFilter(&out, 0)
+		calls := 0
+		f.onEarlyDisconnect = func() { calls++ }
+		if _, err := f.Write(c.input); err != nil {
+			t.Fatal(err)
+		}
+		if calls != c.want || !bytes.HasSuffix(out.Bytes(), ultimatum) {
+			t.Errorf("%s: %d reports (want %d), ultimatum forwarded: %v", c.name, calls, c.want, bytes.HasSuffix(out.Bytes(), ultimatum))
+		}
+	}
+}

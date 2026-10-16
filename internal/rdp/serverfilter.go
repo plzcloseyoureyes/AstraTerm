@@ -2,6 +2,7 @@ package rdp
 
 import (
 	"encoding/binary"
+	"fmt"
 	"io"
 )
 
@@ -47,6 +48,16 @@ type serverFilter struct {
 	shareID       uint32
 	reactivations int  // diagnostics
 	activated     bool // a Demand Active was seen: a Deactivate All from now on is a reactivation
+
+	// Diagnostics (debug log): why the filter gave up parsing, the Share Control PDU types before the first Demand
+	// Active, and the Deactivate All PDUs dropped then.
+	gaveUp       string
+	preActivate  []int
+	droppedEarly int
+
+	// onEarlyDisconnect runs when the server hangs up (MCS Disconnect Provider Ultimatum) before the first Demand
+	// Active, before the client sees it: the relay records why first (see relay.pump).
+	onEarlyDisconnect func()
 }
 
 const (
@@ -210,6 +221,9 @@ func (f *serverFilter) next(b []byte) int {
 
 // passthrough gives up on parsing: everything from here on (including held fragments) is forwarded unchanged.
 func (f *serverFilter) passthrough(b []byte) int {
+	if f.gaveUp == "" {
+		f.gaveUp = fmt.Sprintf("state %d at % x", f.state, b[:min(len(b), 24)])
+	}
 	f.release()
 	f.flushFragments()
 	f.state = filterPassthrough
@@ -250,6 +264,9 @@ func derSize(b []byte) (int, bool) {
 // slowPath handles one TPKT: an MCS Send Data Indication carrying a Share Data PDU whose bitmap update needs fixing is
 // replaced by one or more PDUs with the same headers; everything else is forwarded unchanged.
 func (f *serverFilter) slowPath(pdu []byte) {
+	if !f.activated && f.onEarlyDisconnect != nil && isDisconnectUltimatum(pdu) {
+		f.onEarlyDisconnect()
+	}
 	mark := len(f.obuf)
 	f.flushFragments() // fast-path fragments cannot straddle a slow-path PDU
 	f.holdSince(mark)
@@ -267,10 +284,14 @@ func (f *serverFilter) slowPath(pdu []byte) {
 		if len(body) >= 10 && (pduType == pduTypeData || pduType == pduTypeDemandActive) {
 			f.shareID = binary.LittleEndian.Uint32(body[6:])
 		}
+		if !f.activated && len(f.preActivate) < 16 {
+			f.preActivate = append(f.preActivate, pduType)
+		}
 		f.activated = f.activated || pduType == pduTypeDemandActive
 	}
 	switch {
 	case pduType == pduTypeDeactivateAll && !f.activated:
+		f.droppedEarly++
 		return // before the first activation (see serverFilter)
 	case pduType == pduTypeDeactivateAll:
 		f.reactivating = true
@@ -317,6 +338,11 @@ func (f *serverFilter) release() {
 	f.reactivating = false
 	f.obuf = append(f.obuf, f.held...)
 	f.held = nil
+}
+
+// isDisconnectUltimatum reports whether a TPKT carries an MCS Disconnect Provider Ultimatum (DomainMCSPDU choice 8).
+func isDisconnectUltimatum(pdu []byte) bool {
+	return len(pdu) >= 8 && pdu[4] == 0x02 && pdu[5] == 0xF0 && pdu[6] == 0x80 && pdu[7]>>2 == 8
 }
 
 // sendDataIndication returns the MCS header (Send Data Indication up to the length) and the user data of a TPKT.

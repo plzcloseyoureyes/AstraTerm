@@ -28,9 +28,11 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ### Fixed
 
-- **RDP:** connecting to servers that send a Deactivate All PDU before the first Demand Active (Windows Server, GNOME
-  Remote Desktop) failed with "invalid state (this is a bug): general error" in the built-in IronRDP client. The relay
-  now drops that PDU (nothing is active yet), as the newer IronRDP does.
+- **RDP:** servers that send a Deactivate All PDU before the first Demand Active failed with "invalid state (this is a
+  bug): general error" in the built-in IronRDP engine; the relay now drops that PDU (nothing is active yet), as newer
+  IronRDP does. GNOME Remote Desktop still cannot be used with IronRDP — it requires the RDP graphics pipeline, which
+  the engine does not support yet — and now says so ("use the guacd engine, or VNC") instead of "received disconnect
+  provider ultimatum". The relay logs (debug) why a connection failed or ended.
 
 ## [0.1.17] - 2026-10-13
 
