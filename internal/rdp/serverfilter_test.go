@@ -525,6 +525,7 @@ func TestServerFilterReportsDisconnectBeforeActivation(t *testing.T) {
 	}{
 		// GNOME Remote Desktop without a graphics pipeline client: Deactivate All, then it hangs up.
 		{"before activation", concat(deactivate, ultimatum), 1},
+		{"before activation, no Deactivate All", ultimatum, 1},
 		{"after activation", concat(demand, ultimatum), 0},
 	} {
 		var out bytes.Buffer

@@ -284,7 +284,8 @@ func (f *serverFilter) slowPath(pdu []byte) {
 		if len(body) >= 10 && (pduType == pduTypeData || pduType == pduTypeDemandActive) {
 			f.shareID = binary.LittleEndian.Uint32(body[6:])
 		}
-		if !f.activated && len(f.preActivate) < 16 {
+		// Share Control PDUs only (their total length is the body's): licensing PDUs start with a security header.
+		if !f.activated && len(f.preActivate) < 16 && int(binary.LittleEndian.Uint16(body)) == len(body) {
 			f.preActivate = append(f.preActivate, pduType)
 		}
 		f.activated = f.activated || pduType == pduTypeDemandActive

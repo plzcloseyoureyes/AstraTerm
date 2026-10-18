@@ -573,6 +573,14 @@ export default function ChatView({ variant = 'panel', tabId }: { variant?: 'pane
 
   const streaming = useChatStore((s) => (s.activeId ? !!s.streaming[s.activeId] : false))
   const lastContent = conv?.messages[conv.messages.length - 1]
+  // Announced when a reply ends while this view is open, not when another conversation is opened.
+  const [finished, setFinished] = useState('')
+  const wasStreaming = useRef(false)
+  useEffect(() => {
+    if (streaming) setFinished('')
+    else if (wasStreaming.current) setFinished(lastContent?.status === 'error' ? 'The reply failed' : 'Reply ready')
+    wasStreaming.current = streaming
+  }, [streaming, lastContent?.status])
   const scroll = useStickToBottom(`${conv?.id}:${conv?.messages.length}:${lastContent?.content.length}:${lastContent?.status}`)
 
   if (gate.hold) return <LoadingPane immediate active={gate.show} />
@@ -610,7 +618,7 @@ export default function ChatView({ variant = 'panel', tabId }: { variant?: 'pane
       {conv && <Composer conv={conv} status={status} streaming={streaming} />}
       {/* Screen readers hear when a reply has finished (streamed text is not read out word by word). */}
       <span className="sr-only" role="status">
-        {!streaming && lastContent?.role === 'assistant' ? (lastContent.status === 'error' ? 'The reply failed' : lastContent.status === 'done' ? 'Reply ready' : '') : ''}
+        {finished}
       </span>
     </div>
   )

@@ -562,9 +562,13 @@ func (r *relay) pump(tc *tls.Conn, selected uint32, autologon bool, blockedChann
 	}()
 	buf := make([]byte, pumpBuffer)
 	filter := newServerFilter(nc, selected)
-	// The server hung up before the desktop started. Recorded before the client hears of it, so it shows this
-	// instead of IronRDP's "disconnect provider ultimatum".
+	// The server hung up before the desktop started, right after a Deactivate All: what GNOME Remote Desktop does to
+	// clients without the graphics pipeline. Recorded before the client hears of it, so it shows this instead of
+	// IronRDP's "disconnect provider ultimatum". Other early hang-ups keep the client's own message.
 	filter.onEarlyDisconnect = func() {
+		if filter.droppedEarly == 0 {
+			return
+		}
 		r.h.failState(r.s, r.viewer, "The remote desktop ended the connection before the desktop started. Servers that "+
 			"require the RDP graphics pipeline, such as GNOME Remote Desktop, do not work with the built-in IronRDP engine yet: "+
 			"set this session's Engine to guacd, or connect with VNC.")

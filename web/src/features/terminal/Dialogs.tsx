@@ -288,6 +288,8 @@ function ClipboardHistoryDialog({ ctrl, container, onDone }: { ctrl: TerminalCon
     return q ? entries.filter((e) => e.text.toLowerCase().includes(q)) : entries
   }, [entries, query])
   useEffect(() => setActive(0), [query])
+  // A removed entry must not leave the highlight past the end of the list.
+  useEffect(() => setActive((a) => Math.min(a, Math.max(0, filtered.length - 1))), [filtered.length])
   const pick = (i: number) => {
     const e = filtered[i]
     if (!e) return
