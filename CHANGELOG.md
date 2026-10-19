@@ -8,6 +8,8 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+## [0.1.18] - 2026-10-19
+
 ### Changed
 
 - **Accessibility:**
@@ -294,7 +296,8 @@ endings, which broke monitoring of Linux, macOS and BSD hosts. That is fixed her
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.17...HEAD
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.18...HEAD
+[0.1.18]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.17...v0.1.18
 [0.1.17]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.14...v0.1.15
