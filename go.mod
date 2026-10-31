@@ -25,7 +25,7 @@ require (
 	github.com/jlaffaye/ftp v0.2.4
 	github.com/kayrus/putty v1.0.5
 	github.com/kevinburke/ssh_config v1.6.0
-	github.com/labstack/echo/v5 v5.3.1
+	github.com/labstack/echo/v5 v5.4.1
 	github.com/likexian/whois v1.15.7
 	github.com/masterzen/winrm v0.0.0-20260407182533-5570be7f80cf
 	github.com/miekg/dns v1.1.73
