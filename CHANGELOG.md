@@ -15,6 +15,12 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
   itself and the server on the same machine copies them into the folder under the pointer (with the usual progress and
   name-conflict handling); the file browser is highlighted while files hover over it.
 
+### Security
+
+- Updated Echo (the server's HTTP framework) to 5.4.1: a rejected WebSocket upgrade could bypass route-level access
+  checks (critical), and the WebSocket proxy could keep connections after the client left. Also go-jose 4.1.6 (DoS on
+  RSA keys in OIDC key sets), DOMPurify 3.4.17 (used by the editor) and Vite 8.3.6 (build tooling).
+
 ## [0.1.18] - 2026-10-19
 
 ### Changed
