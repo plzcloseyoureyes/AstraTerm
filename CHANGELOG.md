@@ -8,6 +8,8 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+## [0.1.19] - 2026-11-08
+
 ### Fixed
 
 - **Linux desktop app:** files dragged from the file manager onto a file browser (the SFTP panel, file tabs) did
@@ -309,7 +311,8 @@ endings, which broke monitoring of Linux, macOS and BSD hosts. That is fixed her
   FreeBSD amd64, with the web UI embedded and precompressed; `astraterm version` prints version, commit and build date; reproducible
   release archives with SHA256SUMS, SBOMs and build-provenance attestations; third-party notices.
 
-[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.18...HEAD
+[Unreleased]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.19...HEAD
+[0.1.19]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.18...v0.1.19
 [0.1.18]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.17...v0.1.18
 [0.1.17]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/plzcloseyoureyes/AstraTerm/compare/v0.1.15...v0.1.16
