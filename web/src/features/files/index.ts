@@ -44,7 +44,7 @@ import { installFsLifecycle, openFs, sourceKey } from './fsHandles'
 import { FILES_TAB, openFilesTab, revealInPanel, SFTP_PANEL } from './open'
 import { describePlace } from './place'
 import { collectDrop, filesFromInput, planUpload, withSlowToast } from './upload'
-import { installDropGuard } from './dnd'
+import { installDropGuard, installFileDrops } from './dnd'
 import { installTerminalProbe } from './terminalProbe'
 import { installAutoShow } from './sidebar/autoshow'
 import { followDefault, installPanelTargetTracking, setFollow, usePanelState } from './sidebar/state'
@@ -57,6 +57,7 @@ installTransfersLifecycle()
 installPanelTargetTracking()
 installAutoShow()
 installDropGuard()
+installFileDrops()
 installTerminalProbe()
 
 // ---------------------------------------------------------------------------------------------------------------------

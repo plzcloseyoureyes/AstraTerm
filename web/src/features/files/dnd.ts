@@ -3,16 +3,18 @@
  *   - files and folders dropped from the OS → upload into the folder under the pointer (row, breadcrumb or list);
  *   - rows dragged between views (panel ↔ tab, two panes, two sessions) → copy / move, server-side;
  *   - a single file dragged out to the desktop (Chromium DownloadURL). Folders cannot leave the browser: use
- *     Download / Download as zip.
+ *     Download / Download as zip;
+ *   - in the Linux desktop app, files dropped from other apps arrive as host paths (installFileDrops).
  */
 import type React from 'react'
+import { toast } from 'sonner'
 import type { FileEntry } from '@/api/types'
-import { isMac } from '@/lib/utils'
+import { errorMessage, isMac } from '@/lib/utils'
 import { fsApi } from './api'
 import { transferEntries } from './actions'
 import { absoluteUrl, zipName } from './download'
 import { guessMime, isDirLike } from './format'
-import { getFsHandle } from './fsHandles'
+import { getFsHandle, openFs, sourceKey, withFs } from './fsHandles'
 import { collectDrop, planUpload, withSlowToast } from './upload'
 import type { FsContext } from './types'
 
@@ -134,4 +136,77 @@ export function installDropGuard(): void {
   window.addEventListener('drop', (e) => {
     if (!e.defaultPrevented && carriesFiles(e)) e.preventDefault()
   })
+}
+
+// ---- files dropped from other apps in the Linux desktop app ------------------------------------------------------------
+// WebKitGTK no longer gives a page the files dropped onto it from a file manager (dataTransfer.files is empty), so the
+// Linux desktop app takes those drops natively and passes their host paths and the pointer position as window events
+// (desktop/src-tauri/src/main.rs, forward_file_drops). The server runs on that same machine: it copies the files from
+// its local file system into the file browser under the pointer, like a drag from the local files pane.
+
+/** Where a drop goes: the folder, and the view to mark active (the conflict question / follow-up focus belong to it). */
+interface FileDropTarget {
+  ctx: FsContext
+  dir: string
+  activate?: () => void
+}
+
+/** File browsers taking such drops: their root element → where a drop goes (null: not now). */
+const fileDropZones = new WeakMap<Element, () => FileDropTarget | null>()
+
+/** Registers a file browser root for files dropped from other apps; returns the unregister function. */
+export function registerFileDropZone(el: Element, target: () => FileDropTarget | null): () => void {
+  fileDropZones.set(el, target)
+  return () => fileDropZones.delete(el)
+}
+
+function zoneAt(x: number, y: number): Element | null {
+  for (let el = document.elementFromPoint(x, y); el; el = el.parentElement) if (fileDropZones.get(el)?.()) return el
+  return null
+}
+
+let fileDropsInstalled = false
+
+/** Listens for the desktop app's file drag / drop events (they only occur in the Linux desktop app). */
+export function installFileDrops(): void {
+  if (fileDropsInstalled || typeof window === 'undefined') return
+  fileDropsInstalled = true
+  let hovered: Element | null = null
+  const highlight = (el: Element | null) => {
+    if (el === hovered) return
+    hovered?.removeAttribute('data-file-drop')
+    el?.setAttribute('data-file-drop', '')
+    hovered = el
+  }
+  window.addEventListener('astraterm:file-drag', (e) => {
+    const p = (e as CustomEvent<{ x: number; y: number } | null>).detail
+    highlight(p ? zoneAt(p.x, p.y) : null)
+  })
+  window.addEventListener('astraterm:file-drop', (e) => {
+    const { paths, x, y } = (e as CustomEvent<{ paths: string[]; x: number; y: number }>).detail
+    highlight(null)
+    const zone = zoneAt(x, y)
+    const target = zone && fileDropZones.get(zone)?.()
+    if (!target) {
+      toast.info('Drop files onto a file browser to upload them')
+      return
+    }
+    target.activate?.()
+    void uploadHostPaths(paths, target.ctx, target.dir)
+  })
+}
+
+/** Copy files of this machine (host paths) into dir of target, through the transfer queue. */
+async function uploadHostPaths(paths: string[], target: FsContext, dir: string): Promise<void> {
+  const source = { kind: 'local' } as const
+  try {
+    const handle = await openFs(source)
+    const local: FsContext = { key: sourceKey(source), handle, source, placeKey: 'local', label: 'Local files' }
+    const entries = await Promise.all(paths.map((p) => withFs(local.key, (id) => fsApi.stat(id, p)).catch(() => null)))
+    const found = entries.filter((x): x is FileEntry => !!x)
+    if (found.length < paths.length) toast.error(`${paths.length - found.length} of the dropped items could not be read`)
+    if (found.length) await transferEntries(local, found, target, dir, 'copy')
+  } catch (err) {
+    toast.error('Could not upload the dropped files', { description: errorMessage(err) })
+  }
 }

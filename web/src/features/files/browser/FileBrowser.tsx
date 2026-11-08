@@ -39,7 +39,7 @@ import { DELAY_PRESETS, useDelayedFlag } from '@/lib/useDelayedFlag'
 import { cn, formatBytes, formatRate } from '@/lib/utils'
 import { describeError } from '../actions'
 import { fsApi, fsKeys, isHandleGone, isPermissionDenied } from '../api'
-import { acceptDrag, performDrop } from '../dnd'
+import { acceptDrag, performDrop, registerFileDropZone } from '../dnd'
 import { countOf, describeCounts, isDirLike, totalSize } from '../format'
 import { reportFsError } from '../fsHandles'
 import { dirname, isRoot, normalizePath } from '../paths'
@@ -403,6 +403,13 @@ export function FileBrowser(props: FileBrowserProps) {
     )
   }
 
+  // Files dropped from other apps in the Linux desktop app (dnd.ts installFileDrops): into the folder shown.
+  useEffect(() => {
+    const el = rootRef.current
+    if (!el || props.inert) return
+    return registerFileDropZone(el, () => (path ? { ctx, dir: path, activate: () => controller.markActive() } : null))
+  }, [rootRef, props.inert, path, ctx, controller])
+
   const label = `Files in ${path ?? requested ?? ''}`
   const filterRow = (
     <FilterRow
@@ -418,7 +425,12 @@ export function FileBrowser(props: FileBrowserProps) {
   return (
     <div
       ref={rootRef}
-      className={cn('@container flex h-full min-h-0 min-w-0 flex-col', props.className)}
+      className={cn(
+        '@container flex h-full min-h-0 min-w-0 flex-col',
+        // Hovered by files dragged in from another app (Linux desktop app, dnd.ts).
+        'data-[file-drop]:ring-2 data-[file-drop]:ring-primary/70 data-[file-drop]:ring-inset',
+        props.className,
+      )}
       inert={props.inert || undefined}
       // Read by scripts/flash-audit.mjs (region of interest, "navigation settled").
       data-file-browser={variant}

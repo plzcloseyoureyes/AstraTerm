@@ -15,7 +15,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
 use tauri::webview::NewWindowResponse;
-use tauri::{AppHandle, Manager, Runtime, WebviewUrl, WebviewWindow, WebviewWindowBuilder};
+use tauri::{AppHandle, DragDropEvent, Manager, Runtime, WebviewUrl, WebviewWindow, WebviewWindowBuilder, WindowEvent};
 use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 use tauri_plugin_opener::OpenerExt;
 use tauri_plugin_shell::process::{CommandChild, CommandEvent};
@@ -164,10 +164,7 @@ fn app_window(
         Some((x, y)) => window.position(x, y),
         None => window.center(),
     };
-    window
-        // The page handles drag and drop itself (tabs, files onto the file browser and terminals). Tauri's native
-        // handler would swallow those HTML5 events on Windows (WebView2).
-        .disable_drag_drop_handler()
+    drag_drop(window)
         // The window title follows the active tab ("host — AstraTerm").
         .on_document_title_changed(|window, title| {
             let _ = window.set_title(&title);
@@ -193,22 +190,64 @@ fn app_window(
             static NEXT: AtomicUsize = AtomicUsize::new(1);
             let label = format!("popout-{}", NEXT.fetch_add(1, Ordering::Relaxed));
             let url = WebviewUrl::External("about:blank".parse().unwrap());
-            let built = translucent(WebviewWindowBuilder::new(&popup_app, label, url))
+            let built = drag_drop(translucent(WebviewWindowBuilder::new(&popup_app, label, url)))
                 .window_features(features)
-                .disable_drag_drop_handler()
                 .title("AstraTerm")
                 .on_document_title_changed(|window, title| {
                     let _ = window.set_title(&title);
                 })
                 .build();
             match built {
-                Ok(window) => NewWindowResponse::Create { window },
+                Ok(window) => {
+                    forward_file_drops(&window);
+                    NewWindowResponse::Create { window }
+                }
                 Err(_) => NewWindowResponse::Deny,
             }
         })
         // Downloads (files, exports, recordings): ask where to save, or the download folder (downloads.rs).
         .on_download(downloads::on_download)
         .build()
+        .inspect(forward_file_drops)
+}
+
+/// The page handles drag and drop itself (tabs, rows, files onto the file browser and terminals): Tauri's native
+/// handler would swallow those HTML5 events on Windows (WebView2). On Linux it stays on: WebKitGTK no longer gives the
+/// page the files dropped from other apps (dataTransfer.files is empty), so they come through it (forward_file_drops).
+/// It only takes drops carrying file URIs; the page's own drags are left alone.
+fn drag_drop<'a, R: Runtime, M: Manager<R>>(builder: WebviewWindowBuilder<'a, R, M>) -> WebviewWindowBuilder<'a, R, M> {
+    if cfg!(target_os = "linux") {
+        builder
+    } else {
+        builder.disable_drag_drop_handler()
+    }
+}
+
+/// Files dragged in from other apps (Linux, see drag_drop): the page gets the pointer position while they hover and
+/// their paths where they are dropped (web/src/features/files/dnd.ts uploads them with the server on this machine).
+fn forward_file_drops(window: &WebviewWindow) {
+    let target = window.clone();
+    window.on_window_event(move |event| {
+        let WindowEvent::DragDrop(event) = event else { return };
+        let (name, detail) = match event {
+            DragDropEvent::Enter { position, .. } | DragDropEvent::Over { position } => (
+                "astraterm:file-drag",
+                serde_json::json!({ "x": position.x, "y": position.y }),
+            ),
+            DragDropEvent::Drop { paths, position } => {
+                let paths: Vec<&str> = paths.iter().filter_map(|p| p.to_str()).collect();
+                (
+                    "astraterm:file-drop",
+                    serde_json::json!({ "paths": paths, "x": position.x, "y": position.y }),
+                )
+            }
+            DragDropEvent::Leave => ("astraterm:file-drag", serde_json::Value::Null),
+            _ => return,
+        };
+        let _ = target.eval(format!(
+            "window.dispatchEvent(new CustomEvent('{name}', {{ detail: {detail} }}))"
+        ));
+    });
 }
 
 /// macOS and Windows: a transparent window. The page stays opaque unless Settings → Appearance → Window opacity is

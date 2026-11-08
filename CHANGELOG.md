@@ -8,6 +8,13 @@ contain breaking changes; they are called out under **Changed** or **Removed**.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Linux desktop app:** files dragged from the file manager onto a file browser (the SFTP panel, file tabs) did
+  nothing. Recent WebKitGTK versions no longer give a page the files dropped onto it, so the app now takes such drops
+  itself and the server on the same machine copies them into the folder under the pointer (with the usual progress and
+  name-conflict handling); the file browser is highlighted while files hover over it.
+
 ## [0.1.18] - 2026-10-19
 
 ### Changed
